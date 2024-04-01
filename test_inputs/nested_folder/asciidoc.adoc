@@ -8,7 +8,7 @@ Use it to try https://asciidoc.org[AsciiDoc].
 * A list item
 * Another list item
 
-[,ruby]
+[source,ruby]
 ----
 puts 'Hello, World!'
 ----

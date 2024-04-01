@@ -6,7 +6,9 @@ import importlib
 from pathlib import Path
 import pkgutil
 import shutil
+import tempfile
 
+from asciidoc3 import asciidoc3api
 from joppy.api import Api
 import pypandoc
 
@@ -31,10 +33,19 @@ def convert_folder(folder: Path, root):
 
 def convert_file(file_: Path, root):
     """Default conversion function for files. Uses pandoc directly."""
-    # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-    # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
-    note_body = pypandoc.convert_file(file_, "commonmark_x")
-    root.child_notes.append(Note({"title": file_.stem, "body": note_body}))
+    if file_.suffix == ".adoc":
+        # Convert asciidoc separately, since reading is not supported by pandc (yet).
+        with tempfile.NamedTemporaryFile(suffix=".docbook") as docbook_file:
+            # https://gitlab.com/asciidoc3/asciidoc3/-/issues/5#note_752781763
+            asciidoc3_api = asciidoc3api.AsciiDoc3API(Path(asciidoc3api.__file__))
+            asciidoc3_api.execute(str(file_), docbook_file.name, backend="docbook")
+            note_body = pypandoc.convert_file(docbook_file.name, "commonmark_x")
+            root.child_notes.append(Note({"title": file_.stem, "body": note_body}))
+    else:
+        # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+        # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
+        note_body = pypandoc.convert_file(file_, "commonmark_x")
+        root.child_notes.append(Note({"title": file_.stem, "body": note_body}))
     return root, []
 
 
