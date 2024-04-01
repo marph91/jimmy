@@ -1,0 +1,7 @@
+__pycache__
+*.AppImage
+joplin_universal_importer.spec
+build
+dist
+test_profile
+tmp
