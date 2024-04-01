@@ -71,6 +71,6 @@ class JoplinImporter:
         for note in notebook.child_notes:
             note.data["parent_id"] = notebook_id
             self.import_note(note)
-        for notebook in notebook.child_notebooks:
-            notebook.data["parent_id"] = notebook_id
-            self.import_notebook(notebook)
+        for child_notebook in notebook.child_notebooks:
+            child_notebook.data["parent_id"] = notebook_id
+            self.import_notebook(child_notebook)

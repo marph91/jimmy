@@ -9,7 +9,8 @@ from common import Note, Tag
 
 
 def convert(file_or_folder: Path, root):
-    # export via takeout: https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/
+    # export via takeout:
+    # https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/
 
     if file_or_folder.suffix == ".zip":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
@@ -29,7 +30,6 @@ def convert(file_or_folder: Path, root):
 
     tags_keep_all_notes = set()
     notes_joplin = []
-    resources_joplin = []
     for file_ in input_folder.glob("**/*.json"):  # take only the exports in json format
         if file_.suffix == ".json":
             note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))

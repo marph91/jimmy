@@ -1,17 +1,14 @@
 import argparse
 from datetime import datetime
-from enum import Enum
-from functools import partial
 import importlib
 from pathlib import Path
 import pkgutil
-import shutil
 
 from joppy.api import Api
 import pypandoc
 
 import apps
-from common import *
+from common import JoplinImporter, Note, Notebook
 
 
 def convert_folder(folder: Path, root):
@@ -21,7 +18,7 @@ def convert_folder(folder: Path, root):
             try:
                 convert_file(item, root)
                 print(f"{item.name}: success")
-            except Exception as exc:
+            except Exception as exc:  # pylint: disable=broad-except
                 print(f"{item.name}: {str(exc).strip()}")
         else:
             new_root, _ = convert_folder(item, Notebook({"title": item.name}))
@@ -57,9 +54,10 @@ def main():
     # root notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     root = Notebook({"title": f"{now} - Import"})
-    # convert the input data to an intermediate representation that can be used by the importer later
-    # try to use an app specific converter
-    # if there is none, fall back to the default converter
+    # Convert the input data to an intermediate representation
+    # that can be used by the importer later.
+    # Try to use an app specific converter. If there is none,
+    # fall back to the default converter.
     try:
         module = importlib.import_module(f"apps.{args.app}")
         conversion_function = module.convert
