@@ -1,4 +1,4 @@
-# joplin-universal-importer
+# joplin-custom-importer
 
 Import your data to Joplin.
 

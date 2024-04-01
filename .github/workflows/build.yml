@@ -19,8 +19,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Build executable with pyinstaller
-        run: python -m PyInstaller src/joplin_universal_importer.py --onefile --collect-data pypandoc
+        run: python -m PyInstaller src/joplin_custom_importer.py --onefile --collect-data pypandoc
       - uses: actions/upload-artifact@v4
         with:
-          name: joplin-universal-importer-${{ matrix.os }}
-          path: ./dist/joplin_universal_importer*
+          name: joplin-custom-importer-${{ matrix.os }}
+          path: ./dist/joplin_custom_importer*
