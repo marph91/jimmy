@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import List
 
 import requests
@@ -19,8 +20,8 @@ class Note:
     """Represents a note."""
 
     data: dict
-    # resources: List[Resource]
     tags: List[str] = field(default_factory=list)  # list of original tag ids
+    resources: List[Path] = field(default_factory=list)  # list of filenames
 
 
 @dataclass
@@ -59,6 +60,11 @@ class JoplinImporter:
         note_id = self.api.add_note(**note.data)
         for tag in note.tags:
             self.api.add_tag_to_note(tag_id=self.tag_map[tag], note_id=note_id)
+        for resource in note.resources:
+            resource_id = self.api.add_resource(
+                filename=str(resource), title=resource.name
+            )
+            self.api.add_resource_to_note(resource_id=resource_id, note_id=note_id)
 
     def import_notebook(self, notebook):
         notebook_id = self.api.add_notebook(**notebook.data)
