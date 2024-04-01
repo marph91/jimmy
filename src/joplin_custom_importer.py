@@ -47,7 +47,11 @@ def main():
         choices=[module.name for module in pkgutil.iter_modules(apps.__path__)],
         help="The source application.",
     )
-    parser.add_argument("--api-token", required=True, help="Joplin API token.")
+    group_api = parser.add_mutually_exclusive_group(required=True)
+    group_api.add_argument("--api-token", help="Joplin API token.")
+    group_api.add_argument(
+        "--dry-run", action="store_true", help="Don't connect to the Joplin API."
+    )
     args = parser.parse_args()
 
     # root notebook
@@ -63,11 +67,12 @@ def main():
         conversion_function = convert_file if args.input.is_file() else convert_folder
     root_tree, tags = conversion_function(args.input, root)
 
-    # import to Joplin
-    api = Api(token=args.api_token)
-    importer = JoplinImporter(api)
-    importer.import_tags(tags)
-    importer.import_notebook(root_tree)
+    if not args.dry_run:
+        # import to Joplin
+        api = Api(token=args.api_token)
+        importer = JoplinImporter(api)
+        importer.import_tags(tags)
+        importer.import_notebook(root_tree)
 
 
 if __name__ == "__main__":
