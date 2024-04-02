@@ -24,3 +24,5 @@ jobs:
         with:
           name: joplin-custom-importer-${{ matrix.os }}
           path: ./dist/joplin_custom_importer*
+      - name: Smoke test
+        run: ./dist/joplin_custom_importer test_inputs --dry-run
