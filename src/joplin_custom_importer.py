@@ -4,9 +4,9 @@ import importlib
 from pathlib import Path
 import pkgutil
 
-from joppy.api import Api
 import pypandoc
 
+import api_helper
 import apps
 from common import JoplinImporter, Note, Notebook
 
@@ -44,12 +44,14 @@ def main():
         choices=[module.name for module in pkgutil.iter_modules(apps.__path__)],
         help="The source application.",
     )
-    group_api = parser.add_mutually_exclusive_group(required=True)
-    group_api.add_argument("--api-token", help="Joplin API token.")
-    group_api.add_argument(
+    parser.add_argument(
         "--dry-run", action="store_true", help="Don't connect to the Joplin API."
     )
     args = parser.parse_args()
+
+    if not args.dry_run:
+        # create the connection to Joplin first to fail fast in case of a problem
+        api = api_helper.get_api()
 
     # root notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -67,7 +69,6 @@ def main():
 
     if not args.dry_run:
         # import to Joplin
-        api = Api(token=args.api_token)
         importer = JoplinImporter(api)
         importer.import_tags(tags)
         importer.import_notebook(root_tree)
