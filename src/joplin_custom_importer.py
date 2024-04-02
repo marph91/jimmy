@@ -11,15 +11,21 @@ import apps
 from common import JoplinImporter, Note, Notebook
 
 
+# https://stackoverflow.com/a/287944/7410886
+COLOR_SUCCESS = "\033[92m"
+COLOR_FAIL = "\033[91m"
+COLOR_END = "\033[0m"
+
+
 def convert_folder(folder: Path, root):
     """Default conversion function for folders."""
     for item in folder.iterdir():
         if item.is_file():
             try:
-                convert_file(item, root)
-                print(f"{item.name}: success")
+                root, _ = convert_file(item, root)
+                print(f"- {COLOR_SUCCESS}{item.name}{COLOR_END}")
             except Exception as exc:  # pylint: disable=broad-except
-                print(f"{item.name}: {str(exc).strip()}")
+                print(f"- {COLOR_FAIL}{item.name}{COLOR_END}: {str(exc).strip()[:120]}")
         else:
             new_root, _ = convert_folder(item, Notebook({"title": item.name}))
             root.child_notebooks.append(new_root)
