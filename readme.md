@@ -4,9 +4,12 @@ Import your data to Joplin.
 
 :exclamation: Should only be used if the built-in import of Joplin doesn't work.
 
-## Supported formats and apps
+## Supported Formats
 
-Every format that is supported by pandoc. Some formats may need some tweaking, though.
+- Every format that is supported by pandoc. Some formats may need some tweaking, though.
+- txt
+
+## Supported Apps
 
 | App | Notes | Tags | Resources | Internal Name | Export Instructions |
 | --- | --- | --- | --- | --- | --- |
@@ -20,6 +23,9 @@ This script requires that the webclipper in Joplin is running. It will connect t
 ```bash
 # import a single file supported by pandoc
 joplin_custom_importer libre_office_document.odt
+
+# import multiple files
+joplin_custom_importer plaintext.txt markdown.md
 
 # import all files in a folder
 joplin_custom_importer path/to/folder

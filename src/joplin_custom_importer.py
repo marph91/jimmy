@@ -47,7 +47,9 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input", type=Path, help="The input file or folder.")
+    parser.add_argument(
+        "input", type=Path, nargs="+", help="The input file(s) or folder(s)."
+    )
     # specific apps that need a special handling
     parser.add_argument(
         "--app",
@@ -66,16 +68,22 @@ def main():
     # parent notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     parent = Notebook({"title": f"{now} - Import"})
-    # Convert the input data to an intermediate representation
-    # that can be used by the importer later.
-    # Try to use an app specific converter. If there is none,
-    # fall back to the default converter.
-    try:
-        module = importlib.import_module(f"apps.{args.app}")
-        conversion_function = module.convert
-    except ModuleNotFoundError:
-        conversion_function = convert_file if args.input.is_file() else convert_folder
-    note_tree, tags = conversion_function(args.input, parent)
+    all_tags = []
+    for single_input in args.input:
+        # Convert the input data to an intermediate representation
+        # that can be used by the importer later.
+        # Try to use an app specific converter. If there is none,
+        # fall back to the default converter.
+        try:
+            module = importlib.import_module(f"apps.{args.app}")
+            conversion_function = module.convert
+        except ModuleNotFoundError:
+            conversion_function = (
+                convert_file if single_input.is_file() else convert_folder
+            )
+        # TODO: children are added to the parent node / node tree implicitly
+        note_tree, tags = conversion_function(single_input, parent)
+        all_tags.append(tags)
 
     if not args.dry_run:
         # import to Joplin
