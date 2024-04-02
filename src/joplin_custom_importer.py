@@ -35,9 +35,12 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
 
 def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
     """Default conversion function for files. Uses pandoc directly."""
-    # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-    # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
-    note_body = pypandoc.convert_file(file_, "commonmark_x")
+    if file_.suffix == ".txt":
+        note_body = file_.read_text()
+    else:
+        # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+        # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
+        note_body = pypandoc.convert_file(file_, "commonmark_x")
     parent.child_notes.append(Note({"title": file_.stem, "body": note_body}))
     return parent, []
 

@@ -15,11 +15,11 @@ Every format that is supported by pandoc. Some formats may need some tweaking, t
 
 ## Usage
 
-This script requires that the webclipper in Joplin is running. You need to activate it and copy the token: <https://joplinapp.org/help/apps/clipper>. In the following examples `--api-token` is needed always. It's omitted except of the first example for the sake of simplicity.
+This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 
 ```bash
 # import a single file supported by pandoc
-joplin_custom_importer libre_office_document.odt --api-token XYZ
+joplin_custom_importer libre_office_document.odt
 
 # import all files in a folder
 joplin_custom_importer path/to/folder
