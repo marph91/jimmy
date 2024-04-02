@@ -3,6 +3,7 @@ from datetime import datetime
 import importlib
 from pathlib import Path
 import pkgutil
+from typing import Tuple
 
 import pypandoc
 
@@ -17,28 +18,28 @@ COLOR_FAIL = "\033[91m"
 COLOR_END = "\033[0m"
 
 
-def convert_folder(folder: Path, root):
+def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
     """Default conversion function for folders."""
     for item in folder.iterdir():
         if item.is_file():
             try:
-                root, _ = convert_file(item, root)
+                parent, _ = convert_file(item, parent)
                 print(f"- {COLOR_SUCCESS}{item.name}{COLOR_END}")
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"- {COLOR_FAIL}{item.name}{COLOR_END}: {str(exc).strip()[:120]}")
         else:
-            new_root, _ = convert_folder(item, Notebook({"title": item.name}))
-            root.child_notebooks.append(new_root)
-    return root, []
+            new_parent, _ = convert_folder(item, Notebook({"title": item.name}))
+            parent.child_notebooks.append(new_parent)
+    return parent, []
 
 
-def convert_file(file_: Path, root):
+def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
     """Default conversion function for files. Uses pandoc directly."""
     # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
     # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
     note_body = pypandoc.convert_file(file_, "commonmark_x")
-    root.child_notes.append(Note({"title": file_.stem, "body": note_body}))
-    return root, []
+    parent.child_notes.append(Note({"title": file_.stem, "body": note_body}))
+    return parent, []
 
 
 def main():
@@ -59,9 +60,9 @@ def main():
         # create the connection to Joplin first to fail fast in case of a problem
         api = api_helper.get_api()
 
-    # root notebook
+    # parent notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    root = Notebook({"title": f"{now} - Import"})
+    parent = Notebook({"title": f"{now} - Import"})
     # Convert the input data to an intermediate representation
     # that can be used by the importer later.
     # Try to use an app specific converter. If there is none,
@@ -71,13 +72,13 @@ def main():
         conversion_function = module.convert
     except ModuleNotFoundError:
         conversion_function = convert_file if args.input.is_file() else convert_folder
-    root_tree, tags = conversion_function(args.input, root)
+    note_tree, tags = conversion_function(args.input, parent)
 
     if not args.dry_run:
         # import to Joplin
         importer = JoplinImporter(api)
         importer.import_tags(tags)
-        importer.import_notebook(root_tree)
+        importer.import_notebook(note_tree)
 
 
 if __name__ == "__main__":
