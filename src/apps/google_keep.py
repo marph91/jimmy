@@ -5,13 +5,10 @@ import tempfile
 import time
 import zipfile
 
-from common import Note, Tag
+from intermediate_format import Note, Tag
 
 
 def convert(file_or_folder: Path, root):
-    # export via takeout:
-    # https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/
-
     if file_or_folder.suffix == ".zip":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
         with zipfile.ZipFile(file_or_folder) as zip_ref:

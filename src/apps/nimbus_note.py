@@ -3,12 +3,10 @@ import zipfile
 
 import pypandoc
 
-from common import Note
+from intermediate_format import Note
 
 
 def convert(input_folder: Path, parent):
-    # export: https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/
-
     for file_ in input_folder.glob("**/*.zip"):
         with zipfile.ZipFile(file_) as zip_ref:
             # HTML note seems to have the name "note.html" always

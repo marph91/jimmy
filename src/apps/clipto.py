@@ -1,11 +1,10 @@
 from pathlib import Path
 import json
 
-from common import Note, Tag
+from intermediate_format import Note, Tag
 
 
 def convert(file_: Path, root):
-    # https://clipto.pro/
     # export only possible in android app:
     # - https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330
     # - settings -> time machine -> backup to file

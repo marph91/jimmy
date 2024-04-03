@@ -9,7 +9,8 @@ import pypandoc
 
 import api_helper
 import apps
-from common import JoplinImporter, Note, Notebook
+import importer
+from intermediate_format import Note, Notebook
 
 
 # https://stackoverflow.com/a/287944/7410886
@@ -92,9 +93,9 @@ def main():
 
     if not args.dry_run:
         # import to Joplin
-        importer = JoplinImporter(api)
-        importer.import_tags(tags)
-        importer.import_notebook(note_tree)
+        joplin_importer = importer.JoplinImporter(api)
+        joplin_importer.import_tags(tags)
+        joplin_importer.import_notebook(note_tree)
 
 
 if __name__ == "__main__":

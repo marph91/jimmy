@@ -16,7 +16,7 @@ Import your data to Joplin.
 | [clipto](https://clipto.pro/) | ✅   | ✅   | -  | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
 | [Google Keep](https://keep.google.com) | ✅   | ✅   | ✅   | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | ✅   | -   | -   | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
-| [Simplenote](https://simplenote.com/) | ✅   | ✅   | -   | nimbus_note | [link](https://simplenote.com/help/#export) |
+| [Simplenote](https://simplenote.com/) | ✅   | ✅   | -   | simplenote | [link](https://simplenote.com/help/#export) |
 
 ## Usage
 

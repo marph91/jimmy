@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import zipfile
 
-from common import Note, Tag
+from intermediate_format import Note, Tag
 
 
 def iso_to_unix_ms(iso_time):
