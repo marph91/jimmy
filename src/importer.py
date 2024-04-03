@@ -1,3 +1,5 @@
+"""Convert the intermediate format to Joplin notes."""
+
 import requests
 
 

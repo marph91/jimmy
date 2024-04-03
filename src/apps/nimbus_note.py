@@ -1,3 +1,5 @@
+"""Convert nimbus notes to the intermediate format."""
+
 from pathlib import Path
 import zipfile
 

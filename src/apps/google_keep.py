@@ -1,3 +1,5 @@
+"""Convert Google Keep notes to the intermediate format."""
+
 from pathlib import Path
 import json
 import tarfile
@@ -34,7 +36,12 @@ def convert(file_or_folder: Path, root):
         for resource_keep in note_keep.get("attachments", []):
             resources_keep.append(file_.parent.absolute() / resource_keep["filePath"])
         note_joplin = Note(
-            {"title": note_keep["title"], "body": note_keep["textContent"]},
+            {
+                "title": note_keep["title"],
+                "body": note_keep["textContent"],
+                "user_created_time": note_keep["userEditedTimestampUsec"] // 1000,
+                "user_updated_time": note_keep["userEditedTimestampUsec"] // 1000,
+            },
             tags=tags_keep,
             resources=resources_keep,
         )

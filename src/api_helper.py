@@ -1,3 +1,5 @@
+"""Helper functions for connecting to the Joplin data API."""
+
 from pathlib import Path
 import sys
 import time

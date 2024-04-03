@@ -1,13 +1,11 @@
-from datetime import datetime
+"""Convert simplenote notes to the intermediate format."""
+
 import json
 from pathlib import Path
 import zipfile
 
+from common import iso_to_unix_ms
 from intermediate_format import Note, Tag
-
-
-def iso_to_unix_ms(iso_time):
-    return int(datetime.fromisoformat(iso_time).timestamp() * 1000)
 
 
 def convert(input_zip: Path, parent):

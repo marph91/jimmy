@@ -1,3 +1,5 @@
+"""Importer for many (note) formats to Joplin."""
+
 import argparse
 from datetime import datetime
 import importlib
@@ -29,7 +31,16 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"- {COLOR_FAIL}{item.name}{COLOR_END}: {str(exc).strip()[:120]}")
         else:
-            new_parent, _ = convert_folder(item, Notebook({"title": item.name}))
+            new_parent, _ = convert_folder(
+                item,
+                Notebook(
+                    {
+                        "title": item.name,
+                        "user_created_time": item.stat().st_ctime * 1000,
+                        "user_updated_time": item.stat().st_mtime * 1000,
+                    }
+                ),
+            )
             parent.child_notebooks.append(new_parent)
     return parent, []
 
@@ -42,7 +53,16 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
         # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
         # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
         note_body = pypandoc.convert_file(file_, "commonmark_x")
-    parent.child_notes.append(Note({"title": file_.stem, "body": note_body}))
+    parent.child_notes.append(
+        Note(
+            {
+                "title": file_.stem,
+                "body": note_body,
+                "user_created_time": file_.stat().st_ctime * 1000,
+                "user_updated_time": file_.stat().st_mtime * 1000,
+            }
+        )
+    )
     return parent, []
 
 

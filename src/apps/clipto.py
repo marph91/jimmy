@@ -1,6 +1,9 @@
+"""Convert clipto notes to the intermediate format."""
+
 from pathlib import Path
 import json
 
+from common import iso_to_unix_ms
 from intermediate_format import Note, Tag
 
 
@@ -18,7 +21,12 @@ def convert(file_: Path, root):
     joplin_notes = []
     for note_clipto in file_dict.get("notes", []):
         note_joplin = Note(
-            {"title": note_clipto["title"], "body": note_clipto["text"]},
+            {
+                "title": note_clipto["title"],
+                "body": note_clipto["text"],
+                "user_created_time": iso_to_unix_ms(note_clipto["created"]),
+                "user_updated_time": iso_to_unix_ms(note_clipto["updated"]),
+            },
             tags=note_clipto["tagIds"],
         )
         joplin_notes.append(note_joplin)
