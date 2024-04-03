@@ -31,22 +31,19 @@ def convert(file_or_folder: Path, root):
     tags_keep_all_notes = set()
     notes_joplin = []
     for file_ in input_folder.glob("**/*.json"):  # take only the exports in json format
-        if file_.suffix == ".json":
-            note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
-            tags_keep = [label["name"] for label in note_keep.get("labels", [])]
-            resources_keep = []
-            for resource_keep in note_keep.get("attachments", []):
-                resources_keep.append(
-                    file_.parent.absolute() / resource_keep["filePath"]
-                )
-            note_joplin = Note(
-                {"title": note_keep["title"], "body": note_keep["textContent"]},
-                tags=tags_keep,
-                resources=resources_keep,
-            )
-            notes_joplin.append(note_joplin)
-            tags_keep_all_notes.update(tags_keep)
-            print(note_joplin)
+        note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
+        tags_keep = [label["name"] for label in note_keep.get("labels", [])]
+        resources_keep = []
+        for resource_keep in note_keep.get("attachments", []):
+            resources_keep.append(file_.parent.absolute() / resource_keep["filePath"])
+        note_joplin = Note(
+            {"title": note_keep["title"], "body": note_keep["textContent"]},
+            tags=tags_keep,
+            resources=resources_keep,
+        )
+        notes_joplin.append(note_joplin)
+        tags_keep_all_notes.update(tags_keep)
+        print(note_joplin)
 
     # labels in keep don't have a separate uid. just use the name as id
     tags_joplin = [Tag({"title": tag}, tag) for tag in tags_keep_all_notes]
