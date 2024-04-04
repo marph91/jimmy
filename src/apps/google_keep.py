@@ -11,12 +11,12 @@ from intermediate_format import Note, Tag
 
 
 def convert(file_or_folder: Path, parent):
-    if file_or_folder.suffix == ".zip":
+    if file_or_folder.suffix.lower() == ".zip":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
         with zipfile.ZipFile(file_or_folder) as zip_ref:
             zip_ref.extractall(temp_folder)
         input_folder = temp_folder
-    elif file_or_folder.suffix == ".tgz":
+    elif file_or_folder.suffix.lower() == ".tgz":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
         with tarfile.open(file_or_folder) as tar_ref:
             tar_ref.extractall(temp_folder)
@@ -40,9 +40,9 @@ def convert(file_or_folder: Path, parent):
                 "body": note_keep["textContent"],
                 "user_created_time": note_keep["userEditedTimestampUsec"] // 1000,
                 "user_updated_time": note_keep["userEditedTimestampUsec"] // 1000,
+                "source_application": Path(__file__).stem,
             },
-            # Labels / tags in simplenote don't have a separate id.
-            # Just use the name as id.
+            # Labels / tags don't have a separate id. Just use the name as id.
             tags=[Tag({"title": tag}, tag) for tag in tags_keep],
             resources=resources_keep,
         )

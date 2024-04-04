@@ -28,9 +28,9 @@ def convert(input_zip: Path, parent):
                     "user_updated_time": iso_to_unix_ms(
                         note_simplenote["lastModified"]
                     ),
+                    "source_application": Path(__file__).stem,
                 },
-                # Labels / tags in simplenote don't have a separate id.
-                # Just use the name as id.
+                # Tags don't have a separate id. Just use the name as id.
                 tags=[Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
             )
             parent.child_notes.append(note_joplin)

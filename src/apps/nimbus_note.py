@@ -25,7 +25,11 @@ def convert(input_folder: Path, parent):
                         note_body_html, "markdown_strict-raw_html", format="html"
                     )
                     note_joplin = Note(
-                        {"title": file_.stem, "body": note_body_markdown.strip()}
+                        {
+                            "title": file_.stem,
+                            "body": note_body_markdown.strip(),
+                            "source_application": Path(__file__).stem,
+                        }
                     )
                     parent.child_notes.append(note_joplin)
                     print(note_joplin)

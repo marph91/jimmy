@@ -60,6 +60,7 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
                 "body": note_body,
                 "user_created_time": file_.stat().st_ctime * 1000,
                 "user_updated_time": file_.stat().st_mtime * 1000,
+                "source_application": "joplin_custom_importer",
             }
         )
     )
@@ -69,7 +70,8 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
 def convert_all_inputs(inputs, app):
     # parent notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    parent = Notebook({"title": f"{now} - Import"})
+    source_app = "Joplin Custom Importer" if app is None else app
+    parent = Notebook({"title": f"{now} - Import from {source_app}"})
     for single_input in inputs:
         # Convert the input data to an intermediate representation
         # that can be used by the importer later.
