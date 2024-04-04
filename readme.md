@@ -1,6 +1,6 @@
 # joplin-custom-importer
 
-Import your data to Joplin.
+Simple tool to import your data to Joplin.
 
 :exclamation: Should only be used if the built-in import of Joplin doesn't work.
 
@@ -13,16 +13,35 @@ Import your data to Joplin.
 
 ## Supported Apps
 
-| App | Notes | Tags | Resources | Internal Name | Export Instructions |
-| --- | --- | --- | --- | --- | --- |
-| [clipto](https://clipto.pro/) | ✅   | ✅   | -  | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
-| [Google Keep](https://keep.google.com) | ✅   | ✅   | ✅   | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
-| [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | ✅   | -   | -   | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
-| [Simplenote](https://simplenote.com/) | ✅   | ✅   | -   | simplenote | [link](https://simplenote.com/help/#export) |
+| App | Internal Name | Export Instructions |
+| --- | --- | --- |
+| [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
+| [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
+| [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
+| [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
+
+There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
+
+What is migrated?
+
+- Notes and their content
+- Tags / Labels
+- Resources / Attachments
+- Creation and modification date
+
+What is not handled (yet)?
+
+- Internal note links
+- Markdown Front Matter
+- Inline tags
+
+If something else is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with this tool.
 
 ## Usage
 
 This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
+
+Grab the executable from the [build workflow](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml).
 
 ```bash
 # import a single file supported by pandoc
