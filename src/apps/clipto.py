@@ -13,10 +13,10 @@ def convert(file_: Path, root):
     # - settings -> time machine -> backup to file
 
     file_dict = json.loads(Path(file_).read_text(encoding="UTF-8"))
-    tags_joplin = []
+    tags = []
     # tags are contained in filters
     for filter_ in file_dict.get("filters"):
-        tags_joplin.append(Tag({"title": filter_["name"]}, filter_["uid"]))
+        tags.append(Tag({"title": filter_["name"]}, filter_["uid"]))
 
     joplin_notes = []
     for note_clipto in file_dict.get("notes", []):
@@ -27,11 +27,10 @@ def convert(file_: Path, root):
                 "user_created_time": iso_to_unix_ms(note_clipto["created"]),
                 "user_updated_time": iso_to_unix_ms(note_clipto["updated"]),
             },
-            tags=note_clipto["tagIds"],
+            tags=[tag for tag in tags if tag.original_id in note_clipto["tagIds"]],
         )
         joplin_notes.append(note_joplin)
         print(note_joplin)
 
     root.child_notes = joplin_notes
-    print(tags_joplin)
-    return root, tags_joplin
+    return root

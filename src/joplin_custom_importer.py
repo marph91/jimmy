@@ -26,12 +26,12 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
     for item in folder.iterdir():
         if item.is_file():
             try:
-                parent, _ = convert_file(item, parent)
+                parent = convert_file(item, parent)
                 print(f"- {COLOR_SUCCESS}{item.name}{COLOR_END}")
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"- {COLOR_FAIL}{item.name}{COLOR_END}: {str(exc).strip()[:120]}")
         else:
-            new_parent, _ = convert_folder(
+            new_parent = convert_folder(
                 item,
                 Notebook(
                     {
@@ -42,7 +42,7 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
                 ),
             )
             parent.child_notebooks.append(new_parent)
-    return parent, []
+    return parent
 
 
 def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
@@ -63,14 +63,13 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
             }
         )
     )
-    return parent, []
+    return parent
 
 
 def convert_all_inputs(inputs, app):
     # parent notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     parent = Notebook({"title": f"{now} - Import"})
-    all_tags = []
     for single_input in inputs:
         # Convert the input data to an intermediate representation
         # that can be used by the importer later.
@@ -84,9 +83,8 @@ def convert_all_inputs(inputs, app):
                 convert_file if single_input.is_file() else convert_folder
             )
         # TODO: children are added to the parent node / node tree implicitly
-        note_tree, tags = conversion_function(single_input, parent)
-        all_tags.extend(tags)
-    return note_tree, all_tags
+        note_tree = conversion_function(single_input, parent)
+    return note_tree
 
 
 def main():
@@ -109,12 +107,11 @@ def main():
         # create the connection to Joplin first to fail fast in case of a problem
         api = api_helper.get_api()
 
-    note_tree, tags = convert_all_inputs(args.input, args.app)
+    note_tree = convert_all_inputs(args.input, args.app)
 
     if not args.dry_run:
         # import to Joplin
         joplin_importer = importer.JoplinImporter(api)
-        joplin_importer.import_tags(tags)
         joplin_importer.import_notebook(note_tree)
 
 

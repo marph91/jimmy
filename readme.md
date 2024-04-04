@@ -3,6 +3,7 @@
 Import your data to Joplin.
 
 :exclamation: Should only be used if the built-in import of Joplin doesn't work.
+:exclamation: Make sure your data is imported properly after the script finished.
 
 ## Supported Formats
 

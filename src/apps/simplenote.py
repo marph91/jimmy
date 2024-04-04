@@ -11,7 +11,6 @@ from intermediate_format import Note, Tag
 def convert(input_zip: Path, parent):
     # TODO: note links - probably second pass and map old uid - joplin uid?
 
-    all_tags = set()
     with zipfile.ZipFile(input_zip) as zip_ref, zip_ref.open(
         "source/notes.json"
     ) as zipped_json:
@@ -19,7 +18,6 @@ def convert(input_zip: Path, parent):
         for note_simplenote in notes_simplenote["activeNotes"]:
             # title is the first line
             title, body = note_simplenote["content"].split("\n", maxsplit=1)
-            tags = note_simplenote["tags"]
             note_joplin = Note(
                 {
                     "title": title.strip(),
@@ -31,12 +29,11 @@ def convert(input_zip: Path, parent):
                         note_simplenote["lastModified"]
                     ),
                 },
-                tags=tags,
+                # Labels / tags in simplenote don't have a separate id.
+                # Just use the name as id.
+                tags=[Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
             )
             parent.child_notes.append(note_joplin)
-            all_tags.update(tags)
             print(note_joplin)
 
-    # labels in simplenote don't have a separate uid. just use the name as id
-    tags_joplin = [Tag({"title": tag}, tag) for tag in all_tags]
-    return parent, tags_joplin
+    return parent

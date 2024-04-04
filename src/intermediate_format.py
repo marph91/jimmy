@@ -20,7 +20,7 @@ class Note:
     """Represents a note."""
 
     data: dict
-    tags: List[str] = field(default_factory=list)  # list of original tag ids
+    tags: List[Tag] = field(default_factory=list)
     resources: List[Path] = field(default_factory=list)  # list of filenames
 
 

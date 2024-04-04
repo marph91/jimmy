@@ -10,7 +10,7 @@ import zipfile
 from intermediate_format import Note, Tag
 
 
-def convert(file_or_folder: Path, root):
+def convert(file_or_folder: Path, parent):
     if file_or_folder.suffix == ".zip":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
         with zipfile.ZipFile(file_or_folder) as zip_ref:
@@ -25,9 +25,8 @@ def convert(file_or_folder: Path, root):
         input_folder = file_or_folder
     else:
         print("Unsupported format for Google Keep")
-        return root, []
+        return parent
 
-    tags_keep_all_notes = set()
     notes_joplin = []
     for file_ in input_folder.glob("**/*.json"):  # take only the exports in json format
         note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
@@ -42,15 +41,13 @@ def convert(file_or_folder: Path, root):
                 "user_created_time": note_keep["userEditedTimestampUsec"] // 1000,
                 "user_updated_time": note_keep["userEditedTimestampUsec"] // 1000,
             },
-            tags=tags_keep,
+            # Labels / tags in simplenote don't have a separate id.
+            # Just use the name as id.
+            tags=[Tag({"title": tag}, tag) for tag in tags_keep],
             resources=resources_keep,
         )
         notes_joplin.append(note_joplin)
-        tags_keep_all_notes.update(tags_keep)
         print(note_joplin)
 
-    # labels in keep don't have a separate uid. just use the name as id
-    tags_joplin = [Tag({"title": tag}, tag) for tag in tags_keep_all_notes]
-
-    root.child_notes = notes_joplin
-    return root, tags_joplin
+    parent.child_notes = notes_joplin
+    return parent
