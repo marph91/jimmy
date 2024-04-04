@@ -47,7 +47,7 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
 
 def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
     """Default conversion function for files. Uses pandoc directly."""
-    if file_.suffix == ".txt":
+    if file_.suffix in (".md", ".txt"):
         note_body = file_.read_text()
     else:
         # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
