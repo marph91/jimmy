@@ -13,12 +13,13 @@ Simple tool to import your data to Joplin.
 
 ## Supported Apps
 
-| App | Internal Name | Export Instructions |
+| App | Internal App Name | Export Instructions |
 | --- | --- | --- |
 | [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
 | [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
+| [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) |
 
 There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
 
