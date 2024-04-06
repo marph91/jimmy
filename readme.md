@@ -22,6 +22,9 @@ joplin_custom_importer plaintext.txt markdown.md
 # import all files in a folder
 joplin_custom_importer path/to/folder
 
+# Import all files in a folder. Delete all notes before. I. e. start with a clean workspace.
+joplin_custom_importer path/to/folder --clear-notes
+
 # import a clipto export
 joplin_custom_importer clipto_backup_240401_105154.json --app clipto
 

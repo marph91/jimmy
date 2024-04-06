@@ -101,6 +101,9 @@ def main():
         help="The source application.",
     )
     parser.add_argument(
+        "--clear-notes", action="store_true", help="Clear everything before importing."
+    )
+    parser.add_argument(
         "--dry-run", action="store_true", help="Don't connect to the Joplin API."
     )
     args = parser.parse_args()
@@ -108,6 +111,18 @@ def main():
     if not args.dry_run:
         # create the connection to Joplin first to fail fast in case of a problem
         api = api_helper.get_api()
+
+        if args.clear_notes:
+            delete_everything = input(
+                "Really clear everything and start from scratch? (yes/no): "
+            )
+            if delete_everything.lower() == "yes":
+                print("Clear everything. Please wait.")
+                api.delete_all_notebooks()
+                api.delete_all_resources()
+                api.delete_all_tags()
+            else:
+                print("Clearing skipped. Importing anyway.")
 
     note_tree = convert_all_inputs(args.input, args.app)
 
