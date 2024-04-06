@@ -76,6 +76,8 @@ def convert(file_: Path, parent):
                 for tag in split_tags(note_tiddlywiki.get("tags", ""))
             ],
         )
+        if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
+            continue  # skip notes with special tags
         joplin_notes.append(note_joplin)
         print(note_joplin)
 
