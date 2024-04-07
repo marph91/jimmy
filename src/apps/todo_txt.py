@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytodotxt
 
-from common import current_unix_ms, date_to_unix_ms
+from common import current_unix_ms, date_to_unix_ms, iso_to_unix_ms
 from intermediate_format import Note, Notebook, Tag
 
 
@@ -26,6 +26,15 @@ def convert(file_: Path, parent: Notebook):
                 if task.completion_date is None
                 else date_to_unix_ms(task.completion_date)
             )
+
+        for key, value in task.attributes.items():
+            # "value" is a list, because there can be multiple attributes with the same key.
+            # For example: "due:1 due:2" will get parsed as "due: [1, 2]".
+            # Just take the first one for simplicity.
+            if key == "due":
+                note_data["todo_due"] = iso_to_unix_ms(value[0])
+            else:
+                print("ignoring unsupported key {key}")
 
         tags_string = []
         if task.priority is not None:
