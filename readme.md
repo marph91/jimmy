@@ -41,6 +41,8 @@ After importing, the notes should be available in a new Joplin notebook named li
 
 ## Supported Apps
 
+There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
+
 | App | Internal App Name | Export Instructions |
 | --- | --- | --- |
 | [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
@@ -50,11 +52,6 @@ After importing, the notes should be available in a new Joplin notebook named li
 | [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [1] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
 | [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [2] |
-
-[1] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
-[2] Finished todo's are not exported at all. Subtasks are converted to regular notes. I. e. they lose their indentation. Markdown is not rendered in note titles.
-
-There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
 
 What is migrated?
 
@@ -70,6 +67,16 @@ What is not handled (yet)?
 - Inline tags
 
 If something else is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with this tool.
+
+---
+
+[1] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+[2]
+
+- Uncheck "Use relative data" when exporting.
+- Finished todo's are not exported at all.
+- Subtasks are converted to regular notes. I. e. they lose their indentation.
+- Markdown is not rendered in note titles.
 
 ## Why Joplin's data API is used?
 
