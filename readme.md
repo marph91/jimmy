@@ -48,8 +48,10 @@ After importing, the notes should be available in a new Joplin notebook named li
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
 | [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [1] |
+| [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [2] |
 
 [1] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+[2] Finished todo's are not exported at all. Subtasks are converted to regular notes. I. e. they lose their indentation. Markdown is not rendered in note titles.
 
 There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
 

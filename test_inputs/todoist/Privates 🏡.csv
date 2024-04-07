@@ -1,0 +1,50 @@
+﻿TYPE,CONTENT,DESCRIPTION,PRIORITY,INDENT,AUTHOR,RESPONSIBLE,DATE,DATE_LANG,TIMEZONE,DURATION,DURATION_UNIT
+task,prio 1,,1,1,Marph (48856253),,,,Europe/Berlin,,
+task,prio 2,,2,1,Marph (48856253),,,,Europe/Berlin,,
+task,prio 3,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,no prio is prio 4,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,prio 4,,4,1,Marph (48856253),,,,Europe/Berlin,,
+,,,,,,,,,,,
+section,inbox,,,,,,,,,,
+task,"Zusätzliche [kostenlose Apps und Plugins](https://todoist.com/de/downloads?utm_source=todoist&utm_medium=in_app&utm_campaign=onboarding_project&utm_content=inbox) für 💻,⌚️,🖥,📱 und 📧 herunterladen",,4,1,Marph (48856253),,6 Apr 17:15,de,Europe/Berlin,,
+task,[Produktivitätsmethoden-Quiz](https://todoist.com/productivity-methods?utm_source=todoist&utm_medium=in_app&utm_campaign=onboarding_project&utm_content=inbox) machen,Eine personalisierte Empfehlung von Todoist erhalten,2,1,Marph (48856253),,7 Apr 17:15,de,Europe/Berlin,,
+,,,,,,,,,,,
+section,test section,,,,,,,,,,
+task,task with due date,,4,1,Marph (48856253),,9 Apr,de,Europe/Berlin,,
+task,task with due date incl. time,,4,1,Marph (48856253),,10 Apr 17:15,de,Europe/Berlin,,
+task,task with due date next year,,4,1,Marph (48856253),,2 Jan 2025,de,Europe/Berlin,,
+task,task with due date in two years,,4,1,Marph (48856253),,2 Jan 2026 09:35,de,Europe/Berlin,,
+task,task with subtask,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,subtask @testlabel,,4,2,Marph (48856253),,,,Europe/Berlin,,
+task,task with label @testlabel,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,task *with* **some** `formatting` and a [link](https://app.todoist.com),,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,task with description,"this is a task for testing
+
+unnumbered list
+
+- aa
+- bb
+
+numbered list
+
+1. aa
+    1. aa
+2. bb
+
+> cite
+
+# Heading 1
+
+## Heading 2
+
+description",4,1,Marph (48856253),,,,Europe/Berlin,,
+,,,,,,,,,,,
+section,Routinen 🔁,,,,,,,,,,
+task,Einen wöchentlichen Überblick über meine Aufgaben und Ziele erstellen,,3,1,Marph (48856253),,ev sun,en,Europe/Berlin,,
+task,Weitere Routinen für _Privates_  hinzufügen,"z. B.: jedes Jahr Steuern machen, jede Woche die Mülleimer rausbringen, jeden Werktag um 9 Uhr 10 Minuten meditieren",4,1,Marph (48856253),,,,Europe/Berlin,,
+,,,,,,,,,,,
+section,Inspiration ✨,,,,,,,,,,
+task,[7 praktische Todoist-Setups zum Abgucken](https://blog.doist.com/todoist-setup/?utm_source=todoist&utm_medium=in_app&utm_campaign=onboarding_project&utm_content=personal) 💡 @lesen,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,[Die Familien-To-do-Liste mit Todoist organisieren (Erkenntnisse von Usern)](https://blog.doist.com/family-todo-list/?utm_source=todoist&utm_medium=in_app&utm_campaign=onboarding_project&utm_content=personal) @lesen,,4,1,Marph (48856253),,,,Europe/Berlin,,
+task,Ausgewählte [Todoist-Vorlagen für persönliche Projekte](https://todoist.com/de/templates/category/personal?utm_source=todoist&utm_medium=in_app&utm_campaign=onboarding_project&utm_content=personal) durchstöbern,,4,1,Marph (48856253),,,,Europe/Berlin,,
+,,,,,,,,,,,
