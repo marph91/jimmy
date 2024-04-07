@@ -111,6 +111,7 @@ def convert(file_: Path, parent: Notebook):
                     "body": row["DESCRIPTION"],
                     "author": parse_author(row["AUTHOR"]),
                     "is_todo": 1,
+                    "source_application": Path(__file__).stem,
                 }
                 if (due_date := parse_date(row["DATE"])) is not None:
                     note_data["todo_due"] = int(due_date.timestamp() * 1000)
@@ -120,6 +121,7 @@ def convert(file_: Path, parent: Notebook):
                     note_data, tags=[Tag({"title": tag}, tag) for tag in tags_string]
                 )
                 current_section.child_notes.append(joplin_note)
+                print(joplin_note)
             elif row["TYPE"] == "":
                 continue  # ignore empty rows
             else:
