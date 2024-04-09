@@ -126,5 +126,3 @@ def convert(file_: Path, parent: Notebook):
                 continue  # ignore empty rows
             else:
                 print(f"Ignoring unknown type: {row['TYPE']}")
-
-    return parent

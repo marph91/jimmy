@@ -27,7 +27,6 @@ def convert(file_or_folder: Path, parent):
         print("Unsupported format for Google Keep")
         return parent
 
-    notes_joplin = []
     for file_ in input_folder.glob("**/*.json"):  # take only the exports in json format
         note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
         tags_keep = [label["name"] for label in note_keep.get("labels", [])]
@@ -46,8 +45,5 @@ def convert(file_or_folder: Path, parent):
             tags=[Tag({"title": tag}, tag) for tag in tags_keep],
             resources=resources_keep,
         )
-        notes_joplin.append(note_joplin)
+        parent.child_notes.append(note_joplin)
         print(note_joplin)
-
-    parent.child_notes = notes_joplin
-    return parent

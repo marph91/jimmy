@@ -47,5 +47,3 @@ def convert(file_: Path, parent: Notebook):
         )
         parent.child_notes.append(joplin_note)
         print(joplin_note)
-
-    return parent

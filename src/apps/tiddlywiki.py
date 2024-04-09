@@ -52,7 +52,6 @@ def convert(file_: Path, parent):
         return parent
 
     file_dict = json.loads(Path(file_).read_text(encoding="UTF-8"))
-    joplin_notes = []
     for note_tiddlywiki in file_dict:
         note_joplin_data = {
             "title": note_tiddlywiki["title"],
@@ -78,8 +77,5 @@ def convert(file_: Path, parent):
         )
         if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
             continue  # skip notes with special tags
-        joplin_notes.append(note_joplin)
+        parent.child_notes.append(note_joplin)
         print(note_joplin)
-
-    parent.child_notes = joplin_notes
-    return parent

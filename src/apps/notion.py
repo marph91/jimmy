@@ -47,5 +47,3 @@ def convert(input_zip: Path, parent):
             )
             parent.child_notes.append(note_joplin)
             print(note_joplin)
-
-    return parent

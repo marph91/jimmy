@@ -18,7 +18,6 @@ def convert(file_: Path, parent):
     for filter_ in file_dict.get("filters"):
         tags.append(Tag({"title": filter_["name"]}, filter_["uid"]))
 
-    joplin_notes = []
     for note_clipto in file_dict.get("notes", []):
         note_joplin = Note(
             {
@@ -30,8 +29,5 @@ def convert(file_: Path, parent):
             },
             tags=[tag for tag in tags if tag.original_id in note_clipto["tagIds"]],
         )
-        joplin_notes.append(note_joplin)
+        parent.child_notes.append(note_joplin)
         print(note_joplin)
-
-    parent.child_notes = joplin_notes
-    return parent

@@ -26,23 +26,20 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
     for item in folder.iterdir():
         if item.is_file():
             try:
-                parent = convert_file(item, parent)
+                convert_file(item, parent)
                 print(f"- {COLOR_SUCCESS}{item.name}{COLOR_END}")
             except Exception as exc:  # pylint: disable=broad-except
                 print(f"- {COLOR_FAIL}{item.name}{COLOR_END}: {str(exc).strip()[:120]}")
         else:
-            new_parent = convert_folder(
-                item,
-                Notebook(
-                    {
-                        "title": item.name,
-                        "user_created_time": item.stat().st_ctime * 1000,
-                        "user_updated_time": item.stat().st_mtime * 1000,
-                    }
-                ),
+            new_parent = Notebook(
+                {
+                    "title": item.name,
+                    "user_created_time": item.stat().st_ctime * 1000,
+                    "user_updated_time": item.stat().st_mtime * 1000,
+                }
             )
+            convert_folder(item, new_parent)
             parent.child_notebooks.append(new_parent)
-    return parent
 
 
 def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
@@ -64,7 +61,6 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
             }
         )
     )
-    return parent
 
 
 def convert_all_inputs(inputs, app):
@@ -84,9 +80,10 @@ def convert_all_inputs(inputs, app):
             conversion_function = (
                 convert_file if single_input.is_file() else convert_folder
             )
-        # TODO: children are added to the parent node / node tree implicitly
-        note_tree = conversion_function(single_input, parent)
-    return note_tree
+        # TODO: Children are added to the parent node / node tree implicitly.
+        # This is an anti-pattern, but works for now.
+        conversion_function(single_input, parent)
+    return parent
 
 
 def main():
