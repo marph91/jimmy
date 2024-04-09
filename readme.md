@@ -48,10 +48,11 @@ There are many more apps supported implicitly if they export text files to a fol
 | [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
 | [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
+| [Notion](https://www.notion.so/) | notion | [link](https://www.notion.so/de-de/help/export-your-content) [1] |
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
-| [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [1] |
+| [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [2] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
-| [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [2] |
+| [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [3] |
 
 What is migrated?
 
@@ -70,8 +71,13 @@ If something else is not working, please check the issues first. If you can't fi
 
 ---
 
-[1] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
-[2]
+[1]
+
+- Choose "Markdown and CSV" and uncheck "Create folder for sub-pages" when exporting.
+- Only note pages are imported. Attachments and internal links are not handled yet.
+
+[2] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+[3]
 
 - Uncheck "Use relative data" when exporting.
 - Finished todo's are not exported at all.

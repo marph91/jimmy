@@ -22,6 +22,7 @@ class Note:
     data: dict
     tags: List[Tag] = field(default_factory=list)
     resources: List[Path] = field(default_factory=list)  # list of filenames
+    original_id: Optional[str] = None
 
 
 @dataclass
