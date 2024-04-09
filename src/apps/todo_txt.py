@@ -1,11 +1,15 @@
 """Convert todo.txt tasks to the intermediate format."""
 
+import logging
 from pathlib import Path
 
 import pytodotxt
 
 from common import current_unix_ms, date_to_unix_ms, iso_to_unix_ms
 from intermediate_format import Note, Notebook, Tag
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def convert(file_: Path, parent: Notebook):
@@ -34,7 +38,7 @@ def convert(file_: Path, parent: Notebook):
             if key == "due":
                 note_data["todo_due"] = iso_to_unix_ms(value[0])
             else:
-                print("ignoring unsupported key {key}")
+                LOGGER.debug(f"ignoring unsupported key {key}")
 
         tags_string = []
         if task.priority is not None:
@@ -46,4 +50,3 @@ def convert(file_: Path, parent: Notebook):
             note_data, tags=[Tag({"title": tag}, tag) for tag in tags_string]
         )
         parent.child_notes.append(joplin_note)
-        print(joplin_note)

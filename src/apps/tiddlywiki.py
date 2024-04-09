@@ -1,11 +1,15 @@
 """Convert TiddlyWiki notes to the intermediate format."""
 
 from datetime import datetime
+import logging
 from pathlib import Path
 import json
 from typing import List
 
 from intermediate_format import Note, Tag
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def tiddlywiki_to_unix(tiddlywiki_time: str) -> int:
@@ -48,8 +52,8 @@ def split_tags(tag_string: str) -> List[str]:
 
 def convert(file_: Path, parent):
     if file_.suffix.lower() != ".json":
-        print("Unsupported format. Please export your tiddlers in JSON format.")
-        return parent
+        LOGGER.error("Unsupported format. Please export your tiddlers in JSON format.")
+        return
 
     file_dict = json.loads(Path(file_).read_text(encoding="UTF-8"))
     for note_tiddlywiki in file_dict:
@@ -78,4 +82,3 @@ def convert(file_: Path, parent):
         if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
             continue  # skip notes with special tags
         parent.child_notes.append(note_joplin)
-        print(note_joplin)

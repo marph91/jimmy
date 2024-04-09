@@ -2,10 +2,14 @@
 
 import csv
 from datetime import datetime
+import logging
 from pathlib import Path
 from typing import List, Tuple
 
 from intermediate_format import Note, Notebook, Tag
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def parse_author(author_string: str) -> str:
@@ -121,8 +125,7 @@ def convert(file_: Path, parent: Notebook):
                     note_data, tags=[Tag({"title": tag}, tag) for tag in tags_string]
                 )
                 current_section.child_notes.append(joplin_note)
-                print(joplin_note)
             elif row["TYPE"] == "":
                 continue  # ignore empty rows
             else:
-                print(f"Ignoring unknown type: {row['TYPE']}")
+                LOGGER.debug(f"Ignoring unknown type: {row['TYPE']}")

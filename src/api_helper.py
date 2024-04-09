@@ -1,5 +1,6 @@
 """Helper functions for connecting to the Joplin data API."""
 
+import logging
 from pathlib import Path
 import sys
 import time
@@ -8,6 +9,9 @@ from typing import Optional
 from joppy.api import Api
 import platformdirs
 import requests
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 API_TOKEN_FILE = (
@@ -20,12 +24,14 @@ def request_api_token():
         response = requests.post("http://localhost:41184/auth", timeout=5)
         if response.status_code == 200:
             auth_token = response.json()["auth_token"]
-            print("Please open Joplin and accept the 'grant authorization' dialog.")
+            LOGGER.info(
+                "Please open Joplin and accept the 'grant authorization' dialog."
+            )
         else:
-            print(f"Received unexpected HTTP status {response.status_code}.")
+            LOGGER.error(f"Received unexpected HTTP status {response.status_code}.")
             return None
     except requests.exceptions.ConnectionError:
-        print(
+        LOGGER.error(
             "Joplin web clipper is not available. "
             "Please start Joplin and activate the web clipper at "
             "'Tools -> Options -> Web Clipper'."
@@ -39,12 +45,12 @@ def request_api_token():
         if response.status_code == 200:
             data = response.json()
             if data["status"] == "accepted":
-                print("Authorization granted. Your notes will be imported soon.")
+                LOGGER.info("Authorization granted. Your notes will be imported soon.")
                 API_TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
                 API_TOKEN_FILE.write_text(data["token"])
                 return data["token"]
         time.sleep(1)
-    print("Didn't get authorized in 60 seconds. Please try again.")
+    LOGGER.error("Didn't get authorized in 60 seconds. Please try again.")
     return None
 
 
@@ -61,7 +67,7 @@ def get_api() -> Optional[Api]:
             api_token = request_api_token()
         except requests.exceptions.ConnectionError:
             api_token = None
-            print(
+            LOGGER.error(
                 "Joplin web clipper is not available. "
                 "Please start Joplin and activate the web clipper at "
                 "'Tools -> Options -> Web Clipper'."

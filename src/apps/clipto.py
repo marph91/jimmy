@@ -30,4 +30,3 @@ def convert(file_: Path, parent):
             tags=[tag for tag in tags if tag.original_id in note_clipto["tagIds"]],
         )
         parent.child_notes.append(note_joplin)
-        print(note_joplin)

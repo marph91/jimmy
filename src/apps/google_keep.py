@@ -2,12 +2,16 @@
 
 from pathlib import Path
 import json
+import logging
 import tarfile
 import tempfile
 import time
 import zipfile
 
 from intermediate_format import Note, Tag
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def convert(file_or_folder: Path, parent):
@@ -24,8 +28,8 @@ def convert(file_or_folder: Path, parent):
     elif file_or_folder.is_dir():
         input_folder = file_or_folder
     else:
-        print("Unsupported format for Google Keep")
-        return parent
+        LOGGER.error("Unsupported format for Google Keep")
+        return
 
     for file_ in input_folder.glob("**/*.json"):  # take only the exports in json format
         note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
@@ -46,4 +50,3 @@ def convert(file_or_folder: Path, parent):
             resources=resources_keep,
         )
         parent.child_notes.append(note_joplin)
-        print(note_joplin)

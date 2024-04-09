@@ -30,4 +30,3 @@ def convert(input_zip: Path, parent):
             tags=[Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
         )
         parent.child_notes.append(note_joplin)
-        print(note_joplin)
