@@ -5,10 +5,10 @@ import zipfile
 
 import pypandoc
 
-from intermediate_format import Note, Notebook
+import intermediate_format as imf
 
 
-def convert(input_folder: Path, parent: Notebook):
+def convert(input_folder: Path, parent: imf.Notebook):
     for file_ in input_folder.glob("**/*.zip"):
         with zipfile.ZipFile(file_) as zip_ref:
             # HTML note seems to have the name "note.html" always
@@ -24,7 +24,7 @@ def convert(input_folder: Path, parent: Notebook):
                 note_body_markdown = pypandoc.convert_text(
                     note_body_html, "markdown_strict-raw_html", format="html"
                 )
-                note_joplin = Note(
+                note_joplin = imf.Note(
                     {
                         "title": file_.stem,
                         "body": note_body_markdown.strip(),

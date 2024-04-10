@@ -6,13 +6,13 @@ from pathlib import Path
 import pytodotxt
 
 from common import current_unix_ms, date_to_unix_ms, iso_to_unix_ms
-from intermediate_format import Note, Notebook, Tag
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
-def convert(file_: Path, parent: Notebook):
+def convert(file_: Path, parent: imf.Notebook):
     todotxt = pytodotxt.TodoTxt(file_)
     todotxt.parse()
 
@@ -46,7 +46,7 @@ def convert(file_: Path, parent: Notebook):
         tags_string += [f"todotxt-context-{context}" for context in task.contexts]
         tags_string += [f"todotxt-project-{project}" for project in task.projects]
 
-        joplin_note = Note(
-            note_data, tags=[Tag({"title": tag}, tag) for tag in tags_string]
+        joplin_note = imf.Note(
+            note_data, tags=[imf.Tag({"title": tag}, tag) for tag in tags_string]
         )
         parent.child_notes.append(joplin_note)

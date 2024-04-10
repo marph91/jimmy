@@ -2,14 +2,13 @@
 
 import json
 from pathlib import Path
-import re
 import zipfile
 
 import common
-from intermediate_format import Note, Notebook, NoteLink, Tag
+import intermediate_format as imf
 
 
-def convert(input_zip: Path, parent: Notebook):
+def convert(input_zip: Path, parent: imf.Notebook):
     # TODO: note links - probably second pass and map old uid - joplin uid?
 
     with zipfile.ZipFile(input_zip) as zip_ref, zip_ref.open(
@@ -29,9 +28,9 @@ def convert(input_zip: Path, parent: Notebook):
                 # internal link
                 _, linked_note_id = url.rsplit("/", 1)
                 note_links.append(
-                    NoteLink(f"[{description}]({url})", linked_note_id, description)
+                    imf.NoteLink(f"[{description}]({url})", linked_note_id, description)
                 )
-        note_joplin = Note(
+        note_joplin = imf.Note(
             {
                 "title": title.strip(),
                 "body": body.lstrip(),
@@ -44,7 +43,7 @@ def convert(input_zip: Path, parent: Notebook):
                 "source_application": Path(__file__).stem,
             },
             # Tags don't have a separate id. Just use the name as id.
-            tags=[Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
+            tags=[imf.Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
             resources=resources,
             note_links=note_links,
             original_id=note_simplenote["id"],

@@ -2,17 +2,16 @@
 
 import logging
 from pathlib import Path
-import re
 from typing import Optional
 
 import common
-from intermediate_format import Note, Notebook, NoteLink, Resource
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
-def convert(folder: Path, parent: Notebook, root_folder: Optional[Path] = None):
+def convert(folder: Path, parent: imf.Notebook, root_folder: Optional[Path] = None):
     if root_folder is None:
         root_folder = folder
 
@@ -36,18 +35,18 @@ def convert(folder: Path, parent: Notebook, root_folder: Optional[Path] = None):
                             continue
                         resources.append(
                             # TODO: is image and add ! in markdown -> ![]()
-                            Resource(
+                            imf.Resource(
                                 potential_matches[0], original_text, description or url
                             )
                         )
                     else:
                         # internal link
                         note_links.append(
-                            NoteLink(original_text, url, description or url)
+                            imf.NoteLink(original_text, url, description or url)
                         )
 
                 parent.child_notes.append(
-                    Note(
+                    imf.Note(
                         {
                             "title": item.stem,
                             "body": body,
@@ -59,7 +58,7 @@ def convert(folder: Path, parent: Notebook, root_folder: Optional[Path] = None):
                     )
                 )
         else:
-            new_parent = Notebook(
+            new_parent = imf.Notebook(
                 {
                     "title": item.name,
                     "user_created_time": item.stat().st_ctime * 1000,

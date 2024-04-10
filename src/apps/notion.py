@@ -8,10 +8,10 @@ import time
 import zipfile
 
 import common
-from intermediate_format import Note, Notebook, NoteLink, Resource
+import intermediate_format as imf
 
 
-def convert(input_zip: Path, parent: Notebook):
+def convert(input_zip: Path, parent: imf.Notebook):
     # TODO: note links and attachments
     temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
 
@@ -50,17 +50,19 @@ def convert(input_zip: Path, parent: Notebook):
                     # internal link
                     _, linked_note_id = Path(url).stem.rsplit("%20", 1)
                     note_links.append(
-                        NoteLink(f"[{description}]({url})", linked_note_id, description)
+                        imf.NoteLink(
+                            f"[{description}]({url})", linked_note_id, description
+                        )
                     )
                 elif (temp_folder / url).is_file():
                     # resource
                     resources.append(
-                        Resource(
+                        imf.Resource(
                             temp_folder / url, f"[{description}]({url})", description
                         )
                     )
 
-            note_joplin = Note(
+            note_joplin = imf.Note(
                 {
                     "title": title,
                     "body": body,

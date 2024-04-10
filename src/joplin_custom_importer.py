@@ -13,7 +13,7 @@ import pypandoc
 import api_helper
 import apps
 import importer
-from intermediate_format import Note, Notebook
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -49,7 +49,7 @@ def setup_logging(log_to_file):
     LOGGER.addHandler(console_handler)
 
 
-def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
+def convert_folder(folder: Path, parent: imf.Notebook) -> Tuple[imf.Notebook, list]:
     """Default conversion function for folders."""
     for item in folder.iterdir():
         if item.is_file():
@@ -59,7 +59,7 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
             except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.debug(f"fail {item.name}: {str(exc).strip()[:120]}")
         else:
-            new_parent = Notebook(
+            new_parent = imf.Notebook(
                 {
                     "title": item.name,
                     "user_created_time": item.stat().st_ctime * 1000,
@@ -70,7 +70,7 @@ def convert_folder(folder: Path, parent: Notebook) -> Tuple[Notebook, list]:
             parent.child_notebooks.append(new_parent)
 
 
-def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
+def convert_file(file_: Path, parent: imf.Notebook) -> Tuple[imf.Notebook, list]:
     """Default conversion function for files. Uses pandoc directly."""
     if file_.suffix in (".md", ".txt"):
         note_body = file_.read_text()
@@ -79,7 +79,7 @@ def convert_file(file_: Path, parent: Notebook) -> Tuple[Notebook, list]:
         # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
         note_body = pypandoc.convert_file(file_, "commonmark_x")
     parent.child_notes.append(
-        Note(
+        imf.Note(
             {
                 "title": file_.stem,
                 "body": note_body,
@@ -95,7 +95,7 @@ def convert_all_inputs(inputs, app):
     # parent notebook
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     source_app = "Joplin Custom Importer" if app is None else app
-    parent = Notebook({"title": f"{now} - Import from {source_app}"})
+    parent = imf.Notebook({"title": f"{now} - Import from {source_app}"})
     for single_input in inputs:
         # Convert the input data to an intermediate representation
         # that can be used by the importer later.

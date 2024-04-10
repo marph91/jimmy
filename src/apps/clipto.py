@@ -4,10 +4,10 @@ from pathlib import Path
 import json
 
 from common import iso_to_unix_ms
-from intermediate_format import Note, Notebook, Tag
+import intermediate_format as imf
 
 
-def convert(file_: Path, parent: Notebook):
+def convert(file_: Path, parent: imf.Notebook):
     # export only possible in android app:
     # - https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330
     # - settings -> time machine -> backup to file
@@ -16,10 +16,10 @@ def convert(file_: Path, parent: Notebook):
     tags = []
     # tags are contained in filters
     for filter_ in file_dict.get("filters"):
-        tags.append(Tag({"title": filter_["name"]}, filter_["uid"]))
+        tags.append(imf.Tag({"title": filter_["name"]}, filter_["uid"]))
 
     for note_clipto in file_dict.get("notes", []):
-        note_joplin = Note(
+        note_joplin = imf.Note(
             {
                 "title": note_clipto["title"],
                 "body": note_clipto["text"],

@@ -6,7 +6,7 @@ from pathlib import Path
 import json
 from typing import List
 
-from intermediate_format import Note, Notebook, Tag
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -50,7 +50,7 @@ def split_tags(tag_string: str) -> List[str]:
     return final_tags
 
 
-def convert(file_: Path, parent: Notebook):
+def convert(file_: Path, parent: imf.Notebook):
     if file_.suffix.lower() != ".json":
         LOGGER.error("Unsupported format. Please export your tiddlers in JSON format.")
         return
@@ -71,11 +71,11 @@ def convert(file_: Path, parent: Notebook):
             note_joplin_data["user_updated_time"] = tiddlywiki_to_unix(
                 note_tiddlywiki["modified"]
             )
-        note_joplin = Note(
+        note_joplin = imf.Note(
             note_joplin_data,
             # Tags don't have a separate id. Just use the name as id.
             tags=[
-                Tag({"title": tag}, tag)
+                imf.Tag({"title": tag}, tag)
                 for tag in split_tags(note_tiddlywiki.get("tags", ""))
             ],
         )

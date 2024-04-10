@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import List, Tuple
 
-from intermediate_format import Note, Notebook, Tag
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -92,13 +92,13 @@ def split_labels(title_labels: str) -> Tuple[str, List[str]]:
     return " ".join(title), labels
 
 
-def convert(file_: Path, parent: Notebook):
+def convert(file_: Path, parent: imf.Notebook):
     # - Finished tasks don't get exported.
     # - Todoist titles can be markdown formatted. Joplin titles are not.
     #   If imported as task list, we would gain markdown and sub-tasks,
     #   but lose the due date and priority tags.
 
-    project_notebook = Notebook({"title": file_.stem})
+    project_notebook = imf.Notebook({"title": file_.stem})
     parent.child_notebooks.append(project_notebook)
     current_section = project_notebook
     # "utf-8-sig" to prevent "\ufeffTYPE"
@@ -106,7 +106,7 @@ def convert(file_: Path, parent: Notebook):
         reader = csv.DictReader(csvfile)
         for row in reader:
             if row["TYPE"] == "section":
-                current_section = Notebook({"title": row["CONTENT"]})
+                current_section = imf.Notebook({"title": row["CONTENT"]})
                 project_notebook.child_notebooks.append(current_section)
             elif row["TYPE"] == "task":
                 title, labels = split_labels(row["CONTENT"])
@@ -121,8 +121,9 @@ def convert(file_: Path, parent: Notebook):
                     note_data["todo_due"] = int(due_date.timestamp() * 1000)
 
                 tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
-                joplin_note = Note(
-                    note_data, tags=[Tag({"title": tag}, tag) for tag in tags_string]
+                joplin_note = imf.Note(
+                    note_data,
+                    tags=[imf.Tag({"title": tag}, tag) for tag in tags_string],
                 )
                 current_section.child_notes.append(joplin_note)
             elif row["TYPE"] == "":
