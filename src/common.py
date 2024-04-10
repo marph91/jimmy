@@ -1,6 +1,19 @@
 """Common functions."""
 
 from datetime import datetime
+import re
+
+
+MARKDOWN_LINK_REGEX = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
+
+
+def get_markdown_links(text: str):
+    return MARKDOWN_LINK_REGEX.findall(text)
+
+
+def get_wikilink_links(text: str):
+    return WIKILINK_LINK_REGEX.findall(text)
 
 
 def current_unix_ms():

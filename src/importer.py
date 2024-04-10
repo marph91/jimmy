@@ -1,8 +1,13 @@
 """Convert the intermediate format to Joplin notes."""
 
+import logging
+
 import requests
 
 from intermediate_format import Tag
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 class JoplinImporter:
@@ -12,6 +17,7 @@ class JoplinImporter:
         self.api = api
         # Cache created tags to create them only once.
         self.tag_map = {}  # original id - joplin id
+        self.note_id_map = {}  # original id - joplin id
 
     def add_tag(self, tag: Tag) -> str:
         try:
@@ -31,15 +37,31 @@ class JoplinImporter:
             return matching_tags[0].id
 
     def import_note(self, note):
+        # Handle resources first, since the note body changes.
+        for resource in note.resources:
+            resource_title = resource.title or resource.filename.name
+            resource_id = self.api.add_resource(
+                filename=str(resource.filename), title=resource_title
+            )
+            if resource.original_text is None:
+                # append
+                note.data["body"] = (
+                    f"{note.data['body']}\n[{resource_title}](:/{resource_id})"
+                )
+            else:
+                # replace existing link
+                note.data["body"] = note.data["body"].replace(
+                    resource.original_text, f"[{resource_title}](:/{resource_id})"
+                )
+
         note_id = self.api.add_note(**note.data)
+        # needed to properly link notes later
+        note.joplin_id = note_id
+        self.note_id_map[note.original_id] = note_id
+
         for tag in note.tags:
             tag_id = self.tag_map.get(tag.original_id, self.add_tag(tag))
             self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
-        for resource in note.resources:
-            resource_id = self.api.add_resource(
-                filename=str(resource), title=resource.name
-            )
-            self.api.add_resource_to_note(resource_id=resource_id, note_id=note_id)
 
     def import_notebook(self, notebook):
         notebook_id = self.api.add_notebook(**notebook.data)
@@ -49,3 +71,21 @@ class JoplinImporter:
         for child_notebook in notebook.child_notebooks:
             child_notebook.data["parent_id"] = notebook_id
             self.import_notebook(child_notebook)
+
+    def update_note_links(self, note):
+        if not note.note_links or not note.data.get("body", ""):
+            return  # nothing to link
+        for note_link in note.note_links:
+            joplin_id = self.note_id_map.get(note_link.original_id)
+            if joplin_id is None:
+                LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")
+            note.data["body"] = note.data["body"].replace(
+                note_link.original_text, f"[{note_link.title}](:/{joplin_id})"
+            )
+        self.api.modify_note(note.joplin_id, body=note.data["body"])
+
+    def link_notes(self, notebook):
+        for note in notebook.child_notes:
+            self.update_note_links(note)
+        for child_notebook in notebook.child_notebooks:
+            self.link_notes(child_notebook)

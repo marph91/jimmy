@@ -4,10 +4,10 @@ from pathlib import Path
 import json
 
 from common import iso_to_unix_ms
-from intermediate_format import Note, Tag
+from intermediate_format import Note, Notebook, Tag
 
 
-def convert(file_: Path, parent):
+def convert(file_: Path, parent: Notebook):
     # export only possible in android app:
     # - https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330
     # - settings -> time machine -> backup to file

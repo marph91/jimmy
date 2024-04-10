@@ -8,13 +8,13 @@ import tempfile
 import time
 import zipfile
 
-from intermediate_format import Note, Tag
+from intermediate_format import Note, Notebook, Resource, Tag
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
-def convert(file_or_folder: Path, parent):
+def convert(file_or_folder: Path, parent: Notebook):
     if file_or_folder.suffix.lower() == ".zip":
         temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
         with zipfile.ZipFile(file_or_folder) as zip_ref:
@@ -36,7 +36,9 @@ def convert(file_or_folder: Path, parent):
         tags_keep = [label["name"] for label in note_keep.get("labels", [])]
         resources_keep = []
         for resource_keep in note_keep.get("attachments", []):
-            resources_keep.append(file_.parent.absolute() / resource_keep["filePath"])
+            resources_keep.append(
+                Resource(file_.parent.absolute() / resource_keep["filePath"])
+            )
         note_joplin = Note(
             {
                 "title": note_keep["title"],

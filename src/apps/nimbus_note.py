@@ -5,10 +5,10 @@ import zipfile
 
 import pypandoc
 
-from intermediate_format import Note
+from intermediate_format import Note, Notebook
 
 
-def convert(input_folder: Path, parent):
+def convert(input_folder: Path, parent: Notebook):
     for file_ in input_folder.glob("**/*.zip"):
         with zipfile.ZipFile(file_) as zip_ref:
             # HTML note seems to have the name "note.html" always

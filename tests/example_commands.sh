@@ -6,7 +6,8 @@ python src/joplin_custom_importer.py test_inputs
 python src/joplin_custom_importer.py test_inputs/nested_folder test_inputs
 
 python src/joplin_custom_importer.py test_inputs/clipto_backup_240401_105154.json --app clipto
-python src/joplin_custom_importer.py test_inputs/Google\ Keep/ --app google_keep
+python src/joplin_custom_importer.py test_inputs/Google\ Keep --app google_keep
+python src/joplin_custom_importer.py test_inputs/obsidian_vault --app obsidian
 python src/joplin_custom_importer.py test_inputs/todo_txt/examples_from_readme.txt --app todo_txt
 python src/joplin_custom_importer.py test_inputs/todoist/Privates.csv --app todoist
 

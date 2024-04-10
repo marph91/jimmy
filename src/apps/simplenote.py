@@ -2,13 +2,14 @@
 
 import json
 from pathlib import Path
+import re
 import zipfile
 
-from common import iso_to_unix_ms
-from intermediate_format import Note, Tag
+import common
+from intermediate_format import Note, Notebook, NoteLink, Tag
 
 
-def convert(input_zip: Path, parent):
+def convert(input_zip: Path, parent: Notebook):
     # TODO: note links - probably second pass and map old uid - joplin uid?
 
     with zipfile.ZipFile(input_zip) as zip_ref, zip_ref.open(
@@ -18,15 +19,34 @@ def convert(input_zip: Path, parent):
     for note_simplenote in notes_simplenote["activeNotes"]:
         # title is the first line
         title, body = note_simplenote["content"].split("\n", maxsplit=1)
+
+        resources = []
+        note_links = []
+        for description, url in common.get_markdown_links(body):
+            if url.startswith("http"):
+                continue  # web link
+            elif url.startswith("simplenote://"):
+                # internal link
+                _, linked_note_id = url.rsplit("/", 1)
+                note_links.append(
+                    NoteLink(f"[{description}]({url})", linked_note_id, description)
+                )
         note_joplin = Note(
             {
                 "title": title.strip(),
                 "body": body.lstrip(),
-                "user_created_time": iso_to_unix_ms(note_simplenote["creationDate"]),
-                "user_updated_time": iso_to_unix_ms(note_simplenote["lastModified"]),
+                "user_created_time": common.iso_to_unix_ms(
+                    note_simplenote["creationDate"]
+                ),
+                "user_updated_time": common.iso_to_unix_ms(
+                    note_simplenote["lastModified"]
+                ),
                 "source_application": Path(__file__).stem,
             },
             # Tags don't have a separate id. Just use the name as id.
             tags=[Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
+            resources=resources,
+            note_links=note_links,
+            original_id=note_simplenote["id"],
         )
         parent.child_notes.append(note_joplin)

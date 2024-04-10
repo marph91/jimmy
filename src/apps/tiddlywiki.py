@@ -6,7 +6,7 @@ from pathlib import Path
 import json
 from typing import List
 
-from intermediate_format import Note, Tag
+from intermediate_format import Note, Notebook, Tag
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -50,7 +50,7 @@ def split_tags(tag_string: str) -> List[str]:
     return final_tags
 
 
-def convert(file_: Path, parent):
+def convert(file_: Path, parent: Notebook):
     if file_.suffix.lower() != ".json":
         LOGGER.error("Unsupported format. Please export your tiddlers in JSON format.")
         return

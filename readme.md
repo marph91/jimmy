@@ -49,21 +49,22 @@ There are many more apps supported implicitly if they export text files to a fol
 | [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
 | [Notion](https://www.notion.so/) | notion | [link](https://www.notion.so/de-de/help/export-your-content) [1] |
+| [Obsidian](https://obsidian.md/) | obsidian | |
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
 | [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [2] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
 | [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [3] |
 
-What is migrated?
+What is migrated (in most cases)?
 
 - Notes and their content
 - Tags / Labels
 - Resources / Attachments
+- Internal note links
 - Creation and modification date
 
 What is not handled (yet)?
 
-- Internal note links
 - Markdown Front Matter
 - Inline tags
 
@@ -71,12 +72,10 @@ If something else is not working, please check the issues first. If you can't fi
 
 ---
 
-[1]
-
-- Choose "Markdown and CSV" and uncheck "Create folder for sub-pages" when exporting.
-- Only note pages are imported. Attachments and internal links are not handled yet.
+[1] Choose "Markdown and CSV" and uncheck "Create folder for sub-pages" when exporting.
 
 [2] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+
 [3]
 
 - Uncheck "Use relative data" when exporting.

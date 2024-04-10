@@ -116,7 +116,7 @@ def convert_all_inputs(inputs, app):
 
 def get_import_stats(parent, stats=None):
     if stats is None:
-        stats = {"notebooks": 1, "notes": 0, "resources": 0, "tags": 0}
+        stats = {"notebooks": 1, "notes": 0, "resources": 0, "tags": 0, "note_links": 0}
 
     # iterate through all notebooks
     for notebook in parent.child_notebooks:
@@ -128,6 +128,7 @@ def get_import_stats(parent, stats=None):
     for note in parent.child_notes:
         stats["resources"] += len(note.resources)
         stats["tags"] += len(note.tags)
+        stats["note_links"] += len(note.note_links)
 
     return stats
 
@@ -186,7 +187,13 @@ def main():
     LOGGER.info("Start parsing")
     note_tree = convert_all_inputs(args.input, args.app)
     stats = get_import_stats(note_tree)
-    if stats == {"notebooks": 1, "notes": 0, "resources": 0, "tags": 0}:
+    if stats == {
+        "notebooks": 1,
+        "notes": 0,
+        "resources": 0,
+        "tags": 0,
+        "note_links": 0,
+    }:
         LOGGER.info(f"Nothing to import.")
         return
     LOGGER.info(f"Finished parsing: {stats}")
@@ -195,6 +202,8 @@ def main():
         LOGGER.info("Start import to Joplin")
         joplin_importer = importer.JoplinImporter(api)
         joplin_importer.import_notebook(note_tree)
+        # We need another pass, since at the first pass that target note IDs are unknown.
+        joplin_importer.link_notes(note_tree)
         LOGGER.info(
             "Imported notes to Joplin successfully. "
             "Please verify that everything was imported."
