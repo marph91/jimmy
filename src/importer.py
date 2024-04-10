@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from intermediate_format import Tag
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -19,7 +19,7 @@ class JoplinImporter:
         self.tag_map = {}  # original id - joplin id
         self.note_id_map = {}  # original id - joplin id
 
-    def add_tag(self, tag: Tag) -> str:
+    def add_tag(self, tag: imf.Tag) -> str:
         try:
             tag_id = self.api.add_tag(**tag.data)
             self.tag_map[tag.original_id] = tag_id

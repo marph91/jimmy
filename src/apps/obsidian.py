@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import common
 import intermediate_format as imf
@@ -11,7 +10,7 @@ import intermediate_format as imf
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
-def convert(folder: Path, parent: imf.Notebook, root_folder: Optional[Path] = None):
+def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None):
     if root_folder is None:
         root_folder = folder
 

@@ -32,8 +32,8 @@ def convert(file_: Path, parent: imf.Notebook):
             )
 
         for key, value in task.attributes.items():
-            # "value" is a list, because there can be multiple attributes with the same key.
-            # For example: "due:1 due:2" will get parsed as "due: [1, 2]".
+            # "value" is a list, because there can be multiple attributes with the
+            # same key. For example: "due:1 due:2" will get parsed as "due: [1, 2]".
             # Just take the first one for simplicity.
             if key == "due":
                 note_data["todo_due"] = iso_to_unix_ms(value[0])

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, List
 
 
 @dataclass
@@ -26,9 +25,9 @@ class Resource:
     filename: Path
     # This text will be replaced with the Joplin-internal resource ID.
     # If None, the resource gets appended.
-    original_text: Optional[str] = None
+    original_text: str | None = None
     # [title_or_filename](:/resource_id)
-    title: Optional[str] = None
+    title: str | None = None
 
 
 @dataclass
@@ -44,12 +43,12 @@ class Note:
     """Represents a note."""
 
     data: dict
-    tags: List[Tag] = field(default_factory=list)
-    resources: List[Resource] = field(default_factory=list)
+    tags: list[Tag] = field(default_factory=list)
+    resources: list[Resource] = field(default_factory=list)
     # list of complete links including original note ids
-    note_links: List[NoteLink] = field(default_factory=list)
-    original_id: Optional[str] = None
-    joplin_id: Optional[str] = None
+    note_links: list[NoteLink] = field(default_factory=list)
+    original_id: str | None = None
+    joplin_id: str | None = None
 
 
 @dataclass
@@ -57,5 +56,5 @@ class Notebook:
     """Represents a notebook and its children."""
 
     data: dict
-    child_notebooks: List[Notebook] = field(default_factory=list)
-    child_notes: List[Note] = field(default_factory=list)
+    child_notebooks: list[Notebook] = field(default_factory=list)
+    child_notes: list[Note] = field(default_factory=list)

@@ -19,7 +19,6 @@ def convert(input_zip: Path, parent: imf.Notebook):
         # title is the first line
         title, body = note_simplenote["content"].split("\n", maxsplit=1)
 
-        resources = []
         note_links = []
         for description, url in common.get_markdown_links(body):
             if url.startswith("http"):
@@ -44,7 +43,6 @@ def convert(input_zip: Path, parent: imf.Notebook):
             },
             # Tags don't have a separate id. Just use the name as id.
             tags=[imf.Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
-            resources=resources,
             note_links=note_links,
             original_id=note_simplenote["id"],
         )

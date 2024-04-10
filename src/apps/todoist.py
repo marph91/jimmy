@@ -4,7 +4,6 @@ import csv
 from datetime import datetime
 import logging
 from pathlib import Path
-from typing import List, Tuple
 
 import intermediate_format as imf
 
@@ -22,7 +21,7 @@ def parse_author(author_string: str) -> str:
     return author_string.rsplit(" (", 1)[0]
 
 
-def parse_date(date_string: str) -> datetime:
+def parse_date(date_string: str | None) -> datetime | None:
     """
     # datetime.datetime({datetime.today().year}, 2, 29, 0, 0)
     # >>> parse_date("10 Apr 17:15")
@@ -71,7 +70,7 @@ def parse_date(date_string: str) -> datetime:
     return None
 
 
-def split_labels(title_labels: str) -> Tuple[str, List[str]]:
+def split_labels(title_labels: str) -> tuple[str, list[str]]:
     """
     >>> split_labels("")
     ('', [])

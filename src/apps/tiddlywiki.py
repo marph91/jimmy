@@ -4,7 +4,6 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import json
-from typing import List
 
 import intermediate_format as imf
 
@@ -17,7 +16,7 @@ def tiddlywiki_to_unix(tiddlywiki_time: str) -> int:
     return int(datetime.strptime(tiddlywiki_time, "%Y%m%d%H%M%S%f").timestamp() * 1000)
 
 
-def split_tags(tag_string: str) -> List[str]:
+def split_tags(tag_string: str) -> list[str]:
     """
     Tags are space separated. Tags with spaces are surrounded by double brackets.
 

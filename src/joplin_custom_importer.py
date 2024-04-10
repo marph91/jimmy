@@ -6,7 +6,6 @@ import importlib
 import logging
 from pathlib import Path
 import pkgutil
-from typing import Tuple
 
 import pypandoc
 
@@ -49,7 +48,7 @@ def setup_logging(log_to_file):
     LOGGER.addHandler(console_handler)
 
 
-def convert_folder(folder: Path, parent: imf.Notebook) -> Tuple[imf.Notebook, list]:
+def convert_folder(folder: Path, parent: imf.Notebook):
     """Default conversion function for folders."""
     for item in folder.iterdir():
         if item.is_file():
@@ -70,12 +69,13 @@ def convert_folder(folder: Path, parent: imf.Notebook) -> Tuple[imf.Notebook, li
             parent.child_notebooks.append(new_parent)
 
 
-def convert_file(file_: Path, parent: imf.Notebook) -> Tuple[imf.Notebook, list]:
+def convert_file(file_: Path, parent: imf.Notebook):
     """Default conversion function for files. Uses pandoc directly."""
     if file_.suffix in (".md", ".txt"):
         note_body = file_.read_text()
     else:
-        # markdown output formats: https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+        # markdown output formats:
+        # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
         # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
         note_body = pypandoc.convert_file(file_, "commonmark_x")
     parent.child_notes.append(
@@ -194,7 +194,7 @@ def main():
         "tags": 0,
         "note_links": 0,
     }:
-        LOGGER.info(f"Nothing to import.")
+        LOGGER.info("Nothing to import.")
         return
     LOGGER.info(f"Finished parsing: {stats}")
 
@@ -202,7 +202,8 @@ def main():
         LOGGER.info("Start import to Joplin")
         joplin_importer = importer.JoplinImporter(api)
         joplin_importer.import_notebook(note_tree)
-        # We need another pass, since at the first pass that target note IDs are unknown.
+        # We need another pass, since at the first pass
+        # target note IDs are unknown.
         joplin_importer.link_notes(note_tree)
         LOGGER.info(
             "Imported notes to Joplin successfully. "

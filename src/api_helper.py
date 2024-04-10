@@ -4,7 +4,6 @@ import logging
 from pathlib import Path
 import sys
 import time
-from typing import Optional
 
 from joppy.api import Api
 import platformdirs
@@ -54,10 +53,11 @@ def request_api_token():
     return None
 
 
-def get_api() -> Optional[Api]:
+def get_api() -> Api | None:
     if API_TOKEN_FILE.is_file():
         # token from config dir
-        api_token = API_TOKEN_FILE.read_text()
+        api_token: str | None = API_TOKEN_FILE.read_text()
+        assert api_token is not None
         api = Api(token=api_token)
         try:
             # check if old token works
