@@ -1,7 +1,10 @@
-aaa [[Second sample note|alias]]
+link with [[Second sample note|alias]]
 
 
 - https://help.obsidian.md/Getting+started/Link+notes
 - https://help.obsidian.md/Editing+and+formatting/Tags
+- [internal link markdown syntax](Second%20sample%20note.md)
 
-![[test.png]]
+link to image markdown syntax:
+
+![markdown image](test.png)

@@ -54,6 +54,7 @@ def parse_date(date_string: str | None) -> datetime | None:
         except ValueError:
             return None
 
+    # TODO: Ignoring the locale column could yield problems.
     possible_date_formats = (
         # some date this year
         "%d %b",

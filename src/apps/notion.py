@@ -4,6 +4,7 @@ import io
 from pathlib import Path
 import tempfile
 import time
+from urllib.parse import unquote
 import zipfile
 
 import common
@@ -21,7 +22,6 @@ def unzip(input_zip: Path, temp_folder: Path):
 
 
 def convert(input_zip: Path, parent: imf.Notebook):
-    # TODO: note links and attachments
     temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
 
     unzip(input_zip, temp_folder)
@@ -50,7 +50,7 @@ def convert(input_zip: Path, parent: imf.Notebook):
                 continue  # web link
             if url.endswith(".md"):
                 # internal link
-                _, linked_note_id = Path(url).stem.rsplit("%20", 1)
+                _, linked_note_id = Path(unquote(url)).stem.rsplit(" ", 1)
                 note_links.append(
                     imf.NoteLink(f"[{description}]({url})", linked_note_id, description)
                 )

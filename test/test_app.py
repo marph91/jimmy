@@ -53,7 +53,7 @@ class Apps(Base):
 
     def test_obsidian(self):
         stats = self.get_stats([TEST_INPUTS / "obsidian_vault"], "obsidian")
-        self.assert_stats(stats, notebooks=2, notes=2, resources=2, note_links=2)
+        self.assert_stats(stats, notebooks=2, notes=2, resources=3, note_links=3)
 
     def test_simplenote(self):
         stats = self.get_stats([TEST_INPUTS / "simplenote"], "simplenote")
