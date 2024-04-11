@@ -1,5 +1,4 @@
 joppy
 platformdirs
-pyinstaller
 pypandoc_binary
 pytodotxt

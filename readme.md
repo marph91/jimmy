@@ -6,6 +6,10 @@ Simple tool to import your data to Joplin.
 
 :exclamation: Make sure your data is imported properly after the script finished.
 
+[![build](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml)
+[![lint](https://github.com/marph91/joplin-custom-importer/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/lint.yml)
+[![tests](https://github.com/marph91/joplin-custom-importer/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/tests.yml)
+
 ## Usage
 
 This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.

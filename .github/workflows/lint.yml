@@ -1,0 +1,13 @@
+name: lint
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pip dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Run linting
+        run: ./lint.sh
