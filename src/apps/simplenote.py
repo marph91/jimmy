@@ -32,7 +32,7 @@ def convert(zip_or_folder: Path, parent: imf.Notebook):
         for description, url in common.get_markdown_links(body):
             if url.startswith("http"):
                 continue  # web link
-            elif url.startswith("simplenote://"):
+            if url.startswith("simplenote://"):
                 # internal link
                 _, linked_note_id = url.rsplit("/", 1)
                 note_links.append(
