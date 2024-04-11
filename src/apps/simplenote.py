@@ -1,6 +1,7 @@
 """Convert simplenote notes to the intermediate format."""
 
 import json
+import logging
 from pathlib import Path
 import zipfile
 
@@ -8,14 +9,22 @@ import common
 import intermediate_format as imf
 
 
-def convert(input_zip: Path, parent: imf.Notebook):
-    # TODO: note links - probably second pass and map old uid - joplin uid?
+LOGGER = logging.getLogger("joplin_custom_importer")
 
-    with zipfile.ZipFile(input_zip) as zip_ref, zip_ref.open(
-        "source/notes.json"
-    ) as zipped_json:
-        notes_simplenote = json.loads(zipped_json.read().decode("UTF-8"))
-    for note_simplenote in notes_simplenote["activeNotes"]:
+
+def convert(zip_or_folder: Path, parent: imf.Notebook):
+    if zip_or_folder.suffix.lower() == ".zip":
+        with zipfile.ZipFile(zip_or_folder) as zip_ref, zip_ref.open(
+            "source/notes.json"
+        ) as zipped_json:
+            input_json = json.loads(zipped_json.read().decode("UTF-8"))
+    elif zip_or_folder.is_dir():
+        input_json = json.loads((zip_or_folder / "source/notes.json").read_text())
+    else:
+        LOGGER.error("Unsupported format for simplenote")
+        return
+
+    for note_simplenote in input_json["activeNotes"]:
         # title is the first line
         title, body = note_simplenote["content"].split("\n", maxsplit=1)
 

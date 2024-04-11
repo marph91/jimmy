@@ -48,6 +48,15 @@ def setup_logging(log_to_file):
     LOGGER.addHandler(console_handler)
 
 
+def get_ctime_mtime_ms(item: Path) -> dict:
+    data = {}
+    if (ctime_ms := int(item.stat().st_ctime * 1000)) > 0:
+        data["user_created_time"] = ctime_ms
+    if (mtime_ms := int(item.stat().st_mtime * 1000)) > 0:
+        data["user_updated_time"] = mtime_ms
+    return data
+
+
 def convert_folder(folder: Path, parent: imf.Notebook):
     """Default conversion function for folders."""
     for item in folder.iterdir():
@@ -58,13 +67,7 @@ def convert_folder(folder: Path, parent: imf.Notebook):
             except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.debug(f"fail {item.name}: {str(exc).strip()[:120]}")
         else:
-            new_parent = imf.Notebook(
-                {
-                    "title": item.name,
-                    "user_created_time": item.stat().st_ctime * 1000,
-                    "user_updated_time": item.stat().st_mtime * 1000,
-                }
-            )
+            new_parent = imf.Notebook({"title": item.name, **get_ctime_mtime_ms(item)})
             convert_folder(item, new_parent)
             parent.child_notebooks.append(new_parent)
 
@@ -83,8 +86,7 @@ def convert_file(file_: Path, parent: imf.Notebook):
             {
                 "title": file_.stem,
                 "body": note_body,
-                "user_created_time": file_.stat().st_ctime * 1000,
-                "user_updated_time": file_.stat().st_mtime * 1000,
+                **get_ctime_mtime_ms(file_),
                 "source_application": "joplin_custom_importer",
             }
         )
