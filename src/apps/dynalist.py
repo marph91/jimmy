@@ -31,16 +31,6 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
     return [], note_links
 
 
-def get_inline_tags(body: str) -> list[str]:
-    return list(
-        set(
-            word[1:]
-            for word in body.split()
-            if word.startswith("#") or word.startswith("@")
-        )
-    )
-
-
 def convert(zip_or_folder: Path, parent: imf.Notebook, root_folder: Path | None = None):
     if zip_or_folder.suffix.lower() == ".zip":
         temp_folder = common.get_temp_folder()
@@ -66,7 +56,7 @@ def convert(zip_or_folder: Path, parent: imf.Notebook, root_folder: Path | None 
             body = item.read_text()
 
             resources, note_links = handle_markdown_links(body, root_folder)
-            tags = get_inline_tags(body)
+            tags = common.get_inline_tags(body, ["#", "@"])
 
             parent.child_notes.append(
                 imf.Note(

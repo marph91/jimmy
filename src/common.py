@@ -11,6 +11,10 @@ import time
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
+###########################################################
+# operations on note body
+###########################################################
+
 MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]+)\]\(([^)]+)\)")
 WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
 
@@ -21,6 +25,30 @@ def get_markdown_links(text: str):
 
 def get_wikilink_links(text: str):
     return WIKILINK_LINK_REGEX.findall(text)
+
+
+def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
+    """
+    >>> get_inline_tags("# header", ["#"])
+    []
+    >>> get_inline_tags("#tag", ["#"])
+    ['tag']
+    >>> get_inline_tags("#tag abc", ["#"])
+    ['tag']
+    >>> get_inline_tags("#tag @abc", ["#", "@"])
+    ['abc', 'tag']
+    """
+    # TODO: can possibly be combined with todoist.split_labels()
+    tags = set()
+    for word in text.split():
+        if any(word.startswith(char) for char in start_characters) and len(word) > 1:
+            tags.add(word[1:])
+    return list(tags)
+
+
+###########################################################
+# folder operations
+###########################################################
 
 
 def get_temp_folder() -> Path:
@@ -35,6 +63,11 @@ def find_file_recursively(root_folder: Path, url: str) -> Path | None:
     if len(potential_matches) > 1:
         LOGGER.debug(f"Found too many matches for resource {url}")
     return potential_matches[0]
+
+
+###########################################################
+# datetime helpers
+###########################################################
 
 
 def get_ctime_mtime_ms(item: Path) -> dict:

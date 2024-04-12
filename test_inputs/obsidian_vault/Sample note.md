@@ -8,3 +8,7 @@ link with [[Second sample note|alias]]
 link to image markdown syntax:
 
 ![markdown image](test.png)
+
+#inline-tag-obsidian
+
+# header

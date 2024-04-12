@@ -4,3 +4,5 @@ aaa [[Sample note]]
 
 
 ![[plaintext.txt]]
+
+#inline-tag-obsidian

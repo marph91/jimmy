@@ -73,6 +73,10 @@ def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None)
             resources.extend(wikilink_resources + markdown_resources)
             note_links.extend(wikilink_note_links + markdown_note_links)
 
+            # https://help.obsidian.md/Editing+and+formatting/Tags
+            # TODO: frontmatter parsing
+            tags = common.get_inline_tags(body, ["#"])
+
             parent.child_notes.append(
                 imf.Note(
                     {
@@ -80,9 +84,10 @@ def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None)
                         "body": body,
                         "source_application": Path(__file__).stem,
                     },
-                    original_id=item.stem,
+                    tags=[imf.Tag({"title": tag}, tag) for tag in tags],
                     resources=resources,
                     note_links=note_links,
+                    original_id=item.stem,
                 )
             )
         else:
