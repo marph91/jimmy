@@ -43,15 +43,16 @@ class JoplinImporter:
             resource_id = self.api.add_resource(
                 filename=str(resource.filename), title=resource_title
             )
+            resource_markdown = (
+                f"{'!' * resource.is_image}[{resource_title}](:/{resource_id})"
+            )
             if resource.original_text is None:
                 # append
-                note.data["body"] = (
-                    f"{note.data['body']}\n[{resource_title}](:/{resource_id})"
-                )
+                note.data["body"] = f"{note.data['body']}\n{resource_markdown}"
             else:
                 # replace existing link
                 note.data["body"] = note.data["body"].replace(
-                    resource.original_text, f"[{resource_title}](:/{resource_id})"
+                    resource.original_text, resource_markdown
                 )
 
         note_id = self.api.add_note(**note.data)

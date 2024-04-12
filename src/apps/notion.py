@@ -21,11 +21,7 @@ def unzip(input_zip: Path, temp_folder: Path):
                     nested_zip_ref.extractall(temp_folder)
 
 
-def convert(input_zip: Path, parent: imf.Notebook):
-    temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
-
-    unzip(input_zip, temp_folder)
-
+def flatten_folder(temp_folder: Path):
     # Flatten folder structure. I. e. move all files to root directory.
     # https://stackoverflow.com/a/50368037/7410886
     for item in temp_folder.iterdir():
@@ -33,6 +29,13 @@ def convert(input_zip: Path, parent: imf.Notebook):
             for file_ in item.iterdir():
                 file_.rename(file_.parents[1] / file_.name)
             item.rmdir()
+
+
+def convert(input_zip: Path, parent: imf.Notebook):
+    temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
+
+    unzip(input_zip, temp_folder)
+    flatten_folder(temp_folder)
 
     for item in temp_folder.iterdir():
         if item.is_dir() or item.suffix != ".md":
@@ -45,21 +48,20 @@ def convert(input_zip: Path, parent: imf.Notebook):
         # find links
         resources = []
         note_links = []
-        for description, url in common.get_markdown_links(body):
+        for file_prefix, description, url in common.get_markdown_links(body):
             if url.startswith("http"):
                 continue  # web link
+            original_text = f"{file_prefix}[{description}]({url})"
             if url.endswith(".md"):
                 # internal link
                 _, linked_note_id = Path(unquote(url)).stem.rsplit(" ", 1)
                 note_links.append(
-                    imf.NoteLink(f"[{description}]({url})", linked_note_id, description)
+                    imf.NoteLink(original_text, linked_note_id, description)
                 )
             elif (temp_folder / url).is_file():
                 # resource
                 resources.append(
-                    imf.Resource(
-                        temp_folder / url, f"[{description}]({url})", description
-                    )
+                    imf.Resource(temp_folder / url, original_text, description)
                 )
 
         note_joplin = imf.Note(

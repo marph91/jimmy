@@ -29,14 +29,18 @@ def convert(zip_or_folder: Path, parent: imf.Notebook):
         title, body = note_simplenote["content"].split("\n", maxsplit=1)
 
         note_links = []
-        for description, url in common.get_markdown_links(body):
+        for file_prefix, description, url in common.get_markdown_links(body):
             if url.startswith("http"):
                 continue  # web link
             if url.startswith("simplenote://"):
                 # internal link
                 _, linked_note_id = url.rsplit("/", 1)
                 note_links.append(
-                    imf.NoteLink(f"[{description}]({url})", linked_note_id, description)
+                    imf.NoteLink(
+                        f"{file_prefix}[{description}]({url})",
+                        linked_note_id,
+                        description,
+                    )
                 )
         note_joplin = imf.Note(
             {
