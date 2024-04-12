@@ -1,7 +1,14 @@
 """Common functions."""
 
 import datetime as dt
+import logging
+from pathlib import Path
 import re
+import tempfile
+import time
+
+
+LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]+)\]\(([^)]+)\)")
@@ -14,6 +21,29 @@ def get_markdown_links(text: str):
 
 def get_wikilink_links(text: str):
     return WIKILINK_LINK_REGEX.findall(text)
+
+
+def get_temp_folder() -> Path:
+    return Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
+
+
+def find_file_recursively(root_folder: Path, url: str) -> Path | None:
+    potential_matches = list(root_folder.glob(f"**/{url}"))
+    if not potential_matches:
+        LOGGER.debug(f"Couldn't find match for resource {url}")
+        return None
+    if len(potential_matches) > 1:
+        LOGGER.debug(f"Found too many matches for resource {url}")
+    return potential_matches[0]
+
+
+def get_ctime_mtime_ms(item: Path) -> dict:
+    data = {}
+    if (ctime_ms := int(item.stat().st_ctime * 1000)) > 0:
+        data["user_created_time"] = ctime_ms
+    if (mtime_ms := int(item.stat().st_mtime * 1000)) > 0:
+        data["user_updated_time"] = mtime_ms
+    return data
 
 
 def datetime_to_ms(datetime_: dt.datetime) -> int:

@@ -1,25 +1,10 @@
 """Convert obsidian notes to the intermediate format."""
 
-import logging
 from pathlib import Path
 from urllib.parse import unquote
 
 import common
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("joplin_custom_importer")
-
-
-def find_obsidian_resource(root_folder, url) -> Path | None:
-    # Resources can be located anywhere?!
-    potential_matches = list(root_folder.glob(f"**/{url}"))
-    if not potential_matches:
-        LOGGER.debug(f"Couldn't find match for resource {url}")
-        return None
-    if len(potential_matches) > 1:
-        LOGGER.debug(f"Found too many matches for resource {url}")
-    return potential_matches[0]
 
 
 def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
@@ -36,7 +21,7 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
             note_links.append(imf.NoteLink(original_text, linked_note_id, description))
         else:
             # resource
-            resource_path = find_obsidian_resource(root_folder, url)
+            resource_path = common.find_file_recursively(root_folder, url)
             if resource_path is None:
                 continue
             resources.append(imf.Resource(resource_path, original_text, description))
@@ -52,7 +37,8 @@ def handle_wikilink_links(body: str, root_folder: Path) -> tuple[list, list]:
         alias = "" if description.strip() == "" else f"|{description}"
         original_text = f"{file_prefix}[[{url}{alias}]]"
         if file_prefix:
-            resource_path = find_obsidian_resource(root_folder, url)
+            # resource
+            resource_path = common.find_file_recursively(root_folder, url)
             if resource_path is None:
                 continue
             resources.append(
@@ -101,11 +87,7 @@ def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None)
             )
         else:
             new_parent = imf.Notebook(
-                {
-                    "title": item.name,
-                    "user_created_time": item.stat().st_ctime * 1000,
-                    "user_updated_time": item.stat().st_mtime * 1000,
-                }
+                {"title": item.name, **common.get_ctime_mtime_ms(item)}
             )
             convert(item, new_parent, root_folder=root_folder)
             parent.child_notebooks.append(new_parent)

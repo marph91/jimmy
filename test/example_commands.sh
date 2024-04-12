@@ -15,6 +15,7 @@ if [ -d "tmp" ]; then
 fi
 
 python src/joplin_custom_importer.py test_inputs/clipto/clipto_backup_240401_105154.json --app clipto
+python src/joplin_custom_importer.py test_inputs/dynalist --app dynalist
 python src/joplin_custom_importer.py test_inputs/Google\ Keep --app google_keep
 python src/joplin_custom_importer.py test_inputs/obsidian_vault --app obsidian
 python src/joplin_custom_importer.py test_inputs/simplenote --app simplenote

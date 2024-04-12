@@ -2,8 +2,6 @@
 
 import io
 from pathlib import Path
-import tempfile
-import time
 from urllib.parse import unquote
 import zipfile
 
@@ -32,7 +30,7 @@ def flatten_folder(temp_folder: Path):
 
 
 def convert(input_zip: Path, parent: imf.Notebook):
-    temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
+    temp_folder = common.get_temp_folder()
 
     unzip(input_zip, temp_folder)
     flatten_folder(temp_folder)

@@ -39,6 +39,10 @@ class Apps(Base):
         )
         self.assert_stats(stats, notes=3, tags=1)
 
+    def test_dynalist(self):
+        stats = self.get_stats([TEST_INPUTS / "dynalist"], "dynalist")
+        self.assert_stats(stats, notebooks=2, notes=3, tags=3, note_links=1)
+
     def test_google_keep(self):
         stats = self.get_stats([TEST_INPUTS / "Google Keep"], "google_keep")
         self.assert_stats(stats, notes=3, resources=1, tags=3)

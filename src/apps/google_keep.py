@@ -4,10 +4,9 @@ from pathlib import Path
 import json
 import logging
 import tarfile
-import tempfile
-import time
 import zipfile
 
+import common
 import intermediate_format as imf
 
 
@@ -16,12 +15,12 @@ LOGGER = logging.getLogger("joplin_custom_importer")
 
 def convert(file_or_folder: Path, parent: imf.Notebook):
     if file_or_folder.suffix.lower() == ".zip":
-        temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
+        temp_folder = common.get_temp_folder()
         with zipfile.ZipFile(file_or_folder) as zip_ref:
             zip_ref.extractall(temp_folder)
         input_folder = temp_folder
     elif file_or_folder.suffix.lower() == ".tgz":
-        temp_folder = Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time())}"
+        temp_folder = common.get_temp_folder()
         with tarfile.open(file_or_folder) as tar_ref:
             tar_ref.extractall(temp_folder)
         input_folder = temp_folder

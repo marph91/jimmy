@@ -50,6 +50,7 @@ There are many more apps supported implicitly if they export text files to a fol
 | App | Internal App Name | Export Instructions |
 | --- | --- | --- |
 | [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
+| [Dynalist](https://dynalist.io/) | dynalist | [link](https://help.dynalist.io/article/79-back-up-your-data) |
 | [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
 | [Notion](https://www.notion.so/) | notion | [link](https://www.notion.so/de-de/help/export-your-content) [1] |
