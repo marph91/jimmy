@@ -100,10 +100,13 @@ def convert_all_inputs(inputs, app):
         try:
             module = importlib.import_module(f"apps.{app}")
             conversion_function = module.convert
-        except ModuleNotFoundError:
-            conversion_function = (
-                convert_file if single_input.is_file() else convert_folder
-            )
+        except ModuleNotFoundError as exc:
+            if str(exc) == f"No module named 'apps.{app}'":
+                conversion_function = (
+                    convert_file if single_input.is_file() else convert_folder
+                )
+            else:
+                raise exc  # this is unexpected -> reraise
         # TODO: Children are added to the parent node / node tree implicitly.
         # This is an anti-pattern, but works for now.
         conversion_function(single_input, parent)

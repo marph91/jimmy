@@ -1,3 +1,12 @@
+---
+tags:
+  - frontmatter-tag-obsidian
+  - another-tag-obsidian
+aliases:
+  - also called xyz
+  - Sample note alias
+---
+
 link with [[Second sample note|alias]]
 
 

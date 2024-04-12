@@ -6,3 +6,5 @@ aaa [[Sample note]]
 ![[plaintext.txt]]
 
 #inline-tag-obsidian
+
+[[Sample note|Sample note alias]]

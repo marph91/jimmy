@@ -3,6 +3,8 @@
 from pathlib import Path
 from urllib.parse import unquote
 
+import frontmatter
+
 import common
 import intermediate_format as imf
 
@@ -74,8 +76,15 @@ def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None)
             note_links.extend(wikilink_note_links + markdown_note_links)
 
             # https://help.obsidian.md/Editing+and+formatting/Tags
-            # TODO: frontmatter parsing
-            tags = common.get_inline_tags(body, ["#"])
+            inline_tags = common.get_inline_tags(body, ["#"])
+
+            # frontmatter tags
+            # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties
+            frontmatter_ = frontmatter.loads(body)
+            frontmatter_tags = frontmatter_.get("tags", [])
+
+            # aliases seem to be only used in the link description
+            # frontmatter_.get("aliases", [])
 
             parent.child_notes.append(
                 imf.Note(
@@ -84,7 +93,10 @@ def convert(folder: Path, parent: imf.Notebook, root_folder: Path | None = None)
                         "body": body,
                         "source_application": Path(__file__).stem,
                     },
-                    tags=[imf.Tag({"title": tag}, tag) for tag in tags],
+                    tags=[
+                        imf.Tag({"title": tag}, tag)
+                        for tag in inline_tags + frontmatter_tags
+                    ],
                     resources=resources,
                     note_links=note_links,
                     original_id=item.stem,

@@ -1,4 +1,5 @@
 joppy
 platformdirs
 pypandoc_binary
+python-frontmatter
 pytodotxt
