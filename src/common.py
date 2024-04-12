@@ -1,6 +1,6 @@
 """Common functions."""
 
-from datetime import datetime
+import datetime as dt
 import re
 
 
@@ -16,16 +16,20 @@ def get_wikilink_links(text: str):
     return WIKILINK_LINK_REGEX.findall(text)
 
 
-def current_unix_ms():
-    return int(datetime.now().timestamp() * 1000)
+def datetime_to_ms(datetime_: dt.datetime) -> int:
+    return int(datetime_.timestamp() * 1000)
 
 
-def date_to_unix_ms(date_):
+def current_unix_ms() -> int:
+    return datetime_to_ms(dt.datetime.now())
+
+
+def date_to_unix_ms(date_: dt.date) -> int:
     # https://stackoverflow.com/a/61886944/7410886
-    return int(
-        datetime(year=date_.year, month=date_.month, day=date_.day).timestamp() * 1000
+    return datetime_to_ms(
+        dt.datetime(year=date_.year, month=date_.month, day=date_.day)
     )
 
 
-def iso_to_unix_ms(iso_time):
-    return int(datetime.fromisoformat(iso_time).timestamp() * 1000)
+def iso_to_unix_ms(iso_time: str) -> int:
+    return datetime_to_ms(dt.datetime.fromisoformat(iso_time))

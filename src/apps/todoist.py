@@ -5,6 +5,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 
+import common
 import intermediate_format as imf
 
 
@@ -118,7 +119,7 @@ def convert(file_: Path, parent: imf.Notebook):
                     "source_application": Path(__file__).stem,
                 }
                 if (due_date := parse_date(row["DATE"])) is not None:
-                    note_data["todo_due"] = int(due_date.timestamp() * 1000)
+                    note_data["todo_due"] = common.datetime_to_ms(due_date)
 
                 tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
                 joplin_note = imf.Note(

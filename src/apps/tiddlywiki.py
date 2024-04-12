@@ -5,6 +5,7 @@ import logging
 from pathlib import Path
 import json
 
+import common
 import intermediate_format as imf
 
 
@@ -13,7 +14,7 @@ LOGGER = logging.getLogger("joplin_custom_importer")
 
 def tiddlywiki_to_unix(tiddlywiki_time: str) -> int:
     """Format: https://tiddlywiki.com/static/DateFormat.html"""
-    return int(datetime.strptime(tiddlywiki_time, "%Y%m%d%H%M%S%f").timestamp() * 1000)
+    return common.datetime_to_ms(datetime.strptime(tiddlywiki_time, "%Y%m%d%H%M%S%f"))
 
 
 def split_tags(tag_string: str) -> list[str]:
