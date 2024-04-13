@@ -1,15 +1,12 @@
 """Convert TiddlyWiki notes to the intermediate format."""
 
 from datetime import datetime
-import logging
 from pathlib import Path
 import json
 
 import common
+import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def tiddlywiki_to_unix(tiddlywiki_time: str) -> int:
@@ -50,35 +47,38 @@ def split_tags(tag_string: str) -> list[str]:
     return final_tags
 
 
-def convert(file_: Path, parent: imf.Notebook):
-    if file_.suffix.lower() != ".json":
-        LOGGER.error("Unsupported format. Please export your tiddlers in JSON format.")
-        return
+class Converter(converter.BaseConverter):
+    def convert(self, file_or_folder: Path):
+        if file_or_folder.suffix.lower() != ".json":
+            self.logger.error(
+                "Unsupported format. Please export your tiddlers in JSON format."
+            )
+            return
 
-    file_dict = json.loads(Path(file_).read_text(encoding="UTF-8"))
-    for note_tiddlywiki in file_dict:
-        note_joplin_data = {
-            "title": note_tiddlywiki["title"],
-            "body": note_tiddlywiki.get("text", ""),
-            "author": note_tiddlywiki.get("creator", ""),
-            "source_application": Path(__file__).stem,
-        }
-        if "created" in note_tiddlywiki:
-            note_joplin_data["user_created_time"] = tiddlywiki_to_unix(
-                note_tiddlywiki["created"]
+        file_dict = json.loads(Path(file_or_folder).read_text(encoding="UTF-8"))
+        for note_tiddlywiki in file_dict:
+            note_joplin_data = {
+                "title": note_tiddlywiki["title"],
+                "body": note_tiddlywiki.get("text", ""),
+                "author": note_tiddlywiki.get("creator", ""),
+                "source_application": self.app,
+            }
+            if "created" in note_tiddlywiki:
+                note_joplin_data["user_created_time"] = tiddlywiki_to_unix(
+                    note_tiddlywiki["created"]
+                )
+            if "modified" in note_tiddlywiki:
+                note_joplin_data["user_updated_time"] = tiddlywiki_to_unix(
+                    note_tiddlywiki["modified"]
+                )
+            note_joplin = imf.Note(
+                note_joplin_data,
+                # Tags don't have a separate id. Just use the name as id.
+                tags=[
+                    imf.Tag({"title": tag}, tag)
+                    for tag in split_tags(note_tiddlywiki.get("tags", ""))
+                ],
             )
-        if "modified" in note_tiddlywiki:
-            note_joplin_data["user_updated_time"] = tiddlywiki_to_unix(
-                note_tiddlywiki["modified"]
-            )
-        note_joplin = imf.Note(
-            note_joplin_data,
-            # Tags don't have a separate id. Just use the name as id.
-            tags=[
-                imf.Tag({"title": tag}, tag)
-                for tag in split_tags(note_tiddlywiki.get("tags", ""))
-            ],
-        )
-        if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
-            continue  # skip notes with special tags
-        parent.child_notes.append(note_joplin)
+            if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
+                continue  # skip notes with special tags
+            self.root_notebook.child_notes.append(note_joplin)

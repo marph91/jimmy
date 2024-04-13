@@ -2,14 +2,11 @@
 
 import csv
 from datetime import datetime
-import logging
 from pathlib import Path
 
 import common
+import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def parse_author(author_string: str) -> str:
@@ -93,41 +90,42 @@ def split_labels(title_labels: str) -> tuple[str, list[str]]:
     return " ".join(title), labels
 
 
-def convert(file_: Path, parent: imf.Notebook):
-    # - Finished tasks don't get exported.
-    # - Todoist titles can be markdown formatted. Joplin titles are not.
-    #   If imported as task list, we would gain markdown and sub-tasks,
-    #   but lose the due date and priority tags.
+class Converter(converter.BaseConverter):
+    def convert(self, file_or_folder: Path):
+        # - Finished tasks don't get exported.
+        # - Todoist titles can be markdown formatted. Joplin titles are not.
+        #   If imported as task list, we would gain markdown and sub-tasks,
+        #   but lose the due date and priority tags.
 
-    project_notebook = imf.Notebook({"title": file_.stem})
-    parent.child_notebooks.append(project_notebook)
-    current_section = project_notebook
-    # "utf-8-sig" to prevent "\ufeffTYPE"
-    with open(file_, encoding="utf-8-sig") as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            if row["TYPE"] == "section":
-                current_section = imf.Notebook({"title": row["CONTENT"]})
-                project_notebook.child_notebooks.append(current_section)
-            elif row["TYPE"] == "task":
-                title, labels = split_labels(row["CONTENT"])
-                note_data = {
-                    "title": title,
-                    "body": row["DESCRIPTION"],
-                    "author": parse_author(row["AUTHOR"]),
-                    "is_todo": 1,
-                    "source_application": Path(__file__).stem,
-                }
-                if (due_date := parse_date(row["DATE"])) is not None:
-                    note_data["todo_due"] = common.datetime_to_ms(due_date)
+        project_notebook = imf.Notebook({"title": file_or_folder.stem})
+        self.root_notebook.child_notebooks.append(project_notebook)
+        current_section = project_notebook
+        # "utf-8-sig" to prevent "\ufeffTYPE"
+        with open(file_or_folder, encoding="utf-8-sig") as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                if row["TYPE"] == "section":
+                    current_section = imf.Notebook({"title": row["CONTENT"]})
+                    project_notebook.child_notebooks.append(current_section)
+                elif row["TYPE"] == "task":
+                    title, labels = split_labels(row["CONTENT"])
+                    note_data = {
+                        "title": title,
+                        "body": row["DESCRIPTION"],
+                        "author": parse_author(row["AUTHOR"]),
+                        "is_todo": 1,
+                        "source_application": self.app,
+                    }
+                    if (due_date := parse_date(row["DATE"])) is not None:
+                        note_data["todo_due"] = common.datetime_to_ms(due_date)
 
-                tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
-                joplin_note = imf.Note(
-                    note_data,
-                    tags=[imf.Tag({"title": tag}, tag) for tag in tags_string],
-                )
-                current_section.child_notes.append(joplin_note)
-            elif row["TYPE"] == "":
-                continue  # ignore empty rows
-            else:
-                LOGGER.debug(f"Ignoring unknown type: {row['TYPE']}")
+                    tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
+                    joplin_note = imf.Note(
+                        note_data,
+                        tags=[imf.Tag({"title": tag}, tag) for tag in tags_string],
+                    )
+                    current_section.child_notes.append(joplin_note)
+                elif row["TYPE"] == "":
+                    continue  # ignore empty rows
+                else:
+                    self.logger.debug(f"Ignoring unknown type: {row['TYPE']}")

@@ -92,7 +92,7 @@ class Arbitrary(Base):
 
     def test_multiple_folders(self):
         stats = self.get_stats([self.arbitrary_folder] * 2, None)
-        self.assert_stats(stats, notebooks=3, notes=8)
+        self.assert_stats(stats, notebooks=4, notes=8)
 
     def test_single_file(self):
         stats = self.get_stats([self.arbitrary_folder / "plaintext.txt"], None)
@@ -100,7 +100,7 @@ class Arbitrary(Base):
 
     def test_multiple_files(self):
         stats = self.get_stats([self.arbitrary_folder / "plaintext.txt"] * 2, None)
-        self.assert_stats(stats, notes=2)
+        self.assert_stats(stats, notebooks=2, notes=2)
 
     def test_markdown(self):
         stats = self.get_stats([self.arbitrary_folder / "sample.md"], None)

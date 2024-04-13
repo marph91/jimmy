@@ -1,14 +1,11 @@
 """Convert clipto notes to the intermediate format."""
 
-import logging
 from pathlib import Path
 import zipfile
 
 import common
+import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("joplin_custom_importer")
 
 
 def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
@@ -31,49 +28,56 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
     return [], note_links
 
 
-def convert(zip_or_folder: Path, parent: imf.Notebook, root_folder: Path | None = None):
-    if zip_or_folder.suffix.lower() == ".zip":
-        temp_folder = common.get_temp_folder()
-        with zipfile.ZipFile(zip_or_folder) as zip_ref:
-            zip_ref.extractall(temp_folder)
-        input_folder = temp_folder
-    elif zip_or_folder.is_dir():
-        input_folder = zip_or_folder
-    else:
-        LOGGER.error("Unsupported format for dynalist")
-        return
+class Converter(converter.BaseConverter):
 
-    if root_folder is None:
-        root_folder = input_folder
+    def prepare_input(self, input_: Path) -> Path | None:
+        """Prepare the input for further processing. For example extract an archive."""
+        if input_.suffix.lower() == ".zip":
+            temp_folder = common.get_temp_folder()
+            with zipfile.ZipFile(input_) as zip_ref:
+                zip_ref.extractall(temp_folder)
+            return temp_folder
+        if input_.is_dir():
+            return input_
+        self.logger.error("Unsupported format for dynalist")
+        return None
 
-    for item in input_folder.iterdir():
-        if item.is_file():
-            if item.suffix != ".txt":
+    def convert(self, file_or_folder: Path):
+        """This is the main conversion function, called from the main app."""
+        self.root_path = self.prepare_input(file_or_folder)
+        if self.root_path is None:
+            return
+        self.convert_folder(self.root_path, self.root_notebook)
+
+    def convert_folder(self, folder: Path, parent: imf.Notebook):
+        for item in folder.iterdir():
+            if item.is_file():
                 # We get a zip with opml and txt. Only advantage of opml over txt is
                 # the owner attribute. So just use txt, because it's simpler.
                 # opml is supported by pandoc, but the import is not working properly.
-                continue
-            body = item.read_text()
+                if item.suffix != ".txt":
+                    continue
+                body = item.read_text()
 
-            resources, note_links = handle_markdown_links(body, root_folder)
-            tags = common.get_inline_tags(body, ["#", "@"])
+                resources, note_links = handle_markdown_links(body, self.root_path)
+                tags = common.get_inline_tags(body, ["#", "@"])
 
-            parent.child_notes.append(
-                imf.Note(
-                    {
-                        "title": item.stem,
-                        "body": body,
-                        "source_application": Path(__file__).stem,
-                    },
-                    tags=[imf.Tag({"title": tag}, tag) for tag in tags],
-                    resources=resources,
-                    note_links=note_links,
-                    original_id=item.stem,
+                parent.child_notes.append(
+                    imf.Note(
+                        {
+                            "title": item.stem,
+                            "body": body,
+                            "source_application": self.app,
+                        },
+                        tags=[imf.Tag({"title": tag}, tag) for tag in tags],
+                        resources=resources,
+                        note_links=note_links,
+                        original_id=item.stem,
+                    )
                 )
-            )
-        else:
-            new_parent = imf.Notebook(
-                {"title": item.name, **common.get_ctime_mtime_ms(item)}
-            )
-            convert(item, new_parent, root_folder=root_folder)
-            parent.child_notebooks.append(new_parent)
+            else:
+                new_parent = imf.Notebook(
+                    {"title": item.name, **common.get_ctime_mtime_ms(item)}
+                )
+                self.convert_folder(item, new_parent)
+                parent.child_notebooks.append(new_parent)

@@ -1,19 +1,15 @@
 """Importer for many (note) formats to Joplin."""
 
 import argparse
-from datetime import datetime
 import importlib
 import logging
 from pathlib import Path
 import pkgutil
 
-import pypandoc
-
 import api_helper
 import apps
-import common
+import converter
 import importer
-import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
@@ -49,85 +45,48 @@ def setup_logging(log_to_file):
     LOGGER.addHandler(console_handler)
 
 
-def convert_folder(folder: Path, parent: imf.Notebook):
-    """Default conversion function for folders."""
-    for item in folder.iterdir():
-        if item.is_file():
-            try:
-                convert_file(item, parent)
-                LOGGER.debug(f"ok   {item.name}")
-            except Exception as exc:  # pylint: disable=broad-except
-                LOGGER.debug(f"fail {item.name}: {str(exc).strip()[:120]}")
-        else:
-            new_parent = imf.Notebook(
-                {"title": item.name, **common.get_ctime_mtime_ms(item)}
-            )
-            convert_folder(item, new_parent)
-            parent.child_notebooks.append(new_parent)
-
-
-def convert_file(file_: Path, parent: imf.Notebook):
-    """Default conversion function for files. Uses pandoc directly."""
-    if file_.suffix in (".md", ".txt"):
-        note_body = file_.read_text()
-    else:
-        # markdown output formats:
-        # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-        # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
-        note_body = pypandoc.convert_file(file_, "commonmark_x")
-    parent.child_notes.append(
-        imf.Note(
-            {
-                "title": file_.stem,
-                "body": note_body,
-                **common.get_ctime_mtime_ms(file_),
-                "source_application": "joplin_custom_importer",
-            }
-        )
-    )
-
-
 def convert_all_inputs(inputs, app):
-    # parent notebook
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    source_app = "Joplin Custom Importer" if app is None else app
-    parent = imf.Notebook({"title": f"{now} - Import from {source_app}"})
-    for single_input in inputs:
-        # Convert the input data to an intermediate representation
-        # that can be used by the importer later.
-        # Try to use an app specific converter. If there is none,
-        # fall back to the default converter.
-        try:
-            module = importlib.import_module(f"apps.{app}")
-            conversion_function = module.convert
-        except ModuleNotFoundError as exc:
-            if str(exc) == f"No module named 'apps.{app}'":
-                conversion_function = (
-                    convert_file if single_input.is_file() else convert_folder
-                )
-            else:
-                raise exc  # this is unexpected -> reraise
-        # TODO: Children are added to the parent node / node tree implicitly.
-        # This is an anti-pattern, but works for now.
-        conversion_function(single_input, parent)
+    # Convert the input data to an intermediate representation
+    # that can be used by the importer later.
+    # Try to use an app specific converter. If there is none,
+    # fall back to the default converter.
+    try:
+        module = importlib.import_module(f"apps.{app}")
+        converter_ = module.Converter(app)
+    except ModuleNotFoundError as exc:
+        if str(exc) == f"No module named 'apps.{app}'":
+            converter_ = converter.DefaultConverter(app)
+        else:
+            raise exc  # this is unexpected -> reraise
+    # TODO: Children are added to the parent node / node tree implicitly.
+    # This is an anti-pattern, but works for now.
+    parent = converter_.convert_multiple(inputs)
     return parent
 
 
-def get_import_stats(parent, stats=None):
+def get_import_stats(parents, stats=None):
     if stats is None:
-        stats = {"notebooks": 1, "notes": 0, "resources": 0, "tags": 0, "note_links": 0}
+        stats = {
+            "notebooks": len(parents),
+            "notes": 0,
+            "resources": 0,
+            "tags": 0,
+            "note_links": 0,
+        }
 
-    # iterate through all notebooks
-    for notebook in parent.child_notebooks:
-        get_import_stats(notebook, stats)
+    # iterate through all separate inputs
+    for parent in parents:
+        # iterate through all notebooks
+        for notebook in parent.child_notebooks:
+            get_import_stats([notebook], stats)
 
-    # assemble stats
-    stats["notebooks"] += len(parent.child_notebooks)
-    stats["notes"] += len(parent.child_notes)
-    for note in parent.child_notes:
-        stats["resources"] += len(note.resources)
-        stats["tags"] += len(note.tags)
-        stats["note_links"] += len(note.note_links)
+        # assemble stats
+        stats["notebooks"] += len(parent.child_notebooks)
+        stats["notes"] += len(parent.child_notes)
+        for note in parent.child_notes:
+            stats["resources"] += len(note.resources)
+            stats["tags"] += len(note.tags)
+            stats["note_links"] += len(note.note_links)
 
     return stats
 
@@ -184,8 +143,8 @@ def main():
             return
 
     LOGGER.info("Start parsing")
-    note_tree = convert_all_inputs(args.input, args.app)
-    stats = get_import_stats(note_tree)
+    root_notebooks = convert_all_inputs(args.input, args.app)
+    stats = get_import_stats(root_notebooks)
     if stats == {
         "notebooks": 1,
         "notes": 0,
@@ -199,11 +158,12 @@ def main():
 
     if not args.dry_run:
         LOGGER.info("Start import to Joplin")
-        joplin_importer = importer.JoplinImporter(api)
-        joplin_importer.import_notebook(note_tree)
-        # We need another pass, since at the first pass
-        # target note IDs are unknown.
-        joplin_importer.link_notes(note_tree)
+        for note_tree in root_notebooks:
+            joplin_importer = importer.JoplinImporter(api)
+            joplin_importer.import_notebook(note_tree)
+            # We need another pass, since at the first pass
+            # target note IDs are unknown.
+            joplin_importer.link_notes(note_tree)
         LOGGER.info(
             "Imported notes to Joplin successfully. "
             "Please verify that everything was imported."
