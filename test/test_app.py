@@ -65,6 +65,12 @@ class Apps(Base):
         stats = self.get_stats([TEST_INPUTS / "simplenote"], "simplenote")
         self.assert_stats(stats, notes=2, tags=2, note_links=1)
 
+    def test_synology_note_station(self):
+        stats = self.get_stats(
+            [TEST_INPUTS / "synology_note_station"], "synology_note_station"
+        )
+        self.assert_stats(stats, notebooks=3, notes=4, tags=6, resources=2)
+
     def test_tiddlywiki(self):
         # TODO
         self.skipTest("no public test data yet")

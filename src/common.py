@@ -7,6 +7,8 @@ import re
 import tempfile
 import time
 
+import pypandoc
+
 
 LOGGER = logging.getLogger("joplin_custom_importer")
 
@@ -15,7 +17,23 @@ LOGGER = logging.getLogger("joplin_custom_importer")
 # operations on note body
 ###########################################################
 
-MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]+)\]\(([^)]+)\)")
+
+def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, str]]):
+    """Try to transfer values from one to another dict if they exist."""
+    for key in keys:
+        if isinstance(key, tuple):
+            source_key, target_key = key
+        else:
+            source_key = target_key = key
+        if (value := source.get(source_key)) is not None:
+            target[target_key] = value
+
+
+###########################################################
+# operations on note body
+###########################################################
+
+MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]*)\]\(([^)]+)\)")
 WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
 
 
@@ -44,6 +62,13 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
         if any(word.startswith(char) for char in start_characters) and len(word) > 1:
             tags.add(word[1:])
     return list(tags)
+
+
+def html_text_to_markdown(html_text: str) -> str:
+    # Don't use "commonmark_x". There would be too many noise.
+    return pypandoc.convert_text(
+        html_text, "markdown_strict+pipe_tables-raw_html", format="html"
+    )
 
 
 ###########################################################

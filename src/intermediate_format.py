@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
+import puremagic
 
 
 @dataclass
@@ -28,19 +29,15 @@ class Resource:
     original_text: str | None = None
     # [title_or_filename](:/resource_id)
     title: str | None = None
+    is_image: bool = field(init=False)
 
-    @property
-    def is_image(self) -> bool:
-        # Just take the supported image types of Joplin:
+    def __post_init__(self):
+        # Supported image types of Joplin:
         # https://github.com/laurent22/joplin/blob/a3eec19b32684b86202c751c94c092c7339c6307/packages/lib/models/utils/resourceUtils.ts#L40-L43
-        return self.filename.suffix.lower() in (
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".gif",
-            ".svg",
-            ".webp",
-            ".avif",
+        # We can't simply match by extension, because sometimes the files/images
+        # are stored as binary blob without extension.
+        self.is_image = puremagic.from_file(self.filename, mime=True).startswith(
+            "image/"
         )
 
 
@@ -72,3 +69,4 @@ class Notebook:
     data: dict
     child_notebooks: list[Notebook] = field(default_factory=list)
     child_notes: list[Note] = field(default_factory=list)
+    original_id: str | None = None

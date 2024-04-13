@@ -1,5 +1,6 @@
 joppy
 platformdirs
+puremagic
 pypandoc_binary
 python-frontmatter
 pytodotxt

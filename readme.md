@@ -56,6 +56,7 @@ There are many more apps supported implicitly if they export text files to a fol
 | [Notion](https://www.notion.so/) | notion | [link](https://www.notion.so/de-de/help/export-your-content) [1] |
 | [Obsidian](https://obsidian.md/) | obsidian | |
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
+| [Synology Note Station](https://www.synology.com/en-global/dsm/feature/note_station) | synology_note_stattion | [link](https://kb.synology.com/en-global/DSM/help/NoteStation/note_station_managing_notes?version=7#t7) |
 | [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [2] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
 | [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [3] |

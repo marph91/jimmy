@@ -48,7 +48,7 @@ class JoplinImporter:
             )
             if resource.original_text is None:
                 # append
-                note.data["body"] = f"{note.data['body']}\n{resource_markdown}"
+                note.data["body"] = f"{note.data.get('body', '')}\n{resource_markdown}"
             else:
                 # replace existing link
                 note.data["body"] = note.data["body"].replace(

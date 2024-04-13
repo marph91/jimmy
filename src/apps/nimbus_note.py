@@ -3,8 +3,7 @@
 from pathlib import Path
 import zipfile
 
-import pypandoc
-
+import common
 import converter
 import intermediate_format as imf
 
@@ -22,10 +21,7 @@ class Converter(converter.BaseConverter):
                 for html_note in html_notes:
                     with zip_ref.open(html_note) as zip_note:
                         note_body_html = zip_note.read().decode("UTF-8")
-                    # Don't use "commonmark_x". There would be too many noise.
-                    note_body_markdown = pypandoc.convert_text(
-                        note_body_html, "markdown_strict-raw_html", format="html"
-                    )
+                    note_body_markdown = common.html_text_to_markdown(note_body_html)
                     note_joplin = imf.Note(
                         {
                             "title": file_.stem,

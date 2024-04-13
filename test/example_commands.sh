@@ -19,5 +19,6 @@ python src/joplin_custom_importer.py test_inputs/dynalist --app dynalist
 python src/joplin_custom_importer.py test_inputs/Google\ Keep --app google_keep
 python src/joplin_custom_importer.py test_inputs/obsidian_vault --app obsidian
 python src/joplin_custom_importer.py test_inputs/simplenote --app simplenote
+python src/joplin_custom_importer.py test_inputs/synology_note_station --app synology_note_station
 python src/joplin_custom_importer.py test_inputs/todo_txt/examples_from_readme.txt --app todo_txt
 python src/joplin_custom_importer.py test_inputs/todoist/Privates.csv --app todoist
