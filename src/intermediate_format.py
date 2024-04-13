@@ -30,7 +30,7 @@ class Resource:
     title: str | None = None
 
     @property
-    def is_image(self):
+    def is_image(self) -> bool:
         # Just take the supported image types of Joplin:
         # https://github.com/laurent22/joplin/blob/a3eec19b32684b86202c751c94c092c7339c6307/packages/lib/models/utils/resourceUtils.ts#L40-L43
         return self.filename.suffix.lower() in (

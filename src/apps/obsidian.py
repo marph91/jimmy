@@ -59,6 +59,8 @@ class Converter(converter.BaseConverter):
         self.convert_folder(file_or_folder, self.root_notebook)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
+        assert self.root_path is not None  # for mypy
+
         for item in folder.iterdir():
             if item.is_dir() and item.name == ".obsidian":
                 continue  # ignore the internal obsidian folder

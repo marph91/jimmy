@@ -10,12 +10,13 @@ import api_helper
 import apps
 import converter
 import importer
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("joplin_custom_importer")
 
 
-def setup_logging(log_to_file):
+def setup_logging(log_to_file: bool):
     # mute other logger
     logging.getLogger("pypandoc").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
@@ -45,7 +46,7 @@ def setup_logging(log_to_file):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs, app):
+def convert_all_inputs(inputs: list[Path], app: str):
     # Convert the input data to an intermediate representation
     # that can be used by the importer later.
     # Try to use an app specific converter. If there is none,
@@ -64,7 +65,7 @@ def convert_all_inputs(inputs, app):
     return parent
 
 
-def get_import_stats(parents, stats=None):
+def get_import_stats(parents: list[imf.Notebook], stats: dict | None = None) -> dict:
     if stats is None:
         stats = {
             "notebooks": len(parents),

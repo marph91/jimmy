@@ -50,6 +50,8 @@ class Converter(converter.BaseConverter):
         self.convert_folder(self.root_path, self.root_notebook)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
+        assert self.root_path is not None  # for mypy
+
         for item in folder.iterdir():
             if item.is_file():
                 # We get a zip with opml and txt. Only advantage of opml over txt is

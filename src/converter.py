@@ -12,11 +12,11 @@ import intermediate_format as imf
 
 class BaseConverter:
 
-    def __init__(self, app):
+    def __init__(self, app: str):
         self.logger = logging.getLogger("joplin_custom_importer")
         self.app = "Joplin Custom Importer" if app is None else app
-        self.root_notebook = None
-        self.root_path = None
+        self.root_notebook: imf.Notebook
+        self.root_path: Path | None = None
 
     def prepare_input(self, input_: Path) -> Path | None:
         """Prepare the input for further processing. For example extract an archive."""

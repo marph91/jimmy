@@ -19,11 +19,11 @@ MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]+)\]\(([^)]+)\)")
 WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
 
 
-def get_markdown_links(text: str):
+def get_markdown_links(text: str) -> list:
     return MARKDOWN_LINK_REGEX.findall(text)
 
 
-def get_wikilink_links(text: str):
+def get_wikilink_links(text: str) -> list:
     return WIKILINK_LINK_REGEX.findall(text)
 
 

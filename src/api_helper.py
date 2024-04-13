@@ -53,7 +53,7 @@ def request_api_token():
     return None
 
 
-def get_api() -> Api | None:
+def get_api() -> Api:
     if API_TOKEN_FILE.is_file():
         # token from config dir
         api_token: str | None = API_TOKEN_FILE.read_text()
