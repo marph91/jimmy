@@ -52,9 +52,11 @@ def convert_all_inputs(inputs: list[Path], app: str):
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
     try:
+        LOGGER.debug(f"Try converting with converter {app}")
         module = importlib.import_module(f"apps.{app}")
         converter_ = module.Converter(app)
     except ModuleNotFoundError as exc:
+        LOGGER.debug(f"Fallback to default converter: {exc}")
         if str(exc) == f"No module named 'apps.{app}'":
             converter_ = converter.DefaultConverter(app)
         else:
