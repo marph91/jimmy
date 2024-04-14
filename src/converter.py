@@ -27,8 +27,9 @@ class BaseConverter:
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            index_suffix = "" if len(files_or_folders) == 1 else f" ({input_index})"
             self.root_notebook = imf.Notebook(
-                {"title": f"{now} - Import from {self.app} ({input_index})"}
+                {"title": f"{now} - Import from {self.app}{index_suffix}"}
             )
             self.convert(file_or_folder)
             notebooks.append(self.root_notebook)

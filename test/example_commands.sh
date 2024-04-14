@@ -22,3 +22,4 @@ python src/joplin_custom_importer.py test_inputs/simplenote --app simplenote
 python src/joplin_custom_importer.py test_inputs/synology_note_station --app synology_note_station
 python src/joplin_custom_importer.py test_inputs/todo_txt/examples_from_readme.txt --app todo_txt
 python src/joplin_custom_importer.py test_inputs/todoist/Privates.csv --app todoist
+python src/joplin_custom_importer.py test_inputs/zoho_notebook --app zoho_notebook

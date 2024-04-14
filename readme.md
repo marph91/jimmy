@@ -60,17 +60,14 @@ There are many more apps supported implicitly if they export text files to a fol
 | [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [2] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
 | [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [3] |
+| [Zoho Notebook](https://www.zoho.com/notebook/) | zoho_notebook | [link](https://help.zoho.com/portal/en/kb/notebook/import-and-export/articles/export-all-your-notecards-from-notebook) [4] |
 
 What is migrated (in most cases)?
 
-- Notes and their content
+- Notes incl. title, content and metadata
 - Tags / Labels
 - Resources / Attachments
 - Internal note links
-- Creation and modification date
-
-What is not handled (yet)?
-
 - Markdown Front Matter
 - Inline tags
 
@@ -88,6 +85,11 @@ If something else is not working, please check the issues first. If you can't fi
 - Finished todo's are not exported at all.
 - Subtasks are converted to regular notes. I. e. they lose their indentation.
 - Markdown is not rendered in note titles.
+
+[4]
+
+- Export as HTML.
+- Checklists and tables are not properly converted.
 
 ## Why Joplin's data API is used?
 

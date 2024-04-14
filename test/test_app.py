@@ -87,6 +87,12 @@ class Apps(Base):
         stats = self.get_stats([TEST_INPUTS / "todoist/Privates.csv"], "todoist")
         self.assert_stats(stats, notebooks=6, notes=21, tags=25)
 
+    def test_zoho_notebook(self):
+        stats = self.get_stats([TEST_INPUTS / "zoho_notebook"], "zoho_notebook")
+        self.assert_stats(
+            stats, notebooks=4, notes=5, resources=2, tags=2, note_links=3
+        )
+
 
 class Arbitrary(Base):
     arbitrary_folder = TEST_INPUTS / "arbitrary_folder"
