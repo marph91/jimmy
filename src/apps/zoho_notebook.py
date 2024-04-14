@@ -11,6 +11,39 @@ import converter
 import intermediate_format as imf
 
 
+def clean_tables(soup):
+    for table in soup.find_all("table"):
+        for row in table.find_all("tr"):
+            for td in row.find_all("td"):
+                # remove all tags from table data
+                text_only = td.text
+                td.clear()
+                td.append(text_only)
+        # tables seem to be headerless always
+        #         # make first row to header
+        #         if row_index == 0:
+        #             td.name = "th"
+        # # remove "tbody"
+        # body = table.find("tbody")
+        # body.unwrap()
+
+
+def clean_task_lists(soup):
+    # TODO: Not sure why the cleaned task lists still don't work.
+    # It works online. Maybe caused by an old pandoc version.
+    for task_list in soup.find_all("div", class_="checklist"):
+        task_list.name = "ul"
+        # remove the spans
+        for span in task_list.find_all("span"):
+            span.unwrap()
+        # remove the first divs
+        for child in task_list.children:
+            child.unwrap()
+        # convert the second divs to list items
+        for child in task_list.children:
+            child.name = "li"
+
+
 class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
@@ -118,10 +151,12 @@ class Converter(converter.BaseConverter):
         # - checklists are note working, even with "+task_lists"
         # - tables are not working
         if soup.body is not None:
-            note_data["body"] = common.html_text_to_markdown(str(soup.body))
+            clean_tables(soup)
+            clean_task_lists(soup)
+            note_data["body"] = common.html_text_to_markdown(str(soup))
 
-        # resources and internal links
-        resources, note_links = self.parse_links(note_data["body"])
+            # resources and internal links
+            resources, note_links = self.parse_links(note_data["body"])
 
         # create note
         parent_notebook.child_notes.append(

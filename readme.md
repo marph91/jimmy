@@ -89,7 +89,7 @@ If something else is not working, please check the issues first. If you can't fi
 [4]
 
 - Export as HTML.
-- Checklists and tables are not properly converted.
+- Checklists are converted to plain lists. This might change with a newer pandoc version.
 
 ## Why Joplin's data API is used?
 
