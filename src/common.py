@@ -53,7 +53,7 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
     ['tag']
     >>> get_inline_tags("#tag abc", ["#"])
     ['tag']
-    >>> get_inline_tags("#tag @abc", ["#", "@"])
+    >>> sorted(get_inline_tags("#tag @abc", ["#", "@"]))
     ['abc', 'tag']
     """
     # TODO: can possibly be combined with todoist.split_labels()
