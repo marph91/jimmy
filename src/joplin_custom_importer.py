@@ -1,6 +1,7 @@
 """Importer for many (note) formats to Joplin."""
 
 import argparse
+from dataclasses import dataclass
 import importlib
 import logging
 from pathlib import Path
@@ -67,15 +68,18 @@ def convert_all_inputs(inputs: list[Path], app: str):
     return parent
 
 
-def get_import_stats(parents: list[imf.Notebook], stats: dict | None = None) -> dict:
+@dataclass
+class Stats:
+    notebooks: int = 0
+    notes: int = 0
+    resources: int = 0
+    tags: int = 0
+    note_links: int = 0
+
+
+def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) -> dict:
     if stats is None:
-        stats = {
-            "notebooks": len(parents),
-            "notes": 0,
-            "resources": 0,
-            "tags": 0,
-            "note_links": 0,
-        }
+        stats = Stats(len(parents))
 
     # iterate through all separate inputs
     for parent in parents:
@@ -84,12 +88,12 @@ def get_import_stats(parents: list[imf.Notebook], stats: dict | None = None) -> 
             get_import_stats([notebook], stats)
 
         # assemble stats
-        stats["notebooks"] += len(parent.child_notebooks)
-        stats["notes"] += len(parent.child_notes)
+        stats.notebooks += len(parent.child_notebooks)
+        stats.notes += len(parent.child_notes)
         for note in parent.child_notes:
-            stats["resources"] += len(note.resources)
-            stats["tags"] += len(note.tags)
-            stats["note_links"] += len(note.note_links)
+            stats.resources += len(note.resources)
+            stats.tags += len(note.tags)
+            stats.note_links += len(note.note_links)
 
     return stats
 

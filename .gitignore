@@ -1,6 +1,7 @@
 __pycache__
 *.AppImage
 joplin_custom_importer.log
+.cache
 .obsidian
 build
 dist

@@ -1,3 +1,0 @@
-plaintext content
-
-multiple lines

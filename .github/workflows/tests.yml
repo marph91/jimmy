@@ -13,5 +13,5 @@ jobs:
           python-version: "3.11"
       - name: Install pip dependencies
         run: pip install -r requirements-dev.txt
-      - name: Run linting
+      - name: Run tests
         run: ./test.sh
