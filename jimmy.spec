@@ -23,7 +23,7 @@ hiddenimports = list_python_files(Path("src/apps"))
 
 
 a = Analysis(
-    ['src/joplin_custom_importer.py'],
+    ['src/jimmy.py'],
     pathex=[],
     binaries=[],
     datas=datas,
@@ -42,7 +42,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='joplin_custom_importer',
+    name='jimmy',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

@@ -1,4 +1,4 @@
-# joplin-custom-importer
+# jimmy
 
 Simple tool to import your data to Joplin.
 
@@ -6,34 +6,34 @@ Simple tool to import your data to Joplin.
 
 :exclamation: Make sure your data is imported properly after the script finished.
 
-[![build](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml)
-[![lint](https://github.com/marph91/joplin-custom-importer/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/lint.yml)
-[![tests](https://github.com/marph91/joplin-custom-importer/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/joplin-custom-importer/actions/workflows/tests.yml)
+[![build](https://github.com/marph91/jimmy/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/build.yml)
+[![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
+[![tests](https://github.com/marph91/jimmy/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/tests.yml)
 
 ## Usage
 
 This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 
-Grab the executable from the [build workflow](https://github.com/marph91/joplin-custom-importer/actions/workflows/build.yml).
+Grab the executable from the [build workflow](https://github.com/marph91/jimmy/actions/workflows/build.yml).
 
 ```bash
 # import a single file supported by pandoc
-joplin_custom_importer libre_office_document.odt
+jimmy libre_office_document.odt
 
 # import multiple files
-joplin_custom_importer plaintext.txt markdown.md
+jimmy plaintext.txt markdown.md
 
 # import all files in a folder
-joplin_custom_importer path/to/folder
+jimmy path/to/folder
 
 # Import all files in a folder. Delete all notes before. I. e. start with a clean workspace.
-joplin_custom_importer path/to/folder --clear-notes
+jimmy path/to/folder --clear-notes
 
 # import a clipto export
-joplin_custom_importer clipto_backup_240401_105154.json --app clipto
+jimmy clipto_backup_240401_105154.json --app clipto
 
 # import a Google Keep export
-joplin_custom_importer takeout-20240401T160516Z-001.zip --app google_keep
+jimmy takeout-20240401T160516Z-001.zip --app google_keep
 ```
 
 After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.

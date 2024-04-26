@@ -7,7 +7,7 @@ import requests
 import intermediate_format as imf
 
 
-LOGGER = logging.getLogger("joplin_custom_importer")
+LOGGER = logging.getLogger("jimmy")
 
 
 class JoplinImporter:

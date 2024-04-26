@@ -10,7 +10,7 @@ import time
 import pypandoc
 
 
-LOGGER = logging.getLogger("joplin_custom_importer")
+LOGGER = logging.getLogger("jimmy")
 
 
 ###########################################################

@@ -10,12 +10,10 @@ import platformdirs
 import requests
 
 
-LOGGER = logging.getLogger("joplin_custom_importer")
+LOGGER = logging.getLogger("jimmy")
 
 
-API_TOKEN_FILE = (
-    Path(platformdirs.user_config_dir("joplin-custom-importer")) / ".joplin_api_token"
-)
+API_TOKEN_FILE = Path(platformdirs.user_config_dir("jimmy")) / ".joplin_api_token"
 
 
 def request_api_token():

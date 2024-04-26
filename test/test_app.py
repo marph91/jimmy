@@ -11,7 +11,7 @@ import requests
 # ensure that we can access the code
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-import joplin_custom_importer as jci
+import jimmy
 
 
 @dataclass
@@ -27,12 +27,12 @@ class Config:
 
     @property
     def expected_output_class(self):
-        return jci.Stats(**self.expected_output)
+        return jimmy.Stats(**self.expected_output)
 
 
 def get_stats(inputs, app):
-    note_tree = jci.convert_all_inputs(inputs, app)
-    return jci.get_import_stats(note_tree)
+    note_tree = jimmy.convert_all_inputs(inputs, app)
+    return jimmy.get_import_stats(note_tree)
 
 
 TEST_CASES = []

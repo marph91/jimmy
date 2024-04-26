@@ -13,7 +13,7 @@ import intermediate_format as imf
 class BaseConverter:
 
     def __init__(self, app: str):
-        self.logger = logging.getLogger("joplin_custom_importer")
+        self.logger = logging.getLogger("jimmy")
         self.app = "Joplin Custom Importer" if app is None else app
         self.root_notebook: imf.Notebook
         self.root_path: Path | None = None
@@ -56,7 +56,7 @@ class DefaultConverter(BaseConverter):
                     "title": file_.stem,
                     "body": note_body,
                     **common.get_ctime_mtime_ms(file_),
-                    "source_application": "joplin_custom_importer",
+                    "source_application": "jimmy",
                 }
             )
         )

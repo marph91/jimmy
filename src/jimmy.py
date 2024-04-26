@@ -14,7 +14,7 @@ import importer
 import intermediate_format as imf
 
 
-LOGGER = logging.getLogger("joplin_custom_importer")
+LOGGER = logging.getLogger("jimmy")
 
 
 def setup_logging(log_to_file: bool):
@@ -34,7 +34,7 @@ def setup_logging(log_to_file: bool):
         file_handler_formatter = logging.Formatter(
             "%(asctime)s [%(levelname)-5.5s]  %(message)s"
         )
-        file_handler = logging.FileHandler("joplin_custom_importer.log", mode="w")
+        file_handler = logging.FileHandler("jimmy.log", mode="w")
         file_handler.setFormatter(file_handler_formatter)
         file_handler.setLevel(logging.DEBUG)
         LOGGER.addHandler(file_handler)
