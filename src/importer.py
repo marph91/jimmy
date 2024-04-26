@@ -22,7 +22,7 @@ class JoplinImporter:
     def add_tag(self, tag: imf.Tag) -> str:
         try:
             tag_id = self.api.add_tag(**tag.data)
-            self.tag_map[tag.original_id] = tag_id
+            self.tag_map[tag.reference_id] = tag_id
             return tag_id
         except requests.exceptions.HTTPError:
             # Tag exists already. Search for it.
@@ -33,7 +33,7 @@ class JoplinImporter:
                 if joplin_tag.title == tag.data["title"].lower()
             ]
             assert len(matching_tags) == 1
-            self.tag_map[tag.original_id] = matching_tags[0].id
+            self.tag_map[tag.reference_id] = matching_tags[0].id
             return matching_tags[0].id
 
     def import_note(self, note: imf.Note):
@@ -58,10 +58,10 @@ class JoplinImporter:
         note_id = self.api.add_note(**note.data)
         # needed to properly link notes later
         note.joplin_id = note_id
-        self.note_id_map[note.original_id] = note_id
+        self.note_id_map[note.reference_id] = note_id
 
         for tag in note.tags:
-            tag_id = self.tag_map.get(tag.original_id, self.add_tag(tag))
+            tag_id = self.tag_map.get(tag.reference_id, self.add_tag(tag))
             self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
 
     def import_notebook(self, notebook: imf.Notebook):

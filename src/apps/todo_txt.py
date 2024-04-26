@@ -51,6 +51,6 @@ class Converter(converter.BaseConverter):
             tags_string += [f"todotxt-project-{project}" for project in task.projects]
 
             joplin_note = imf.Note(
-                note_data, tags=[imf.Tag({"title": tag}, tag) for tag in tags_string]
+                note_data, tags=[imf.Tag({"title": tag}) for tag in tags_string]
             )
             self.root_notebook.child_notes.append(joplin_note)

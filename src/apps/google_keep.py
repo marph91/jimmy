@@ -51,7 +51,7 @@ class Converter(converter.BaseConverter):
                     "source_application": self.app,
                 },
                 # Labels / tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag({"title": tag}, tag) for tag in tags_keep],
+                tags=[imf.Tag({"title": tag}) for tag in tags_keep],
                 resources=resources_keep,
             )
             self.root_notebook.child_notes.append(note_joplin)

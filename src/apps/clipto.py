@@ -29,6 +29,6 @@ class Converter(converter.BaseConverter):
                     "user_updated_time": iso_to_unix_ms(note_clipto["updated"]),
                     "source_application": self.app,
                 },
-                tags=[tag for tag in tags if tag.original_id in note_clipto["tagIds"]],
+                tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
             )
             self.root_notebook.child_notes.append(note_joplin)

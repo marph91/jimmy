@@ -75,10 +75,10 @@ class Converter(converter.BaseConverter):
                 note_joplin_data,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[
-                    imf.Tag({"title": tag}, tag)
+                    imf.Tag({"title": tag})
                     for tag in split_tags(note_tiddlywiki.get("tags", ""))
                 ],
             )
-            if any(t.original_id.startswith("$:/tags/") for t in note_joplin.tags):
+            if any(t.reference_id.startswith("$:/tags/") for t in note_joplin.tags):
                 continue  # skip notes with special tags
             self.root_notebook.child_notes.append(note_joplin)

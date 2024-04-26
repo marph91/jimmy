@@ -122,7 +122,7 @@ class Converter(converter.BaseConverter):
                     tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
                     joplin_note = imf.Note(
                         note_data,
-                        tags=[imf.Tag({"title": tag}, tag) for tag in tags_string],
+                        tags=[imf.Tag({"title": tag}) for tag in tags_string],
                     )
                     current_section.child_notes.append(joplin_note)
                 elif row["TYPE"] == "":

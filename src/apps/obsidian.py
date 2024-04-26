@@ -101,12 +101,11 @@ class Converter(converter.BaseConverter):
                             "source_application": self.app,
                         },
                         tags=[
-                            imf.Tag({"title": tag}, tag)
+                            imf.Tag({"title": tag})
                             for tag in inline_tags + frontmatter_tags
                         ],
                         resources=resources,
                         note_links=note_links,
-                        original_id=item.stem,
                     )
                 )
             else:

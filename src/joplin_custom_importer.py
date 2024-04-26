@@ -77,7 +77,7 @@ class Stats:
     note_links: int = 0
 
 
-def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) -> dict:
+def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) -> Stats:
     if stats is None:
         stats = Stats(len(parents))
 
@@ -152,13 +152,7 @@ def main():
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(args.input, args.app)
     stats = get_import_stats(root_notebooks)
-    if stats == {
-        "notebooks": 1,
-        "notes": 0,
-        "resources": 0,
-        "tags": 0,
-        "note_links": 0,
-    }:
+    if stats == Stats():
         LOGGER.info("Nothing to import.")
         return
     LOGGER.info(f"Finished parsing: {stats}")

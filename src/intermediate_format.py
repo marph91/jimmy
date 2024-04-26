@@ -46,7 +46,15 @@ class Tag:
     """Represents a tag."""
 
     data: dict
-    original_id: str
+    original_id: str | None = None
+
+    @property
+    def reference_id(self) -> str:
+        """
+        Reference ID of the original app. Might be not unique,
+        but this is sufficient for now.
+        """
+        return self.original_id or self.data["title"]
 
 
 @dataclass
@@ -60,6 +68,14 @@ class Note:
     note_links: list[NoteLink] = field(default_factory=list)
     original_id: str | None = None
     joplin_id: str | None = None
+
+    @property
+    def reference_id(self) -> str:
+        """
+        Reference ID of the original app. Might be not unique,
+        but this is sufficient for now.
+        """
+        return self.original_id or self.data["title"]
 
 
 @dataclass

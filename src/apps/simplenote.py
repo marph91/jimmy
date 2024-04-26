@@ -58,7 +58,7 @@ class Converter(converter.BaseConverter):
                     "source_application": self.app,
                 },
                 # Tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag({"title": tag}, tag) for tag in note_simplenote["tags"]],
+                tags=[imf.Tag({"title": tag}) for tag in note_simplenote["tags"]],
                 note_links=note_links,
                 original_id=note_simplenote["id"],
             )

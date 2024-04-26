@@ -71,10 +71,9 @@ class Converter(converter.BaseConverter):
                             "body": body,
                             "source_application": self.app,
                         },
-                        tags=[imf.Tag({"title": tag}, tag) for tag in tags],
+                        tags=[imf.Tag({"title": tag}) for tag in tags],
                         resources=resources,
                         note_links=note_links,
-                        original_id=item.stem,
                     )
                 )
             else:

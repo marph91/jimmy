@@ -162,9 +162,7 @@ class Converter(converter.BaseConverter):
         parent_notebook.child_notes.append(
             imf.Note(
                 note_data,
-                tags=[
-                    imf.Tag({"title": tag}, tag) for tag in metadata.get("data-tag", [])
-                ],
+                tags=[imf.Tag({"title": tag}) for tag in metadata.get("data-tag", [])],
                 resources=resources,
                 note_links=note_links,
                 original_id=file_.stem,
