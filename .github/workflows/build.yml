@@ -6,6 +6,8 @@ jobs:
   build:
     name: build
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -20,13 +22,13 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Build executable with pyinstaller
         run: python -m PyInstaller jimmy.spec
-      - uses: actions/upload-artifact@v4
-        # upload artifacts only if it's a release
-        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
-        with:
-          name: jimmy-${{ matrix.os }}
-          path: ./dist/jimmy*
       - name: Smoke test
         run: |
           ./dist/jimmy test_inputs --dry-run
           ./dist/jimmy test_inputs/obsidian_vault --app obsidian --dry-run
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        # release only if there is a release tag
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          files: ./dist/jimmy*
