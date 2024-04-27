@@ -22,6 +22,11 @@ def list_python_files(folder):
 hiddenimports = list_python_files(Path("src/apps"))
 
 
+# Generate the executable name based on OS.
+import platform
+executable_name = f"jimmy-{platform.system().lower()}"
+
+
 a = Analysis(
     ['src/jimmy.py'],
     pathex=[],
@@ -42,7 +47,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='jimmy',
+    name=executable_name,
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

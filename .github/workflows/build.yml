@@ -28,8 +28,8 @@ jobs:
         run: python test/test_app.py
       - name: Smoke test
         run: |
-          ./dist/jimmy .cache/arbitrary_folder/arbitrary_folder --dry-run
-          ./dist/jimmy .cache/obsidian/obsidian_vault --app obsidian --dry-run
+          ./dist/jimmy* .cache/arbitrary_folder/arbitrary_folder --dry-run
+          ./dist/jimmy* .cache/obsidian/obsidian_vault --app obsidian --dry-run
       - name: Release
         uses: softprops/action-gh-release@v2
         # release only if there is a release tag
