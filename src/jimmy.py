@@ -152,7 +152,7 @@ def main():
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(args.input, args.app)
     stats = get_import_stats(root_notebooks)
-    if stats == Stats():
+    if stats == Stats(notebooks=1):
         LOGGER.info("Nothing to import.")
         return
     LOGGER.info(f"Finished parsing: {stats}")
