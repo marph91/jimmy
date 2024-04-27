@@ -1,15 +1,11 @@
 from dataclasses import dataclass
 import json
 from pathlib import Path
-import sys
 import unittest
 import zipfile
 
 from parameterized import parameterized
 import requests
-
-# ensure that we can access the code
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import jimmy
 
