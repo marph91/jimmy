@@ -29,7 +29,7 @@ class Converter(converter.BaseConverter):
 
         for note_simplenote in input_json["activeNotes"]:
             # title is the first line
-            title, body = note_simplenote["content"].split("\n", maxsplit=1)
+            title, body = note_simplenote["content"].split("\r\n", maxsplit=1)
 
             note_links = []
             for file_prefix, description, url in common.get_markdown_links(body):
@@ -58,7 +58,9 @@ class Converter(converter.BaseConverter):
                     "source_application": self.app,
                 },
                 # Tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag({"title": tag}) for tag in note_simplenote["tags"]],
+                tags=[
+                    imf.Tag({"title": tag}) for tag in note_simplenote.get("tags", [])
+                ],
                 note_links=note_links,
                 original_id=note_simplenote["id"],
             )

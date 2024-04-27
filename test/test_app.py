@@ -66,7 +66,8 @@ download_from_dropbox()
 
 def name_func(testcase_func, param_num, param):
     config = param[0][0]
-    return f"{testcase_func.__name__}_{config.app}_{config.name or config.inputs[0]}"
+    test_name = config.name or config.inputs[0].replace(".", "_")
+    return f"{testcase_func.__name__}_{config.app}_{test_name}"
 
 
 class IntermediateFormat(unittest.TestCase):
