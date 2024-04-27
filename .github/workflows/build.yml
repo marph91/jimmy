@@ -8,6 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: write
+    env:
+      PYTHONPATH: src
     strategy:
       fail-fast: false
       matrix:
@@ -25,9 +27,7 @@ jobs:
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
       - name: Create the test inputs (don't run the tests itself)
-        run: |
-          export PYTHONPATH="$PYTHONPATH:src"
-          python test/test_app.py
+        run: python test/test_app.py
       - name: Smoke test
         run: |
           ./dist/jimmy* .cache/arbitrary_folder/arbitrary_folder --dry-run
