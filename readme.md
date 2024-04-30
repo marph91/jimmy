@@ -1,6 +1,6 @@
 # jimmy
 
-Simple tool to import your data to Joplin.
+Tool to import your notes to Joplin.
 
 :exclamation: Should only be used if the built-in import of Joplin doesn't work.
 
@@ -14,7 +14,7 @@ Simple tool to import your data to Joplin.
 
 This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 
-Grab the executable from the [build workflow](https://github.com/marph91/jimmy/actions/workflows/build.yml).
+Grab the executable from the [release page](https://github.com/marph91/jimmy/releases/latest).
 
 ```bash
 # import a single file supported by pandoc
@@ -52,6 +52,7 @@ There are many more apps supported implicitly if they export text files to a fol
 | [clipto](https://clipto.pro/) | clipto | [mobile only](https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330) |
 | [Dynalist](https://dynalist.io/) | dynalist | [link](https://help.dynalist.io/article/79-back-up-your-data) |
 | [Google Keep](https://keep.google.com) | google_keep | [via Takeout](https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/) |
+| [Joplin](https://joplinapp.org/) | joplin | [link](https://joplinapp.org/help/apps/import_export/#exporting) |
 | [Nimbus Note / FuseBase](https://nimbusweb.me/note/) | nimbus_note | [link](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/) |
 | [Notion](https://www.notion.so/) | notion | [link](https://www.notion.so/de-de/help/export-your-content) [1] |
 | [Obsidian](https://obsidian.md/) | obsidian | |
