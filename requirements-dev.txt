@@ -6,4 +6,5 @@ parameterized
 pyinstaller
 pylint
 types-beautifulsoup4
+types-Markdown
 types-requests
