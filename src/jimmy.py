@@ -18,11 +18,13 @@ LOGGER = logging.getLogger("jimmy")
 
 
 def setup_logging(log_to_file: bool):
-    # mute other logger
+    # mute other loggers
+    # https://stackoverflow.com/a/53250066/7410886
     logging.getLogger("pypandoc").setLevel(logging.WARNING)
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("joppy").setLevel(logging.WARNING)
+    logging.getLogger("python-markdown").setLevel(logging.WARNING)
 
     # setup the root logger, but don't propagate. We will log using our own
     # log handler. See: https://stackoverflow.com/a/71365918/7410886

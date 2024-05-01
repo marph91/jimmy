@@ -7,6 +7,9 @@ import re
 import tempfile
 import time
 
+import markdown
+from markdown.treeprocessors import Treeprocessor, util
+from markdown.extensions import Extension
 import pypandoc
 
 
@@ -33,12 +36,68 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
 # operations on note body
 ###########################################################
 
-MARKDOWN_LINK_REGEX = re.compile(r"(!)?\[([^\]]*)\]\(([^)]+)\)")
-WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
+
+class LinkExtractor(Treeprocessor):
+    # We need to unescape manually. Reference: "UnescapeTreeprocessor"
+    # https://github.com/Python-Markdown/markdown/blob/3.6/markdown/treeprocessors.py#L454
+    RE = re.compile(r"{}(\d+){}".format(util.STX, util.ETX))
+
+    def _unescape(self, m: re.Match[str]) -> str:
+        return "\\" + chr(int(m.group(1)))
+
+    def unescape(self, text: str) -> str:
+        return self.RE.sub(self._unescape, text)
+
+    def run(self, doc):
+        self.md.images = []
+        self.md.links = []
+        for image in doc.findall(".//img"):
+            self.md.images.append(
+                ("!", self.unescape(image.get("alt")), image.get("src"))
+            )
+        for link in doc.findall(".//a"):
+            url = link.get("href")
+            description = link.text
+            if (title := link.get("title")) is not None:
+                # TODO: This is not robust against titles with single quotation marks.
+                url += ' "' + link.get("title", "") + '"'
+            self.md.links.append(("", link.text, url))
+
+
+class LinkExtractorExtension(Extension):
+    def extendMarkdown(self, md):
+        link_extension = LinkExtractor(md)
+        md.treeprocessors.register(link_extension, "link_extension", 15)
+
+
+MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
 
 
 def get_markdown_links(text: str) -> list:
-    return MARKDOWN_LINK_REGEX.findall(text)
+    """
+    >>> get_markdown_links("![](image.png)")
+    [('!', '', 'image.png')]
+    >>> get_markdown_links("![abc](image (1).png)")
+    [('!', 'abc', 'image (1).png')]
+    >>> get_markdown_links("[mul](tiple) [links](...)")
+    [('', 'mul', 'tiple'), ('', 'links', '...')]
+    >>> get_markdown_links("![desc \[reference\]](Image.png){#fig:leanCycle}")
+    [('!', 'desc \\\\[reference\\\\]', 'Image.png')]
+    >>> get_markdown_links('[link](internal "Example Title")')
+    [('', 'link', 'internal "Example Title"')]
+    >>> get_markdown_links('[link](#internal)')
+    [('', 'link', '#internal')]
+    >>> get_markdown_links('[link](:/custom)')
+    [('', 'link', ':/custom')]
+    >>> get_markdown_links('[weblink](https://duckduckgo.com)')
+    [('', 'weblink', 'https://duckduckgo.com')]
+    """
+    # Based on: https://stackoverflow.com/a/29280824/7410886
+    MD.convert(text)
+    return MD.images + MD.links
+
+
+WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
 
 
 def get_wikilink_links(text: str) -> list:

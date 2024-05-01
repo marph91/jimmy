@@ -14,7 +14,7 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
         original_text = f"{file_prefix}[{description}]({url})"
         if url.startswith("https://dynalist.io/d"):
             # Most likely internal link. We can only try to match against the name
-            # (that might me modified in the meantime).
+            # (that might be modified in the meantime).
             if (
                 common.find_file_recursively(root_folder, f"{description}.txt")
                 is not None

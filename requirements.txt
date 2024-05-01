@@ -1,5 +1,6 @@
 beautifulsoup4
 joppy
+markdown
 platformdirs
 puremagic
 pypandoc_binary

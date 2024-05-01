@@ -43,7 +43,7 @@ class DefaultConverter(BaseConverter):
 
     def convert_file(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
-        if file_.suffix in (".md", ".txt"):
+        if file_.suffix.lower() in (".md", ".markdown", ".txt", ".text"):
             note_body = file_.read_text()
         else:
             # markdown output formats:
