@@ -59,11 +59,12 @@ There are many more apps supported implicitly if they export text files to a fol
 | [Simplenote](https://simplenote.com/) | simplenote | [link](https://simplenote.com/help/#export) |
 | [Standard Notes](https://standardnotes.com/) | standard_notes | [link](https://standardnotes.com/help/14/how-do-i-create-and-import-backups-of-my-standard-notes-data) [2] |
 | [Synology Note Station](https://www.synology.com/en-global/dsm/feature/note_station) | synology_note_stattion | [link](https://kb.synology.com/en-global/DSM/help/NoteStation/note_station_managing_notes?version=7#t7) |
-| [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [3] |
+| [Textbundle](http://textbundle.org/) | textbundle | [3] |
+| [TiddlyWiki](https://tiddlywiki.com/) | tiddlywiki | [JSON only](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html) [4] |
 | [Todo.txt](http://todotxt.org/) | todo_txt | |
-| [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [4] |
-| [Toodledo](https://www.toodledo.com/) | toodledo | [link](https://www.toodledo.com/tools/import_export.php) [5] |
-| [Zoho Notebook](https://www.zoho.com/notebook/) | zoho_notebook | [link](https://help.zoho.com/portal/en/kb/notebook/import-and-export/articles/export-all-your-notecards-from-notebook) [6] |
+| [Todoist](https://todoist.com/) | todoist | [link](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN) [5] |
+| [Toodledo](https://www.toodledo.com/) | toodledo | [link](https://www.toodledo.com/tools/import_export.php) [6] |
+| [Zoho Notebook](https://www.zoho.com/notebook/) | zoho_notebook | [link](https://help.zoho.com/portal/en/kb/notebook/import-and-export/articles/export-all-your-notecards-from-notebook) [7] |
 
 What is migrated (in most cases)?
 
@@ -82,18 +83,20 @@ If something else is not working, please check the issues first. If you can't fi
 
 [2] Note links, attachments and folders are not implemented, since they require a subscription.
 
-[3] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+[3] All apps listed [here](http://textbundle.org/#supporting-apps) should be working. However, most of them are untested.
 
-[4]
+[4] Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to markdown.
+
+[5]
 
 - Uncheck "Use relative data" when exporting.
 - Finished todo's are not exported at all.
 - Subtasks are converted to regular notes. I. e. they lose their indentation.
 - Markdown is not rendered in note titles.
 
-[5] [subtasks](https://www.toodledo.com/info/subtasks.php) and [files](https://www.toodledo.com/organize/files.php) are not implemented, since they require a subscription.
+[6] [subtasks](https://www.toodledo.com/info/subtasks.php) and [files](https://www.toodledo.com/organize/files.php) are not implemented, since they require a subscription.
 
-[6]
+[7]
 
 - Export as HTML.
 - Checklists are converted to plain lists. This might change with a newer pandoc version.

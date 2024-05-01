@@ -136,6 +136,13 @@ def html_text_to_markdown(html_text: str) -> str:
 ###########################################################
 
 
+def get_single_child_folder(parent_folder: Path) -> Path:
+    """If there is only a single subfolder, return it."""
+    child_folders = [f for f in parent_folder.iterdir() if f.is_dir()]
+    assert len(child_folders) == 1
+    return child_folders[0]
+
+
 def get_temp_folder() -> Path:
     return Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
 

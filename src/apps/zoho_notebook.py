@@ -175,9 +175,7 @@ class Converter(converter.BaseConverter):
             return
 
         # There is always one subfolder that contains all data.
-        child_folders = [f for f in self.root_path.iterdir() if f.is_dir()]
-        assert len(child_folders) == 1
-        self.root_path = child_folders[0]
+        self.root_path = common.get_single_child_folder(self.root_path)
 
         for item in self.root_path.iterdir():
             if item.suffix != ".html" or item.name == "index.html":
