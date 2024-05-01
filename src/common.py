@@ -12,6 +12,7 @@ import zipfile
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
+import puremagic
 import pypandoc
 
 
@@ -19,8 +20,12 @@ LOGGER = logging.getLogger("jimmy")
 
 
 ###########################################################
-# operations on note body
+# general
 ###########################################################
+
+
+def is_image(file_: Path) -> bool:
+    return puremagic.from_file(file_, mime=True).startswith("image/")
 
 
 def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, str]]):

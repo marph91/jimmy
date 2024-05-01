@@ -41,15 +41,44 @@ class BaseConverter:
 
 class DefaultConverter(BaseConverter):
 
+    def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
+        note_links = []
+        resources = []
+        for file_prefix, description, url in common.get_markdown_links(body):
+            if url.startswith("http"):
+                continue  # web link
+            original_text = f"{file_prefix}[{description}]({url})"
+            resource_path = path / url
+            if resource_path.is_file():
+                if common.is_image(resource_path):
+                    # resource
+                    resources.append(
+                        imf.Resource(resource_path, original_text, description)
+                    )
+                else:
+                    # TODO: this could be a resource, too. How to distinguish?
+                    # internal link
+                    note_links.append(
+                        imf.NoteLink(original_text, Path(url).stem, description)
+                    )
+        return resources, note_links
+
     def convert_file(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
         if file_.suffix.lower() in (".md", ".markdown", ".txt", ".text"):
             note_body = file_.read_text()
         else:
-            # markdown output formats:
-            # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-            # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
-            note_body = pypandoc.convert_file(file_, "commonmark_x")
+            note_body = pypandoc.convert_file(
+                file_,
+                # markdown output formats:
+                # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+                # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
+                "commonmark_x",
+                # somehow the temp folder is needed to create the resources properly
+                extra_args=[f"--extract-media={common.get_temp_folder()}"],
+            )
+
+        resources, note_links = self.handle_markdown_links(note_body, file_.parent)
         parent.child_notes.append(
             imf.Note(
                 {
@@ -57,7 +86,9 @@ class DefaultConverter(BaseConverter):
                     "body": note_body,
                     **common.get_ctime_mtime_ms(file_),
                     "source_application": "jimmy",
-                }
+                },
+                resources=resources,
+                note_links=note_links,
             )
         )
 
@@ -79,6 +110,7 @@ class DefaultConverter(BaseConverter):
 
     def convert(self, file_or_folder: Path):
         """This is the main conversion function, called from the main app."""
+        self.root_path = file_or_folder
         conversion_function = (
             self.convert_file if file_or_folder.is_file() else self.convert_folder
         )

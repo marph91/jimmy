@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-import puremagic
+
+import common
 
 
 @dataclass
@@ -36,9 +37,7 @@ class Resource:
         # https://github.com/laurent22/joplin/blob/a3eec19b32684b86202c751c94c092c7339c6307/packages/lib/models/utils/resourceUtils.ts#L40-L43
         # We can't simply match by extension, because sometimes the files/images
         # are stored as binary blob without extension.
-        self.is_image = puremagic.from_file(self.filename, mime=True).startswith(
-            "image/"
-        )
+        self.is_image = common.is_image(self.filename)
 
 
 @dataclass
