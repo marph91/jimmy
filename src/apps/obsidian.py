@@ -65,7 +65,7 @@ class Converter(converter.BaseConverter):
             if item.is_dir() and item.name == ".obsidian":
                 continue  # ignore the internal obsidian folder
             if item.is_file():
-                if item.suffix != ".md":
+                if item.suffix.lower() != ".md":
                     continue
                 note_links = []
                 resources = []

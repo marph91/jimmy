@@ -118,7 +118,7 @@ class Converter(converter.BaseConverter):
             parent_notebook.child_notes.append(joplin_note)
 
     def convert(self, file_or_folder: Path):
-        if file_or_folder.suffix != ".csv":
+        if file_or_folder.suffix.lower() != ".csv":
             self.logger.error("Unsupported format for toodledo")
             return None
         with open(file_or_folder, encoding="utf-8") as csvfile:

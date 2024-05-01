@@ -40,7 +40,7 @@ class Converter(converter.BaseConverter):
             return
 
         for item in self.root_path.iterdir():
-            if item.is_dir() or item.suffix != ".md":
+            if item.is_dir() or item.suffix.lower() != ".md":
                 continue
             # id is appended to filename
             title, original_id = item.stem.rsplit(" ", 1)

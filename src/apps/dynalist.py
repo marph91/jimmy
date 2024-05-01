@@ -57,7 +57,7 @@ class Converter(converter.BaseConverter):
                 # We get a zip with opml and txt. Only advantage of opml over txt is
                 # the owner attribute. So just use txt, because it's simpler.
                 # opml is supported by pandoc, but the import is not working properly.
-                if item.suffix != ".txt":
+                if item.suffix.lower() != ".txt":
                     continue
                 body = item.read_text()
 
