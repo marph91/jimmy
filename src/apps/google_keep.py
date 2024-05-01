@@ -2,8 +2,6 @@
 
 from pathlib import Path
 import json
-import tarfile
-import zipfile
 
 import common
 import converter
@@ -13,28 +11,22 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
-        temp_folder = common.get_temp_folder()
-        if input_.suffix.lower() == ".zip":
-            with zipfile.ZipFile(input_) as zip_ref:
-                zip_ref.extractall(temp_folder)
-            return temp_folder
-        if input_.suffix.lower() == ".tgz":
-            with tarfile.open(input_) as tar_ref:
-                tar_ref.extractall(temp_folder)
-            return temp_folder
-        if input_.is_dir():
-            return input_
-        self.logger.error("Unsupported format for Google Keep")
-        return None
+        match input_.suffix.lower():
+            case ".zip":
+                return common.extract_zip(input_)
+            case ".tgz":
+                return common.extract_tar(input_)
+            case _:
+                self.logger.error(f"Unsupported format for {self.app}")
+                return None
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
         if self.root_path is None:
             return
 
-        for file_ in self.root_path.glob(
-            "**/*.json"
-        ):  # take only the exports in json format
+        # take only the exports in json format
+        for file_ in self.root_path.glob("**/*.json"):
             note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
             tags_keep = [label["name"] for label in note_keep.get("labels", [])]
             resources_keep = []

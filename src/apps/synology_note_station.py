@@ -5,7 +5,6 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import zipfile
 
 import common
 import converter
@@ -29,16 +28,11 @@ class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() in (".nsx", ".zip"):
-            temp_folder = common.get_temp_folder()
-            with zipfile.ZipFile(input_) as zip_ref:
-                zip_ref.extractall(temp_folder)
-            return temp_folder
-        if input_.is_dir():
-            return input_
+            return common.extract_zip(input_)
         self.logger.error(f"Unsupported format for {self.app}")
         return None
 
-    def find_parent_notebook(self, parent_id) -> imf.Notebook:
+    def find_parent_notebook(self, parent_id: str) -> imf.Notebook:
         for notebook in self.root_notebook.child_notebooks:
             if notebook.original_id == parent_id:
                 return notebook

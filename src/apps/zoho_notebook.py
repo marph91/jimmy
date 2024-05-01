@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-import zipfile
 
 from bs4 import BeautifulSoup
 
@@ -48,16 +47,11 @@ class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() == ".zip":
-            temp_folder = common.get_temp_folder()
-            with zipfile.ZipFile(input_) as zip_ref:
-                zip_ref.extractall(temp_folder)
-            return temp_folder
-        if input_.is_dir():
-            return input_
-        self.logger.error("Unsupported format for Zoho Notebook")
+            return common.extract_zip(input_)
+        self.logger.error(f"Unsupported format for {self.app}")
         return None
 
-    def parse_links(self, note_body):
+    def parse_links(self, note_body: str):
         resources = []
         note_links = []
         for file_prefix, description, url in common.get_markdown_links(note_body):

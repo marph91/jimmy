@@ -12,7 +12,7 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix.lower() != ".txt":
-            self.logger.error("Unsupported format.")
+            self.logger.error(f"Unsupported format for {self.app}")
             return
 
         todotxt = pytodotxt.TodoTxt(file_or_folder)

@@ -4,8 +4,10 @@ import datetime as dt
 import logging
 from pathlib import Path
 import re
+import tarfile
 import tempfile
 import time
+import zipfile
 
 import markdown
 from markdown.treeprocessors import Treeprocessor
@@ -145,6 +147,23 @@ def get_single_child_folder(parent_folder: Path) -> Path:
 
 def get_temp_folder() -> Path:
     return Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
+
+
+def extract_tar(input_: Path) -> Path:
+    temp_folder = get_temp_folder()
+    with tarfile.open(input_) as tar_ref:
+        tar_ref.extractall(temp_folder)
+    return temp_folder
+
+
+def extract_zip(input_: Path, file_to_extract: str | None = None) -> Path:
+    temp_folder = get_temp_folder()
+    with zipfile.ZipFile(input_) as zip_ref:
+        if file_to_extract is None:
+            zip_ref.extractall(temp_folder)
+        else:
+            zip_ref.extract(file_to_extract, temp_folder)
+    return temp_folder
 
 
 def find_file_recursively(root_folder: Path, url: str) -> Path | None:

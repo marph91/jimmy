@@ -3,7 +3,6 @@
 from collections import defaultdict
 import json
 from pathlib import Path
-import zipfile
 
 import common
 import converter
@@ -13,12 +12,9 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() == ".zip":
-            temp_folder = common.get_temp_folder()
-            with zipfile.ZipFile(input_) as zip_ref:
-                zip_ref.extract(
-                    "Standard Notes Backup and Import File.txt", temp_folder
-                )
-            return temp_folder
+            return common.extract_zip(
+                input_, "Standard Notes Backup and Import File.txt"
+            )
         self.logger.error(f"Unsupported format for {self.app}")
         return None
 

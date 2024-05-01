@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from urllib.parse import unquote
-import zipfile
 
 import common
 import converter
@@ -12,21 +11,21 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
-        if input_.suffix.lower() == ".textbundle":
-            if not input_.is_dir():
-                self.logger.error("Textbundle should be a folder.")
+        match input_.suffix.lower():
+            case ".textbundle":
+                if not input_.is_dir():
+                    self.logger.error("Textbundle should be a folder.")
+                    return None
+                return input_
+            case ".textpack":
+                if not input_.is_file():
+                    self.logger.error("Textpack should be a file.")
+                    return None
+                temp_folder = common.extract_zip(input_)
+                return common.get_single_child_folder(temp_folder)
+            case _:
+                self.logger.error("Unsupported format for textbundle")
                 return None
-            return input_
-        if input_.suffix.lower() == ".textpack":
-            if not input_.is_file():
-                self.logger.error("Textpack should be a file.")
-                return None
-            temp_folder = common.get_temp_folder()
-            with zipfile.ZipFile(input_) as zip_ref:
-                zip_ref.extractall(temp_folder)
-            return common.get_single_child_folder(temp_folder)
-        self.logger.error("Unsupported format for textbundle")
-        return None
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []

@@ -119,8 +119,9 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix.lower() != ".csv":
-            self.logger.error("Unsupported format for toodledo")
+            self.logger.error(f"Unsupported format for {self.app}")
             return None
+
         with open(file_or_folder, encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
 

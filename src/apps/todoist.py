@@ -92,6 +92,10 @@ def split_labels(title_labels: str) -> tuple[str, list[str]]:
 
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
+        if file_or_folder.suffix.lower() != ".csv":
+            self.logger.error(f"Unsupported format for {self.app}")
+            return
+
         # - Finished tasks don't get exported.
         # - Todoist titles can be markdown formatted. Joplin titles are not.
         #   If imported as task list, we would gain markdown and sub-tasks,

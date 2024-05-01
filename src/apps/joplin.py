@@ -2,7 +2,6 @@
 
 from collections import defaultdict
 from pathlib import Path
-import tarfile
 
 import common
 import converter
@@ -31,15 +30,12 @@ def handle_markdown_links(
 class Converter(converter.BaseConverter):
 
     def prepare_input(self, input_: Path) -> Path | None:
-        temp_folder = common.get_temp_folder()
         if input_.suffix.lower() == ".jex":
-            with tarfile.open(input_) as tar_ref:
-                tar_ref.extractall(temp_folder)
-            return temp_folder
-        self.logger.error("Unsupported format for Joplin")
+            return common.extract_tar(input_)
+        self.logger.error(f"Unsupported format for {self.app}")
         return None
 
-    def parse_data(self, file_or_folder):
+    def parse_data(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
         self.root_path = self.prepare_input(file_or_folder)
         if self.root_path is None:

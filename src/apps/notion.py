@@ -15,7 +15,8 @@ class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path | None:
         temp_folder = common.get_temp_folder()
         if input_.suffix.lower() != ".zip":
-            return temp_folder
+            self.logger.error(f"Unsupported format for {self.app}")
+            return None
 
         # unzip nested zip file in notion format
         with zipfile.ZipFile(input_) as zip_ref:

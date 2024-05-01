@@ -55,6 +55,9 @@ def handle_wikilink_links(body: str, root_folder: Path) -> tuple[list, list]:
 
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
+        if not file_or_folder.is_dir():
+            self.logger.error(f"Unsupported format for {self.app}")
+            return
         self.root_path = file_or_folder
         self.convert_folder(file_or_folder, self.root_notebook)
 
