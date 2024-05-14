@@ -92,26 +92,28 @@ class DefaultConverter(BaseConverter):
             )
         )
 
-    def convert_folder(self, folder: Path, parent: imf.Notebook):
+    def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):
         """Default conversion function for folders."""
-        for item in folder.iterdir():
-            if item.is_file():
-                try:
-                    self.convert_file(item, parent)
-                    self.logger.debug(f"ok   {item.name}")
-                except Exception as exc:  # pylint: disable=broad-except
-                    self.logger.debug(f"fail {item.name}: {str(exc).strip()[:120]}")
-            else:
-                new_parent = imf.Notebook(
-                    {"title": item.stem, **common.get_ctime_mtime_ms(item)}
+        if file_or_folder.is_file():
+            try:
+                self.convert_file(file_or_folder, parent)
+                self.logger.debug(f"ok   {file_or_folder.name}")
+            except Exception as exc:  # pylint: disable=broad-except
+                self.logger.debug(
+                    f"fail {file_or_folder.name}: {str(exc).strip()[:120]}"
                 )
-                self.convert_folder(item, new_parent)
-                parent.child_notebooks.append(new_parent)
+        else:
+            new_parent = imf.Notebook(
+                {
+                    "title": file_or_folder.stem,
+                    **common.get_ctime_mtime_ms(file_or_folder),
+                }
+            )
+            for item in file_or_folder.iterdir():
+                self.convert_file_or_folder(item, new_parent)
+            parent.child_notebooks.append(new_parent)
 
     def convert(self, file_or_folder: Path):
         """This is the main conversion function, called from the main app."""
         self.root_path = file_or_folder
-        conversion_function = (
-            self.convert_file if file_or_folder.is_file() else self.convert_folder
-        )
-        conversion_function(file_or_folder, self.root_notebook)
+        self.convert_file_or_folder(file_or_folder, self.root_notebook)
