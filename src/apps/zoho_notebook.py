@@ -151,6 +151,8 @@ class Converter(converter.BaseConverter):
 
             # resources and internal links
             resources, note_links = self.parse_links(note_data["body"])
+        else:
+            resources, note_links = [], []
 
         # create note
         parent_notebook.child_notes.append(
