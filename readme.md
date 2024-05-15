@@ -42,6 +42,7 @@ After importing, the notes should be available in a new Joplin notebook named li
 
 - Every format that is supported by pandoc. Some formats may need some tweaking, though.
 - txt
+- [asciidoc](https://docs.asciidoctor.org/asciidoc/latest/) (requires [asciidoctor](https://asciidoctor.org/) installed and in path)
 
 ## Supported Apps
 

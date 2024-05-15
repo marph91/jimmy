@@ -3,6 +3,7 @@
 from datetime import datetime
 import logging
 from pathlib import Path
+import subprocess
 
 import pypandoc
 
@@ -65,18 +66,39 @@ class DefaultConverter(BaseConverter):
 
     def convert_file(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
-        if file_.suffix.lower() in (".md", ".markdown", ".txt", ".text"):
-            note_body = file_.read_text()
-        else:
-            note_body = pypandoc.convert_file(
-                file_,
-                # markdown output formats:
-                # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-                # Joplin follows CommonMark: https://joplinapp.org/help/apps/markdown
-                "commonmark_x",
-                # somehow the temp folder is needed to create the resources properly
-                extra_args=[f"--extract-media={common.get_temp_folder()}"],
-            )
+
+        match file_.suffix.lower():
+            case ".md" | ".markdown" | ".txt" | ".text":
+                note_body = file_.read_text()
+            case ".adoc" | ".asciidoc":
+                # asciidoc -> html -> markdown
+                # Technically, the first line is the document title and gets
+                # stripped from the note body:
+                # https://docs.asciidoctor.org/asciidoc/latest/document/title/
+                # However, we want everything in the note body. Thus, we need
+                # to use HTML (instead of docbook) as intermediate format.
+                note_body_html = subprocess.check_output(
+                    [
+                        # fmt: off
+                        "asciidoctor",
+                        "--backend", "html",
+                        "--out-file", "-",
+                        str(file_.resolve()),
+                        # fmt: on
+                    ]
+                )
+                note_body = common.html_text_to_markdown(note_body_html.decode())
+                note_body_splitted = note_body.split("\n")
+                if note_body_splitted[-2].startswith("Last updated "):
+                    # Remove unnecessarily added lines if needed.
+                    note_body = "\n".join(note_body_splitted[:-2])
+            case _:
+                note_body = pypandoc.convert_file(
+                    file_,
+                    common.PANDOC_OUTPUT_FORMAT,
+                    # somehow the temp folder is needed to create the resources properly
+                    extra_args=[f"--extract-media={common.get_temp_folder()}"],
+                )
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
         parent.child_notes.append(
