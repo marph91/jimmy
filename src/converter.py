@@ -125,6 +125,7 @@ class DefaultConverter(BaseConverter):
                     f"fail {file_or_folder.name}: {str(exc).strip()[:120]}"
                 )
         else:
+            self.logger.debug(f"entering folder {file_or_folder.name}")
             new_parent = imf.Notebook(
                 {
                     "title": file_or_folder.stem,

@@ -67,16 +67,17 @@ There are many more apps supported implicitly if they export text files to a fol
 | [Toodledo](https://www.toodledo.com/) | toodledo | [link](https://www.toodledo.com/tools/import_export.php) [6] |
 | [Zoho Notebook](https://www.zoho.com/notebook/) | zoho_notebook | [link](https://help.zoho.com/portal/en/kb/notebook/import-and-export/articles/export-all-your-notecards-from-notebook) [7] |
 
-What is migrated (in most cases)?
+What is converted (in most cases)?
 
-- Notes incl. title, content and metadata
+- Note content
+- Metadata
 - Tags / Labels
 - Resources / Attachments
-- Internal note links
+- Images
+- External links and internal note links
 - Markdown Front Matter
-- Inline tags
 
-If something else is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with this tool.
+If something is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with jimmy.
 
 ---
 

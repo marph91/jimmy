@@ -17,7 +17,7 @@ import intermediate_format as imf
 LOGGER = logging.getLogger("jimmy")
 
 
-def setup_logging(log_to_file: bool):
+def setup_logging(log_to_file: bool, stdout_log_level: str):
     # mute other loggers
     # https://stackoverflow.com/a/53250066/7410886
     logging.getLogger("pypandoc").setLevel(logging.WARNING)
@@ -45,7 +45,7 @@ def setup_logging(log_to_file: bool):
     console_handler_formatter = logging.Formatter("[%(levelname)-5.5s] %(message)s")
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(console_handler_formatter)
-    console_handler.setLevel(logging.INFO)
+    console_handler.setLevel(stdout_log_level)
     LOGGER.addHandler(console_handler)
 
 
@@ -122,9 +122,15 @@ def main():
         action="store_true",
         help="Create a log file next to the executable.",
     )
+    parser.add_argument(
+        "--stdout-log-level",
+        default="INFO",
+        choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
+        help="Create a log file next to the executable.",
+    )
     args = parser.parse_args()
 
-    setup_logging(args.log_file)
+    setup_logging(args.log_file, args.stdout_log_level)
 
     if not args.dry_run:
         # create the connection to Joplin first to fail fast in case of a problem
