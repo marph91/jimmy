@@ -15,7 +15,7 @@ class Converter(converter.BaseConverter):
             return common.extract_zip(
                 input_, "Standard Notes Backup and Import File.txt"
             )
-        self.logger.error(f"Unsupported format for {self.app}")
+        self.logger.error(f"Unsupported format for {self.format}")
         return None
 
     def convert(self, file_or_folder: Path):
@@ -64,7 +64,7 @@ class Converter(converter.BaseConverter):
                     "body": item["content"]["text"],
                     "user_created_time": common.iso_to_unix_ms(item["created_at"]),
                     "user_updated_time": common.iso_to_unix_ms(item["updated_at"]),
-                    "source_application": self.app,
+                    "source_application": self.format,
                 },
                 # Tags don't have a separate id. Just use the name as id.
                 tags=tags,

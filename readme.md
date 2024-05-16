@@ -30,23 +30,29 @@ jimmy path/to/folder
 jimmy path/to/folder --clear-notes
 
 # import a clipto export
-jimmy clipto_backup_240401_105154.json --app clipto
+jimmy clipto_backup_240401_105154.json --format clipto
 
 # import a Google Keep export
-jimmy takeout-20240401T160516Z-001.zip --app google_keep
+jimmy takeout-20240401T160516Z-001.zip --format google_keep
 ```
 
 After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.
 
 ## Supported Formats
 
+### Text Formats
+
 - Every format that is supported by pandoc. Some formats may need some tweaking, though.
 - txt
 - [asciidoc](https://docs.asciidoctor.org/asciidoc/latest/) (requires [asciidoctor](https://asciidoctor.org/) installed and in path)
 
-## Supported Apps
+These formats are covered by the default export. No additional flag is needed. Each file is imported as a note (if conversion was successful). Each folder will be a notebook. You can import single files or a folder recursively. For example a folder of markdown and asciidoc files.
 
-There are many more apps supported implicitly if they export text files to a folder. Just specify the folder and try the import (see [usage](#usage)).
+### Bundled formats
+
+A single file or folder, encoded in a specific format. For example a zip file exported from Google Keep.
+
+Covered by the parameter `--format internal_app_name`.
 
 | App | Internal App Name | Export Instructions |
 | --- | --- | --- |

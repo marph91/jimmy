@@ -8,7 +8,7 @@ from pathlib import Path
 import pkgutil
 
 import api_helper
-import apps
+import formats
 import converter
 import importer
 import intermediate_format as imf
@@ -49,19 +49,19 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs: list[Path], app: str):
+def convert_all_inputs(inputs: list[Path], format_: str):
     # Convert the input data to an intermediate representation
     # that can be used by the importer later.
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
     try:
-        LOGGER.debug(f"Try converting with converter {app}")
-        module = importlib.import_module(f"apps.{app}")
-        converter_ = module.Converter(app)
+        LOGGER.debug(f"Try converting with converter {format_}")
+        module = importlib.import_module(f"formats.{format_}")
+        converter_ = module.Converter(format_)
     except ModuleNotFoundError as exc:
         LOGGER.debug(f"Fallback to default converter: {exc}")
-        if str(exc) == f"No module named 'apps.{app}'":
-            converter_ = converter.DefaultConverter(app)
+        if str(exc) == f"No module named 'formats.{format_}'":
+            converter_ = converter.DefaultConverter(format_)
         else:
             raise exc  # this is unexpected -> reraise
     # TODO: Children are added to the parent node / node tree implicitly.
@@ -105,11 +105,11 @@ def main():
     parser.add_argument(
         "input", type=Path, nargs="+", help="The input file(s) or folder(s)."
     )
-    # specific apps that need a special handling
+    # specific formats that need a special handling
     parser.add_argument(
-        "--app",
-        choices=[module.name for module in pkgutil.iter_modules(apps.__path__)],
-        help="The source application.",
+        "--format",
+        choices=[module.name for module in pkgutil.iter_modules(formats.__path__)],
+        help="The source format.",
     )
     parser.add_argument(
         "--clear-notes", action="store_true", help="Clear everything before importing."
@@ -158,7 +158,7 @@ def main():
             return
 
     LOGGER.info("Start parsing")
-    root_notebooks = convert_all_inputs(args.input, args.app)
+    root_notebooks = convert_all_inputs(args.input, args.format)
     stats = get_import_stats(root_notebooks)
     if stats == Stats(notebooks=1):
         LOGGER.info("Nothing to import.")

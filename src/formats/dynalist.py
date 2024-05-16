@@ -33,11 +33,10 @@ class Converter(converter.BaseConverter):
         """Prepare the input for further processing. For example extract an archive."""
         if input_.suffix.lower() == ".zip":
             return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.app}")
+        self.logger.error(f"Unsupported format for {self.format}")
         return None
 
     def convert(self, file_or_folder: Path):
-        """This is the main conversion function, called from the main app."""
         self.root_path = self.prepare_input(file_or_folder)
         if self.root_path is None:
             return
@@ -63,7 +62,7 @@ class Converter(converter.BaseConverter):
                         {
                             "title": item.stem,
                             "body": body,
-                            "source_application": self.app,
+                            "source_application": self.format,
                         },
                         tags=[imf.Tag({"title": tag}) for tag in tags],
                         resources=resources,

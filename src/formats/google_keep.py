@@ -17,7 +17,7 @@ class Converter(converter.BaseConverter):
             case ".tgz":
                 return common.extract_tar(input_)
             case _:
-                self.logger.error(f"Unsupported format for {self.app}")
+                self.logger.error(f"Unsupported format for {self.format}")
                 return None
 
     def convert(self, file_or_folder: Path):
@@ -40,7 +40,7 @@ class Converter(converter.BaseConverter):
                     "body": note_keep["textContent"],
                     "user_created_time": note_keep["userEditedTimestampUsec"] // 1000,
                     "user_updated_time": note_keep["userEditedTimestampUsec"] // 1000,
-                    "source_application": self.app,
+                    "source_application": self.format,
                 },
                 # Labels / tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag({"title": tag}) for tag in tags_keep],

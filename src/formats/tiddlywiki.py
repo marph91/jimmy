@@ -61,7 +61,7 @@ class Converter(converter.BaseConverter):
                 "title": note_tiddlywiki["title"],
                 "body": note_tiddlywiki.get("text", ""),
                 "author": note_tiddlywiki.get("creator", ""),
-                "source_application": self.app,
+                "source_application": self.format,
             }
             if "created" in note_tiddlywiki:
                 note_joplin_data["user_created_time"] = tiddlywiki_to_unix(

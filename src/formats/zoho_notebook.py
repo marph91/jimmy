@@ -48,7 +48,7 @@ class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() == ".zip":
             return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.app}")
+        self.logger.error(f"Unsupported format for {self.format}")
         return None
 
     def parse_links(self, note_body: str):
@@ -124,7 +124,7 @@ class Converter(converter.BaseConverter):
             "user_updated_time": common.iso_to_unix_ms(
                 metadata["data-notecard"]["modified_date"]
             ),
-            "source_application": self.app,
+            "source_application": self.format,
         }
 
         if (reminders := metadata.get("data-remainder")) is not None:

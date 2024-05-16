@@ -32,7 +32,7 @@ class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() == ".jex":
             return common.extract_tar(input_)
-        self.logger.error(f"Unsupported format for {self.app}")
+        self.logger.error(f"Unsupported format for {self.format}")
         return None
 
     def parse_data(self, file_or_folder: Path):
@@ -70,7 +70,7 @@ class Converter(converter.BaseConverter):
                     "user_updated_time": common.iso_to_unix_ms(
                         metadata_json["updated_time"]
                     ),
-                    "source_application": self.app,
+                    "source_application": self.format,
                 }
                 common.try_transfer_dicts(
                     metadata_json,

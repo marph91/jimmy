@@ -66,7 +66,7 @@ class Converter(converter.BaseConverter):
                 "title": row["TASK"],
                 "body": row["NOTE"],
                 "is_todo": 1,
-                "source_application": self.app,
+                "source_application": self.format,
             }
             if (due_date := parse_date(row["DUEDATE"], row["DUETIME"])) is not None:
                 note_data["todo_due"] = common.datetime_to_ms(due_date)
@@ -98,7 +98,7 @@ class Converter(converter.BaseConverter):
             note_data = {
                 "title": row["TITLE"],
                 "body": row["NOTE"],
-                "source_application": self.app,
+                "source_application": self.format,
             }
             if (created_time := parse_date(row["ADDED"])) is not None:
                 note_data["user_created_time"] = common.datetime_to_ms(created_time)
@@ -119,7 +119,7 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix.lower() != ".csv":
-            self.logger.error(f"Unsupported format for {self.app}")
+            self.logger.error(f"Unsupported format for {self.format}")
             return None
 
         with open(file_or_folder, encoding="utf-8") as csvfile:

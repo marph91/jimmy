@@ -13,9 +13,9 @@ import intermediate_format as imf
 
 class BaseConverter:
 
-    def __init__(self, app: str):
+    def __init__(self, format_: str):
         self.logger = logging.getLogger("jimmy")
-        self.app = "Joplin Custom Importer" if app is None else app
+        self.format = "Joplin Custom Importer" if format_ is None else format_
         self.root_notebook: imf.Notebook
         self.root_path: Path | None = None
 
@@ -24,13 +24,13 @@ class BaseConverter:
         return input_
 
     def convert_multiple(self, files_or_folders: list[Path]) -> list[imf.Notebook]:
-        """This is the main conversion function, called from the main app."""
+        """This is the main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             index_suffix = "" if len(files_or_folders) == 1 else f" ({input_index})"
             self.root_notebook = imf.Notebook(
-                {"title": f"{now} - Import from {self.app}{index_suffix}"}
+                {"title": f"{now} - Import from {self.format}{index_suffix}"}
             )
             self.convert(file_or_folder)
             notebooks.append(self.root_notebook)
@@ -137,6 +137,5 @@ class DefaultConverter(BaseConverter):
             parent.child_notebooks.append(new_parent)
 
     def convert(self, file_or_folder: Path):
-        """This is the main conversion function, called from the main app."""
         self.root_path = file_or_folder
         self.convert_file_or_folder(file_or_folder, self.root_notebook)

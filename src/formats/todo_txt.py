@@ -12,7 +12,7 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix.lower() != ".txt":
-            self.logger.error(f"Unsupported format for {self.app}")
+            self.logger.error(f"Unsupported format for {self.format}")
             return
 
         todotxt = pytodotxt.TodoTxt(file_or_folder)
@@ -22,7 +22,7 @@ class Converter(converter.BaseConverter):
             note_data = {
                 "title": task.bare_description(),
                 "is_todo": 1,
-                "source_application": self.app,
+                "source_application": self.format,
             }
             if task.creation_date is not None:
                 note_data["user_creation_date"] = common.date_to_unix_ms(

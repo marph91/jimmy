@@ -66,7 +66,7 @@ class Converter(converter.BaseConverter):
                     "title": title.lstrip("# "),
                     "body": body.lstrip(),
                     **common.get_ctime_mtime_ms(file_),
-                    "source_application": self.app,
+                    "source_application": self.format,
                 },
                 resources=resources,
             )

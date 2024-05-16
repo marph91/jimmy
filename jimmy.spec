@@ -7,7 +7,7 @@ datas += collect_data_files('pypandoc')
 
 
 # Generate list of hidden imports
-# hidden import for dynamically loaded modules "apps.*":
+# hidden import for dynamically loaded modules "formats.*":
 # - https://stackoverflow.com/a/77395744/7410886
 # - https://stackoverflow.com/a/35805418/7410886
 # - https://pyinstaller.org/en/stable/when-things-go-wrong.html#listing-hidden-imports
@@ -19,7 +19,7 @@ def list_python_files(folder):
             file_list.append(f"{folder.stem}.{file_.stem}")
     return file_list
 
-hiddenimports = list_python_files(Path("src/apps"))
+hiddenimports = list_python_files(Path("src/formats"))
 
 
 # Generate the executable name based on OS.

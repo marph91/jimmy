@@ -93,7 +93,7 @@ def split_labels(title_labels: str) -> tuple[str, list[str]]:
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix.lower() != ".csv":
-            self.logger.error(f"Unsupported format for {self.app}")
+            self.logger.error(f"Unsupported format for {self.format}")
             return
 
         # - Finished tasks don't get exported.
@@ -118,7 +118,7 @@ class Converter(converter.BaseConverter):
                         "body": row["DESCRIPTION"],
                         "author": parse_author(row["AUTHOR"]),
                         "is_todo": 1,
-                        "source_application": self.app,
+                        "source_application": self.format,
                     }
                     if (due_date := parse_date(row["DATE"])) is not None:
                         note_data["todo_due"] = common.datetime_to_ms(due_date)

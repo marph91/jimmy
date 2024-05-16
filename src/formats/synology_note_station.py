@@ -29,7 +29,7 @@ class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path | None:
         if input_.suffix.lower() in (".nsx", ".zip"):
             return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.app}")
+        self.logger.error(f"Unsupported format for {self.format}")
         return None
 
     def find_parent_notebook(self, parent_id: str) -> imf.Notebook:
@@ -126,7 +126,7 @@ class Converter(converter.BaseConverter):
                 "title": note["title"],
                 "user_created_time": note["ctime"],
                 "user_updated_time": note["mtime"],
-                "source_application": self.app,
+                "source_application": self.format,
             }
             if (content_html := note.get("content")) is not None:
                 # dirty hack: In the original data, the attachment_id is stored in the

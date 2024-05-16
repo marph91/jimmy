@@ -27,7 +27,7 @@ class Converter(converter.BaseConverter):
                     "body": note_clipto["text"],
                     "user_created_time": iso_to_unix_ms(note_clipto["created"]),
                     "user_updated_time": iso_to_unix_ms(note_clipto["updated"]),
-                    "source_application": self.app,
+                    "source_application": self.format,
                 },
                 tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
             )

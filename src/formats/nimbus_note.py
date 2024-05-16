@@ -11,7 +11,7 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         if not file_or_folder.is_dir():
-            self.logger.error(f"Unsupported format for {self.app}")
+            self.logger.error(f"Unsupported format for {self.format}")
             return
 
         for file_ in file_or_folder.glob("**/*.zip"):
@@ -30,7 +30,7 @@ class Converter(converter.BaseConverter):
                         {
                             "title": file_.stem,
                             "body": note_body_markdown.strip(),
-                            "source_application": self.app,
+                            "source_application": self.format,
                         }
                     )
                     self.root_notebook.child_notes.append(note_joplin)

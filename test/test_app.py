@@ -18,7 +18,7 @@ class Config:
     name: str | None = None
 
     @property
-    def app(self):
+    def format_(self):
         return self.path.parent.stem
 
     @property
@@ -26,8 +26,8 @@ class Config:
         return jimmy.Stats(**self.expected_output)
 
 
-def get_stats(inputs, app):
-    note_tree = jimmy.convert_all_inputs(inputs, app)
+def get_stats(inputs, format_):
+    note_tree = jimmy.convert_all_inputs(inputs, format_)
     return jimmy.get_import_stats(note_tree)
 
 
@@ -67,7 +67,7 @@ download_from_dropbox()
 def name_func(testcase_func, param_num, param):
     config = param[0][0]
     test_name = config.name or config.inputs[0].replace(".", "_").replace(" ", "_")
-    return f"{testcase_func.__name__}_{config.app}_{test_name}"
+    return f"{testcase_func.__name__}_{config.format_}_{test_name}"
 
 
 class IntermediateFormat(unittest.TestCase):
@@ -76,6 +76,7 @@ class IntermediateFormat(unittest.TestCase):
     def test_convert(self, testcase):
 
         stats = get_stats(
-            [testcase.path.parent / input_ for input_ in testcase.inputs], testcase.app
+            [testcase.path.parent / input_ for input_ in testcase.inputs],
+            testcase.format_,
         )
         self.assertEqual(stats, testcase.expected_output_class)
