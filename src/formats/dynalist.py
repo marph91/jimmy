@@ -28,18 +28,13 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
-        """Prepare the input for further processing. For example extract an archive."""
-        if input_.suffix.lower() == ".zip":
-            return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.format}")
-        return None
+    def prepare_input(self, input_: Path) -> Path:
+        return common.extract_zip(input_)
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
         self.convert_folder(self.root_path, self.root_notebook)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):

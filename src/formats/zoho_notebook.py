@@ -44,12 +44,12 @@ def clean_task_lists(soup):
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
-        if input_.suffix.lower() == ".zip":
-            return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.format}")
-        return None
+    def prepare_input(self, input_: Path) -> Path:
+        unzipped_input = common.extract_zip(input_)
+        # There is always one subfolder that contains all data.
+        return common.get_single_child_folder(unzipped_input)
 
     def parse_links(self, note_body: str):
         resources = []
@@ -167,11 +167,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
-
-        # There is always one subfolder that contains all data.
-        self.root_path = common.get_single_child_folder(self.root_path)
 
         for item in self.root_path.iterdir():
             if item.suffix != ".html" or item.name == "index.html":

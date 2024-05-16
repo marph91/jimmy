@@ -12,6 +12,8 @@ import intermediate_format as imf
 
 
 class BaseConverter:
+    accepted_extensions: list[str] | None = None
+    accept_folder = False
 
     def __init__(self, format_: str):
         self.logger = logging.getLogger("jimmy")
@@ -19,7 +21,18 @@ class BaseConverter:
         self.root_notebook: imf.Notebook
         self.root_path: Path | None = None
 
-    def prepare_input(self, input_: Path) -> Path | None:
+    def has_valid_format(self, input_: Path) -> bool:
+        """Check if the input has a valid format."""
+        if self.accepted_extensions is not None and (
+            input_.suffix.lower() in self.accepted_extensions
+            or self.accepted_extensions == ["*"]
+        ):
+            return True
+        if self.accept_folder and input_.is_dir():
+            return True
+        return False
+
+    def prepare_input(self, input_: Path) -> Path:
         """Prepare the input for further processing. For example extract an archive."""
         return input_
 
@@ -32,6 +45,13 @@ class BaseConverter:
             self.root_notebook = imf.Notebook(
                 {"title": f"{now} - Import from {self.format}{index_suffix}"}
             )
+            # Sanity check - do the input files / folders exist?
+            if not file_or_folder.exists():
+                self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
+                continue
+            if not self.has_valid_format(file_or_folder):
+                self.logger.warning(f"{file_or_folder} has invalid format.")
+                continue
             self.convert(file_or_folder)
             notebooks.append(self.root_notebook)
         return notebooks
@@ -41,6 +61,8 @@ class BaseConverter:
 
 
 class DefaultConverter(BaseConverter):
+    accepted_extensions = ["*"]
+    accept_folder = True
 
     def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
         note_links = []

@@ -48,12 +48,12 @@ def split_tags(tag_string: str) -> list[str]:
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".json"]
+
     def convert(self, file_or_folder: Path):
-        if file_or_folder.suffix.lower() != ".json":
-            self.logger.error(
-                "Unsupported format. Please export your tiddlers in JSON format."
-            )
-            return
+        self.logger.error(
+            "Unsupported format. Please export your tiddlers in JSON format."
+        )
 
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="UTF-8"))
         for note_tiddlywiki in file_dict:

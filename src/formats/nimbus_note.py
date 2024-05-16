@@ -9,11 +9,9 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    def convert(self, file_or_folder: Path):
-        if not file_or_folder.is_dir():
-            self.logger.error(f"Unsupported format for {self.format}")
-            return
+    accept_folder = True
 
+    def convert(self, file_or_folder: Path):
         for file_ in file_or_folder.glob("**/*.zip"):
             with zipfile.ZipFile(file_) as zip_ref:
                 # HTML note seems to have the name "note.html" always

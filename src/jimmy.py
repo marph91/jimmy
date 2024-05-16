@@ -150,13 +150,6 @@ def main():
                 LOGGER.info("Clearing skipped. Importing anyway.")
 
     LOGGER.info(f"Importing notes from {' '.join(map(str, args.input))}")
-
-    # Sanity check - do the input files / folders exist?
-    for item in args.input:
-        if not item.exists():
-            LOGGER.error(f"{item.resolve()} doesn't exist.")
-            return
-
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(args.input, args.format)
     stats = get_import_stats(root_notebooks)

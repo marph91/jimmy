@@ -9,6 +9,8 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".json"]
+
     def convert(self, file_or_folder: Path):
         # export only possible in android app:
         # - https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330

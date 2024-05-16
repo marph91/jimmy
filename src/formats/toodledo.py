@@ -29,6 +29,8 @@ def parse_date(date_: str, time_: str = "") -> dt.datetime | None:
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".csv"]
+
     def find_parent_notebook(self, notebook_name, current_notebook):
         for notebook in current_notebook.child_notebooks:
             if notebook.data["title"] == notebook_name:
@@ -118,10 +120,6 @@ class Converter(converter.BaseConverter):
             parent_notebook.child_notes.append(joplin_note)
 
     def convert(self, file_or_folder: Path):
-        if file_or_folder.suffix.lower() != ".csv":
-            self.logger.error(f"Unsupported format for {self.format}")
-            return None
-
         with open(file_or_folder, encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
 

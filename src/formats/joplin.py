@@ -28,18 +28,14 @@ def handle_markdown_links(
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".jex"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
-        if input_.suffix.lower() == ".jex":
-            return common.extract_tar(input_)
-        self.logger.error(f"Unsupported format for {self.format}")
-        return None
+    def prepare_input(self, input_: Path) -> Path:
+        return common.extract_tar(input_)
 
     def parse_data(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return None
 
         parent_id_note_map = []
         parent_id_notebook_map = []

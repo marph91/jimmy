@@ -9,16 +9,13 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    def prepare_input(self, input_: Path) -> Path | None:
-        if input_.suffix.lower() == ".zip":
-            return common.extract_zip(input_, "source/notes.json")
-        self.logger.error(f"Unsupported format for {self.format}")
-        return None
+    accepted_extensions = [".zip"]
+
+    def prepare_input(self, input_: Path) -> Path:
+        return common.extract_zip(input_, "source/notes.json")
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
         input_json = json.loads((self.root_path / "source/notes.json").read_text())
 
         for note_simplenote in input_json["activeNotes"]:

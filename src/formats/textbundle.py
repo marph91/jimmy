@@ -9,23 +9,15 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".textbundle", ".textpack"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
+    def prepare_input(self, input_: Path) -> Path:
         match input_.suffix.lower():
             case ".textbundle":
-                if not input_.is_dir():
-                    self.logger.error("Textbundle should be a folder.")
-                    return None
                 return input_
-            case ".textpack":
-                if not input_.is_file():
-                    self.logger.error("Textpack should be a file.")
-                    return None
+            case _:  # ".textpack":
                 temp_folder = common.extract_zip(input_)
                 return common.get_single_child_folder(temp_folder)
-            case _:
-                self.logger.error("Unsupported format for textbundle")
-                return None
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
@@ -46,8 +38,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
 
         # TODO: Are internal links and nested folders possible?
 

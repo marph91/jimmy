@@ -9,21 +9,17 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".zip", ".tgz"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
+    def prepare_input(self, input_: Path) -> Path:
         match input_.suffix.lower():
             case ".zip":
                 return common.extract_zip(input_)
-            case ".tgz":
+            case _:  # ".tgz":
                 return common.extract_tar(input_)
-            case _:
-                self.logger.error(f"Unsupported format for {self.format}")
-                return None
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
 
         # take only the exports in json format
         for file_ in self.root_path.glob("**/*.json"):

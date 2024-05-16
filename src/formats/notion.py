@@ -11,12 +11,10 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path | None:
+    def prepare_input(self, input_: Path) -> Path:
         temp_folder = common.get_temp_folder()
-        if input_.suffix.lower() != ".zip":
-            self.logger.error(f"Unsupported format for {self.format}")
-            return None
 
         # unzip nested zip file in notion format
         with zipfile.ZipFile(input_) as zip_ref:
@@ -37,8 +35,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
 
         for item in self.root_path.iterdir():
             if item.is_dir() or item.suffix.lower() != ".md":

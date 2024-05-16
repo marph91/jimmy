@@ -22,15 +22,14 @@ class Attachment:
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".nsx", ".zip"]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.available_resources = []
 
-    def prepare_input(self, input_: Path) -> Path | None:
-        if input_.suffix.lower() in (".nsx", ".zip"):
-            return common.extract_zip(input_)
-        self.logger.error(f"Unsupported format for {self.format}")
-        return None
+    def prepare_input(self, input_: Path) -> Path:
+        return common.extract_zip(input_)
 
     def find_parent_notebook(self, parent_id: str) -> imf.Notebook:
         for notebook in self.root_notebook.child_notebooks:
@@ -99,8 +98,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        if self.root_path is None:
-            return
         input_json = json.loads((self.root_path / "config.json").read_text())
 
         # TODO: What is input_json["shortcut"]?
