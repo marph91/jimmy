@@ -3,6 +3,7 @@
 import datetime as dt
 import logging
 from pathlib import Path
+import pkgutil
 import re
 import tarfile
 import tempfile
@@ -15,6 +16,8 @@ from markdown.extensions import Extension
 import puremagic
 import pypandoc
 
+import formats
+
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -22,6 +25,10 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 # general
 ###########################################################
+
+
+def get_formats():
+    return [module.name for module in pkgutil.iter_modules(formats.__path__)]
 
 
 def is_image(file_: Path) -> bool:
@@ -154,10 +161,12 @@ def get_single_child_folder(parent_folder: Path) -> Path:
 
 
 def get_temp_folder() -> Path:
+    """Return a temporary folder."""
     return Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
 
 
 def extract_tar(input_: Path) -> Path:
+    """Extract a tar file to a new temporary directory."""
     temp_folder = get_temp_folder()
     with tarfile.open(input_) as tar_ref:
         tar_ref.extractall(temp_folder)
@@ -165,6 +174,7 @@ def extract_tar(input_: Path) -> Path:
 
 
 def extract_zip(input_: Path, file_to_extract: str | None = None) -> Path:
+    """Extract a zip file to a new temporary directory."""
     temp_folder = get_temp_folder()
     with zipfile.ZipFile(input_) as zip_ref:
         if file_to_extract is None:

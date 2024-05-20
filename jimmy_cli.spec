@@ -28,7 +28,7 @@ executable_name = f"jimmy-{platform.system().lower()}"
 
 
 a = Analysis(
-    ['src/jimmy.py'],
+    ['src/jimmy_cli.py'],
     pathex=[],
     binaries=[],
     datas=datas,

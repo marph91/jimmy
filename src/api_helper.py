@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-import sys
 import time
 
 from joppy.api import Api
@@ -51,7 +50,7 @@ def request_api_token():
     return None
 
 
-def get_api() -> Api:
+def get_api() -> Api | None:
     if API_TOKEN_FILE.is_file():
         # token from config dir
         api_token: str | None = API_TOKEN_FILE.read_text()
@@ -74,5 +73,5 @@ def get_api() -> Api:
         # no old token - request new token
         api_token = request_api_token()
     if api_token is None:
-        sys.exit(1)
+        return None
     return Api(token=api_token)

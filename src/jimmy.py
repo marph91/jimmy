@@ -1,14 +1,10 @@
 """Importer for many (note) formats to Joplin."""
 
-import argparse
 from dataclasses import dataclass
 import importlib
 import logging
 from pathlib import Path
-import pkgutil
 
-import api_helper
-import formats
 import converter
 import importer
 import intermediate_format as imf
@@ -18,6 +14,11 @@ LOGGER = logging.getLogger("jimmy")
 
 
 def setup_logging(log_to_file: bool, stdout_log_level: str):
+    if LOGGER.handlers:
+        # Don't setup handlers again. This results in duplicated logging.
+        # TODO: This is a problem if the arguments change.
+        return
+
     # mute other loggers
     # https://stackoverflow.com/a/53250066/7410886
     logging.getLogger("pypandoc").setLevel(logging.WARNING)
@@ -50,8 +51,10 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
 
 
 def convert_all_inputs(inputs: list[Path], format_: str):
-    # Convert the input data to an intermediate representation
-    # that can be used by the importer later.
+    """
+    Convert the input data to an intermediate representation
+    that can be used by the importer later.
+    """
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
     try:
@@ -78,6 +81,22 @@ class Stats:
     tags: int = 0
     note_links: int = 0
 
+    def __str__(self):
+        if self == Stats():
+            return "nothing"
+        stats = []
+        if self.notebooks > 0:
+            stats.append(f"{self.notebooks} notebooks")
+        if self.notes > 0:
+            stats.append(f"{self.notes} notes")
+        if self.resources > 0:
+            stats.append(f"{self.resources} resources")
+        if self.tags > 0:
+            stats.append(f"{self.tags} tags")
+        if self.note_links > 0:
+            stats.append(f"{self.note_links} note links")
+        return ", ".join(stats)
+
 
 def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) -> Stats:
     if stats is None:
@@ -100,65 +119,24 @@ def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) ->
     return stats
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "input", type=Path, nargs="+", help="The input file(s) or folder(s)."
-    )
-    # specific formats that need a special handling
-    parser.add_argument(
-        "--format",
-        choices=[module.name for module in pkgutil.iter_modules(formats.__path__)],
-        help="The source format.",
-    )
-    parser.add_argument(
-        "--clear-notes", action="store_true", help="Clear everything before importing."
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Don't connect to the Joplin API."
-    )
-    parser.add_argument(
-        "--log-file",
-        action="store_true",
-        help="Create a log file next to the executable.",
-    )
-    parser.add_argument(
-        "--stdout-log-level",
-        default="INFO",
-        choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
-        help="Create a log file next to the executable.",
-    )
-    args = parser.parse_args()
+def jimmy(api, config):
+    setup_logging(config.log_file, config.stdout_log_level)
 
-    setup_logging(args.log_file, args.stdout_log_level)
+    if not config.dry_run:
+        if config.clear_notes:
+            LOGGER.info("Clear everything. Please wait.")
+            api.delete_all_notebooks()
+            api.delete_all_resources()
+            api.delete_all_tags()
+            LOGGER.info("Cleared everything successfully.")
 
-    if not args.dry_run:
-        # create the connection to Joplin first to fail fast in case of a problem
-        api = api_helper.get_api()
-
-        if args.clear_notes:
-            delete_everything = input(
-                "[WARN ] Really clear everything and start from scratch? (yes/no): "
-            )
-            if delete_everything.lower() == "yes":
-                LOGGER.info("Clear everything. Please wait.")
-                api.delete_all_notebooks()
-                api.delete_all_resources()
-                api.delete_all_tags()
-                LOGGER.info("Cleared everything successfully.")
-            else:
-                LOGGER.info("Clearing skipped. Importing anyway.")
-
-    LOGGER.info(f"Importing notes from {' '.join(map(str, args.input))}")
+    LOGGER.info(f"Importing notes from {' '.join(map(str, config.input))}")
     LOGGER.info("Start parsing")
-    root_notebooks = convert_all_inputs(args.input, args.format)
+    root_notebooks = convert_all_inputs(config.input, config.format)
     stats = get_import_stats(root_notebooks)
-    if stats == Stats(notebooks=1):
-        LOGGER.info("Nothing to import.")
-        return
     LOGGER.info(f"Finished parsing: {stats}")
 
-    if not args.dry_run:
+    if not config.dry_run:
         LOGGER.info("Start import to Joplin")
         for note_tree in root_notebooks:
             joplin_importer = importer.JoplinImporter(api)
@@ -170,7 +148,4 @@ def main():
             "Imported notes to Joplin successfully. "
             "Please verify that everything was imported."
         )
-
-
-if __name__ == "__main__":
-    main()
+    return stats

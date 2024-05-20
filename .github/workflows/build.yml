@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
       - name: Build executable with pyinstaller
-        run: python -m PyInstaller jimmy.spec
+        run: python -m PyInstaller jimmy_cli.spec
       - name: Install test dependencies
         run: pip install -r requirements-dev.txt
       - name: Create the test inputs (don't run the tests itself)
