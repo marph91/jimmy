@@ -9,6 +9,9 @@ import common
 import jimmy
 
 
+LOGGER = logging.getLogger("jimmy")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -50,7 +53,7 @@ def main():
         api = None
     else:
         # create the connection to Joplin first to fail fast in case of a problem
-        api = api_helper.get_api()
+        api = api_helper.get_api(LOGGER.info, LOGGER.error)
         if api is None:
             return
 

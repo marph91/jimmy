@@ -1,6 +1,7 @@
 """GUI for jimmy."""
 
 from dataclasses import dataclass
+import functools
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog
@@ -30,10 +31,6 @@ def main():
     style.theme_use("clam")
     root.resizable(False, False)
     root.title("Jimmy")
-
-    # make the grid cells adaptive to the window size
-    root.grid_rowconfigure(tuple(i for i in range(7)), weight=1)
-    root.grid_columnconfigure(tuple(i for i in range(3)), weight=1)
 
     row = 0
 
@@ -138,19 +135,17 @@ def main():
             api = None
         else:
             # create the connection to Joplin first to fail fast in case of a problem
-            api = api_helper.get_api()
+            api = api_helper.get_api(
+                functools.partial(tk.messagebox.showinfo, "API Connection"),
+                functools.partial(tk.messagebox.showerror, "API Connection Failed"),
+            )
             if api is None:
-                tk.messagebox.showerror(
-                    "Import Failed",
-                    "Joplin web clipper is not available. "
-                    "Please start Joplin and activate the web clipper at "
-                    "'Tools -> Options -> Web Clipper'.",
-                )
                 return
 
         if config.clear_notes and not config.dry_run:
             delete_everything = tk.messagebox.askyesno(
                 message="Really clear everything and start from scratch?"
+                "\nThis may take some time."
             )
             if not delete_everything:
                 return
@@ -160,6 +155,10 @@ def main():
 
     import_button = ttk.Button(text="Import", command=do_import)
     import_button.grid(column=0, row=row, columnspan=3, sticky="nswe")
+
+    # make the grid cells adaptive to the window size
+    root.grid_rowconfigure(tuple(i for i in range(row)), weight=1)
+    root.grid_columnconfigure(tuple(i for i in range(3)), weight=1)
 
     root.mainloop()
 

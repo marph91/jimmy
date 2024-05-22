@@ -14,10 +14,7 @@ LOGGER = logging.getLogger("jimmy")
 
 
 def setup_logging(log_to_file: bool, stdout_log_level: str):
-    if LOGGER.handlers:
-        # Don't setup handlers again. This results in duplicated logging.
-        # TODO: This is a problem if the arguments change.
-        return
+    LOGGER.handlers.clear()
 
     # mute other loggers
     # https://stackoverflow.com/a/53250066/7410886
