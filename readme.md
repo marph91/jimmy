@@ -14,7 +14,13 @@ Tool to import your notes to Joplin.
 
 This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 
-Grab the executable from the [release page](https://github.com/marph91/jimmy/releases/latest).
+You can install jimmy in three ways:
+
+1. CLI app: `jimmy-cli-*` (recommended). Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
+2. GUI app: `jimmy-gui-*`. Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
+3. Clone the repository
+
+Examples for the CLI app:
 
 ```bash
 # import a single file supported by pandoc

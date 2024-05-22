@@ -24,11 +24,11 @@ hiddenimports = list_python_files(Path("src/formats"))
 
 # Generate the executable name based on OS.
 import platform
-executable_name = f"jimmy-cli-{platform.system().lower()}"
+executable_name = f"jimmy-gui-{platform.system().lower()}"
 
 
 a = Analysis(
-    ['src/jimmy_cli.py'],
+    ['src/jimmy_gui.py'],
     pathex=[],
     binaries=[],
     datas=datas,
@@ -54,7 +54,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
