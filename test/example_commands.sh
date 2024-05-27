@@ -6,7 +6,7 @@ set -e
 
 CACHE=".cache"  # created at a testsuite run
 
-EXECUTABLE="${1:-python src/jimmy.py}"
+EXECUTABLE="${1:-python src/jimmy_cli.py}"
 echo "Running with $EXECUTABLE"
 
 $EXECUTABLE "$CACHE"
