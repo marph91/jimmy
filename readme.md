@@ -17,8 +17,9 @@ This script requires that the webclipper in Joplin is running. It will connect t
 You can install jimmy in three ways:
 
 1. CLI app: `jimmy-cli-*` (recommended). Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
-2. GUI app: `jimmy-gui-*`. Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
-3. Clone the repository
+2. Clone the repository and use it from python by `python src/jimmy_cli.py`.
+3. GUI app (experimental). Can be used from python `python src/jimmy_gui.py` or built manually by `python -m PyInstaller jimmy_gui.spec`.
+
 
 Examples for the CLI app:
 
