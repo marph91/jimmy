@@ -42,6 +42,8 @@ def main():
     )
     config = parser.parse_args()
 
+    jimmy.setup_logging(config.log_file, config.stdout_log_level)
+
     if config.clear_notes and not config.dry_run:
         delete_everything = input(
             "[WARN ] Really clear everything and start from scratch? (yes/no): "

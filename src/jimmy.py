@@ -117,8 +117,6 @@ def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) ->
 
 
 def jimmy(api, config):
-    setup_logging(config.log_file, config.stdout_log_level)
-
     if not config.dry_run:
         if config.clear_notes:
             LOGGER.info("Clear everything. Please wait.")

@@ -131,6 +131,8 @@ def main():
             log_file_var.get(),
         )
 
+        jimmy.setup_logging(config.log_file, config.stdout_log_level)
+
         if config.dry_run:
             api = None
         else:
