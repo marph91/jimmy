@@ -10,9 +10,7 @@ Tool to import your notes to Joplin.
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
 [![tests](https://github.com/marph91/jimmy/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/tests.yml)
 
-## Usage
-
-This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
+## :computer: Installation
 
 You can install jimmy in three ways:
 
@@ -20,6 +18,9 @@ You can install jimmy in three ways:
 2. Clone the repository and use it from python by `python src/jimmy_cli.py`.
 3. GUI app (experimental). Can be used from python `python src/jimmy_gui.py` or built manually by `python -m PyInstaller jimmy_gui.spec`.
 
+## :wrench: Usage
+
+This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 
 Examples for the CLI app:
 
@@ -45,7 +46,7 @@ jimmy takeout-20240401T160516Z-001.zip --format google_keep
 
 After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.
 
-## Supported Formats
+## :bulb: Supported Formats
 
 ### Text Formats
 
