@@ -48,6 +48,10 @@ jimmy takeout-20240401T160516Z-001.zip --format google_keep
 
 After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.
 
+## Demo
+
+https://github.com/marph91/jimmy/assets/33229141/de8f8e96-f925-4eef-8ff3-f69b5ee067ef
+
 ## :bulb: Supported Formats
 
 ### Text Formats
