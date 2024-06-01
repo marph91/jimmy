@@ -12,7 +12,9 @@ Tool to import your notes to Joplin.
 
 ## :computer: Installation
 
-You can install jimmy in three ways:
+Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin)
+
+Alternative installation options:
 
 1. CLI app: `jimmy-cli-*` (recommended). Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
 2. Clone the repository and use it from python by `python src/jimmy_cli.py`.
