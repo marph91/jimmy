@@ -2,7 +2,7 @@
 
 Tool to import your notes to Joplin.
 
-:exclamation: Should only be used if the built-in import of Joplin doesn't work.
+:exclamation: Should only be used if the built-in import of Joplin isn't available for your note format.
 
 :exclamation: Make sure your data is imported properly after the script finished.
 
@@ -12,13 +12,15 @@ Tool to import your notes to Joplin.
 
 ## :computer: Installation
 
-Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin)
+Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin) [^macos]
 
 Alternative installation options:
 
 1. CLI app: `jimmy-cli-*` (recommended). Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
 2. Clone the repository and use it from python by `python src/jimmy_cli.py`.
 3. GUI app (experimental). Can be used from python `python src/jimmy_gui.py` or built manually by `python -m PyInstaller jimmy_gui.spec`.
+
+[^macos]: The MacOS app is untested.
 
 ## :wrench: Usage
 
@@ -118,3 +120,7 @@ If something is not working, please check the issues first. If you can't find an
 [^zoho]:
     - Export as HTML.
     - Checklists are converted to plain lists. This might change with a newer pandoc version.
+
+## Similar Projects
+
+- [Obsidian-Importer](https://github.com/obsidianmd/obsidian-importer)
