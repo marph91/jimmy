@@ -21,25 +21,24 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
-        for file_prefix, description, url in common.get_markdown_links(body):
-            if url.startswith("http"):
-                continue  # web link
-            if description.startswith("^"):
+        for link in common.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            if link.text.startswith("^"):
                 continue  # foot note (is working in Joplin without modification)
-            original_text = f"{file_prefix}[{description}]({url})"
             # resource
             assert self.root_path is not None
-            resource_path = self.root_path / unquote(url)
+            resource_path = self.root_path / unquote(link.url)
             if not resource_path.is_file():
                 self.logger.warning(f"Couldn't find resource {resource_path}")
                 continue
-            resources.append(imf.Resource(resource_path, original_text, description))
+            resources.append(imf.Resource(resource_path, str(link), link.text))
         return resources, []
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
 
-        # TODO: Are internal links and nested folders possible?
+        # TODO: Are internal links and nested folders supported by this format?
 
         for file_ in self.root_path.iterdir():
             if file_.suffix.lower() not in (".md", ".markdown"):

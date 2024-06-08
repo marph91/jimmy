@@ -54,25 +54,24 @@ class Converter(converter.BaseConverter):
     def parse_links(self, note_body: str):
         resources = []
         note_links = []
-        for file_prefix, description, url in common.get_markdown_links(note_body):
-            original_text = f"{file_prefix}[{description}]({url})"
-            if url.startswith("http"):
-                continue  # web link
-            if url.startswith("zohonotebook://"):
+        for link in common.get_markdown_links(note_body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            if link.url.startswith("zohonotebook://"):
                 # internal link
-                _, linked_note_id = url.rsplit("/", 1)
+                _, linked_note_id = link.url.rsplit("/", 1)
                 note_links.append(
                     imf.NoteLink(
-                        original_text,
+                        str(link),
                         linked_note_id,
                         # TODO: seems like internal links are always named "link"
-                        description,
+                        link.text,
                     )
                 )
-            elif (self.root_path / url).is_file():
+            elif (self.root_path / link.url).is_file():
                 # resource
                 resources.append(
-                    imf.Resource(self.root_path / url, original_text, description)
+                    imf.Resource(self.root_path / link.url, str(link), link.text)
                 )
         return resources, note_links
 

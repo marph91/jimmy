@@ -47,20 +47,19 @@ class Converter(converter.BaseConverter):
             # find links
             resources = []
             note_links = []
-            for file_prefix, description, url in common.get_markdown_links(body):
-                if url.startswith("http"):
-                    continue  # web link
-                original_text = f"{file_prefix}[{description}]({url})"
-                if url.endswith(".md"):
+            for link in common.get_markdown_links(body):
+                if link.is_web_link or link.is_mail_link:
+                    continue  # keep the original links
+                if link.url.endswith(".md"):
                     # internal link
-                    _, linked_note_id = Path(unquote(url)).stem.rsplit(" ", 1)
+                    _, linked_note_id = Path(unquote(link.url)).stem.rsplit(" ", 1)
                     note_links.append(
-                        imf.NoteLink(original_text, linked_note_id, description)
+                        imf.NoteLink(str(link), linked_note_id, link.text)
                     )
-                elif (self.root_path / url).is_file():
+                elif (self.root_path / link.url).is_file():
                     # resource
                     resources.append(
-                        imf.Resource(self.root_path / url, original_text, description)
+                        imf.Resource(self.root_path / link.url, str(link), link.text)
                     )
 
             note_joplin = imf.Note(

@@ -9,18 +9,17 @@ import intermediate_format as imf
 
 def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
     note_links = []
-    for file_prefix, description, url in common.get_markdown_links(body):
-        original_text = f"{file_prefix}[{description}]({url})"
-        if url.startswith("https://dynalist.io/d"):
+    for link in common.get_markdown_links(body):
+        if link.url.startswith("https://dynalist.io/d"):
             # Most likely internal link. We can only try to match against the name
             # (that might be modified in the meantime).
             if (
-                common.find_file_recursively(root_folder, f"{description}.txt")
+                common.find_file_recursively(root_folder, f"{link.text}.txt")
                 is not None
             ):
-                note_links.append(imf.NoteLink(original_text, description, description))
-        elif url.startswith("http"):
-            continue  # web link
+                note_links.append(imf.NoteLink(str(link), link.text, link.text))
+        elif link.is_web_link or link.is_mail_link:
+            continue  # keep the original links
         else:
             # TODO: There are no resources in dynalist free plan.
             pass

@@ -67,22 +67,19 @@ class DefaultConverter(BaseConverter):
     def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
         note_links = []
         resources = []
-        for file_prefix, description, url in common.get_markdown_links(body):
-            if url.startswith("http"):
-                continue  # web link
-            original_text = f"{file_prefix}[{description}]({url})"
-            resource_path = path / url
+        for link in common.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            resource_path = path / link.url
             if resource_path.is_file():
                 if common.is_image(resource_path):
                     # resource
-                    resources.append(
-                        imf.Resource(resource_path, original_text, description)
-                    )
+                    resources.append(imf.Resource(resource_path, str(link), link.text))
                 else:
                     # TODO: this could be a resource, too. How to distinguish?
                     # internal link
                     note_links.append(
-                        imf.NoteLink(original_text, Path(url).stem, description)
+                        imf.NoteLink(str(link), Path(link.url).stem, link.text)
                     )
         return resources, note_links
 

@@ -23,18 +23,14 @@ class Converter(converter.BaseConverter):
             title, body = note_simplenote["content"].split("\r\n", maxsplit=1)
 
             note_links = []
-            for file_prefix, description, url in common.get_markdown_links(body):
-                if url.startswith("http"):
-                    continue  # web link
-                if url.startswith("simplenote://"):
+            for link in common.get_markdown_links(body):
+                if link.is_web_link or link.is_mail_link:
+                    continue  # keep the original links
+                if link.url.startswith("simplenote://"):
                     # internal link
-                    _, linked_note_id = url.rsplit("/", 1)
+                    _, linked_note_id = link.url.rsplit("/", 1)
                     note_links.append(
-                        imf.NoteLink(
-                            f"{file_prefix}[{description}]({url})",
-                            linked_note_id,
-                            description,
-                        )
+                        imf.NoteLink(str(link), linked_note_id, link.text)
                     )
             note_joplin = imf.Note(
                 {

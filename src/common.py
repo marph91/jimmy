@@ -1,5 +1,6 @@
 """Common functions."""
 
+from dataclasses import dataclass
 import datetime as dt
 import logging
 from pathlib import Path
@@ -27,7 +28,7 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
-def get_formats():
+def get_available_formats() -> list[str]:
     return [module.name for module in pkgutil.iter_modules(formats.__path__)]
 
 
@@ -51,6 +52,34 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
 ###########################################################
 
 
+@dataclass
+class MarkdownLink:
+    """
+    Represents a markdown:
+    - link: https://www.markdownguide.org/basic-syntax/#links
+    - image: https://www.markdownguide.org/basic-syntax/#images-1
+    """
+
+    text: str
+    url: str
+    # TODO: ignored for now
+    # title: str = ""
+    is_image: bool = False
+
+    @property
+    def is_web_link(self) -> bool:
+        # not robust, but sufficient for now
+        return self.url.startswith("http")
+
+    @property
+    def is_mail_link(self) -> bool:
+        return self.url.startswith("mailto:")
+
+    def __str__(self) -> str:
+        prefix = "!" if self.is_image else ""
+        return f"{prefix}[{self.text}]({self.url})"
+
+
 class LinkExtractor(Treeprocessor):
     # We need to unescape manually. Reference: "UnescapeTreeprocessor"
     # https://github.com/Python-Markdown/markdown/blob/3.6/markdown/treeprocessors.py#L454
@@ -69,14 +98,16 @@ class LinkExtractor(Treeprocessor):
         self.md.links = []
         for image in root.findall(".//img"):
             self.md.images.append(
-                ("!", self.unescape(image.get("alt")), image.get("src"))
+                MarkdownLink(
+                    self.unescape(image.get("alt")), image.get("src"), is_image=True
+                )
             )
         for link in root.findall(".//a"):
             url = link.get("href")
             if (title := link.get("title")) is not None:
                 # TODO: This is not robust against titles with single quotation marks.
                 url += f' "{title}"'
-            self.md.links.append(("", link.text, url))
+            self.md.links.append(MarkdownLink(link.text, url))
 
 
 class LinkExtractorExtension(Extension):
@@ -91,21 +122,22 @@ MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
 def get_markdown_links(text: str) -> list:
     """
     >>> get_markdown_links("![](image.png)")
-    [('!', '', 'image.png')]
+    [MarkdownLink(text='', url='image.png', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")
-    [('!', 'abc', 'image (1).png')]
-    >>> get_markdown_links("[mul](tiple) [links](...)")
-    [('', 'mul', 'tiple'), ('', 'links', '...')]
+    [MarkdownLink(text='abc', url='image (1).png', is_image=True)]
+    >>> get_markdown_links("[mul](tiple) [links](...)") # doctest: +NORMALIZE_WHITESPACE
+    [MarkdownLink(text='mul', url='tiple', is_image=False),
+     MarkdownLink(text='links', url='...', is_image=False)]
     >>> get_markdown_links("![desc \\[reference\\]](Image.png){#fig:leanCycle}")
-    [('!', 'desc \\\\[reference\\\\]', 'Image.png')]
+    [MarkdownLink(text='desc \\\\[reference\\\\]', url='Image.png', is_image=True)]
     >>> get_markdown_links('[link](internal "Example Title")')
-    [('', 'link', 'internal "Example Title"')]
+    [MarkdownLink(text='link', url='internal "Example Title"', is_image=False)]
     >>> get_markdown_links('[link](#internal)')
-    [('', 'link', '#internal')]
+    [MarkdownLink(text='link', url='#internal', is_image=False)]
     >>> get_markdown_links('[link](:/custom)')
-    [('', 'link', ':/custom')]
+    [MarkdownLink(text='link', url=':/custom', is_image=False)]
     >>> get_markdown_links('[weblink](https://duckduckgo.com)')
-    [('', 'weblink', 'https://duckduckgo.com')]
+    [MarkdownLink(text='weblink', url='https://duckduckgo.com', is_image=False)]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     MD.convert(text)

@@ -20,7 +20,7 @@ def main():
     # specific formats that need a special handling
     parser.add_argument(
         "--format",
-        choices=common.get_formats(),
+        choices=common.get_available_formats(),
         help="The source format.",
     )
     parser.add_argument(

@@ -3,6 +3,8 @@
 from collections import defaultdict
 from pathlib import Path
 
+from joppy.data_types import ItemType
+
 import common
 import converter
 import intermediate_format as imf
@@ -13,17 +15,16 @@ def handle_markdown_links(
 ) -> tuple[list, list]:
     note_links = []
     resources = []
-    for file_prefix, description, url in common.get_markdown_links(body):
-        if url.startswith("http"):
-            continue  # web link
-        original_text = f"{file_prefix}[{description}]({url})"
-        resource_path = resource_id_filename_map.get(url[2:])
+    for link in common.get_markdown_links(body):
+        if link.is_web_link or link.is_mail_link:
+            continue  # keep the original links
+        resource_path = resource_id_filename_map.get(link.url[2:])
         if resource_path is None:
             # internal link
-            note_links.append(imf.NoteLink(original_text, url[2:], description))
+            note_links.append(imf.NoteLink(str(link), link.url[2:], link.text))
         else:
             # resource
-            resources.append(imf.Resource(resource_path, original_text, description))
+            resources.append(imf.Resource(resource_path, str(link), link.text))
     return resources, note_links
 
 
@@ -54,8 +55,8 @@ class Converter(converter.BaseConverter):
                 metadata_json[key] = value
 
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
-            type_ = int(metadata_json["type_"])
-            if type_ == 1:  # note
+            type_ = ItemType(int(metadata_json["type_"]))
+            if type_ == ItemType.NOTE:
                 title, body = markdown.split("\n", 1)
                 data = {
                     "title": title.strip(),
@@ -101,7 +102,7 @@ class Converter(converter.BaseConverter):
                         imf.Note(data, original_id=metadata_json["id"]),
                     )
                 )
-            elif type_ == 2:  # notebook
+            elif type_ == ItemType.FOLDER:
                 data = {
                     "title": markdown.strip(),
                     "user_created_time": common.iso_to_unix_ms(
@@ -131,15 +132,15 @@ class Converter(converter.BaseConverter):
                         imf.Notebook(data, original_id=metadata_json["id"]),
                     )
                 )
-            elif type_ == 4:  # resource
-                # TODO: metadata is lost
+            elif type_ == ItemType.RESOURCE:
+                # TODO: some metadata is lost
                 filename = Path(metadata_json["id"]).with_suffix(
                     "." + metadata_json["file_extension"]
                 )
                 resource_id_filename_map[metadata_json["id"]] = (
                     self.root_path / "resources" / filename
                 )
-            elif type_ == 5:  # tag
+            elif type_ == ItemType.TAG:
                 data = {
                     "title": markdown.strip(),
                     "user_created_time": common.iso_to_unix_ms(
@@ -160,12 +161,12 @@ class Converter(converter.BaseConverter):
                     ],
                 )
                 available_tags.append(imf.Tag(data, original_id=metadata_json["id"]))
-            elif type_ == 6:  # note_tag
+            elif type_ == ItemType.NOTE_TAG:
                 note_tag_id_map[metadata_json["note_id"]].append(
                     metadata_json["tag_id"]
                 )
             else:
-                self.logger.debug(f"Ignoring note type {metadata_json['type_']}")
+                self.logger.debug(f"Ignoring note type {type_}")
         return (
             parent_id_note_map,
             parent_id_notebook_map,

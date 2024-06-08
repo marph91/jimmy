@@ -71,7 +71,7 @@ def main():
 
     format_var = tk.StringVar()
     format_var.set("Default")
-    choices = ["Default"] + common.get_formats()
+    choices = ["Default"] + common.get_available_formats()
     format_option_menu = ttk.OptionMenu(root, format_var, choices[0], *choices)
     format_option_menu.grid(column=1, row=row, columnspan=2, sticky="nswe")
 

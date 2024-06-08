@@ -40,25 +40,22 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
-        for file_prefix, description, url in common.get_markdown_links(body):
-            if url.startswith("http") or url.startswith("mailto:"):
-                continue  # web link / mail
-            original_text = f"{file_prefix}[{description}]({url})"
+        for link in common.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
             # resource
             # Find resource file by "ref".
             matched_resources = [
-                res for res in self.available_resources if res.ref == url
+                res for res in self.available_resources if res.ref == link.url
             ]
             if len(matched_resources) != 1:
                 self.logger.debug(
-                    "Found too less or too many resource: {len(matched_resources)}"
+                    f"Found too less or too many resource: {len(matched_resources)}"
                 )
                 continue
             resource = matched_resources[0]
             resources.append(
-                imf.Resource(
-                    resource.filename, original_text, description or resource.title
-                )
+                imf.Resource(resource.filename, str(link), link.text or resource.title)
             )
         return resources, []
 
