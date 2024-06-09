@@ -1,0 +1,40 @@
+site_name: jimmy
+
+# Repository
+repo_name: marph91/jimmy
+repo_url: https://github.com/marph91/jimmy
+
+theme:
+  name: material
+  features:
+    # index.html for collapsible sections
+    - navigation.indexes
+    # show breadcrumbs
+    - navigation.path
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+
+# Page tree
+nav:
+  - index.md
+  - Default Import: default_import.md
+  - Bundled Formats:
+    - bundled_formats/index.md
+    - Clipto: bundled_formats/clipto.md
+    - Dynalist: bundled_formats/dynalist.md
+    - FuseBase: bundled_formats/fusebase.md
+    - Google Keep: bundled_formats/google_keep.md
+    - Joplin: bundled_formats/joplin.md
+    - Notion: bundled_formats/notion.md
+    - Obsidian: bundled_formats/obsidian.md
+    - Simplenote: bundled_formats/simplenote.md
+    - Standard Notes: bundled_formats/standard_notes.md
+    - Synology Note Station: bundled_formats/synology_note_station.md
+    - Textbundle: bundled_formats/textbundle.md
+    - Tiddlywiki: bundled_formats/tiddlywiki.md
+    - Todo.txt: bundled_formats/todo.txt.md
+    - Todoist: bundled_formats/todoist.md
+    - Toodledo: bundled_formats/toodledo.md
+    - Zoho Notebook: bundled_formats/zoho_notebook.md
