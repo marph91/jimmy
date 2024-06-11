@@ -46,17 +46,17 @@ class Converter(converter.BaseConverter):
                 self.logger.debug(f"Ignoring file {file_.name}")
                 continue
 
-            markdown = file_.read_text()
-            title, body = markdown.split("\n", 1)
-            # resources and internal links
+            title, body = common.split_h1_title_from_body(file_.read_text())
+            inline_tags = common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
             note_joplin = imf.Note(
                 {
-                    "title": title.lstrip("# "),
-                    "body": body.lstrip(),
+                    "title": title,
+                    "body": body,
                     **common.get_ctime_mtime_ms(file_),
                     "source_application": self.format,
                 },
+                tags=[imf.Tag({"title": tag}) for tag in inline_tags],
                 resources=resources,
             )
             self.root_notebook.child_notes.append(note_joplin)

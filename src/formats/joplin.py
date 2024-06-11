@@ -57,7 +57,7 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                title, body = markdown.split("\n", 1)
+                title, body = common.split_h1_title_from_body(file_.read_text())
                 data = {
                     "title": title.strip(),
                     "body": body.strip(),
