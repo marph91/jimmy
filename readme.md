@@ -55,6 +55,7 @@ Covered by the parameter `--format internal_app_name`.
 
 Supported formats:
 
+- Bear
 - clipto
 - Dynalist
 - FuseBase / Nimbus Note
