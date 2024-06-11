@@ -19,5 +19,5 @@ Alternative installation options:
 ## Quickstart
 
 1. This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
-2. [Import from text files](./default_import.md) or [import from specific apps](./bundled_formats/index.md)
+2. [Import from text files](./default_import.md) or import from specific apps, like [Google Keep](./bundled_formats/google_keep.md)
 3. Verify that everything was imported properly.

@@ -1,1 +1,0 @@
-# Supported by jimmy

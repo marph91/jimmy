@@ -21,7 +21,7 @@ nav:
   - index.md
   - Default Import: default_import.md
   - Bundled Formats:
-    - bundled_formats/index.md
+    - Bear: bundled_formats/bear.md
     - Clipto: bundled_formats/clipto.md
     - Dynalist: bundled_formats/dynalist.md
     - FuseBase: bundled_formats/fusebase.md
@@ -38,3 +38,5 @@ nav:
     - Todoist: bundled_formats/todoist.md
     - Toodledo: bundled_formats/toodledo.md
     - Zoho Notebook: bundled_formats/zoho_notebook.md
+  - Contributing:
+    - Contributing: contributing/index.md
