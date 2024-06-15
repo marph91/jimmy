@@ -7,7 +7,7 @@ Examples:
 
 - `jimmy-cli-linux example.xit --format xit`
 
-## Import Structure
+## Import structure
 
 - xit groups are converted to Joplin notebooks
 - xit items are converted to Joplin todos

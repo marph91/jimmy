@@ -1,1 +1,2 @@
 mkdocs-material==9.5.26
+mkdocs-open-in-new-tab==1.0.3

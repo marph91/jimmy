@@ -19,5 +19,5 @@ Alternative installation options:
 ## Quickstart
 
 1. This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
-2. [Import from text files](./default_import.md) or import from specific apps, like [Google Keep](./bundled_formats/google_keep.md)
-3. Verify that everything was imported properly.
+2. [Import from text files](./formats/default.md) or import from specific apps, like [Google Keep](./formats/google_keep.md)
+3. Verify that everything was imported properly. The imported notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.

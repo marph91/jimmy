@@ -12,32 +12,36 @@ theme:
     # show breadcrumbs
     - navigation.path
 plugins:
+  # open external links in a new tab
+  - open-in-new-tab
   - search
 markdown_extensions:
   - admonition
+  # code block highlighting
+  - pymdownx.superfences
 
 # Page tree
 nav:
   - index.md
-  - Default Import: default_import.md
-  - Bundled Formats:
-    - Bear: bundled_formats/bear.md
-    - Clipto: bundled_formats/clipto.md
-    - Dynalist: bundled_formats/dynalist.md
-    - FuseBase: bundled_formats/fusebase.md
-    - Google Keep: bundled_formats/google_keep.md
-    - Joplin: bundled_formats/joplin.md
-    - Notion: bundled_formats/notion.md
-    - Obsidian: bundled_formats/obsidian.md
-    - Simplenote: bundled_formats/simplenote.md
-    - Standard Notes: bundled_formats/standard_notes.md
-    - Synology Note Station: bundled_formats/synology_note_station.md
-    - Textbundle: bundled_formats/textbundle.md
-    - Tiddlywiki: bundled_formats/tiddlywiki.md
-    - Todo.txt: bundled_formats/todo.txt.md
-    - Todoist: bundled_formats/todoist.md
-    - Toodledo: bundled_formats/toodledo.md
-    - xit: bundled_formats/xit.md
-    - Zoho Notebook: bundled_formats/zoho_notebook.md
+  - Formats:
+    - Default Import: formats/default.md
+    - Bear: formats/bear.md
+    - Clipto: formats/clipto.md
+    - Dynalist: formats/dynalist.md
+    - FuseBase: formats/fusebase.md
+    - Google Keep: formats/google_keep.md
+    - Joplin: formats/joplin.md
+    - Notion: formats/notion.md
+    - Obsidian: formats/obsidian.md
+    - Simplenote: formats/simplenote.md
+    - Standard Notes: formats/standard_notes.md
+    - Synology Note Station: formats/synology_note_station.md
+    - Textbundle: formats/textbundle.md
+    - Tiddlywiki: formats/tiddlywiki.md
+    - Todo.txt: formats/todo.txt.md
+    - Todoist: formats/todoist.md
+    - Toodledo: formats/toodledo.md
+    - xit: formats/xit.md
+    - Zoho Notebook: formats/zoho_notebook.md
   - Contributing:
     - Contributing: contributing/index.md
