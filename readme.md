@@ -71,6 +71,7 @@ Supported formats:
 - Todo.txt
 - Todoist
 - Toodledo
+- [x]it!
 - Zoho Notebook
 
 What is converted (in most cases)?

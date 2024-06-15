@@ -37,6 +37,7 @@ nav:
     - Todo.txt: bundled_formats/todo.txt.md
     - Todoist: bundled_formats/todoist.md
     - Toodledo: bundled_formats/toodledo.md
+    - xit: bundled_formats/xit.md
     - Zoho Notebook: bundled_formats/zoho_notebook.md
   - Contributing:
     - Contributing: contributing/index.md
