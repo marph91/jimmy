@@ -1,4 +1,4 @@
-- Website: <https://tiddlywiki.com/>
+- [Website](https://tiddlywiki.com/)
 - Typical extension: `.json`
 
 ## Export instructions

@@ -1,4 +1,4 @@
-- Website: <https://www.zoho.com/notebook/>
+- [Website](https://www.zoho.com/notebook/)
 - Typical extension: `.zip`
 
 ## Export instructions

@@ -1,4 +1,4 @@
-- Website: <https://keep.google.com/>
+- [Website](https://keep.google.com/)
 - Typical extensions: `.zip`, `.tgz`
 
 ## Export instructions

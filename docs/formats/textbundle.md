@@ -1,4 +1,4 @@
-- Website: <http://textbundle.org/>
+- [Website](http://textbundle.org/)
 - Typical extensions: `.textbundle`, `.textpack`
 
 ## Apps that support Textbundle export

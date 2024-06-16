@@ -1,4 +1,4 @@
-- Website: <https://www.synology.com/en-global/dsm/feature/note_station>
+- [Website](https://www.synology.com/en-global/dsm/feature/note_station)
 - Typical extension: `.nsx`
 
 ## Export instructions

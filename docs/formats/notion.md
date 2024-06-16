@@ -1,4 +1,4 @@
-- Website: <https://www.notion.so/>
+- [Website](https://www.notion.so/)
 - Typical extension: `.zip`
 
 ## Export instructions

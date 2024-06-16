@@ -1,4 +1,4 @@
-- Website: <https://xit.jotaen.net/>
+- [Website](https://xit.jotaen.net/)
 - Typical extension: `.xit`
 
 ## Import to Joplin

@@ -1,4 +1,4 @@
-- Website: <https://simplenote.com/>
+- [Website](https://simplenote.com/)
 - Typical extension: `.zip`
 
 ## Export instructions

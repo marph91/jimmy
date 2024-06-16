@@ -1,4 +1,4 @@
-- Website: <https://standardnotes.com/>
+- [Website](https://standardnotes.com/)
 - Typical extension: `.zip`
 
 ## Export instructions

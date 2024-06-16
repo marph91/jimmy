@@ -1,5 +1,5 @@
-- Website: <https://obsidian.md/>
-- Typical extension: Folder
+- [Website](https://obsidian.md/)
+- Typical extension: Folder with `.md` files
 
 ## Import to Joplin
 

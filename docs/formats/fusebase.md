@@ -1,6 +1,6 @@
 Also known as Nimbus Note.
 
-- Website: <https://nimbusweb.me/note/>
+- [Website](https://nimbusweb.me/note/)
 - Typical extension: Folder with `.zip` files
 
 ## Export instructions

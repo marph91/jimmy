@@ -1,4 +1,4 @@
-- Website: <https://clipto.pro/>
+- [Website](https://clipto.pro/)
 - Typical extension: `.json`
 
 ## Export instructions

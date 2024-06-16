@@ -1,4 +1,4 @@
-- Website: <https://todoist.com/>
+- [Website](https://todoist.com/)
 - Typical extension: `.csv`
 
 ## Export instructions

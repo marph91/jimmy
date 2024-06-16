@@ -5,6 +5,10 @@
 
 ## How to add a new format?
 
+Here is a [good example commit](https://github.com/marph91/jimmy/commit/362acf0319b130c5abb90324129b76c1b5ebefca).
+
+The brief workflow is:
+
 1. Discuss the format at the forum or github
 2. Implement at [src/](https://github.com/marph91/jimmy/tree/master/src/formats)
 3. Provide an example file and [add a test](https://github.com/marph91/jimmy/blob/master/test/example_commands.sh)

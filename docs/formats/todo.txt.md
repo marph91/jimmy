@@ -1,4 +1,4 @@
-- Website: <http://todotxt.org/>
+- [Website](http://todotxt.org/)
 - Typical extension: `.txt`
 
 ## Apps that support todo.txt

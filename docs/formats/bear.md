@@ -1,4 +1,4 @@
-- Website: <https://bear.app/>
+- [Website](https://bear.app/)
 - Typical extension: `.bear2bk`
 
 ## Export instructions

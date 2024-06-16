@@ -1,4 +1,4 @@
-- Website: <https://dynalist.io/>
+- [Website](https://dynalist.io/)
 - Typical extension: `.zip`
 
 ## Export instructions

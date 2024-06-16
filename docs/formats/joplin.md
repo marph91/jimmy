@@ -1,4 +1,4 @@
-- Website: <https://joplinapp.org/>
+- [Website](https://joplinapp.org/)
 - Typical extension: `.jex`
 
 ## Export instructions

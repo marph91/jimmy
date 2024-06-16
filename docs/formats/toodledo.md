@@ -1,4 +1,4 @@
-- Website: <https://www.toodledo.com/>
+- [Website](https://www.toodledo.com/)
 - Typical extension: `.csv`
 
 ## Export instructions
