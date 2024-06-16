@@ -11,7 +11,17 @@ theme:
     - navigation.indexes
     # show breadcrumbs
     - navigation.path
+  palette:
+    # light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+    # dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+
 plugins:
+  # show last updated at bottom
+  - git-revision-date-localized
   # open external links in a new tab
   - open-in-new-tab
   - search
