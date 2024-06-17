@@ -151,8 +151,18 @@ class DefaultConverter(BaseConverter):
                     **common.get_ctime_mtime_ms(file_or_folder),
                 }
             )
+            folders = []
             for item in file_or_folder.iterdir():
-                self.convert_file_or_folder(item, new_parent)
+                if item.is_file():
+                    self.convert_file_or_folder(item, new_parent)
+                else:
+                    # Delay processing folders to have a better readable log. I. e.
+                    # folder 1 - file 1, file 2, file 3
+                    # folder 2 - file 1, file 2, file 3
+                    # TODO: check if there is a better way
+                    folders.append(item)
+            for folder in folders:
+                self.convert_file_or_folder(folder, new_parent)
             parent.child_notebooks.append(new_parent)
 
     def convert(self, file_or_folder: Path):
