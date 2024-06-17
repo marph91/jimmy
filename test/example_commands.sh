@@ -17,6 +17,7 @@ $EXECUTABLE "$CACHE/dynalist/dynalist-backup-2024-04-12.zip" --format dynalist
 $EXECUTABLE "$CACHE/google_keep/takeout-20240401T160516Z-001.zip" --format google_keep
 $EXECUTABLE "$CACHE/google_keep/takeout-20240401T160556Z-001.tgz" --format google_keep
 $EXECUTABLE "$CACHE/joplin/29_04_2024.jex" --format joplin
+$EXECUTABLE "$CACHE/jrnl/myjournal.json" --format jrnl
 $EXECUTABLE "$CACHE/nimbus_note/Food" --format nimbus_note
 $EXECUTABLE "$CACHE/notion/72a2f31c-3a46-4b44-826d-ae046e693551_Export-d609fb9f-43a4-475d-ba88-1db3e9e6bcd2.zip" --format notion
 $EXECUTABLE "$CACHE/obsidian/obsidian_vault" --format obsidian
