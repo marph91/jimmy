@@ -7,6 +7,7 @@ import zipfile
 from parameterized import parameterized
 import requests
 
+import common
 import jimmy
 
 
@@ -23,12 +24,12 @@ class Config:
 
     @property
     def expected_output_class(self):
-        return jimmy.Stats(**self.expected_output)
+        return common.Stats(**self.expected_output)
 
 
 def get_stats(inputs, format_):
     note_tree = jimmy.convert_all_inputs(inputs, format_)
-    return jimmy.get_import_stats(note_tree)
+    return common.get_import_stats(note_tree)
 
 
 TEST_CASES = []

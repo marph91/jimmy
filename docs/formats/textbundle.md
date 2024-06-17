@@ -3,7 +3,7 @@
 
 ## Apps that support Textbundle export
 
-Selection from <http://textbundle.org/#supporting-apps>:
+Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
 
 - Bear
 - Craft

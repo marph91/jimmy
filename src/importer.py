@@ -4,6 +4,7 @@ import logging
 
 import requests
 
+import common
 import intermediate_format as imf
 
 
@@ -13,13 +14,16 @@ LOGGER = logging.getLogger("jimmy")
 class JoplinImporter:
     """Import notebooks, notes and related data to Joplin."""
 
-    def __init__(self, api):
+    def __init__(self, api, stats: common.Stats):
         self.api = api
         # Cache created tags to create them only once.
-        self.tag_map = {}  # original id - joplin id
-        self.note_id_map = {}  # original id - joplin id
+        self.tag_map: dict[str, imf.Tag] = {}  # original id - joplin id
+        self.note_id_map: dict[str, str] = {}  # original id - joplin id
+
+        self.progress_bars = stats.create_progress_bars()
 
     def add_tag(self, tag: imf.Tag) -> str:
+        self.progress_bars["tags"].update(1)
         try:
             tag_id = self.api.add_tag(**tag.data)
             self.tag_map[tag.reference_id] = tag_id
@@ -37,8 +41,10 @@ class JoplinImporter:
             return matching_tags[0].id
 
     def import_note(self, note: imf.Note):
+        self.progress_bars["notes"].update(1)
         # Handle resources first, since the note body changes.
         for resource in note.resources:
+            self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
             resource_id = self.api.add_resource(
                 filename=str(resource.filename), title=resource_title
@@ -65,6 +71,7 @@ class JoplinImporter:
             self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
 
     def import_notebook(self, notebook: imf.Notebook):
+        self.progress_bars["notebooks"].update(1)
         notebook_id = self.api.add_notebook(**notebook.data)
         for note in notebook.child_notes:
             note.data["parent_id"] = notebook_id
@@ -77,6 +84,7 @@ class JoplinImporter:
         if not note.note_links or not note.data.get("body", ""):
             return  # nothing to link
         for note_link in note.note_links:
+            self.progress_bars["note_links"].update(1)
             joplin_id = self.note_id_map.get(note_link.original_id)
             if joplin_id is None:
                 LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")

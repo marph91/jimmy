@@ -1,13 +1,12 @@
 """Importer for many (note) formats to Joplin."""
 
-from dataclasses import dataclass
 import importlib
 import logging
 from pathlib import Path
 
+import common
 import converter
 import importer
-import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -70,53 +69,7 @@ def convert_all_inputs(inputs: list[Path], format_: str):
     return parent
 
 
-@dataclass
-class Stats:
-    notebooks: int = 0
-    notes: int = 0
-    resources: int = 0
-    tags: int = 0
-    note_links: int = 0
-
-    def __str__(self):
-        if self == Stats():
-            return "nothing"
-        stats = []
-        if self.notebooks > 0:
-            stats.append(f"{self.notebooks} notebooks")
-        if self.notes > 0:
-            stats.append(f"{self.notes} notes")
-        if self.resources > 0:
-            stats.append(f"{self.resources} resources")
-        if self.tags > 0:
-            stats.append(f"{self.tags} tags")
-        if self.note_links > 0:
-            stats.append(f"{self.note_links} note links")
-        return ", ".join(stats)
-
-
-def get_import_stats(parents: list[imf.Notebook], stats: Stats | None = None) -> Stats:
-    if stats is None:
-        stats = Stats(len(parents))
-
-    # iterate through all separate inputs
-    for parent in parents:
-        # iterate through all notebooks
-        for notebook in parent.child_notebooks:
-            get_import_stats([notebook], stats)
-
-        # assemble stats
-        stats.notebooks += len(parent.child_notebooks)
-        stats.notes += len(parent.child_notes)
-        for note in parent.child_notes:
-            stats.resources += len(note.resources)
-            stats.tags += len(note.tags)
-            stats.note_links += len(note.note_links)
-
-    return stats
-
-
-def jimmy(api, config):
+def jimmy(api, config) -> common.Stats:
     if not config.dry_run:
         if config.clear_notes:
             LOGGER.info("Clear everything. Please wait.")
@@ -128,13 +81,13 @@ def jimmy(api, config):
     LOGGER.info(f"Importing notes from {' '.join(map(str, config.input))}")
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(config.input, config.format)
-    stats = get_import_stats(root_notebooks)
+    stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
 
     if not config.dry_run:
         LOGGER.info("Start import to Joplin")
         for note_tree in root_notebooks:
-            joplin_importer = importer.JoplinImporter(api)
+            joplin_importer = importer.JoplinImporter(api, stats)
             joplin_importer.import_notebook(note_tree)
             # We need another pass, since at the first pass
             # target note IDs are unknown.

@@ -11,6 +11,7 @@ import tempfile
 import time
 import zipfile
 
+import enlighten
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
@@ -45,6 +46,90 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
             source_key = target_key = key
         if (value := source.get(source_key)) is not None:
             target[target_key] = value
+
+
+###########################################################
+# stats
+###########################################################
+
+
+@dataclass
+class Stats:
+    notebooks: int = 0
+    notes: int = 0
+    resources: int = 0
+    tags: int = 0
+    note_links: int = 0
+
+    def create_progress_bars(self) -> dict:
+        manager = enlighten.get_manager()
+        common = {
+            "bar_format": "{desc:11s}{percentage:3.0f}%|{bar}| "
+            "{count:{len_total}d}/{total:d} [{elapsed}<{eta}]"
+        }
+        progress_bars = {}
+        if self.notebooks > 0:
+            progress_bars["notebooks"] = manager.counter(
+                total=self.notebooks, desc="Notebooks", **common
+            )
+        if self.notes > 0:
+            progress_bars["notes"] = manager.counter(
+                total=self.notes, desc="Notes", **common
+            )
+        if self.resources > 0:
+            progress_bars["resources"] = manager.counter(
+                total=self.resources, desc="Resources", **common
+            )
+        if self.tags > 0:
+            progress_bars["tags"] = manager.counter(
+                total=self.tags, desc="Tags", **common
+            )
+        if self.note_links > 0:
+            progress_bars["note_links"] = manager.counter(
+                total=self.note_links, desc="Note Links", **common
+            )
+        # Display all counters:
+        # https://python-enlighten.readthedocs.io/en/stable/faq.html#why-isn-t-my-progress-bar-displayed-until-update-is-called
+        for progress_bar in progress_bars.values():
+            progress_bar.refresh()
+        return progress_bars
+
+    def __str__(self):
+        if self == Stats():
+            return "nothing"
+        stats = []
+        if self.notebooks > 0:
+            stats.append(f"{self.notebooks} notebooks")
+        if self.notes > 0:
+            stats.append(f"{self.notes} notes")
+        if self.resources > 0:
+            stats.append(f"{self.resources} resources")
+        if self.tags > 0:
+            stats.append(f"{self.tags} tags")
+        if self.note_links > 0:
+            stats.append(f"{self.note_links} note links")
+        return ", ".join(stats)
+
+
+def get_import_stats(parents: list, stats: Stats | None = None) -> Stats:
+    if stats is None:
+        stats = Stats(len(parents))
+
+    # iterate through all separate inputs
+    for parent in parents:
+        # iterate through all notebooks
+        for notebook in parent.child_notebooks:
+            get_import_stats([notebook], stats)
+
+        # assemble stats
+        stats.notebooks += len(parent.child_notebooks)
+        stats.notes += len(parent.child_notes)
+        for note in parent.child_notes:
+            stats.resources += len(note.resources)
+            stats.tags += len(note.tags)
+            stats.note_links += len(note.note_links)
+
+    return stats
 
 
 ###########################################################

@@ -51,10 +51,6 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".json"]
 
     def convert(self, file_or_folder: Path):
-        self.logger.error(
-            "Unsupported format. Please export your tiddlers in JSON format."
-        )
-
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="UTF-8"))
         for note_tiddlywiki in file_dict:
             note_joplin_data = {
