@@ -36,6 +36,8 @@ nav:
   - Formats:
     - Default Import: formats/default.md
     - Bear: formats/bear.md
+    - Cacher: formats/cacher.md
+    - Cherrytree: formats/cherrytree.md
     - Clipto: formats/clipto.md
     - Dynalist: formats/dynalist.md
     - FuseBase: formats/fusebase.md

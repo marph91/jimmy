@@ -12,6 +12,8 @@ echo "Running with $EXECUTABLE"
 $EXECUTABLE "$CACHE/arbitrary_folder"
 $EXECUTABLE "$CACHE/arbitrary_folder" "$CACHE/arbitrary_folder"
 $EXECUTABLE "$CACHE/bear/backup.bear2bk" --format bear
+$EXECUTABLE "$CACHE/cacher/cacher-export-202406182304.json" --format cacher
+$EXECUTABLE "$CACHE/cherrytree/cherry.ctb.ctd" --format cherrytree
 $EXECUTABLE "$CACHE/clipto/clipto_backup_240401_105154.json" --format clipto
 $EXECUTABLE "$CACHE/dynalist/dynalist-backup-2024-04-12.zip" --format dynalist
 $EXECUTABLE "$CACHE/google_keep/takeout-20240401T160516Z-001.zip" --format google_keep
