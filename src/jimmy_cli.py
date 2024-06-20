@@ -30,6 +30,11 @@ def main():
         "--dry-run", action="store_true", help="Don't connect to the Joplin API."
     )
     parser.add_argument(
+        "--print-tree",
+        action="store_true",
+        help="Print the parsed note tree in intermediate format.",
+    )
+    parser.add_argument(
         "--log-file",
         action="store_true",
         help="Create a log file next to the executable.",

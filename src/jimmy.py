@@ -4,9 +4,14 @@ import importlib
 import logging
 from pathlib import Path
 
+from rich import print  # pylint: disable=redefined-builtin
+from rich.logging import RichHandler
+from rich.tree import Tree
+
 import common
 import converter
 import importer
+import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -39,8 +44,8 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
         LOGGER.addHandler(file_handler)
 
     # log to stdout
-    console_handler_formatter = logging.Formatter("[%(levelname)-5.5s] %(message)s")
-    console_handler = logging.StreamHandler()
+    console_handler_formatter = logging.Formatter("%(message)s")
+    console_handler = RichHandler(show_path=False)
     console_handler.setFormatter(console_handler_formatter)
     console_handler.setLevel(stdout_log_level)
     LOGGER.addHandler(console_handler)
@@ -69,6 +74,21 @@ def convert_all_inputs(inputs: list[Path], format_: str):
     return parent
 
 
+def get_tree(root_notebooks: list[imf.Notebook], root_tree=Tree("Note Tree")) -> Tree:
+    for notebook in root_notebooks:
+        new_root_notebook = root_tree.add("📘 " + notebook.data["title"])
+        for note in notebook.child_notes:
+            new_note = new_root_notebook.add("📖 " + note.data["title"])
+            for resource in note.resources:
+                new_note.add("🎴 " + (resource.title or resource.filename.name))
+            for tag in note.tags:
+                new_note.add("🔖 " + tag.data["title"])
+            for note_link in note.note_links:
+                new_note.add("🔗 " + note_link.title)
+        get_tree(notebook.child_notebooks, new_root_notebook)
+    return root_tree
+
+
 def jimmy(api, config) -> common.Stats:
     if not config.dry_run:
         if config.clear_notes:
@@ -83,6 +103,8 @@ def jimmy(api, config) -> common.Stats:
     root_notebooks = convert_all_inputs(config.input, config.format)
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
+    if config.print_tree:
+        print(get_tree(root_notebooks))
 
     if not config.dry_run:
         LOGGER.info("Start import to Joplin")
