@@ -31,18 +31,16 @@ jobs:
         run: |
           python -m PyInstaller jimmy_cli.spec
           # python -m PyInstaller jimmy_gui.spec
-      - name: Install test dependencies
-        run: pip install -r requirements-dev.txt
       - name: Create the test inputs (don't run the tests itself)
         run: python test/test_app.py
-      - name: Smoke test
-        run: |
-          ./dist/jimmy-cli* .cache/arbitrary_folder/arbitrary_folder --dry-run
-          ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run
-          ./dist/jimmy-cli* .cache/bear/backup.bear2bk --format bear --dry-run
       - name: Release
         uses: softprops/action-gh-release@v2
         # release only if there is a release tag
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           files: ./dist/jimmy*
+      - name: Smoke test
+        run: |
+          ./dist/jimmy-cli* .cache/arbitrary_folder/arbitrary_folder --dry-run
+          ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run
+          ./dist/jimmy-cli* .cache/bear/backup.bear2bk --format bear --dry-run
