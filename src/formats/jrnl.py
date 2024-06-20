@@ -12,7 +12,7 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".json"]
 
     def convert(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="UTF-8"))
+        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
         for note_jrnl in file_dict.get("entries", []):
             title = f"{note_jrnl['date']} {note_jrnl['time']} {note_jrnl['title']}"
             unix_time = iso_to_unix_ms(f"{note_jrnl['date']}T{note_jrnl['time']}")

@@ -76,7 +76,7 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     def convert_note(self, file_: Path):
-        soup = BeautifulSoup(file_.read_text(), "html.parser")
+        soup = BeautifulSoup(file_.read_text(encoding="utf-8"), "html.parser")
 
         # parse metadata and convert it to the intermediate format
         metadata = {}

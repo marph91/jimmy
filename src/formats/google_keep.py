@@ -23,7 +23,7 @@ class Converter(converter.BaseConverter):
 
         # take only the exports in json format
         for file_ in self.root_path.glob("**/*.json"):
-            note_keep = json.loads(Path(file_).read_text(encoding="UTF-8"))
+            note_keep = json.loads(Path(file_).read_text(encoding="utf-8"))
             tags_keep = [label["name"] for label in note_keep.get("labels", [])]
             resources_keep = []
             for resource_keep in note_keep.get("attachments", []):

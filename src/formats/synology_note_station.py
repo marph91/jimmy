@@ -61,7 +61,9 @@ class Converter(converter.BaseConverter):
 
     def convert_notebooks(self, input_json: dict):
         for notebook_id in input_json["notebook"]:
-            notebook = json.loads((self.root_path / notebook_id).read_text())
+            notebook = json.loads(
+                (self.root_path / notebook_id).read_text(encoding="utf-8")
+            )
 
             self.root_notebook.child_notebooks.append(
                 imf.Notebook(
@@ -95,7 +97,9 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        input_json = json.loads((self.root_path / "config.json").read_text())
+        input_json = json.loads(
+            (self.root_path / "config.json").read_text(encoding="utf-8")
+        )
 
         # TODO: What is input_json["shortcut"]?
         # TODO: Are nested notebooks possible?
@@ -111,7 +115,7 @@ class Converter(converter.BaseConverter):
                 )
 
         for note_id in input_json["note"]:
-            note = json.loads((self.root_path / note_id).read_text())
+            note = json.loads((self.root_path / note_id).read_text(encoding="utf-8"))
 
             # resources / attachments
             resources = self.map_resources_by_hash(note)

@@ -55,7 +55,7 @@ def request_api_token(info_function, error_function):
 def get_api(info_function, error_function) -> Api | None:
     if API_TOKEN_FILE.is_file():
         # token from config dir
-        api_token: str | None = API_TOKEN_FILE.read_text()
+        api_token: str | None = API_TOKEN_FILE.read_text(encoding="utf-8")
         assert api_token is not None
         api = Api(token=api_token)
         try:

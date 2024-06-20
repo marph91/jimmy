@@ -16,7 +16,7 @@ class Converter(converter.BaseConverter):
         # - https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330
         # - settings -> time machine -> backup to file
 
-        file_dict = json.loads(file_or_folder.read_text(encoding="UTF-8"))
+        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
         tags = []
         # tags are contained in filters
         for filter_ in file_dict.get("filters"):

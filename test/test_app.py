@@ -56,7 +56,7 @@ def find_test_configs():
     global TEST_CASES
     # find test cases
     for testcase in TEST_CASE_FOLDER.rglob("testcases.json"):
-        testcases_app = json.loads(testcase.read_text(encoding="UTF-8"))
+        testcases_app = json.loads(testcase.read_text(encoding="utf-8"))
         for testcase_app in testcases_app:
             TEST_CASES.append(Config(testcase, **testcase_app))
 

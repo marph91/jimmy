@@ -88,7 +88,7 @@ class DefaultConverter(BaseConverter):
 
         match file_.suffix.lower():
             case ".md" | ".markdown" | ".txt" | ".text":
-                note_body = file_.read_text()
+                note_body = file_.read_text(encoding="utf-8")
             case ".adoc" | ".asciidoc":
                 # asciidoc -> html -> markdown
                 # Technically, the first line is the document title and gets

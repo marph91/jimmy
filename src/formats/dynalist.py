@@ -46,7 +46,7 @@ class Converter(converter.BaseConverter):
                 # opml is supported by pandoc, but the import is not working properly.
                 if item.suffix.lower() != ".txt":
                     continue
-                body = item.read_text()
+                body = item.read_text(encoding="utf-8")
 
                 resources, note_links = handle_markdown_links(body, self.root_path)
                 tags = common.get_inline_tags(body, ["#", "@"])

@@ -46,7 +46,9 @@ class Converter(converter.BaseConverter):
                 self.logger.debug(f"Ignoring file {file_.name}")
                 continue
 
-            title, body = common.split_h1_title_from_body(file_.read_text())
+            title, body = common.split_h1_title_from_body(
+                file_.read_text(encoding="utf-8")
+            )
             inline_tags = common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
             note_joplin = imf.Note(

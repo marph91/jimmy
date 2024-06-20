@@ -42,7 +42,7 @@ class Converter(converter.BaseConverter):
             # id is appended to filename
             title, original_id = item.stem.rsplit(" ", 1)
             # first line is title, second is whitespace
-            body = "\n".join(item.read_text().split("\n")[2:])
+            body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
 
             # find links
             resources = []

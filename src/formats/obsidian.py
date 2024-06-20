@@ -70,7 +70,7 @@ class Converter(converter.BaseConverter):
                     continue
                 note_links = []
                 resources = []
-                body = item.read_text()
+                body = item.read_text(encoding="utf-8")
 
                 # Resources can be anywhere:
                 # https://help.obsidian.md/Editing+and+formatting/Attachments#Change+default+attachment+location

@@ -14,7 +14,7 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".xit"]
 
     def convert(self, file_or_folder: Path):
-        groups = parse_text(file_or_folder.read_text(encoding="UTF-8"))
+        groups = parse_text(file_or_folder.read_text(encoding="utf-8"))
         for group in groups:
             group_notebook = imf.Notebook(
                 {"title": group.title if group.title else "Unnamed Group"}

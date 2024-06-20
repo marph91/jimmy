@@ -16,7 +16,9 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)
-        input_json = json.loads((self.root_path / "source/notes.json").read_text())
+        input_json = json.loads(
+            (self.root_path / "source/notes.json").read_text(encoding="utf-8")
+        )
 
         for note_simplenote in input_json["activeNotes"]:
             # title is the first line

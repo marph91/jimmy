@@ -44,7 +44,7 @@ class Converter(converter.BaseConverter):
         available_tags = []
         note_tag_id_map = defaultdict(list)
         for file_ in self.root_path.glob("**/*.md"):
-            markdown_raw = file_.read_text()
+            markdown_raw = file_.read_text(encoding="utf-8")
             try:
                 markdown, metadata_raw = markdown_raw.rsplit("\n\n", 1)
             except ValueError:
@@ -57,7 +57,9 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                title, body = common.split_h1_title_from_body(file_.read_text())
+                title, body = common.split_h1_title_from_body(
+                    file_.read_text(encoding="utf-8")
+                )
                 data = {
                     "title": title.strip(),
                     "body": body.strip(),

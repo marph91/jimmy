@@ -18,7 +18,7 @@ class Converter(converter.BaseConverter):
         self.root_path = self.prepare_input(file_or_folder)
 
         # TODO: handle "tags.json"
-        # file_dict = json.loads(file_or_folder.read_text(encoding="UTF-8"))
+        # file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
 
         # see BaseConverter.convert_multiple()
         textbundle_converter = TextbundleConverter(self.format)
