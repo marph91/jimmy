@@ -25,6 +25,7 @@ class JoplinImporter:
     def add_tag(self, tag: imf.Tag) -> str:
         self.progress_bars["tags"].update(1)
         try:
+            # Try to create a new tag.
             tag_id = self.api.add_tag(**tag.data)
             self.tag_map[tag.reference_id] = tag_id
             return tag_id

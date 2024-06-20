@@ -34,7 +34,10 @@ def get_available_formats() -> list[str]:
 
 
 def is_image(file_: Path) -> bool:
-    return puremagic.from_file(file_, mime=True).startswith("image/")
+    try:
+        return puremagic.from_file(file_, mime=True).startswith("image/")
+    except puremagic.main.PureError:
+        return False
 
 
 def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, str]]):
@@ -302,7 +305,11 @@ def get_single_child_folder(parent_folder: Path) -> Path:
 
 def get_temp_folder() -> Path:
     """Return a temporary folder."""
-    return Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
+    temp_folder = (
+        Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
+    )
+    temp_folder.mkdir(exist_ok=True)
+    return temp_folder
 
 
 def extract_tar(input_: Path) -> Path:
