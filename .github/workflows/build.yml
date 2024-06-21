@@ -26,13 +26,16 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: pip install -r requirements-dev.txt
+        # install only the really required modules before the pyinstaller build
+        run: pip install -r requirements.txt
       - name: Build executables with pyinstaller
         run: |
           python -m PyInstaller jimmy_cli.spec
           # python -m PyInstaller jimmy_gui.spec
       - name: Create the test inputs (don't run the tests itself)
-        run: python test/test_app.py
+        run: |
+          pip install -r requirements-dev.txt
+          python test/test_app.py
       - name: Release
         uses: softprops/action-gh-release@v2
         # release only if there is a release tag
