@@ -77,8 +77,10 @@ class Converter(converter.BaseConverter):
             )
 
     def map_resources_by_hash(self, note: dict) -> list[imf.Resource]:
-        resources = []
-        for note_resource in note.get("attachment", {}).values():
+        resources: list[imf.Resource] = []
+        if note.get("attachment") is None:
+            return resources
+        for note_resource in note["attachment"].values():
             for file_resource in self.available_resources:
                 if note_resource["md5"] == file_resource.md5:
                     if (ref := note_resource.get("ref")) is not None:
