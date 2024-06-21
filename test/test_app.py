@@ -41,7 +41,12 @@ def download_from_dropbox():
     # download
     # https://stackoverflow.com/a/20243081/7410886
     dropbox_url = "https://www.dropbox.com/scl/fo/pr7ccygc551haq4g7sovi/ACLJMNpwtbctRAS2EiWmizg?rlkey=hj59vfgka3nqcgng7emcsgldp&st=2v2zz8xa&dl=1"
-    response = requests.get(dropbox_url)
+    try:
+        response = requests.get(dropbox_url, timeout=30)
+        if response.status_code != 200:
+            return
+    except requests.exceptions.ConnectionError:
+        return
 
     test_case_file = TEST_CASE_FOLDER / "test_cases.zip"
     if not test_case_file.exists():
@@ -49,13 +54,11 @@ def download_from_dropbox():
         # unzip
         with zipfile.ZipFile(test_case_file) as zip_ref:
             zip_ref.extractall(TEST_CASE_FOLDER)
-    find_test_configs()
 
 
 def find_test_configs():
-    global TEST_CASES
     # find test cases
-    for testcase in TEST_CASE_FOLDER.rglob("testcases.json"):
+    for testcase in TEST_CASE_FOLDER.glob("*/testcases.json"):
         testcases_app = json.loads(testcase.read_text(encoding="utf-8"))
         for testcase_app in testcases_app:
             TEST_CASES.append(Config(testcase, **testcase_app))
@@ -63,6 +66,7 @@ def find_test_configs():
 
 # needs to be executed before "parameterized"
 download_from_dropbox()
+find_test_configs()
 
 
 def name_func(testcase_func, param_num, param):
@@ -72,10 +76,8 @@ def name_func(testcase_func, param_num, param):
 
 
 class IntermediateFormat(unittest.TestCase):
-
     @parameterized.expand(TEST_CASES, name_func=name_func)
     def test_convert(self, testcase):
-
         stats = get_stats(
             [testcase.path.parent / input_ for input_ in testcase.inputs],
             testcase.format_,
