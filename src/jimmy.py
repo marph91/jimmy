@@ -74,7 +74,7 @@ def convert_all_inputs(inputs: list[Path], format_: str):
     return parent
 
 
-def get_tree(root_notebooks: list[imf.Notebook], root_tree=Tree("Note Tree")) -> Tree:
+def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
     for notebook in root_notebooks:
         new_root_notebook = root_tree.add("📘 " + notebook.data["title"])
         for note in notebook.child_notes:
@@ -90,13 +90,12 @@ def get_tree(root_notebooks: list[imf.Notebook], root_tree=Tree("Note Tree")) ->
 
 
 def jimmy(api, config) -> common.Stats:
-    if not config.dry_run:
-        if config.clear_notes:
-            LOGGER.info("Clear everything. Please wait.")
-            api.delete_all_notebooks()
-            api.delete_all_resources()
-            api.delete_all_tags()
-            LOGGER.info("Cleared everything successfully.")
+    if not config.dry_run and config.clear_notes:
+        LOGGER.info("Clear everything. Please wait.")
+        api.delete_all_notebooks()
+        api.delete_all_resources()
+        api.delete_all_tags()
+        LOGGER.info("Cleared everything successfully.")
 
     LOGGER.info(f"Importing notes from {' '.join(map(str, config.input))}")
     LOGGER.info("Start parsing")
@@ -104,7 +103,7 @@ def jimmy(api, config) -> common.Stats:
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:
-        print(get_tree(root_notebooks))
+        print(get_tree(root_notebooks, Tree("Note Tree")))
 
     if not config.dry_run:
         LOGGER.info("Start import to Joplin")

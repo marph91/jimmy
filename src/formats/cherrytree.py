@@ -4,7 +4,7 @@ import base64
 from pathlib import Path
 import logging
 import uuid
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET  # noqa: N817
 
 import common
 import converter
@@ -26,10 +26,7 @@ def convert_table(node):
         columns = []
         for cell in row:
             assert cell.tag == "cell"
-            if cell.text is None:
-                cell_text = ""
-            else:
-                cell_text = cell.text.replace("\n", "<br>")
+            cell_text = "" if cell.text is None else cell.text.replace("\n", "<br>")
             columns.append(cell_text)
         table_md.append("| " + " | ".join(columns) + " |")
 

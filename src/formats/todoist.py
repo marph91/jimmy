@@ -121,7 +121,7 @@ class Converter(converter.BaseConverter):
                     if (due_date := parse_date(row["DATE"])) is not None:
                         note_data["todo_due"] = common.datetime_to_ms(due_date)
 
-                    tags_string = labels + [f"todoist-priority-{row['PRIORITY']}"]
+                    tags_string = [*labels, f"todoist-priority-{row['PRIORITY']}"]
                     joplin_note = imf.Note(
                         note_data,
                         tags=[imf.Tag({"title": tag}) for tag in tags_string],

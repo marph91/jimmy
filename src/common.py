@@ -210,7 +210,7 @@ class LinkExtractor(Treeprocessor):
 
 
 class LinkExtractorExtension(Extension):
-    def extendMarkdown(self, md):
+    def extendMarkdown(self, md):  # noqa: N802
         link_extension = LinkExtractor(md)
         md.treeprocessors.register(link_extension, "link_extension", 15)
 

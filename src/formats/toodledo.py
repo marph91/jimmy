@@ -44,7 +44,6 @@ class Converter(converter.BaseConverter):
 
     def parse_tasks(self, reader):
         for row in reader:
-
             # unused data:
             # row["LOCATION"]
             # row["REPEAT"]
