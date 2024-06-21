@@ -17,6 +17,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install pip dependencies
-        run: pip install -r requirements-dev.txt
+        run: pip install -r requirements/requirements-dev.txt
       - name: Run linting
         run: ./lint.sh

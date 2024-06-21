@@ -21,6 +21,6 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install pip dependencies
-        run: pip install -r requirements-docs.txt
+        run: pip install -r requirements/requirements-docs.txt
       - name: Deploy site
         run: mkdocs gh-deploy --force
