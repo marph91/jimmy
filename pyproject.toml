@@ -1,0 +1,58 @@
+[tool.mypy]
+# almost like strict, but leave out some too strict checks
+warn_unused_configs = true
+# disallow_any_generics = true
+disallow_subclassing_any = true
+# disallow_untyped_calls = true
+# disallow_untyped_defs = true
+# disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+# warn_return_any = true
+no_implicit_reexport = true
+strict_equality = true
+extra_checks = true
+# for python-markdown
+disable_error_code = "attr-defined"
+[[tool.mypy.overrides]]
+module = [
+    "enlighten",
+    "frontmatter",
+    "puremagic",
+    "pypandoc",
+    "pytodotxt",
+    "stage_left",
+    "stage_left.types"
+]
+ignore_missing_imports = true
+
+[tool.pylint]
+# f-strings are convenient. Don't care about the performance (yet).
+disable = [
+    "logging-fstring-interpolation",
+    "missing-function-docstring",
+    "missing-class-docstring"
+]
+min-similarity-lines = 10
+notes = []  # don't show todos
+
+[tool.ruff]
+# Set the maximum line length to 88.
+line-length = 88
+[tool.ruff.lint]
+# all rules: https://docs.astral.sh/ruff/rules/
+select = [
+    "B",    # flake8-bugbear
+    "E",    # pycodestyle errors
+    "F",    # Pyflakes
+    # "I",  # isort
+    "N",    # pep8-naming
+    # "PL",   # Pylint
+    # "RUF",  # ruff
+    # "S",  # flake8-bandit
+    "SIM",  # flake8-simplify
+    "UP",   # pyupgrade
+    "W",    # pycodestyle warnings
+]

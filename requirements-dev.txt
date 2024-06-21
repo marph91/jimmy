@@ -1,10 +1,9 @@
 -r requirements.txt
-black==24.4.2
-flake8==7.1.0
 mypy==1.10.0
 parameterized==0.9.0
 pyinstaller==6.8.0
 pylint==3.2.3
+ruff==0.4.10
 types-beautifulsoup4==4.12.0.20240511
 types-Markdown==3.6.0.20240316
 types-requests==2.32.0.20240602

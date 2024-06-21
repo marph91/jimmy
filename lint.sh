@@ -1,6 +1,5 @@
 #!/bin/sh
 
-black --check src
-flake8 src
+ruff check  # ruff first, because it's fastest
 mypy src
 pylint src
