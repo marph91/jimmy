@@ -4,7 +4,6 @@ import logging
 
 import requests
 
-import common
 import intermediate_format as imf
 
 
@@ -14,13 +13,13 @@ LOGGER = logging.getLogger("jimmy")
 class JoplinImporter:
     """Import notebooks, notes and related data to Joplin."""
 
-    def __init__(self, api, stats: common.Stats):
+    def __init__(self, api, progress_bars):
         self.api = api
         # Cache created tags to create them only once.
         self.tag_map: dict[str, imf.Tag] = {}  # original id - joplin id
         self.note_id_map: dict[str, str] = {}  # original id - joplin id
 
-        self.progress_bars = stats.create_progress_bars()
+        self.progress_bars = progress_bars
 
     def add_tag(self, tag: imf.Tag) -> str:
         self.progress_bars["tags"].update(1)

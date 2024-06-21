@@ -97,7 +97,8 @@ def jimmy(api, config) -> common.Stats:
         api.delete_all_tags()
         LOGGER.info("Cleared everything successfully.")
 
-    LOGGER.info(f"Importing notes from {' '.join(map(str, config.input))}")
+    inputs_str = ' '.join(map(str, config.input))
+    LOGGER.info(f"Importing notes from \"{inputs_str}\"")
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(config.input, config.format)
     stats = common.get_import_stats(root_notebooks)
@@ -107,8 +108,9 @@ def jimmy(api, config) -> common.Stats:
 
     if not config.dry_run:
         LOGGER.info("Start import to Joplin")
+        progress_bars = stats.create_progress_bars()
         for note_tree in root_notebooks:
-            joplin_importer = importer.JoplinImporter(api, stats)
+            joplin_importer = importer.JoplinImporter(api, progress_bars)
             joplin_importer.import_notebook(note_tree)
             # We need another pass, since at the first pass
             # target note IDs are unknown.
