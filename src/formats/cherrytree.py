@@ -209,6 +209,9 @@ class Converter(converter.BaseConverter):
                     if child.attrib.get("filename", "") == "__ct_special.tex":
                         note_body += f"\n```latex\n{child.text}\n```\n"
                         continue
+                    if child.text is None and child.attrib.get("anchor"):
+                        LOGGER.debug(f"ignoring anchor {child.attrib.get('anchor')}")
+                        continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
                     resource_md, resource_joplin = convert_png(child, self.root_path)

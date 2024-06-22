@@ -20,3 +20,4 @@ Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
 - Cherrytree checked (`☑`) and crossed checkboxes (`☒`) are converted to markdown checked checkboxes (`[x]`).
 - Cherrytree latex is converted to a markdown code block.
 - Some cherrytree elements are not inserted at their original location, but at the end of the note. This is a limitation of cherrytree's export.
+- Cherrytree anchors are not converted.
