@@ -97,8 +97,8 @@ def jimmy(api, config) -> common.Stats:
         api.delete_all_tags()
         LOGGER.info("Cleared everything successfully.")
 
-    inputs_str = ' '.join(map(str, config.input))
-    LOGGER.info(f"Importing notes from \"{inputs_str}\"")
+    inputs_str = " ".join(map(str, config.input))
+    LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(config.input, config.format)
     stats = common.get_import_stats(root_notebooks)

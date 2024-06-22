@@ -3,12 +3,16 @@
 from dataclasses import dataclass
 import hashlib
 import json
+import logging
 from pathlib import Path
 import re
 
 import common
 import converter
 import intermediate_format as imf
+
+
+LOGGER = logging.getLogger("jimmy")
 
 
 @dataclass
@@ -117,36 +121,45 @@ class Converter(converter.BaseConverter):
                 )
 
         for note_id in input_json["note"]:
-            note = json.loads((self.root_path / note_id).read_text(encoding="utf-8"))
-
-            # resources / attachments
-            resources = self.map_resources_by_hash(note)
-
-            data = {
-                "title": note["title"],
-                "user_created_time": note["ctime"],
-                "user_updated_time": note["mtime"],
-                "source_application": self.format,
-            }
-            if (content_html := note.get("content")) is not None:
-                # dirty hack: In the original data, the attachment_id is stored in the
-                # "ref" attribute. Mitigate by storing it in the "src" attribute.
-                content_html = re.sub("<img.*?ref=", "<img src=", content_html)
-                content_markdown = common.html_text_to_markdown(content_html)
-                resources_referenced, _ = self.handle_markdown_links(content_markdown)
-                resources.extend(resources_referenced)
-                data["body"] = content_markdown
-
-            common.try_transfer_dicts(
-                note, data, ["latitude", "longitude", "source_url"]
-            )
-
-            parent_notebook = self.find_parent_notebook(note["parent_id"])
-            parent_notebook.child_notes.append(
-                imf.Note(
-                    data,
-                    tags=[imf.Tag({"title": tag}) for tag in note.get("tag", [])],
-                    resources=resources,
-                    original_id=note_id,
+            try:
+                note = json.loads(
+                    (self.root_path / note_id).read_text(encoding="utf-8")
                 )
-            )
+
+                # resources / attachments
+                resources = self.map_resources_by_hash(note)
+
+                data = {
+                    "title": note["title"],
+                    "user_created_time": note["ctime"],
+                    "user_updated_time": note["mtime"],
+                    "source_application": self.format,
+                }
+                if (content_html := note.get("content")) is not None:
+                    # hack: In the original data, the attachment_id is stored in the
+                    # "ref" attribute. Mitigate by storing it in the "src" attribute.
+                    content_html = re.sub("<img.*?ref=", "<img src=", content_html)
+                    content_markdown = common.html_text_to_markdown(content_html)
+                    resources_referenced, _ = self.handle_markdown_links(
+                        content_markdown
+                    )
+                    resources.extend(resources_referenced)
+                    data["body"] = content_markdown
+
+                common.try_transfer_dicts(
+                    note, data, ["latitude", "longitude", "source_url"]
+                )
+
+                parent_notebook = self.find_parent_notebook(note["parent_id"])
+                parent_notebook.child_notes.append(
+                    imf.Note(
+                        data,
+                        tags=[imf.Tag({"title": tag}) for tag in note.get("tag", [])],
+                        resources=resources,
+                        original_id=note_id,
+                    )
+                )
+            except Exception as exc:  # pylint: disable=broad-except
+                LOGGER.warning(f"Failed to convert note \"{note['title']}\"")
+                # https://stackoverflow.com/a/52466005/7410886
+                LOGGER.debug(exc, exc_info=True)
