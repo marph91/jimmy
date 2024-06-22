@@ -88,6 +88,10 @@ class DefaultConverter(BaseConverter):
         match file_.suffix.lower():
             case ".md" | ".markdown" | ".txt" | ".text":
                 note_body = file_.read_text(encoding="utf-8")
+            case ".fountain":
+                # built-in: https://joplinapp.org/help/apps/markdown/#markdown-plugins
+                note_body_fountain = file_.read_text(encoding="utf-8")
+                note_body = f"```fountain\n{note_body_fountain}\n```\n"
             case ".adoc" | ".asciidoc":
                 # asciidoc -> html -> markdown
                 # Technically, the first line is the document title and gets
