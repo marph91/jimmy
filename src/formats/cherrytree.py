@@ -225,11 +225,13 @@ class Converter(converter.BaseConverter):
             "source_application": self.format,
         }
 
+        tags = []
         # cherrytree bookmark -> joplin tag
         unique_id = node.attrib["unique_id"]
-        tags = []
         if unique_id in self.bookmarked_nodes:
             tags.append("cherrytree-bookmarked")
+        if tags_str := node.attrib.get("tags", ""):
+            tags.extend(tags_str.strip().split(" "))
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
             note_data["user_created_time"] = int(created_time) * 1000
