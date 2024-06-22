@@ -241,11 +241,17 @@ def get_markdown_links(text: str) -> list:
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member
     MD.convert(text)
-    all_links = MD.images + MD.links
-    # clear
-    MD.images.clear()
-    MD.links.clear()
-    return all_links
+    try:
+        md_images = [*MD.images]  # new list, because it gets cleared
+        MD.images.clear()
+    except AttributeError:
+        md_images = []
+    try:
+        md_links = [*MD.links]
+        MD.links.clear()
+    except AttributeError:
+        md_links = []
+    return md_images + md_links
 
 
 WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
