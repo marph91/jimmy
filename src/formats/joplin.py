@@ -48,6 +48,7 @@ class Converter(converter.BaseConverter):
             try:
                 markdown, metadata_raw = markdown_raw.rsplit("\n\n", 1)
             except ValueError:
+                markdown = ""
                 metadata_raw = markdown_raw
             metadata_json = {}
             for line in metadata_raw.split("\n"):
@@ -57,9 +58,7 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                title, body = common.split_h1_title_from_body(
-                    file_.read_text(encoding="utf-8")
-                )
+                title, body = common.split_h1_title_from_body(markdown)
                 data = {
                     "title": title.strip(),
                     "body": body.strip(),
