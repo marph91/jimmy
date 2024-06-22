@@ -3,16 +3,12 @@
 from dataclasses import dataclass
 import hashlib
 import json
-import logging
 from pathlib import Path
 import re
 
 import common
 import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("jimmy")
 
 
 @dataclass
@@ -42,7 +38,7 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f"Couldn't find parent notebook with id {parent_id}")
         return self.root_notebook
 
-    def handle_markdown_links(self, body: str) -> tuple[list, list]:
+    def handle_markdown_links(self, title: str, body: str) -> tuple[list, list]:
         resources = []
         for link in common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
@@ -54,7 +50,8 @@ class Converter(converter.BaseConverter):
             ]
             if len(matched_resources) != 1:
                 self.logger.debug(
-                    f"Found too less or too many resource: {len(matched_resources)}"
+                    f"Found too less or too many resources: {len(matched_resources)} "
+                    f'(note: "{title}", original link: "{link}")'
                 )
                 continue
             resource = matched_resources[0]
@@ -140,8 +137,9 @@ class Converter(converter.BaseConverter):
                     # "ref" attribute. Mitigate by storing it in the "src" attribute.
                     content_html = re.sub("<img.*?ref=", "<img src=", content_html)
                     content_markdown = common.html_text_to_markdown(content_html)
+                    # note title only needed for debug message
                     resources_referenced, _ = self.handle_markdown_links(
-                        content_markdown
+                        note["title"], content_markdown
                     )
                     resources.extend(resources_referenced)
                     data["body"] = content_markdown
@@ -160,6 +158,6 @@ class Converter(converter.BaseConverter):
                     )
                 )
             except Exception as exc:  # pylint: disable=broad-except
-                LOGGER.warning(f"Failed to convert note \"{note['title']}\"")
+                self.logger.warning(f"Failed to convert note \"{note['title']}\"")
                 # https://stackoverflow.com/a/52466005/7410886
-                LOGGER.debug(exc, exc_info=True)
+                self.logger.debug(exc, exc_info=True)

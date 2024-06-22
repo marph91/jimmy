@@ -21,7 +21,7 @@ class JoplinImporter:
 
         self.progress_bars = progress_bars
 
-    def add_tag(self, tag: imf.Tag) -> str:
+    def add_tag(self, tag: imf.Tag) -> str | None:
         self.progress_bars["tags"].update(1)
         try:
             # Try to create a new tag.
@@ -30,13 +30,24 @@ class JoplinImporter:
             return tag_id
         except requests.exceptions.HTTPError:
             # Tag exists already. Search for it.
-            result = self.api.search(query=tag.data["title"], type="tag")
+            title = tag.data["title"]
+            result = self.api.search(query=title, type="tag")
             matching_tags = [
                 joplin_tag
                 for joplin_tag in result.items
-                if joplin_tag.title == tag.data["title"].lower()
+                if joplin_tag.title == title.lower()
             ]
-            assert len(matching_tags) == 1
+            if len(matching_tags) == 0:
+                LOGGER.warning(
+                    f'Ignoring tag "{title}". It exists,'
+                    "but there aren't search results."
+                )
+                return None
+            if len(matching_tags) > 1:
+                LOGGER.warning(
+                    f'Too many search results for tag "{title}". '
+                    f'Taking first match "{matching_tags[0].id}".'
+                )
             self.tag_map[tag.reference_id] = matching_tags[0].id
             return matching_tags[0].id
 
@@ -68,7 +79,8 @@ class JoplinImporter:
 
         for tag in note.tags:
             tag_id = self.tag_map.get(tag.reference_id, self.add_tag(tag))
-            self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
+            if tag_id is not None:
+                self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
 
     def import_notebook(self, notebook: imf.Notebook):
         self.progress_bars["notebooks"].update(1)
