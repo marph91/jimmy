@@ -4,7 +4,7 @@
 ## Export instructions
 
 - <https://www.giuspen.com/cherrytreemanual/#_exporting>
-- Choose "Export to CherryTreeDocument"
+- Choose "Export" -> "Export to CherryTreeDocument" -> "All the Tree" -> "XML, Not Protected (.cdt)"
 
 ## Import to Joplin
 
@@ -17,4 +17,6 @@ Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
 
 ## Known limitations
 
-Only a small subset of the rich text is handled for now.
+- Cherrytree checked (`☑`) and crossed checkboxes (`☒`) are converted to markdown checked checkboxes (`[x]`).
+- Cherrytree latex is converted to a markdown code block.
+- Some cherrytree elements are not inserted at their original location, but at the end of the note. This is a limitation of cherrytree's export.

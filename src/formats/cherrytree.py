@@ -37,27 +37,116 @@ def convert_table(node):
     return "\n".join(table_md)
 
 
+def fix_inline_formatting(md_content: str) -> str:
+    # horizontal line
+    md_content = md_content.replace("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "---")
+
+    # TODO: make list replacements more robust
+    # checklist
+    md_content = md_content.replace("☐", "- [ ]")
+    for checked_checkbox in ("☑", "☒"):
+        md_content = md_content.replace(checked_checkbox, "- [x]")
+
+    # unnumbered list
+    for number in range(10):
+        for bullet in (")", "-", ">"):
+            md_content = md_content.replace(f"{number}{bullet}", f"{number}.")
+
+    # unnumbered list
+    for bullet in ("•", "◇", "▪", "→", "⇒"):
+        md_content = md_content.replace(bullet, "-")
+    return md_content
+
+
 def convert_rich_text(rich_text):
     # TODO: is this fine with mixed text and child tags?
     note_links = []
-    if (url := rich_text.attrib.get("link")) is not None:
-        if url.startswith("webs "):
-            # web links
-            url = url.lstrip("webs ")
-            if rich_text.text == url:
-                md_content = f"<{url}>"
-            else:
-                md_content = f"[{rich_text.text}]({url})"
-        elif url.startswith("node "):
-            # internal node links
-            url = url.lstrip("node ")
-            md_content = f"[{rich_text.text}]({url})"
-            note_links.append(imf.NoteLink(md_content, url, rich_text.text))
-        else:
-            # ?
-            md_content = f"[{rich_text.text}]({url})"
-    else:
-        md_content = "" if rich_text.text is None else rich_text.text
+    md_content = ""
+    for attrib, attrib_value in rich_text.attrib.items():
+        match attrib:
+            case "background" | "foreground" | "justification":
+                if rich_text.text is not None:
+                    md_content += rich_text.text
+                LOGGER.debug(
+                    f"ignoring {attrib}={attrib_value} "
+                    "as it's not supported in markdown"
+                )
+            case "family":
+                match attrib_value:
+                    case "monospace":
+                        md_content = f"`{rich_text.text}`"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case "link":
+                url = attrib_value
+                if url.startswith("webs "):
+                    # web links
+                    url = url.lstrip("webs ")
+                    if rich_text.text == url:
+                        md_content = f"<{url}>"
+                    else:
+                        md_content = f"[{rich_text.text}]({url})"
+                elif url.startswith("node "):
+                    # internal node links
+                    url = url.lstrip("node ")
+                    md_content = f"[{rich_text.text}]({url})"
+                    note_links.append(imf.NoteLink(md_content, url, rich_text.text))
+                else:
+                    # ?
+                    md_content = f"[{rich_text.text}]({url})"
+            case "scale":
+                match attrib_value:
+                    case "sup":
+                        md_content = f"^{rich_text.text}^"
+                    case "sub":
+                        md_content = f"~{rich_text.text}~"
+                    case "h1":
+                        md_content = f"# {rich_text.text}"
+                    case "h2":
+                        md_content = f"## {rich_text.text}"
+                    case "h3":
+                        md_content = f"### {rich_text.text}"
+                    case "h4":
+                        md_content = f"#### {rich_text.text}"
+                    case "h5":
+                        md_content = f"##### {rich_text.text}"
+                    case "h6":
+                        md_content = f"###### {rich_text.text}"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case "strikethrough":
+                match attrib_value:
+                    case "true":
+                        md_content = f"~~{rich_text.text}~~"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case "style":
+                match attrib_value:
+                    case "italic":
+                        md_content = f"*{rich_text.text}*"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case "underline":
+                match attrib_value:
+                    case "single":
+                        md_content = f"++{rich_text.text}++"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case "weight":
+                match attrib_value:
+                    case "heavy":
+                        md_content = f"**{rich_text.text}**"
+                    case _:
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+            case _:
+                LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+    if not md_content:
+        # TODO: make this more robust
+        md_content += "" if rich_text.text is None else rich_text.text
+    if not rich_text.attrib:
+        # TODO: make this more robust
+        # Make sure to don't break links.
+        md_content = fix_inline_formatting(md_content)
     return md_content, note_links
 
 
@@ -71,11 +160,6 @@ def convert_png(node, resource_folder):
     resource_md = f"![{display_name}]({filename})"
     resource_imf = imf.Resource(filename, resource_md, filename.name)
     return resource_md, resource_imf
-
-
-def fix_list(md_content):
-    md_content = md_content.replace("•", "-")
-    return md_content
 
 
 class Converter(converter.BaseConverter):
@@ -111,9 +195,13 @@ class Converter(converter.BaseConverter):
                     )
                     self.convert_to_markdown(child, new_root_notebook)
                 case "codebox":
-                    # TODO: language?
-                    note_body += f"```\n{child.text}\n```\n"
+                    language = child.attrib.get("syntax_highlighting", "")
+                    note_body += f"\n```{language}\n{child.text}\n```\n"
                 case "encoded_png":
+                    # Seems to be used for plaintext tex, too?!
+                    if child.attrib.get("filename", "") == "__ct_special.tex":
+                        note_body += f"\n```latex\n{child.text}\n```\n"
+                        continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
                     resource_md, resource_joplin = convert_png(child, self.root_path)
@@ -123,8 +211,6 @@ class Converter(converter.BaseConverter):
                     note_body += convert_table(child)
                 case _:
                     LOGGER.warning(f"ignoring tag {child.tag}")
-
-        note_body = fix_list(note_body)
 
         note_data = {
             "title": note_name,
