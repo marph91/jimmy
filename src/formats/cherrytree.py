@@ -150,16 +150,23 @@ def convert_rich_text(rich_text):
     return md_content, note_links
 
 
-def convert_png(node, resource_folder):
+def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     # It seems like the <encoded_png> attribute doesn't only cover PNG, but also
     # arbitrary attachments.
-    filename = resource_folder / str(uuid.uuid4())
-    filename.write_bytes(base64.b64decode(node.text))
 
-    display_name = node.attrib.get("filename", filename.name)
-    resource_md = f"![{display_name}]({filename})"
-    resource_imf = imf.Resource(filename, resource_md, filename.name)
-    return resource_md, resource_imf
+    # Keep the original filename and extension if possible.
+    original_name = node.attrib.get("filename")
+    suffix = "" if original_name is None else Path(original_name).suffix
+
+    # Use always the uuid to avoid name clashes.
+    temp_filename = (resource_folder / str(uuid.uuid4())).with_suffix(suffix)
+    temp_filename.write_bytes(base64.b64decode(node.text))
+
+    # assemble the markdown
+    display_name = original_name or temp_filename.name
+    resource_md = f"![{display_name}]({temp_filename})"
+    resource_imf = imf.Resource(temp_filename, resource_md, temp_filename.name)
+    return resource_md + "\n", resource_imf
 
 
 class Converter(converter.BaseConverter):
