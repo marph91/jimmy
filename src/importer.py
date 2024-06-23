@@ -29,13 +29,13 @@ class JoplinImporter:
             self.tag_map[tag.reference_id] = tag_id
             return tag_id
         except requests.exceptions.HTTPError:
-            # Tag exists already. Search for it.
-            title = tag.data["title"]
+            # Tag exists already. Search for it. Joplin only supports lower case
+            # tags. If not converted to lower case, this can cause some trouble.
+            # See: https://github.com/marph91/jimmy/issues/6#issuecomment-2184981456
+            title = tag.data["title"].lower()
             result = self.api.search(query=title, type="tag")
             matching_tags = [
-                joplin_tag
-                for joplin_tag in result.items
-                if joplin_tag.title == title.lower()
+                joplin_tag for joplin_tag in result.items if joplin_tag.title == title
             ]
             if len(matching_tags) == 0:
                 LOGGER.warning(
