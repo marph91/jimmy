@@ -32,6 +32,7 @@ $EXECUTABLE "$CACHE/textbundle/example.textpack" --format textbundle
 # $EXECUTABLE "$CACHE/tiddlywiki/tiddlyhost.json" --format tiddlywiki
 $EXECUTABLE "$CACHE/todo_txt/examples_from_readme.txt" --format todo_txt
 $EXECUTABLE "$CACHE/todoist/Privates.csv" --format todoist
+$EXECUTABLE "$CACHE/tomboy-ng/tomboy-ng/" --format tomboy_ng
 $EXECUTABLE "$CACHE/toodledo/toodledo_completed_240427.csv" --format toodledo
 $EXECUTABLE "$CACHE/toodledo/toodledo_current_240427.csv" --format toodledo
 $EXECUTABLE "$CACHE/toodledo/toodledo_notebook_240427.csv" --format toodledo

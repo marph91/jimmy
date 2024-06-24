@@ -53,6 +53,7 @@ nav:
     - Tiddlywiki: formats/tiddlywiki.md
     - Todo.txt: formats/todo.txt.md
     - Todoist: formats/todoist.md
+    - Tomboy-ng: formats/tomboy_ng.md
     - Toodledo: formats/toodledo.md
     - xit: formats/xit.md
     - Zoho Notebook: formats/zoho_notebook.md
