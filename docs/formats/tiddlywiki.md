@@ -1,7 +1,7 @@
 - [Website](https://tiddlywiki.com/)
 - Typical extension: `.json`
 
-## Export instructions
+## Export Instructions
 
 - <https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html>
 - Choose the json export.

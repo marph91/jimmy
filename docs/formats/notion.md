@@ -1,7 +1,7 @@
 - [Website](https://www.notion.so/)
 - Typical extension: `.zip`
 
-## Export instructions
+## Export Instructions
 
 - <https://www.notion.so/de-de/help/export-your-content>
 - Choose "Markdown and CSV" and uncheck "Create folder for sub-pages" when exporting.

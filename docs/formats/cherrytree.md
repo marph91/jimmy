@@ -1,7 +1,7 @@
 - [Website](https://www.giuspen.net/cherrytree/)
 - Typical extension: `.ctd`
 
-## Export instructions
+## Export Instructions
 
 - <https://www.giuspen.com/cherrytreemanual/#_exporting>
 - Choose "Export" -> "Export to CherryTreeDocument" -> "All the Tree" -> "XML, Not Protected (.cdt)"
@@ -10,12 +10,12 @@
 
 Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
 
-## Import structure
+## Import Structure
 
 - CherryTree nodes are converted to Joplin notes.
 - If a CherryTree node contains sub nodes, a Joplin Notebook is created as container. It has the same name as the corresponding note.
 
-## Known limitations
+## Known Limitations
 
 - Cherrytree checked (`☑`) and crossed checkboxes (`☒`) are converted to markdown checked checkboxes (`[x]`).
 - Cherrytree latex is converted to a markdown code block.

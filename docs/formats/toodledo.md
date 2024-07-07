@@ -1,7 +1,7 @@
 - [Website](https://www.toodledo.com/)
 - Typical extension: `.csv`
 
-## Export instructions
+## Export Instructions
 
 - <https://www.toodledo.com/tools/import_export.php>
 - Uncheck "Use relative data" when exporting.

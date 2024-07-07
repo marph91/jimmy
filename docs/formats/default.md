@@ -1,6 +1,6 @@
 The default import can be used to import single files or folders recursively.
 
-## Export instructions
+## Export Instructions
 
 The default import covers the following formats:
 
@@ -37,7 +37,7 @@ jimmy-cli-linux plaintext.txt markdown.md
 jimmy-cli-linux path/to/folder
 ```
 
-## Import structure
+## Import Structure
 
 - Folders are converted to Joplin notebooks
 - Files are converted to Joplin notes

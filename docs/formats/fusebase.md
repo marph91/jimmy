@@ -3,7 +3,7 @@ Also known as Nimbus Note.
 - [Website](https://nimbusweb.me/note/)
 - Typical extension: Folder with `.zip` files
 
-## Export instructions
+## Export Instructions
 
 <https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/>
 

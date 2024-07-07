@@ -1,7 +1,7 @@
 - [Website](https://joplinapp.org/)
 - Typical extension: `.jex`
 
-## Export instructions
+## Export Instructions
 
 <https://joplinapp.org/help/apps/import_export/#exporting>
 

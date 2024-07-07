@@ -1,7 +1,7 @@
 - [Website](https://www.zoho.com/notebook/)
 - Typical extension: `.zip`
 
-## Export instructions
+## Export Instructions
 
 - <https://help.zoho.com/portal/en/kb/notebook/import-and-export/articles/export-all-your-notecards-from-notebook>
 - Export as HTML.

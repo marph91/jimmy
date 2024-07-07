@@ -1,7 +1,7 @@
 - [Website](https://clipto.pro/)
 - Typical extension: `.json`
 
-## Export instructions
+## Export Instructions
 
 !!! note
 

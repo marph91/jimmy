@@ -1,7 +1,7 @@
 - [Website](https://dynalist.io/)
 - Typical extension: `.zip`
 
-## Export instructions
+## Export Instructions
 
 <https://help.dynalist.io/article/79-back-up-your-data>
 

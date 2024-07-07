@@ -1,7 +1,7 @@
 - [Website](https://jrnl.sh/)
 - Typical extension: `.json`
 
-## Export instructions
+## Export Instructions
 
 - <https://jrnl.sh/en/stable/formats/#exporting-with-file>
 - Export as json to preserve metadata.
@@ -11,6 +11,6 @@
 
 Example: `jimmy-cli-linux myjournal.json --format jrnl`
 
-## Import structure
+## Import Structure
 
 Each journal entry is converted to a separate note in a flat notebook.

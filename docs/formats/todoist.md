@@ -1,7 +1,7 @@
 - [Website](https://todoist.com/)
 - Typical extension: `.csv`
 
-## Export instructions
+## Export Instructions
 
 - <https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN>
 - Uncheck "Use relative data" when exporting.

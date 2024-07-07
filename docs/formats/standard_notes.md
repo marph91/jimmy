@@ -1,7 +1,7 @@
 - [Website](https://standardnotes.com/)
 - Typical extension: `.zip`
 
-## Export instructions
+## Export Instructions
 
 <https://standardnotes.com/help/14/how-do-i-create-and-import-backups-of-my-standard-notes-data>
 

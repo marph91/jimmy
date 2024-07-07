@@ -1,7 +1,7 @@
 - [Website](https://simplenote.com/)
 - Typical extension: `.zip`
 
-## Export instructions
+## Export Instructions
 
 <https://simplenote.com/help/#export>
 

@@ -1,7 +1,7 @@
 - [Website](https://keep.google.com/)
 - Typical extensions: `.zip`, `.tgz`
 
-## Export instructions
+## Export Instructions
 
 Export via Takeout: <https://www.howtogeek.com/694042/how-to-export-your-google-keep-notes-and-attachments/>
 

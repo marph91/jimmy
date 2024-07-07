@@ -1,7 +1,7 @@
 - [Website](https://bear.app/)
 - Typical extension: `.bear2bk`
 
-## Export instructions
+## Export Instructions
 
 <https://bear.app/faq/backup-restore/>
 
