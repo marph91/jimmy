@@ -14,3 +14,7 @@ The brief workflow is:
 3. Provide an example file and [add a test](https://github.com/marph91/jimmy/blob/master/test/example_commands.sh)
 4. Lint with [lint.sh](https://github.com/marph91/jimmy/blob/master/lint.sh)
 5. Document at [docs/](https://github.com/marph91/jimmy/tree/master/docs/formats)
+
+## Donations
+
+I'm happy about a star on the [github](https://github.com/marph91/jimmy). If you really want to donate, please [donate to the Joplin core team](https://joplinapp.org/donate/). They do great work.

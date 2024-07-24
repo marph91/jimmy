@@ -6,6 +6,8 @@ Tool to import your notes to Joplin.
 
 For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
+If this app is useful for you, feel free to star it on [github](https://github.com/marph91/jimmy).
+
 [![build](https://github.com/marph91/jimmy/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/build.yml)
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
 [![tests](https://github.com/marph91/jimmy/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/tests.yml)
