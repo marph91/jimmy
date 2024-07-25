@@ -1,4 +1,4 @@
-This page describes how to import notes from Simplenote to Joplin.
+This page describes how to import notes from Standard Notes to Joplin.
 
 ## General Information
 

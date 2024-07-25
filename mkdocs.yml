@@ -37,14 +37,14 @@ nav:
     - Default Import: formats/default.md
     - Bear: formats/bear.md
     - Cacher: formats/cacher.md
-    - Cherrytree: formats/cherrytree.md
+    - CherryTree: formats/cherrytree.md
     - Clipto: formats/clipto.md
     - Day One: formats/day_one.md
     - Dynalist: formats/dynalist.md
     - FuseBase: formats/fusebase.md
     - Google Keep: formats/google_keep.md
     - Joplin: formats/joplin.md
-    - Jrnl: formats/jrnl.md
+    - jrnl: formats/jrnl.md
     - Notion: formats/notion.md
     - Obsidian: formats/obsidian.md
     - Simplenote: formats/simplenote.md
