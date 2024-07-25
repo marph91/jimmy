@@ -1,18 +1,19 @@
+This page describes how to import notes from Toodledo to Joplin.
+
+## General Information
+
 - [Website](https://www.toodledo.com/)
 - Typical extension: `.csv`
 
-## Export Instructions
+## Instructions
 
-- <https://www.toodledo.com/tools/import_export.php>
-- Uncheck "Use relative data" when exporting.
-
-## Import to Joplin
-
-Examples:
-
-- `jimmy-cli-linux toodledo_completed_240427.csv --format toodledo`
-- `jimmy-cli-linux toodledo_current_240427.csv --format toodledo`
-- `jimmy-cli-linux toodledo_notebook_240427.csv --format toodledo`
+1. Export as described in <https://www.toodledo.com/tools/import_export.php>
+    1. Uncheck "Use relative data" when exporting.
+2. [Install jimmy](../index.md#Installation)
+3. Import to Joplin. Examples:
+    1. `jimmy-cli-linux toodledo_completed_240427.csv --format toodledo`
+    2. `jimmy-cli-linux toodledo_current_240427.csv --format toodledo`
+    3. `jimmy-cli-linux toodledo_notebook_240427.csv --format toodledo`
 
 ## Known Limitations
 

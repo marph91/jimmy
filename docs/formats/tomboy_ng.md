@@ -1,12 +1,18 @@
+This page describes how to import notes from Tomboy-ng to Joplin.
+
+## General Information
+
 - [Website](https://wiki.gnome.org/Apps/Tomboy/tomboy-ng)
 - Typical extension: Folder with `.note` files
 
-## Import to Joplin
+## Instructions
 
-Example:
-
-- `jimmy-cli-linux ~/.local/share/tomboy-ng/ --format tomboy_ng`
-- `jimmy-cli-linux tomboy-ng/5E74990A-E93E-4A11-AEA2-0814A37FEE1A.note --format tomboy_ng`
+1. Export as described in <https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN>
+    1. Uncheck "Use relative data" when exporting.
+2. [Install jimmy](../index.md#Installation)
+3. Import to Joplin. Examples:
+    1. `jimmy-cli-linux ~/.local/share/tomboy-ng/ --format tomboy_ng`
+    2. `jimmy-cli-linux tomboy-ng/5E74990A-E93E-4A11-AEA2-0814A37FEE1A.note --format tomboy_ng`
 
 ## Known Limitations
 

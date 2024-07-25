@@ -1,6 +1,6 @@
-The default import can be used to import single files or folders recursively.
+This page describes how to import notes from single files or folders (recursively) to Joplin.
 
-## Export Instructions
+## Supported Formats
 
 The default import covers the following formats:
 
@@ -22,9 +22,10 @@ The default import covers the following formats:
 - Markdown ([Commonmark](https://commonmark.org/))
 - txt
 
-## Import to Joplin
+## Instructions
 
-Examples:
+1. [Install jimmy](../index.md#Installation)
+2. Import to Joplin. Examples:
 
 ```sh
 # import a single file supported by pandoc

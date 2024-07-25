@@ -1,13 +1,15 @@
+This page describes how to import notes from Cacher to Joplin.
+
+## General Information
+
 - [Website](https://www.cacher.io/)
 - Typical extension: `.json`
 
-## Export Instructions
+## Instructions
 
-<https://www.cacher.io/docs/guides/snippets/exporting-snippets#how-to-export-1>
-
-## Import to Joplin
-
-Example: `jimmy-cli-linux cacher-export-202406182304.json --format cacher`
+1. Export as described in <https://www.cacher.io/docs/guides/snippets/exporting-snippets#how-to-export-1>
+2. [Install jimmy](../index.md#Installation)
+3. Import to Joplin. Example: `jimmy-cli-linux cacher-export-202406182304.json --format cacher`
 
 ## Import Structure
 

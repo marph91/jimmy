@@ -1,11 +1,17 @@
+This page describes how to import notes from Todo.txt to Joplin.
+
+## General Information
+
 - [Website](http://todotxt.org/)
 - Typical extension: `.txt`
 
-## Apps that support todo.txt
+## Apps that support Todo.txt
 
 - [The main todo.txt app](https://github.com/todotxt/todo.txt-cli/releases)
 - [Other projects](https://github.com/todotxt/todo.txt-cli/wiki/Other-Todo.txt-Projects)
 
-## Import to Joplin
+## Instructions
 
-Example: `jimmy-cli-linux examples_from_readme.txt --format todo_txt`
+1. Export from any of the mentioned apps
+2. [Install jimmy](../index.md#Installation)
+3. Import to Joplin. Example: `jimmy-cli-linux examples_from_readme.txt --format todo_txt`

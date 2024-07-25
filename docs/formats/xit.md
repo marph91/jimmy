@@ -1,11 +1,14 @@
+This page describes how to import notes from [x]it! to Joplin.
+
+## General Information
+
 - [Website](https://xit.jotaen.net/)
 - Typical extension: `.xit`
 
-## Import to Joplin
+## Instructions
 
-Examples:
-
-- `jimmy-cli-linux example.xit --format xit`
+1. [Install jimmy](../index.md#Installation)
+2. Import to Joplin. Example: `jimmy-cli-linux example.xit --format xit`
 
 ## Import Structure
 
