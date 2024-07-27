@@ -25,64 +25,7 @@ class Converter(converter.BaseConverter):
     def prepare_input(self, input_: Path) -> Path:
         return common.extract_zip(input_)
 
-    def parse_rich_text(self, json_rich_text):
-        # TODO: WIP
-        md_content = []
-        for element in json_rich_text:
-            element_text = element.get("text", "")
-            for attribute, value in element.get("attributes", {}).items():
-                match attribute:
-                    case "autolink":
-                        element_text = f"<{element_text}>"
-                    case "bold" | "highlightedColor":
-                        element_text = f"**{element_text}**"
-                    case "inlineCode":
-                        element_text = f"`{element_text}`"
-                    case "italic":
-                        element_text = f"*{element_text}*"
-                    case "line":
-                        if (header := value.get("header", 0)) > 0:
-                            element_text = f"{'#' * header} {element_text}*"
-                        elif (list_style := value.get("listStyle")) is not None:
-                            match list_style:
-                                case "bulleted":
-                                    bullet = "-"
-                                case "numbered":
-                                    bullet = "1."
-                                case "checkbox":
-                                    if value.get("checked"):
-                                        bullet = "- [x]"
-                                    else:
-                                        bullet = "- [ ]"
-                                case _:
-                                    self.logger.warning(
-                                        f"Unsupported list style {list_style}"
-                                    )
-                                    bullet = "-"
-                            indentation = "    " * (value["indentLevel"] - 1)
-                            element_text = f"{indentation}{bullet} {element_text}"
-                        elif value.get("quote", False):
-                            indentation = "> " * (value["indentLevel"])
-                            element_text = f"{indentation}{element_text}"
-                        else:
-                            self.logger.warning(value, element)
-                    case "linkURL":
-                        if "://" in value:
-                            element_text = f"[{element_text}]({value})"
-                        else:
-                            # assume this is a link to the dayone homepage
-                            element_text = (
-                                f"[{element_text}](https://dayoneapp.com"
-                                f"/guides/tips-and-tutorials/{value})"
-                            )
-                    case _:
-                        self.logger.warning(
-                            f"Unsupported rich text attribute {attribute}"
-                        )
-            md_content.append(element_text)
-        return "".join(md_content)
-
-    def create_notebook_hierarchy(self, date_):
+    def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
         def find_or_create_child_notebook(title, parent_notebook):
             for child_notebook in parent_notebook.child_notebooks:
                 if child_notebook.data["title"] == title:
@@ -100,73 +43,80 @@ class Converter(converter.BaseConverter):
         # can be referenced. For example when copying the same photo to another note,
         # the same photo gets another id. But both IDs are referenced at the first note
         # photos...
-        audio_ids = []
-        pdf_ids = []
-        photo_id_filename_map = {}
-        video_ids = []
+        # Dict of the actual maps.
+        resource_id_filename_maps: dict = {
+            "audios": {},
+            "pdfAttachments": {},
+            "photos": {},
+            "videos": {},
+        }
 
         assert self.root_path is not None  # for mypy
+
         for entry in entries:
-            for audio in entry.get("audios", []):
-                # premium feature - not yet supported
-                audio_ids.append(audio["identifier"])
-            for pdf in entry.get("pdfAttachments", []):
-                # premium feature - not yet supported
-                pdf_ids.append(pdf["identifier"])
-            for photo in entry.get("photos", []):
-                potential_matches = list(
-                    (self.root_path / "photos").glob(f"{photo['md5']}.*")
+            for json_key_name, actual_map in resource_id_filename_maps.items():
+                folder_name = (
+                    "pdfs" if json_key_name == "pdfAttachments" else json_key_name
                 )
-                if len(potential_matches) == 0:
-                    self.logger.warning(f"Couldn't find photo {photo['md5']}")
-                elif len(potential_matches) == 1:
-                    photo_id_filename_map[photo["identifier"]] = Path(
-                        potential_matches[0]
+                for resource in entry.get(json_key_name, []):
+                    potential_matches = list(
+                        (self.root_path / folder_name).glob(f"{resource['md5']}.*")
                     )
-                else:
-                    self.logger.debug(f"Ambiguous photo {photo['md5']}")
-                    photo_id_filename_map[photo["identifier"]] = Path(
-                        potential_matches[0]
-                    )
-            for video in entry.get("videos", []):
-                # premium feature - not yet supported
-                video_ids.append(video["identifier"])
+                    if len(potential_matches) == 0:
+                        self.logger.warning(
+                            f"Couldn't find {folder_name} {resource['md5']}"
+                        )
+                    elif len(potential_matches) == 1:
+                        actual_map[resource["identifier"]] = Path(potential_matches[0])
+                    else:
+                        self.logger.debug(f"Ambiguous {folder_name} {resource['md5']}")
+                        actual_map[resource["identifier"]] = Path(potential_matches[0])
 
-        if audio_ids or pdf_ids or video_ids:
-            self.logger.warning(
-                "Audio/PDF/Video attachments are a Day One premium feature and not "
-                "yet implemented. Please provide an example file if you would like "
-                "to see support."
-            )
-
-        return photo_id_filename_map
+        return resource_id_filename_maps
 
     def handle_markdown_links(
-        self, body: str, photo_id_filename_map: dict
+        self, body: str, resource_id_filename_map: dict
     ) -> tuple[list, list]:
-        assert self.root_path is not None  # for mypy
-
         resources = []
         note_links = []
+
+        def handle_resource(original_id: str, type_: str):
+            assert self.root_path is not None  # for mypy
+            if original_id not in resource_id_filename_map[type_]:
+                self.logger.warning(f"Couldn't find audio with id {original_id}")
+                return
+            source_path = (
+                self.root_path / type_ / resource_id_filename_map[type_][original_id]
+            )
+            if not source_path.is_file():
+                return
+            resources.append(imf.Resource(source_path, str(link), link.text))
+
         for link in common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if link.url.startswith("dayone2://view?entryId="):
+            if link.url.startswith("dayone://view?entryId="):
+                # internal link
+                original_id = link.url.replace("dayone://view?entryId=", "")
+                note_links.append(imf.NoteLink(str(link), original_id, link.text))
+            elif link.url.startswith("dayone2://view?entryId="):
                 # internal link
                 original_id = link.url.replace("dayone2://view?entryId=", "")
                 note_links.append(imf.NoteLink(str(link), original_id, link.text))
+
+            # photos, audios, pdfs and videos
             elif link.url.startswith("dayone-moment://"):
-                # image
                 original_id = link.url.replace("dayone-moment://", "")
-                if original_id not in photo_id_filename_map:
-                    self.logger.warning(f"Couldn't find resource id {original_id}")
-                    continue
-                source_path = (
-                    self.root_path / "photos" / photo_id_filename_map[original_id]
-                )
-                if not source_path.is_file():
-                    continue
-                resources.append(imf.Resource(source_path, str(link), link.text))
+                handle_resource(original_id, "photos")
+            elif link.url.startswith("dayone-moment:/audio/"):
+                original_id = link.url.replace("dayone-moment:/audio/", "")
+                handle_resource(original_id, "audios")
+            elif link.url.startswith("dayone-moment:/pdfAttachment/"):
+                original_id = link.url.replace("dayone-moment:/pdfAttachment/", "")
+                handle_resource(original_id, "pdfAttachments")
+            elif link.url.startswith("dayone-moment:/video/"):
+                original_id = link.url.replace("dayone-moment:/video/", "")
+                handle_resource(original_id, "videos")
             else:
                 self.logger.warning(f"Unknown URL protocol {link.url}")
         return resources, note_links
@@ -183,12 +133,17 @@ class Converter(converter.BaseConverter):
 
         file_dict = json.loads(potential_sources[0].read_text(encoding="utf-8"))
 
-        photo_id_filename_map = self.get_resource_maps(file_dict["entries"])
+        resource_id_filename_map = self.get_resource_maps(file_dict["entries"])
 
         for entry in file_dict["entries"]:
-            # TODO: attach non-referenced photos, videos, audios, pdfAttachments
+            # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
 
             note_body = entry.get("text", "")
+            # Backslashes are added often. Removing them like this might cause issues.
+            note_body = note_body.replace("\\", "")
+            # https://stackoverflow.com/a/55400921/7410886
+            note_body = note_body.replace("\u200b", "")
+
             note_data = {
                 "title": guess_title(note_body),
                 "body": note_body,  # TODO: Is there any advantage of rich text?
@@ -208,7 +163,7 @@ class Converter(converter.BaseConverter):
                 tags.append("day-one-pinned")
 
             resources, note_links = self.handle_markdown_links(
-                note_body, photo_id_filename_map
+                note_body, resource_id_filename_map
             )
 
             note_joplin = imf.Note(

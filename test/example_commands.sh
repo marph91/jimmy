@@ -15,7 +15,7 @@ $EXECUTABLE "$CACHE/bear/backup.bear2bk" --format bear
 $EXECUTABLE "$CACHE/cacher/cacher-export-202406182304.json" --format cacher
 $EXECUTABLE "$CACHE/cherrytree/cherry.ctb.ctd" --format cherrytree
 $EXECUTABLE "$CACHE/clipto/clipto_backup_240401_105154.json" --format clipto
-$EXECUTABLE "$CACHE/day_one/Export-Tagebuch.zip" --format day_one
+$EXECUTABLE "$CACHE/day_one/Day.One.zip" --format day_one
 $EXECUTABLE "$CACHE/dynalist/dynalist-backup-2024-04-12.zip" --format dynalist
 $EXECUTABLE "$CACHE/google_keep/takeout-20240401T160516Z-001.zip" --format google_keep
 $EXECUTABLE "$CACHE/google_keep/takeout-20240401T160556Z-001.tgz" --format google_keep
