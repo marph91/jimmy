@@ -13,5 +13,5 @@ This page describes how to import notes from Todo.txt to Joplin.
 ## Instructions
 
 1. Export from any of the mentioned apps
-2. [Install jimmy](../index.md#Installation)
+2. [Install jimmy](../index.md#installation)
 3. Import to Joplin. Example: `jimmy-cli-linux examples_from_readme.txt --format todo_txt`

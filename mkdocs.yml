@@ -29,6 +29,11 @@ markdown_extensions:
   - admonition
   # code block highlighting
   - pymdownx.superfences
+  # disable the toc, since there is not that much content
+  # https://github.com/squidfunk/mkdocs-material/discussions/2644#discussioncomment-715040
+  - toc:
+      permalink: true
+      toc_depth: 0
 
 # Page tree
 nav:

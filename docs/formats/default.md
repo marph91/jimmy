@@ -24,7 +24,7 @@ The default import covers the following formats:
 
 ## Instructions
 
-1. [Install jimmy](../index.md#Installation)
+1. [Install jimmy](../index.md#installation)
 2. Import to Joplin. Examples:
 
 ```sh

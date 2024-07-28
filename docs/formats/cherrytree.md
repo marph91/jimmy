@@ -9,7 +9,7 @@ This page describes how to import notes from CherryTree to Joplin.
 
 1. Export as described in <https://www.giuspen.com/cherrytreemanual/#_exporting>
     1. Choose "Export" -> "Export to CherryTreeDocument" -> "All the Tree" -> "XML, Not Protected (.cdt)"
-2. [Install jimmy](../index.md#Installation)
+2. [Install jimmy](../index.md#installation)
 3. Import to Joplin. Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
 
 ## Import Structure

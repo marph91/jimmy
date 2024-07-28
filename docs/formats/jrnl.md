@@ -10,7 +10,7 @@ This page describes how to import notes from jrnl to Joplin.
 1. Export as described in <https://jrnl.sh/en/stable/formats/#exporting-with-file>
     1. Export as json to preserve metadata.
     2. Example: `jrnl --format json --file myjournal.json`
-2. [Install jimmy](../index.md#Installation)
+2. [Install jimmy](../index.md#installation)
 3. Import to Joplin. Example: `jimmy-cli-linux myjournal.json --format jrnl`
 
 ## Import Structure
