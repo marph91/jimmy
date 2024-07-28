@@ -46,7 +46,7 @@ def main():
         help="Create a log file next to the executable.",
     )
 
-    filters = parser.add_mutually_exclusive_group(title="filters")
+    filters = parser.add_mutually_exclusive_group()
     filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
     filters.add_argument("--include-notes", nargs="+", help="Include notes by title.")
     filters.add_argument(
