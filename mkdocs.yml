@@ -11,6 +11,9 @@ theme:
     - navigation.indexes
     # show breadcrumbs
     - navigation.path
+    # use more space for content and less for the toc
+    # https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation/#navigation-integration
+    - toc.integrate
   palette:
     # light mode
     - media: "(prefers-color-scheme: light)"
