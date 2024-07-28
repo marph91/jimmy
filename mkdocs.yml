@@ -60,5 +60,6 @@ nav:
     - Zoho Notebook: formats/zoho_notebook.md
   - Additional features:
     - Filters: additional_features/filters.md
+    - Show the Note Tree: additional_features/show_note_tree.md
   - Contributing:
     - Contributing: contributing/index.md
