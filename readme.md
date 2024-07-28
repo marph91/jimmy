@@ -2,8 +2,6 @@
 
 Tool to import your notes to Joplin.
 
-:exclamation: Should only be used if the built-in import of Joplin isn't available for your note format.
-
 For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
 If this app is useful for you, feel free to star it on [github](https://github.com/marph91/jimmy).
@@ -29,9 +27,7 @@ jimmy-cli-linux path/to/folder
 jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
 ```
 
-After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.
-
-:exclamation: Make sure your data is imported properly.
+After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`. Make sure your data is imported properly :exclamation:
 
 What is converted (in most cases)?
 
