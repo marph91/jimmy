@@ -46,4 +46,7 @@ jobs:
         run: |
           ./dist/jimmy-cli* .cache/arbitrary_folder/arbitrary_folder --dry-run
           ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run
+          ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run --exclude-tags "*"
+          ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run --include-notes-with-tags "*"
+          ./dist/jimmy-cli* .cache/obsidian/obsidian_vault --format obsidian --dry-run --include-notes "Second sample note" "Sample note"
           ./dist/jimmy-cli* .cache/bear/backup.bear2bk --format bear --dry-run

@@ -45,6 +45,19 @@ def main():
         choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
         help="Create a log file next to the executable.",
     )
+
+    filters = parser.add_mutually_exclusive_group(title="filters")
+    filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
+    filters.add_argument("--include-notes", nargs="+", help="Include notes by title.")
+    filters.add_argument(
+        "--exclude-notes-with-tags", nargs="+", help="Exclude notes with tag."
+    )
+    filters.add_argument(
+        "--include-notes-with-tags", nargs="+", help="Include notes with tag."
+    )
+    filters.add_argument("--exclude-tags", nargs="+", help="Exclude tags.")
+    filters.add_argument("--include-tags", nargs="+", help="Include tags.")
+
     config = parser.parse_args()
 
     jimmy.setup_logging(config.log_file, config.stdout_log_level)

@@ -58,5 +58,7 @@ nav:
     - Toodledo: formats/toodledo.md
     - xit: formats/xit.md
     - Zoho Notebook: formats/zoho_notebook.md
+  - Additional features:
+    - Filters: additional_features/filters.md
   - Contributing:
     - Contributing: contributing/index.md

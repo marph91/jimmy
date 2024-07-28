@@ -10,6 +10,7 @@ from rich.tree import Tree
 
 import common
 import converter
+import filters
 import importer
 import intermediate_format as imf
 
@@ -105,6 +106,13 @@ def jimmy(api, config) -> common.Stats:
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:
         print(get_tree(root_notebooks, Tree("Note Tree")))
+
+    LOGGER.info("Start filtering")
+    filters.apply_filters(root_notebooks, config)
+    stats_filtered = common.get_import_stats(root_notebooks)
+    LOGGER.info(f"Finished filtering: {stats}")
+    if config.print_tree and stats != stats_filtered:
+        print(get_tree(root_notebooks, Tree("Note Tree Filtered")))
 
     if not config.dry_run:
         LOGGER.info("Start import to Joplin")
