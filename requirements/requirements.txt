@@ -1,5 +1,6 @@
 beautifulsoup4==4.12.3
 enlighten==1.12.4
+jinxed==1.3.0  # TODO: remove when enlighten uses this version
 joppy==0.2.3
 markdown==3.6
 platformdirs==4.2.2
