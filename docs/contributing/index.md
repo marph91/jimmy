@@ -17,4 +17,4 @@ The brief workflow is:
 
 ## Donations
 
-I'm happy about a star on the [github](https://github.com/marph91/jimmy). If you really want to donate, please [donate to the Joplin core team](https://joplinapp.org/donate/). They do great work.
+I'm happy about a star on the [github repository](https://github.com/marph91/jimmy). If you really want to donate, please [donate to the Joplin core team](https://joplinapp.org/donate/). They do great work.
