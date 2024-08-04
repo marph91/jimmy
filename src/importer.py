@@ -15,9 +15,13 @@ class JoplinImporter:
 
     def __init__(self, api, progress_bars):
         self.api = api
-        # Cache created tags to create them only once.
-        self.tag_map: dict[str, imf.Tag] = {}  # original id - joplin id
-        self.note_id_map: dict[str, str] = {}  # original id - joplin id
+        # Cache created tags and resources to create them only once.
+        # original id - joplin id
+        self.tag_map: dict[str, imf.Tag] = {}
+        # original path - joplin id
+        self.resource_map: dict[str, imf.Resource] = {}
+        # original id - joplin id
+        self.note_id_map: dict[str, str] = {}
 
         self.progress_bars = progress_bars
 
@@ -57,9 +61,15 @@ class JoplinImporter:
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
-            resource_id = self.api.add_resource(
-                filename=str(resource.filename), title=resource_title
-            )
+            # Don't create multiple Joplin resources for the same file.
+            # Cache the original file paths and their corresponding Joplin ID.
+            try:
+                resource_id = self.resource_map[resource.filename]
+            except KeyError:
+                resource_id = self.api.add_resource(
+                    filename=str(resource.filename), title=resource_title
+                )
+                self.resource_map[resource.filename] = resource_id
             resource_markdown = (
                 f"{'!' * resource.is_image}[{resource_title}](:/{resource_id})"
             )
