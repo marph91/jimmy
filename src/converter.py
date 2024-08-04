@@ -36,14 +36,21 @@ class BaseConverter:
         """Prepare the input for further processing. For example extract an archive."""
         return input_
 
-    def convert_multiple(self, files_or_folders: list[Path]) -> list[imf.Notebook]:
+    def convert_multiple(
+        self, files_or_folders: list[Path], root_notebook_name: str | None
+    ) -> list[imf.Notebook]:
         """This is the main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             index_suffix = "" if len(files_or_folders) == 1 else f" ({input_index})"
+            root_notebook_base_name = (
+                f"{now} - Import from {self.format}"
+                if root_notebook_name is None
+                else root_notebook_name
+            )
             self.root_notebook = imf.Notebook(
-                {"title": f"{now} - Import from {self.format}{index_suffix}"}
+                {"title": f"{root_notebook_base_name}{index_suffix}"}
             )
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():

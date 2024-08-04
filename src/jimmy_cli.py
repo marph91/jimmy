@@ -19,9 +19,7 @@ def main():
     )
     # specific formats that need a special handling
     parser.add_argument(
-        "--format",
-        choices=common.get_available_formats(),
-        help="The source format.",
+        "--format", choices=common.get_available_formats(), help="The source format."
     )
     parser.add_argument(
         "--clear-notes", action="store_true", help="Clear everything before importing."
@@ -34,6 +32,7 @@ def main():
         action="store_true",
         help="Print the parsed note tree in intermediate format.",
     )
+    parser.add_argument("--root-notebook-name", help="The name of the root notebook.")
     parser.add_argument(
         "--log-file",
         action="store_true",
