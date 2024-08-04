@@ -1,4 +1,5 @@
 site_name: jimmy
+site_description: A tool to import your notes from various formats to Joplin.
 
 # Repository
 repo_name: marph91/jimmy
@@ -6,6 +7,9 @@ repo_url: https://github.com/marph91/jimmy
 
 theme:
   name: material
+  # add open graph metadata (for example for discourse links)
+  # https://mrkeo.github.io/reference/meta-tags/#customization
+  custom_dir: docs/overrides
   features:
     # index.html for collapsible sections
     - navigation.indexes
