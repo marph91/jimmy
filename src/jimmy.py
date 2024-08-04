@@ -52,7 +52,9 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs: list[Path], format_: str):
+def convert_all_inputs(
+    inputs: list[Path], format_: str, root_notebook_name: str | None
+) -> imf.Notebook:
     """
     Convert the input data to an intermediate representation
     that can be used by the importer later.
@@ -71,7 +73,7 @@ def convert_all_inputs(inputs: list[Path], format_: str):
             raise exc  # this is unexpected -> reraise
     # TODO: Children are added to the parent node / node tree implicitly.
     # This is an anti-pattern, but works for now.
-    parent = converter_.convert_multiple(inputs)
+    parent = converter_.convert_multiple(inputs, root_notebook_name)
     return parent
 
 
@@ -101,7 +103,9 @@ def jimmy(api, config) -> common.Stats:
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
-    root_notebooks = convert_all_inputs(config.input, config.format)
+    root_notebooks = convert_all_inputs(
+        config.input, config.format, config.root_notebook_name
+    )
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:

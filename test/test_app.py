@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import json
 from pathlib import Path
+import tempfile
 import unittest
 import zipfile
 
@@ -28,8 +29,8 @@ class Config:
 
 
 def get_stats(inputs, format_):
-    note_tree = jimmy.convert_all_inputs(inputs, format_)
-    return common.get_import_stats(note_tree)
+    note_trees = jimmy.convert_all_inputs(inputs, format_, None)
+    return common.get_import_stats(note_trees)
 
 
 TEST_CASES = []
@@ -83,3 +84,21 @@ class IntermediateFormat(unittest.TestCase):
             testcase.format_,
         )
         self.assertEqual(stats, testcase.expected_output_class)
+
+    def test_root_notebook_name(self):
+        root_notebook_name = "Example name"
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            tmpdirname = Path(tmpdirname)
+            note_trees = jimmy.convert_all_inputs(
+                [tmpdirname], None, root_notebook_name
+            )
+            self.assertEqual(note_trees[0].data["title"], root_notebook_name)
+
+            note_trees = jimmy.convert_all_inputs(
+                [tmpdirname] * 2, None, root_notebook_name
+            )
+            self.assertEqual(len(note_trees), 2)
+            for tree_index, note_tree in enumerate(note_trees):
+                self.assertEqual(
+                    f"{root_notebook_name} ({tree_index})", note_tree.data["title"]
+                )
