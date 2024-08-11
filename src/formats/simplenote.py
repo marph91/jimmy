@@ -22,7 +22,7 @@ class Converter(converter.BaseConverter):
 
         for note_simplenote in input_json["activeNotes"]:
             # title is the first line. In case of title-only notes, create empty second line
-            title, body = title, body = (note_simplenote["content"].split("\r\n", maxsplit=1)+[""])[:2]
+            title, body = common.split_h1_title_from_body(note_simplenote["content"])
 
             note_links = []
             for link in common.get_markdown_links(body):
