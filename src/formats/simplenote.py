@@ -34,6 +34,11 @@ class Converter(converter.BaseConverter):
                     note_links.append(
                         imf.NoteLink(str(link), linked_note_id, link.text)
                     )
+
+            tags = note_simplenote.get("tags", [])
+            if note_simplenote.get("pinned"):
+                tags.append("simplenote-pinned")
+
             note_joplin = imf.Note(
                 {
                     "title": title.strip(),
@@ -47,9 +52,7 @@ class Converter(converter.BaseConverter):
                     "source_application": self.format,
                 },
                 # Tags don't have a separate id. Just use the name as id.
-                tags=[
-                    imf.Tag({"title": tag}) for tag in note_simplenote.get("tags", [])
-                ],
+                tags=[imf.Tag({"title": tag}) for tag in tags],
                 note_links=note_links,
                 original_id=note_simplenote["id"],
             )
