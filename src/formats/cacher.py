@@ -3,14 +3,10 @@
 from collections import defaultdict
 from pathlib import Path
 import json
-import logging
 
 from common import iso_to_unix_ms
 import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("jimmy")
 
 
 class Converter(converter.BaseConverter):
@@ -45,7 +41,7 @@ class Converter(converter.BaseConverter):
 
             for file_ in snippet["files"]:
                 if file_["filetype"] != "markdown":
-                    LOGGER.warning(
+                    self.logger.warning(
                         f"Ignoring file {file_['filename']}. "
                         "Only markdown supported for now."
                     )

@@ -1,6 +1,7 @@
 """Convert the intermediate format to Joplin notes."""
 
 import logging
+from pathlib import Path
 
 import requests
 
@@ -19,7 +20,7 @@ class JoplinImporter:
         # original id - joplin id
         self.tag_map: dict[str, imf.Tag] = {}
         # original path - joplin id
-        self.resource_map: dict[str, imf.Resource] = {}
+        self.resource_map: dict[Path, imf.Resource] = {}
         # original id - joplin id
         self.note_id_map: dict[str, str] = {}
 

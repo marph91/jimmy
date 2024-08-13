@@ -2,16 +2,12 @@
 
 import base64
 from pathlib import Path
-import logging
 import uuid
 import xml.etree.ElementTree as ET  # noqa: N817
 
 import common
 import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("jimmy")
 
 
 def convert_table(node):
@@ -58,7 +54,7 @@ def fix_inline_formatting(md_content: str) -> str:
     return md_content
 
 
-def convert_rich_text(rich_text):
+def convert_rich_text(rich_text, logger):
     # TODO: is this fine with mixed text and child tags?
     note_links = []
     md_content = ""
@@ -67,7 +63,7 @@ def convert_rich_text(rich_text):
             case "background" | "foreground" | "justification":
                 if rich_text.text is not None:
                     md_content += rich_text.text
-                LOGGER.debug(
+                logger.debug(
                     f"ignoring {attrib}={attrib_value} "
                     "as it's not supported in markdown"
                 )
@@ -76,7 +72,7 @@ def convert_rich_text(rich_text):
                     case "monospace":
                         md_content = f"`{rich_text.text}`"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case "link":
                 url = attrib_value
                 if url.startswith("webs "):
@@ -113,33 +109,33 @@ def convert_rich_text(rich_text):
                     case "h6":
                         md_content = f"###### {rich_text.text}"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":
                 match attrib_value:
                     case "true":
                         md_content = f"~~{rich_text.text}~~"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case "style":
                 match attrib_value:
                     case "italic":
                         md_content = f"*{rich_text.text}*"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case "underline":
                 match attrib_value:
                     case "single":
                         md_content = f"++{rich_text.text}++"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case "weight":
                 match attrib_value:
                     case "heavy":
                         md_content = f"**{rich_text.text}**"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        logger.warning(f"ignoring {attrib}={attrib_value}")
             case _:
-                LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                logger.warning(f"ignoring {attrib}={attrib_value}")
     if not md_content:
         # TODO: make this more robust
         md_content += "" if rich_text.text is None else rich_text.text
@@ -188,7 +184,9 @@ class Converter(converter.BaseConverter):
         for child in node:
             match child.tag:
                 case "rich_text":
-                    content_md, note_links_joplin = convert_rich_text(child)
+                    content_md, note_links_joplin = convert_rich_text(
+                        child, self.logger
+                    )
                     note_body += content_md
                     note_links.extend(note_links_joplin)
                 case "node":
@@ -196,7 +194,7 @@ class Converter(converter.BaseConverter):
                     if new_root_notebook is None:
                         new_root_notebook = imf.Notebook({"title": note_name})
                         root_notebook.child_notebooks.append(new_root_notebook)
-                    LOGGER.debug(
+                    self.logger.debug(
                         f"new notebook: {new_root_notebook.data['title']}, "
                         f"parent: {root_notebook.data['title']}"
                     )
@@ -210,7 +208,9 @@ class Converter(converter.BaseConverter):
                         note_body += f"\n```latex\n{child.text}\n```\n"
                         continue
                     if child.text is None and child.attrib.get("anchor"):
-                        LOGGER.debug(f"ignoring anchor {child.attrib.get('anchor')}")
+                        self.logger.debug(
+                            f"ignoring anchor {child.attrib.get('anchor')}"
+                        )
                         continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
@@ -220,7 +220,7 @@ class Converter(converter.BaseConverter):
                 case "table":
                     note_body += convert_table(child)
                 case _:
-                    LOGGER.warning(f"ignoring tag {child.tag}")
+                    self.logger.warning(f"ignoring tag {child.tag}")
 
         note_data = {
             "title": note_name,
@@ -240,7 +240,7 @@ class Converter(converter.BaseConverter):
             note_data["user_created_time"] = int(created_time) * 1000
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
             note_data["user_updated_time"] = int(updated_time) * 1000
-        LOGGER.debug(
+        self.logger.debug(
             f"new note: {note_data['title']}, parent: {root_notebook.data['title']}"
         )
         root_notebook.child_notes.append(
@@ -265,4 +265,4 @@ class Converter(converter.BaseConverter):
                 case "node":
                     self.convert_to_markdown(child, self.root_notebook)
                 case _:
-                    LOGGER.warning(f"ignoring tag {child.tag}")
+                    self.logger.warning(f"ignoring tag {child.tag}")

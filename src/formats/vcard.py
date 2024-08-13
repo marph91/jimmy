@@ -3,16 +3,17 @@
 from pathlib import Path
 import vobject
 
-from common import iso_to_unix_ms
 import converter
 import intermediate_format as imf
 
 
 def vcard_list_to_markdown(name: str, list_: list) -> list[str]:
     # remove duplicates (set can't be used, because there are unhashable items)
-    # TODO: check if there is a better way
+    # TODO: check if there is a more elegant way
     unique_list = []
-    [unique_list.append(item.value) for item in list_ if item.value not in unique_list]
+    for item in list_:
+        if item.value not in unique_list:
+            unique_list.append(item.value)
     if len(unique_list) == 1:
         normalized_value = str(list_[0].value).replace("\n", " ")
         return [f"- {name}: {normalized_value}"]

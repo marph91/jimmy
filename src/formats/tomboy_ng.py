@@ -1,15 +1,11 @@
 """Convert tomboy-ng notes to the intermediate format."""
 
 from pathlib import Path
-import logging
 import xml.etree.ElementTree as ET  # noqa: N817
 
 import common
 import converter
 import intermediate_format as imf
-
-
-LOGGER = logging.getLogger("jimmy")
 
 
 class Converter(converter.BaseConverter):
@@ -35,7 +31,7 @@ class Converter(converter.BaseConverter):
                     if item.tag.endswith("list-item"):
                         md_content.append(f"- {item.text}")
                     else:
-                        LOGGER.warning(f"ignoring list tag {item.tag}")
+                        self.logger.warning(f"ignoring list tag {item.tag}")
             elif child.tag.endswith("monospace"):
                 md_content.append(f"`{child.text}`")
             elif child.tag.endswith("strikeout"):
@@ -51,7 +47,7 @@ class Converter(converter.BaseConverter):
             ):
                 md_content.append(child.text)  # TODO
             else:
-                LOGGER.warning(f"ignoring tag {child.tag}")
+                self.logger.warning(f"ignoring tag {child.tag}")
             if child.tail is not None:
                 md_content.append(child.tail)
         if node.tail is not None:
