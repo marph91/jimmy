@@ -12,7 +12,7 @@ If this app is useful for you, feel free to star it on [github](https://github.c
 
 ## Quickstart
 
-1. Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin) [^macos]
+1. Download jimmy here: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**MacOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin) [^macos]
 2. This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
 3. Examples for the Linux CLI app:
 
