@@ -46,7 +46,7 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
 
     # log to stdout
     console_handler_formatter = logging.Formatter("%(message)s")
-    console_handler = RichHandler(show_path=False)
+    console_handler = RichHandler(markup=True, show_path=False)
     console_handler.setFormatter(console_handler_formatter)
     console_handler.setLevel(stdout_log_level)
     LOGGER.addHandler(console_handler)
@@ -127,4 +127,13 @@ def jimmy(api, config) -> common.Stats:
             "Imported notes to Joplin successfully. "
             "Please verify that everything was imported."
         )
+
+    LOGGER.info(
+        "[bold]Feel free to open an issue on "
+        "[link=https://github.com/marph91/jimmy/issues]Github[/link], "
+        "write a message at the "
+        "[link=https://discourse.joplinapp.org/t/jimmy-a-joplin-import-tool/38503]"
+        "Joplin forum[/link] or an [link=mailto:martin.d@andix.de]email[/link].[/bold]"
+    )
+
     return stats
