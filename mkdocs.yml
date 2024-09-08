@@ -76,4 +76,5 @@ nav:
     - Filters: additional_features/filters.md
     - Show the Note Tree: additional_features/show_note_tree.md
   - Contributing:
-    - Contributing: contributing/index.md
+    - How to Contribute?: contributing/contributing.md
+    - More Note Apps: contributing/more_note_apps.md
