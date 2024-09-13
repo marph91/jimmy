@@ -11,10 +11,26 @@ import converter
 import intermediate_format as imf
 
 
+QOWNNOTE_LINK_RE = re.compile(r"<(.*?.md)>")
+
+
+def get_qownnote_links(body: str) -> list[str]:
+    """
+    Parse QOwnNote style links.
+    https://www.qownnotes.org/getting-started/markdown.html#internal-links
+
+    >>> get_qownnote_links("no link")
+    []
+    >>> get_qownnote_links("<one link.md>")
+    ['one link.md']
+    >>> get_qownnote_links("<link 1.md> <link 2.md>")
+    ['link 1.md', 'link 2.md']
+    """
+    return QOWNNOTE_LINK_RE.findall(body)
+
+
 class Converter(converter.BaseConverter):
     accept_folder = True
-
-    qownnote_link_re = re.compile(r"<(.*?.md)>")
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         # markdown style links
@@ -35,8 +51,7 @@ class Converter(converter.BaseConverter):
                 )
 
         # qownnote style links
-        # https://www.qownnotes.org/getting-started/markdown.html#internal-links
-        for link in self.qownnote_link_re.findall(body):
+        for link in get_qownnote_links(body):
             note_links.append(imf.NoteLink(f"<{link}>", Path(unquote(link)).stem, link))
 
         return resources, note_links
