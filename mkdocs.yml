@@ -60,6 +60,7 @@ nav:
     - jrnl: formats/jrnl.md
     - Notion: formats/notion.md
     - Obsidian: formats/obsidian.md
+    - QOwnNotes: formats/qownnotes.md
     - Simplenote: formats/simplenote.md
     - Standard Notes: formats/standard_notes.md
     - Synology Note Station: formats/synology_note_station.md
