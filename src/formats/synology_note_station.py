@@ -1,10 +1,13 @@
 """Convert Synology Note Station notes to the intermediate format."""
 
 from dataclasses import dataclass
+import difflib
 import hashlib
 import json
 from pathlib import Path
 import re
+
+from bs4 import BeautifulSoup
 
 import common
 import converter
@@ -19,6 +22,27 @@ class Attachment:
     md5: str
     ref: str | None = None
     title: str | None = None
+
+
+def streamline_html(content_html: str) -> str:
+    # hack: In the original data, the attachment_id is stored in the
+    # "ref" attribute. Mitigate by storing it in the "src" attribute.
+    content_html = re.sub("<img.*?ref=", "<img src=", content_html)
+
+    # another hack: make the first row of a table to the header
+    soup = BeautifulSoup(content_html, "html.parser")
+    for table in soup.find_all("table"):
+        for row_index, row in enumerate(table.find_all("tr")):
+            for td in row.find_all("td"):
+                # tables seem to be headerless always
+                # make first row to header
+                if row_index == 0:
+                    td.name = "th"
+        # remove "tbody"
+        body = table.find("tbody")
+        body.unwrap()
+
+    return str(soup)
 
 
 class Converter(converter.BaseConverter):
@@ -38,27 +62,51 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f"Couldn't find parent notebook with id {parent_id}")
         return self.root_notebook
 
-    def handle_markdown_links(self, title: str, body: str) -> tuple[list, list]:
+    def handle_markdown_links(
+        self, title: str, body: str, note_id_title_map: dict
+    ) -> tuple[list, list]:
         resources = []
+        note_links = []
         for link in common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            # resource
-            # Find resource file by "ref".
-            matched_resources = [
-                res for res in self.available_resources if res.ref == link.url
-            ]
-            if len(matched_resources) != 1:
-                self.logger.debug(
-                    f"Found too less or too many resources: {len(matched_resources)} "
-                    f'(note: "{title}", original link: "{link}")'
+
+            if link.url.startswith("notestation://"):
+                # internal link
+                # Linked note ID doesn't correspond to the real note ID. For example:
+                # - filename: note_VW50aXRsZWQgTm90ZTE2MTM0MDQ5NDQ2NzY=
+                # - link: notestation://remote/self/1026_1547KOMP551EN92DDB4FIOFUNK
+                # TODO: Is there a connection between the ID's?
+                # _, linked_note_id = link.url.rsplit("/", 1)
+
+                # try to map by title similarity
+                def get_match_ratio(id_, link_text=link.text):
+                    return difflib.SequenceMatcher(
+                        None, link_text, note_id_title_map[id_]
+                    ).ratio()
+
+                best_match_id = max(note_id_title_map, key=get_match_ratio)
+                note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
+            else:
+                # resource
+                # Find resource file by "ref".
+                matched_resources = [
+                    res for res in self.available_resources if res.ref == link.url
+                ]
+                if len(matched_resources) != 1:
+                    self.logger.debug(
+                        "Found too less or too many resources: "
+                        f"{len(matched_resources)} "
+                        f'(note: "{title}", original link: "{link}")'
+                    )
+                    continue
+                resource = matched_resources[0]
+                resources.append(
+                    imf.Resource(
+                        resource.filename, str(link), link.text or resource.title
+                    )
                 )
-                continue
-            resource = matched_resources[0]
-            resources.append(
-                imf.Resource(resource.filename, str(link), link.text or resource.title)
-            )
-        return resources, []
+        return resources, note_links
 
     def convert_notebooks(self, input_json: dict):
         for notebook_id in input_json["notebook"]:
@@ -117,15 +165,26 @@ class Converter(converter.BaseConverter):
                     Attachment(item, hashlib.md5(item.read_bytes()).hexdigest())
                 )
 
+        # for internal links, we need to store the note titles
+        note_id_title_map = {}
+        for note_id in input_json["note"]:
+            note = json.loads((self.root_path / note_id).read_text(encoding="utf-8"))
+            note_id_title_map[note_id] = note["title"]
+
         for note_id in input_json["note"]:
             try:
                 note = json.loads(
                     (self.root_path / note_id).read_text(encoding="utf-8")
                 )
 
+                if note["parent_id"].rsplit("_")[-1] == "#00000000":
+                    self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
+                    continue
+
                 # resources / attachments
                 resources = self.map_resources_by_hash(note)
 
+                note_links: list[imf.NoteLink] = []
                 data = {
                     "title": note["title"],
                     "user_created_time": note["ctime"],
@@ -133,13 +192,11 @@ class Converter(converter.BaseConverter):
                     "source_application": self.format,
                 }
                 if (content_html := note.get("content")) is not None:
-                    # hack: In the original data, the attachment_id is stored in the
-                    # "ref" attribute. Mitigate by storing it in the "src" attribute.
-                    content_html = re.sub("<img.*?ref=", "<img src=", content_html)
+                    content_html = streamline_html(content_html)
                     content_markdown = common.html_text_to_markdown(content_html)
                     # note title only needed for debug message
-                    resources_referenced, _ = self.handle_markdown_links(
-                        note["title"], content_markdown
+                    resources_referenced, note_links = self.handle_markdown_links(
+                        note["title"], content_markdown, note_id_title_map
                     )
                     resources.extend(resources_referenced)
                     data["body"] = content_markdown
@@ -154,6 +211,7 @@ class Converter(converter.BaseConverter):
                         data,
                         tags=[imf.Tag({"title": tag}) for tag in note.get("tag", [])],
                         resources=resources,
+                        note_links=note_links,
                         original_id=note_id,
                     )
                 )

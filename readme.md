@@ -50,3 +50,4 @@ If something is not working, please check the issues first. If you can't find an
 ## Similar Projects
 
 - [Obsidian-Importer](https://github.com/obsidianmd/obsidian-importer)
+- [YANOM-Note-O-Matic (fork)](https://github.com/stereohorse/YANOM-Note-O-Matic)
