@@ -3,7 +3,7 @@
 from pathlib import Path
 import json
 
-from common import iso_to_unix_ms
+import common
 import converter
 import intermediate_format as imf
 
@@ -27,8 +27,8 @@ class Converter(converter.BaseConverter):
                 {
                     "title": note_clipto["title"],
                     "body": note_clipto["text"],
-                    "user_created_time": iso_to_unix_ms(note_clipto["created"]),
-                    "user_updated_time": iso_to_unix_ms(note_clipto["updated"]),
+                    "user_created_time": common.iso_to_unix_ms(note_clipto["created"]),
+                    "user_updated_time": common.iso_to_unix_ms(note_clipto["updated"]),
                     "source_application": self.format,
                 },
                 tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],

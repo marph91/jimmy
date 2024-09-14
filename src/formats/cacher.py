@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 import json
 
-from common import iso_to_unix_ms
+import common
 import converter
 import intermediate_format as imf
 
@@ -31,8 +31,8 @@ class Converter(converter.BaseConverter):
             notebook = imf.Notebook(
                 {
                     "title": snippet["title"],
-                    "user_created_time": iso_to_unix_ms(snippet["createdAt"]),
-                    "user_updated_time": iso_to_unix_ms(snippet["updatedAt"]),
+                    "user_created_time": common.iso_to_unix_ms(snippet["createdAt"]),
+                    "user_updated_time": common.iso_to_unix_ms(snippet["updatedAt"]),
                     "source_application": self.format,
                 },
                 original_id=snippet["guid"],
@@ -50,8 +50,8 @@ class Converter(converter.BaseConverter):
                     {
                         "title": Path(file_["filename"]).stem,
                         "body": file_["content"],
-                        "user_created_time": iso_to_unix_ms(file_["createdAt"]),
-                        "user_updated_time": iso_to_unix_ms(file_["updatedAt"]),
+                        "user_created_time": common.iso_to_unix_ms(file_["createdAt"]),
+                        "user_updated_time": common.iso_to_unix_ms(file_["updatedAt"]),
                         "source_application": self.format,
                     },
                     # Tags are assigned per snippet (not per file).

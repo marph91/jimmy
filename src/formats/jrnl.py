@@ -3,7 +3,7 @@
 from pathlib import Path
 import json
 
-from common import iso_to_unix_ms
+import common
 import converter
 import intermediate_format as imf
 
@@ -15,7 +15,9 @@ class Converter(converter.BaseConverter):
         file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
         for note_jrnl in file_dict.get("entries", []):
             title = f"{note_jrnl['date']} {note_jrnl['time']} {note_jrnl['title']}"
-            unix_time = iso_to_unix_ms(f"{note_jrnl['date']}T{note_jrnl['time']}")
+            unix_time = common.iso_to_unix_ms(
+                f"{note_jrnl['date']}T{note_jrnl['time']}"
+            )
 
             tags = [tag.lstrip("@") for tag in note_jrnl["tags"]]
             if note_jrnl["starred"]:

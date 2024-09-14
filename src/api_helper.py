@@ -3,7 +3,7 @@
 from pathlib import Path
 import time
 
-from joppy.api import Api
+from joppy.client_api import ClientApi
 import platformdirs
 import requests
 
@@ -52,12 +52,12 @@ def request_api_token(info_function, error_function):
     return None
 
 
-def get_api(info_function, error_function) -> Api | None:
+def get_api(info_function, error_function) -> ClientApi | None:
     if API_TOKEN_FILE.is_file():
         # token from config dir
         api_token: str | None = API_TOKEN_FILE.read_text(encoding="utf-8")
         assert api_token is not None
-        api = Api(token=api_token)
+        api = ClientApi(token=api_token)
         try:
             # check if old token works
             api.get_notes()
@@ -76,4 +76,4 @@ def get_api(info_function, error_function) -> Api | None:
         api_token = request_api_token(info_function, error_function)
     if api_token is None:
         return None
-    return Api(token=api_token)
+    return ClientApi(token=api_token)

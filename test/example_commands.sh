@@ -28,13 +28,14 @@ $EXECUTABLE "$CACHE/qownnotes/qownnotes_folder" --format qownnotes
 $EXECUTABLE "$CACHE/simplenote/notes.zip" --format simplenote
 $EXECUTABLE "$CACHE/standard_notes/Standard Notes Backup - Sun Apr 28 2024 12_56_55 GMT+0200.zip" --format standard_notes
 $EXECUTABLE "$CACHE/synology_note_station/notestation-test-books.nsx" --format synology_note_station
+$EXECUTABLE "$CACHE/synology_note_station/test.nsx" --format synology_note_station
 $EXECUTABLE "$CACHE/textbundle/Textbundle Example v1.textbundle/" --format textbundle
 $EXECUTABLE "$CACHE/textbundle/Textbundle Example v2.textbundle/" --format textbundle
 $EXECUTABLE "$CACHE/textbundle/example.textpack" --format textbundle
 # $EXECUTABLE "$CACHE/tiddlywiki/tiddlyhost.json" --format tiddlywiki
 $EXECUTABLE "$CACHE/todo_txt/examples_from_readme.txt" --format todo_txt
 $EXECUTABLE "$CACHE/todoist/Privates.csv" --format todoist
-$EXECUTABLE "$CACHE/tomboy-ng/tomboy-ng/" --format tomboy_ng
+$EXECUTABLE "$CACHE/tomboy_ng/tomboy-ng/" --format tomboy_ng
 $EXECUTABLE "$CACHE/toodledo/toodledo_completed_240427.csv" --format toodledo
 $EXECUTABLE "$CACHE/toodledo/toodledo_current_240427.csv" --format toodledo
 $EXECUTABLE "$CACHE/toodledo/toodledo_notebook_240427.csv" --format toodledo

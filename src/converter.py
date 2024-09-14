@@ -28,9 +28,7 @@ class BaseConverter:
             or self.accepted_extensions == ["*"]
         ):
             return True
-        if self.accept_folder and input_.is_dir():
-            return True
-        return False
+        return self.accept_folder and input_.is_dir()
 
     def prepare_input(self, input_: Path) -> Path:
         """Prepare the input for further processing. For example extract an archive."""
