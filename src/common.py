@@ -204,8 +204,11 @@ class LinkExtractor(Treeprocessor):
         for link in root.findall(".//a"):
             url = link.get("href")
             if (title := link.get("title")) is not None:
-                # TODO: This is not robust against titles with single quotation marks.
-                url += f' "{title}"'
+                # TODO: This is not robust against titles with quotation marks.
+                if url:
+                    url += f' "{title}"'
+                else:
+                    url = title  # don't add a title if there is no url
             self.md.links.append(MarkdownLink(link.text, url))
 
 
@@ -293,8 +296,8 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
 PANDOC_OUTPUT_FORMAT = "markdown_strict+pipe_tables+backtick_code_blocks-raw_html"
 
 
-def html_text_to_markdown(html_text: str) -> str:
-    return pypandoc.convert_text(html_text, PANDOC_OUTPUT_FORMAT, format="html")
+def markup_to_markdown(text: str, format_: str = "html") -> str:
+    return pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
 
 
 ###########################################################

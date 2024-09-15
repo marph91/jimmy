@@ -146,7 +146,7 @@ class Converter(converter.BaseConverter):
         if soup.body is not None:
             clean_tables(soup)
             clean_task_lists(soup)
-            note_data["body"] = common.html_text_to_markdown(str(soup))
+            note_data["body"] = common.markup_to_markdown(str(soup))
 
             # resources and internal links
             resources, note_links = self.parse_links(note_data["body"])

@@ -193,7 +193,7 @@ class Converter(converter.BaseConverter):
                 }
                 if (content_html := note.get("content")) is not None:
                     content_html = streamline_html(content_html)
-                    content_markdown = common.html_text_to_markdown(content_html)
+                    content_markdown = common.markup_to_markdown(content_html)
                     # note title only needed for debug message
                     resources_referenced, note_links = self.handle_markdown_links(
                         note["title"], content_markdown, note_id_title_map

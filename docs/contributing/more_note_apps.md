@@ -61,7 +61,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Primenote](https://gitlab.com/william.belanger/primenote) |     |     |
 | [QNAP Notes Station](https://www.qnap.com/de-de/software/notes-station) |     |     |
 | [raindrop.io](https://raindrop.io/) | - [doc](https://help.raindrop.io/backups) <br>- [script](https://github.com/bobscott45/raindrop2enex) |     |
-| [Rednotebook](https://rednotebook.app/) | [doc](https://rednotebook.app/help.html#toc14) |     |
 | [Reflect](https://reflect.app/) | [doc](https://reflect.academy/import-export-backups) (markdown or json?) |     |
 | [Remnote](https://www.remnote.com/) | - [doc](https://help.remnote.com/en/articles/7898019-exporting-notes#h_fffe55a9a8) <br>- [script](https://github.com/AnweshGangula/PKMigrator/tree/main/Remnote2Obsidian) <br>- [example file](https://github.com/AnweshGangula/PKMigrator/blob/main/Data/RemNote_Export_August_23rd_2021_Guest_json.zip) |     |
 | [Reor](https://github.com/reorproject/reor) |     |     |

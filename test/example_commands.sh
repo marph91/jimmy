@@ -25,6 +25,8 @@ $EXECUTABLE "$CACHE/nimbus_note/Food" --format nimbus_note
 $EXECUTABLE "$CACHE/notion/72a2f31c-3a46-4b44-826d-ae046e693551_Export-d609fb9f-43a4-475d-ba88-1db3e9e6bcd2.zip" --format notion
 $EXECUTABLE "$CACHE/obsidian/obsidian_vault" --format obsidian
 $EXECUTABLE "$CACHE/qownnotes/qownnotes_folder" --format qownnotes
+$EXECUTABLE "$CACHE/rednotebook/data" --format rednotebook
+$EXECUTABLE "$CACHE/rednotebook/RedNotebook-Backup-2024-09-15.zip" --format rednotebook
 $EXECUTABLE "$CACHE/simplenote/notes.zip" --format simplenote
 $EXECUTABLE "$CACHE/standard_notes/Standard Notes Backup - Sun Apr 28 2024 12_56_55 GMT+0200.zip" --format standard_notes
 $EXECUTABLE "$CACHE/synology_note_station/notestation-test-books.nsx" --format synology_note_station

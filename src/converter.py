@@ -107,7 +107,7 @@ class DefaultConverter(BaseConverter):
                     ]
                 )
                 # fmt: on
-                note_body = common.html_text_to_markdown(note_body_html.decode())
+                note_body = common.markup_to_markdown(note_body_html.decode())
                 note_body_splitted = note_body.split("\n")
                 if note_body_splitted[-2].startswith("Last updated "):
                     # Remove unnecessarily added lines if needed.

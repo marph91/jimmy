@@ -23,7 +23,7 @@ class Converter(converter.BaseConverter):
                 for html_note in html_notes:
                     with zip_ref.open(html_note) as zip_note:
                         note_body_html = zip_note.read().decode("UTF-8")
-                    note_body_markdown = common.html_text_to_markdown(note_body_html)
+                    note_body_markdown = common.markup_to_markdown(note_body_html)
                     note_joplin = imf.Note(
                         {
                             "title": file_.stem,
