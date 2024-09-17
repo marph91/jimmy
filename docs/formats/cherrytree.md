@@ -1,4 +1,4 @@
-This page describes how to import notes from CherryTree to Joplin.
+This page describes how to import notes from CherryTree to markdown.
 
 ## General Information
 
@@ -10,12 +10,12 @@ This page describes how to import notes from CherryTree to Joplin.
 1. Export as described in <https://www.giuspen.com/cherrytreemanual/#_exporting>
     1. Choose "Export" -> "Export to CherryTreeDocument" -> "All the Tree" -> "XML, Not Protected (.cdt)"
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
+3. Convert to markdown. Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
 
 ## Import Structure
 
-- CherryTree nodes are converted to Joplin notes.
-- If a CherryTree node contains sub nodes, a Joplin Notebook is created as container. It has the same name as the corresponding note.
+- CherryTree nodes are converted to markdown notes.
+- If a CherryTree node contains sub nodes, a folder is created as container. It has the same name as the corresponding note.
 
 ## Known Limitations
 

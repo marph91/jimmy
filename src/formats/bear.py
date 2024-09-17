@@ -21,7 +21,7 @@ class Converter(converter.BaseConverter):
         # file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
 
         # see BaseConverter.convert_multiple()
-        textbundle_converter = TextbundleConverter(self.format)
+        textbundle_converter = TextbundleConverter(self.format, self.output_folder)
         textbundle_converter.root_notebook = self.root_notebook
         for textbundle in self.root_path.glob("*.textbundle"):
             # TODO: handle info.json metadata

@@ -1,13 +1,32 @@
 """Convert Joplin notes to the intermediate format."""
 
 from collections import defaultdict
+import enum
 from pathlib import Path
-
-from joppy.data_types import ItemType
 
 import common
 import converter
 import intermediate_format as imf
+
+
+class ItemType(enum.IntEnum):
+    # https://joplinapp.org/api/references/rest_api/#item-type-ids
+    NOTE = 1
+    FOLDER = 2
+    SETTING = 3
+    RESOURCE = 4
+    TAG = 5
+    NOTE_TAG = 6
+    SEARCH = 7
+    ALARM = 8
+    MASTER_KEY = 9
+    ITEM_CHANGE = 10
+    NOTE_RESOURCE = 11
+    RESOURCE_LOCAL_STATE = 12
+    REVISION = 13
+    MIGRATION = 14
+    SMART_FILTER = 15
+    COMMAND = 16
 
 
 def handle_markdown_links(
@@ -68,21 +87,24 @@ class Converter(converter.BaseConverter):
                     "user_updated_time": common.iso_to_unix_ms(
                         metadata_json["updated_time"]
                     ),
+                    "is_todo": bool(int(metadata_json.get("is_todo", 0))),
+                    "todo_completed": bool(
+                        int(metadata_json.get("todo_completed", False))
+                    ),
+                    "todo_due": int(metadata_json.get("todo_due", 0)),
                     "source_application": self.format,
                 }
+                for key in ("latitude", "longitude", "altitude"):
+                    if (value := metadata_json.get(key)) is not None:
+                        data[key] = float(value)
+                # TODO: Not represented in frontmatter.
                 common.try_transfer_dicts(
                     metadata_json,
                     data,
                     [
                         "is_conflict",
-                        "latitude",
-                        "longitude",
-                        "altitude",
                         "author",
                         "source_url",
-                        "is_todo",
-                        "todo_due",
-                        "todo_completed",
                         "source",
                         "application_data",
                         "order",

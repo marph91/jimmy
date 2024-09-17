@@ -39,7 +39,7 @@ class Converter(converter.BaseConverter):
             if note_simplenote.get("pinned"):
                 tags.append("simplenote-pinned")
 
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": title.strip(),
                     "body": body.lstrip(),
@@ -56,4 +56,4 @@ class Converter(converter.BaseConverter):
                 note_links=note_links,
                 original_id=note_simplenote["id"],
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

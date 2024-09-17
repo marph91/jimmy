@@ -1,6 +1,6 @@
 # Welcome to jimmy's documentation!
 
-**jimmy** is a tool to import your notes from different formats to Joplin.
+**jimmy** is a tool to import your notes from different formats to markdown.
 
 ## Installation
 
@@ -18,6 +18,5 @@ Alternative installation options:
 
 ## Quickstart
 
-1. This script requires that the webclipper in Joplin is running. It will connect to Joplin at the first execution.
-2. [Import from text files](./formats/default.md) or import from specific apps, like [Google Keep](./formats/google_keep.md)
-3. Verify that everything was imported properly. The imported notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`.
+1. [Import from text files](./formats/default.md) or import from specific apps, like [Google Keep](./formats/google_keep.md)
+2. Verify that everything was converted properly. The markdown notes should be available in a new folder named like `YYYY-MM-DD HH:MM:SS - Jimmy Import`.

@@ -67,8 +67,12 @@ class Converter(converter.BaseConverter):
                 # TODO: links are converted, but not correctly
                 body = common.markup_to_markdown(data["text"], format_="t2t")
                 body, resources = self.handle_markdown_links(body)
-                note_joplin = imf.Note(
-                    {"title": day, "body": body, "source_application": self.format},
+                note_imf = imf.Note(
+                    {
+                        "title": str(day),
+                        "body": body,
+                        "source_application": self.format,
+                    },
                     resources=resources,
                 )
-                parent_notebook.child_notes.append(note_joplin)
+                parent_notebook.child_notes.append(note_imf)

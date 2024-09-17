@@ -23,7 +23,7 @@ class Converter(converter.BaseConverter):
             tags.append(imf.Tag({"title": filter_["name"]}, filter_["uid"]))
 
         for note_clipto in file_dict.get("notes", []):
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": note_clipto["title"],
                     "body": note_clipto["text"],
@@ -33,4 +33,4 @@ class Converter(converter.BaseConverter):
                 },
                 tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

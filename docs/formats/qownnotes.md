@@ -1,4 +1,4 @@
-This page describes how to import notes from QOwnNotes to Joplin.
+This page describes how to import notes from QOwnNotes to markdown.
 
 ## General Information
 
@@ -8,7 +8,7 @@ This page describes how to import notes from QOwnNotes to Joplin.
 ## Instructions
 
 1. [Install jimmy](../index.md#installation)
-2. Import to Joplin. Example: `jimmy-cli-linux qownnotes_folder/ --format qownnotes`
+2. Convert to markdown. Example: `jimmy-cli-linux qownnotes_folder/ --format qownnotes`
 
 ## Import Structure
 

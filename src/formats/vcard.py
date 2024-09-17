@@ -77,11 +77,11 @@ class Converter(converter.BaseConverter):
                         body.extend(vcard_list_to_markdown("Custom Information", value))
                     case _:
                         self.logger.debug(f"ignoring unsupported {key}: {value}")
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": contact.fn.value,
                     "body": "\n".join(body),
                     "source_application": self.format,
                 }
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

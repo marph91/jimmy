@@ -1,10 +1,10 @@
 """CLI for jimmy."""
 
 import argparse
+import datetime
 import logging
 from pathlib import Path
 
-import api_helper
 import common
 import jimmy
 
@@ -24,10 +24,15 @@ def main():
         help="The source format.",
     )
     parser.add_argument(
-        "--clear-notes", action="store_true", help="Clear everything before importing."
+        "--frontmatter",
+        default=None,
+        choices=(None, "joplin", "obsidian"),
+        help="Frontmatter type.",
     )
     parser.add_argument(
-        "--dry-run", action="store_true", help="Don't connect to the Joplin API."
+        "--output-folder",
+        type=Path,
+        help="The output folder.",
     )
     parser.add_argument(
         "--print-tree",
@@ -60,24 +65,14 @@ def main():
 
     config = parser.parse_args()
 
+    if config.output_folder is None:
+        now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        format_ = "filesystem" if config.format is None else config.format
+        config.output_folder = Path(f"{now} - Jimmy Import from {format_}")
+
     jimmy.setup_logging(config.log_file, config.stdout_log_level)
 
-    if config.clear_notes and not config.dry_run:
-        delete_everything = input(
-            "[WARN ] Really clear everything and start from scratch? (yes/no): "
-        )
-        if delete_everything.lower() not in ("y", "yes"):
-            return
-
-    if config.dry_run:
-        api = None
-    else:
-        # create the connection to Joplin first to fail fast in case of a problem
-        api = api_helper.get_api(LOGGER.info, LOGGER.error)
-        if api is None:
-            return
-
-    jimmy.jimmy(api, config)
+    jimmy.jimmy(config)
 
 
 if __name__ == "__main__":

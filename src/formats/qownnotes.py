@@ -104,7 +104,7 @@ class Converter(converter.BaseConverter):
             note_body = note_qownnotes.read_text()
 
             resources, note_links = self.handle_markdown_links(note_body)
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": note_qownnotes.stem,
                     "body": "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
@@ -115,4 +115,4 @@ class Converter(converter.BaseConverter):
                 resources=resources,
                 note_links=note_links,
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

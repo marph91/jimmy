@@ -1,4 +1,4 @@
-This page describes how to import posts and messages from Facebook to Joplin.
+This page describes how to import posts and messages from Facebook to markdown.
 
 ## General Information
 
@@ -11,7 +11,7 @@ This page describes how to import posts and messages from Facebook to Joplin.
     1. Choose JSON
     2. The export may take some time. For a 450 MB file it took two days.
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux facebook-xyz-07.07.2024-m9lv24pS.zip --format facebook`
+3. Convert to markdown. Example: `jimmy-cli-linux facebook-xyz-07.07.2024-m9lv24pS.zip --format facebook`
 
 ## Import Structure
 

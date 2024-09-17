@@ -184,11 +184,9 @@ class Converter(converter.BaseConverter):
         for child in node:
             match child.tag:
                 case "rich_text":
-                    content_md, note_links_joplin = convert_rich_text(
-                        child, self.logger
-                    )
+                    content_md, note_links_imf = convert_rich_text(child, self.logger)
                     note_body += content_md
-                    note_links.extend(note_links_joplin)
+                    note_links.extend(note_links_imf)
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
@@ -214,9 +212,9 @@ class Converter(converter.BaseConverter):
                         continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
-                    resource_md, resource_joplin = convert_png(child, self.root_path)
+                    resource_md, resource_imf = convert_png(child, self.root_path)
                     note_body += resource_md
-                    resources.append(resource_joplin)
+                    resources.append(resource_imf)
                 case "table":
                     note_body += convert_table(child)
                 case _:
@@ -229,7 +227,7 @@ class Converter(converter.BaseConverter):
         }
 
         tags = []
-        # cherrytree bookmark -> joplin tag
+        # cherrytree bookmark -> tag
         unique_id = node.attrib["unique_id"]
         if unique_id in self.bookmarked_nodes:
             tags.append("cherrytree-bookmarked")

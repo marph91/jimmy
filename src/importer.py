@@ -1,9 +1,12 @@
-"""Convert the intermediate format to Joplin notes."""
+"""Convert the intermediate format to markdown."""
 
 import logging
+import os.path
 from pathlib import Path
+import shutil
+import urllib.parse
 
-import requests
+import frontmatter
 
 import intermediate_format as imf
 
@@ -11,68 +14,70 @@ import intermediate_format as imf
 LOGGER = logging.getLogger("jimmy")
 
 
-class JoplinImporter:
-    """Import notebooks, notes and related data to Joplin."""
+class FilesystemImporter:
+    """Import notebooks, notes and related data to the filesystem."""
 
-    def __init__(self, api, progress_bars):
-        self.api = api
-        # Cache created tags and resources to create them only once.
-        # original id - joplin id
-        self.tag_map: dict[str, imf.Tag] = {}
-        # original path - joplin id
-        self.resource_map: dict[Path, imf.Resource] = {}
-        # original id - joplin id
-        self.note_id_map: dict[str, str] = {}
-
+    def __init__(self, progress_bars, frontmatter_):
+        self.frontmatter = frontmatter_
+        # reference id - path (new id)
+        self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
 
-    def add_tag(self, tag: imf.Tag) -> str | None:
-        self.progress_bars["tags"].update(1)
-        try:
-            # Try to create a new tag.
-            tag_id = self.api.add_tag(**tag.data)
-            self.tag_map[tag.reference_id] = tag_id
-            return tag_id
-        except requests.exceptions.HTTPError:
-            # Tag exists already. Search for it. Joplin only supports lower case
-            # tags. If not converted to lower case, this can cause some trouble.
-            # See: https://github.com/marph91/jimmy/issues/6#issuecomment-2184981456
-            title = tag.data["title"].lower()
-            result = self.api.search(query=title, type="tag")
-            matching_tags = [
-                joplin_tag for joplin_tag in result.items if joplin_tag.title == title
-            ]
-            if len(matching_tags) == 0:
-                LOGGER.warning(
-                    f'Ignoring tag "{title}". It exists,'
-                    "but there aren't search results."
-                )
-                return None
-            if len(matching_tags) > 1:
-                LOGGER.warning(
-                    f'Too many search results for tag "{title}". '
-                    f'Taking first match "{matching_tags[0].id}".'
-                )
-            self.tag_map[tag.reference_id] = matching_tags[0].id
-            return matching_tags[0].id
+    def write_note(self, note: imf.Note):
+        assert note.path is not None
+        match self.frontmatter:
+            case "joplin":
+                # TODO
+                # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
+                metadata = {"title": note.data["title"]}
+                if note.tags:
+                    metadata["tags"] = [tag.data["title"] for tag in note.tags]
+                key_map = {
+                    "user_created_time": "created",
+                    "user_updated_time": "updated",
+                    "author": "author",
+                    "latitude": "latitude",
+                    "longitude": "longitude",
+                    "altitude": "altitude",
+                }
+                for original_key, mapped_key in key_map.items():
+                    if value := note.data.get(original_key):
+                        metadata[mapped_key] = value
+                if note.data.get("is_todo", False):
+                    metadata["completed?"] = (
+                        "yes" if note.data["todo_completed"] else "no"
+                    )
+                    if note.data["todo_due"] != 0:
+                        metadata["due"] = note.data["todo_due"]
+                post = frontmatter.Post(note.data.get("body", ""), **metadata)
+                frontmatter.dump(post, note.path)
+            case "obsidian":
+                # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
+                metadata = {}
+                if note.tags:
+                    metadata["tags"] = [tag.data["title"] for tag in note.tags]
+                    post = frontmatter.Post(note.data.get("body", ""), **metadata)
+                    frontmatter.dump(post, note.path)
+                else:
+                    note.path.write_text(note.data.get("body", ""))
+            case _:
+                note.path.write_text(note.data.get("body", ""))
 
     def import_note(self, note: imf.Note):
+        assert note.path is not None
         self.progress_bars["notes"].update(1)
         # Handle resources first, since the note body changes.
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
+            # TODO: support local and global resource folder
+            resource.path = note.path.parent / resource.filename.name
             # Don't create multiple Joplin resources for the same file.
             # Cache the original file paths and their corresponding Joplin ID.
-            try:
-                resource_id = self.resource_map[resource.filename]
-            except KeyError:
-                resource_id = self.api.add_resource(
-                    filename=str(resource.filename), title=resource_title
-                )
-                self.resource_map[resource.filename] = resource_id
+            if not resource.path.is_file():
+                shutil.copy(resource.filename, resource.path)
             resource_markdown = (
-                f"{'!' * resource.is_image}[{resource_title}](:/{resource_id})"
+                f"{'!' * resource.is_image}[{resource_title}]({resource.path.name})"
             )
             if resource.original_text is None:
                 # append
@@ -83,38 +88,48 @@ class JoplinImporter:
                     resource.original_text, resource_markdown
                 )
 
-        note_id = self.api.add_note(**note.data)
         # needed to properly link notes later
-        note.joplin_id = note_id
-        self.note_id_map[note.reference_id] = note_id
+        self.note_id_map[note.reference_id] = note.path
 
-        for tag in note.tags:
-            tag_id = self.tag_map.get(tag.reference_id, self.add_tag(tag))
-            if tag_id is not None:
-                self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
+        if len(note.tags) > 0:
+            self.progress_bars["tags"].update(len(note.tags))
+            if not self.frontmatter:
+                LOGGER.warning(
+                    f"Tags of note \"{note.data['title']}\" "
+                    "will be lost without frontmatter."
+                )
+        self.write_note(note)
 
     def import_notebook(self, notebook: imf.Notebook):
+        assert notebook.path is not None
         self.progress_bars["notebooks"].update(1)
-        notebook_id = self.api.add_notebook(**notebook.data)
+        notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.data["parent_id"] = notebook_id
+            note.path = (notebook.path / note.data["title"]).with_suffix(".md")
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.data["parent_id"] = notebook_id
+            child_notebook.path = notebook.path / child_notebook.data["title"]
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):
+        assert note.path is not None
         if not note.note_links or not note.data.get("body", ""):
             return  # nothing to link
         for note_link in note.note_links:
             self.progress_bars["note_links"].update(1)
-            joplin_id = self.note_id_map.get(note_link.original_id)
-            if joplin_id is None:
+            new_path = self.note_id_map.get(note_link.original_id)
+            if new_path is None:
                 LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")
-            note.data["body"] = note.data["body"].replace(
-                note_link.original_text, f"[{note_link.title}](:/{joplin_id})"
+                continue
+
+            relative_path = os.path.relpath(
+                new_path.resolve(), start=note.path.parent.resolve()
             )
-        self.api.modify_note(note.joplin_id, body=note.data["body"])
+            note.data["body"] = note.data["body"].replace(
+                note_link.original_text,
+                f"[{note_link.title}]({urllib.parse.quote(str(relative_path))})",
+            )
+        self.write_note(note)  # update note
 
     def link_notes(self, notebook: imf.Notebook):
         for note in notebook.child_notes:

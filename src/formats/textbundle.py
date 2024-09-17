@@ -51,7 +51,7 @@ class Converter(converter.BaseConverter):
             )
             inline_tags = common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": title,
                     "body": body,
@@ -61,4 +61,4 @@ class Converter(converter.BaseConverter):
                 tags=[imf.Tag({"title": tag}) for tag in inline_tags],
                 resources=resources,
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

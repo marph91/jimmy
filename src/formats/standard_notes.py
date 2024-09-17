@@ -54,7 +54,7 @@ class Converter(converter.BaseConverter):
             if item["content"].get("starred", False):
                 tags.append(imf.Tag({"title": "standard_notes-starred"}))
 
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": item["content"]["title"],
                     # TODO: "noteType" is ignored for now.
@@ -75,4 +75,4 @@ class Converter(converter.BaseConverter):
                 parent = archive_notebook
             else:
                 parent = self.root_notebook
-            parent.child_notes.append(note_joplin)
+            parent.child_notes.append(note_imf)

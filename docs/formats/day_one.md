@@ -1,4 +1,4 @@
-This page describes how to import notes from Day One to Joplin.
+This page describes how to import notes from Day One to markdown.
 
 ## General Information
 
@@ -10,7 +10,7 @@ This page describes how to import notes from Day One to Joplin.
 1. Export as described in <https://dayoneapp.com/guides/tips-and-tutorials/exporting-entries/>
     1. Choose "Day One JSON (.zip)"
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux Export-Tagebuch.zip --format day_one`
+3. Convert to markdown. Example: `jimmy-cli-linux Export-Tagebuch.zip --format day_one`
 
 ## Import Structure
 

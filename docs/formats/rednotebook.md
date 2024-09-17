@@ -1,4 +1,4 @@
-This page describes how to import notes from RedNotebook to Joplin.
+This page describes how to import notes from RedNotebook to markdown.
 
 ## General Information
 
@@ -9,7 +9,7 @@ This page describes how to import notes from RedNotebook to Joplin.
 
 1. Create a backup of your notes as described [here](https://rednotebook.app/help.html#toc13) or specify the data folder (for example `$HOME/.rednotebook/data`)
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Examples:
+3. Convert to markdown. Examples:
    1. `jimmy-cli-linux RedNotebook-Backup-2024-09-15.zip --format rednotebook`
    2. `jimmy-cli-linux ~/.rednotebook/data/ --format rednotebook`
 

@@ -53,28 +53,28 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="utf-8"))
         for note_tiddlywiki in file_dict:
-            note_joplin_data = {
+            note_imf_data = {
                 "title": note_tiddlywiki["title"],
                 "body": note_tiddlywiki.get("text", ""),
                 "author": note_tiddlywiki.get("creator", ""),
                 "source_application": self.format,
             }
             if "created" in note_tiddlywiki:
-                note_joplin_data["user_created_time"] = tiddlywiki_to_unix(
+                note_imf_data["user_created_time"] = tiddlywiki_to_unix(
                     note_tiddlywiki["created"]
                 )
             if "modified" in note_tiddlywiki:
-                note_joplin_data["user_updated_time"] = tiddlywiki_to_unix(
+                note_imf_data["user_updated_time"] = tiddlywiki_to_unix(
                     note_tiddlywiki["modified"]
                 )
-            note_joplin = imf.Note(
-                note_joplin_data,
+            note_imf = imf.Note(
+                note_imf_data,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[
                     imf.Tag({"title": tag})
                     for tag in split_tags(note_tiddlywiki.get("tags", ""))
                 ],
             )
-            if any(t.reference_id.startswith("$:/tags/") for t in note_joplin.tags):
+            if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
                 continue  # skip notes with special tags
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

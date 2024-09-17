@@ -30,7 +30,7 @@ class Converter(converter.BaseConverter):
                 resources_keep.append(
                     imf.Resource(file_.parent.absolute() / resource_keep["filePath"])
                 )
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": note_keep["title"],
                     "body": note_keep["textContent"],
@@ -42,4 +42,4 @@ class Converter(converter.BaseConverter):
                 tags=[imf.Tag({"title": tag}) for tag in tags_keep],
                 resources=resources_keep,
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

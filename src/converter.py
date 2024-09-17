@@ -1,6 +1,5 @@
 """Provides the base class for all converters."""
 
-from datetime import datetime
 import logging
 from pathlib import Path
 import subprocess
@@ -15,11 +14,12 @@ class BaseConverter:
     accepted_extensions: list[str] | None = None
     accept_folder = False
 
-    def __init__(self, format_: str):
+    def __init__(self, format_: str, output_folder):
         self.logger = logging.getLogger("jimmy")
-        self.format = "Joplin Custom Importer" if format_ is None else format_
+        self.format = "Jimmy" if format_ is None else format_
         self.root_notebook: imf.Notebook
         self.root_path: Path | None = None
+        self.output_folder = output_folder
 
     def has_valid_format(self, input_: Path) -> bool:
         """Check if the input has a valid format."""
@@ -38,10 +38,12 @@ class BaseConverter:
         """This is the main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            index_suffix = "" if len(files_or_folders) == 1 else f" ({input_index})"
+            index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
+            output_folder = self.output_folder.with_name(
+                self.output_folder.stem + index_suffix
+            )
             self.root_notebook = imf.Notebook(
-                {"title": f"{now} - Import from {self.format}{index_suffix}"}
+                {"title": output_folder.name}, path=output_folder
             )
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():

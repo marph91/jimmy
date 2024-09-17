@@ -16,7 +16,7 @@ class Converter(converter.BaseConverter):
         file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
 
         # Get the tags/labels for each note/snippet.
-        # cacher labels == joplin tags
+        # cacher labels == tags
         tags_per_note = defaultdict(list)
         for label in file_dict["personalLibrary"]["labels"]:
             for assigned_snippets in label["snippets"]:
@@ -25,8 +25,8 @@ class Converter(converter.BaseConverter):
                     imf.Tag({"title": label["title"]}, original_id=label["guid"])
                 )
 
-        # cacher snippets == joplin notebooks
-        # cacher files == joplin notes
+        # cacher snippets == notebooks
+        # cacher files == notes
         for snippet in file_dict["personalLibrary"]["snippets"]:
             notebook = imf.Notebook(
                 {
@@ -46,7 +46,7 @@ class Converter(converter.BaseConverter):
                         "Only markdown supported for now."
                     )
                     continue
-                note_joplin = imf.Note(
+                note_imf = imf.Note(
                     {
                         "title": Path(file_["filename"]).stem,
                         "body": file_["content"],
@@ -58,4 +58,4 @@ class Converter(converter.BaseConverter):
                     tags=tags_per_note.get(snippet["guid"], []),
                     original_id=file_["guid"],
                 )
-                notebook.child_notes.append(note_joplin)
+                notebook.child_notes.append(note_imf)

@@ -1,4 +1,4 @@
-"""Importer for many (note) formats to Joplin."""
+"""Importer for many (note) formats to markdown."""
 
 import importlib
 import logging
@@ -24,9 +24,6 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     # mute other loggers
     # https://stackoverflow.com/a/53250066/7410886
     logging.getLogger("pypandoc").setLevel(logging.WARNING)
-    logging.getLogger("requests").setLevel(logging.WARNING)
-    logging.getLogger("urllib3").setLevel(logging.WARNING)
-    logging.getLogger("joppy").setLevel(logging.WARNING)
     logging.getLogger("python-markdown").setLevel(logging.WARNING)
 
     # setup the root logger, but don't propagate. We will log using our own
@@ -52,7 +49,7 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs: list[Path], format_: str):
+def convert_all_inputs(inputs: list[Path], format_: str, output_folder):
     """
     Convert the input data to an intermediate representation
     that can be used by the importer later.
@@ -62,11 +59,11 @@ def convert_all_inputs(inputs: list[Path], format_: str):
     try:
         LOGGER.debug(f"Try converting with converter {format_}")
         module = importlib.import_module(f"formats.{format_}")
-        converter_ = module.Converter(format_)
+        converter_ = module.Converter(format_, output_folder)
     except ModuleNotFoundError as exc:
         LOGGER.debug(f"Fallback to default converter: {exc}")
         if str(exc) == f"No module named 'formats.{format_}'":
-            converter_ = converter.DefaultConverter(format_)
+            converter_ = converter.DefaultConverter(format_, output_folder)
         else:
             raise exc  # this is unexpected -> reraise
     # TODO: Children are added to the parent node / node tree implicitly.
@@ -90,18 +87,13 @@ def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
     return root_tree
 
 
-def jimmy(api, config) -> common.Stats:
-    if not config.dry_run and config.clear_notes:
-        LOGGER.info("Clear everything. Please wait.")
-        api.delete_all_notebooks()
-        api.delete_all_resources()
-        api.delete_all_tags()
-        LOGGER.info("Cleared everything successfully.")
-
+def jimmy(config) -> common.Stats:
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
-    root_notebooks = convert_all_inputs(config.input, config.format)
+    root_notebooks = convert_all_inputs(
+        config.input, config.format, config.output_folder
+    )
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:
@@ -114,20 +106,20 @@ def jimmy(api, config) -> common.Stats:
     if config.print_tree and stats != stats_filtered:
         print(get_tree(root_notebooks, Tree("Note Tree Filtered")))
 
-    if not config.dry_run:
-        LOGGER.info("Start import to Joplin")
-        progress_bars = stats.create_progress_bars()
-        for note_tree in root_notebooks:
-            joplin_importer = importer.JoplinImporter(api, progress_bars)
-            joplin_importer.import_notebook(note_tree)
-            # We need another pass, since at the first pass
-            # target note IDs are unknown.
-            joplin_importer.link_notes(note_tree)
-        LOGGER.info(
-            "Imported notes to Joplin successfully. "
-            "Please verify that everything was imported."
+    LOGGER.info("Start writing to file system")
+    progress_bars = stats.create_progress_bars()
+    for note_tree in root_notebooks:
+        file_system_importer = importer.FilesystemImporter(
+            progress_bars, config.frontmatter
         )
-
+        file_system_importer.import_notebook(note_tree)
+        # We need another pass, since at the first pass
+        # target note IDs are unknown.
+        file_system_importer.link_notes(note_tree)
+    LOGGER.info(
+        "Converted notes successfully to markdown. "
+        "Please verify that everything was converted correctly."
+    )
     LOGGER.info(
         "[bold]Feel free to open an issue on "
         "[link=https://github.com/marph91/jimmy/issues]Github[/link], "

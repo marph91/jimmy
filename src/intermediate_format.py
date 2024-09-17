@@ -31,6 +31,7 @@ class Resource:
     # [title_or_filename](:/resource_id)
     title: str | None = None
     is_image: bool = field(init=False)
+    path: Path | None = None
 
     def __post_init__(self):
         # Supported image types of Joplin:
@@ -67,6 +68,7 @@ class Note:
     note_links: list[NoteLink] = field(default_factory=list)
     original_id: str | None = None
     joplin_id: str | None = None
+    path: Path | None = None
 
     @property
     def reference_id(self) -> str:
@@ -85,3 +87,4 @@ class Notebook:
     child_notebooks: list[Notebook] = field(default_factory=list)
     child_notes: list[Note] = field(default_factory=list)
     original_id: str | None = None
+    path: Path | None = None

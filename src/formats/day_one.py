@@ -166,7 +166,7 @@ class Converter(converter.BaseConverter):
                 note_body, resource_id_filename_map
             )
 
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 note_data,
                 resources=resources,
                 tags=[imf.Tag({"title": tag}) for tag in tags],
@@ -176,4 +176,4 @@ class Converter(converter.BaseConverter):
 
             creation_date = dt.datetime.fromisoformat(entry["creationDate"])
             parent_notebook = self.create_notebook_hierarchy(creation_date)
-            parent_notebook.child_notes.append(note_joplin)
+            parent_notebook.child_notes.append(note_imf)

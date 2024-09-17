@@ -23,7 +23,7 @@ class Converter(converter.BaseConverter):
             if note_jrnl["starred"]:
                 tags.append("jrnl-starred")
 
-            note_joplin = imf.Note(
+            note_imf = imf.Note(
                 {
                     "title": title,
                     "body": note_jrnl["body"],
@@ -33,4 +33,4 @@ class Converter(converter.BaseConverter):
                 },
                 tags=[imf.Tag({"title": tag}) for tag in tags],
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

@@ -1,4 +1,4 @@
-This page describes how to import notes from Synology Note Station to Joplin.
+This page describes how to import notes from Synology Note Station to markdown.
 
 ## General Information
 
@@ -9,7 +9,7 @@ This page describes how to import notes from Synology Note Station to Joplin.
 
 1. Export as described in <https://kb.synology.com/en-global/DSM/help/NoteStation/note_station_managing_notes?version=7#t7>
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux notestation-test-books.nsx --format synology_note_station`
+3. Convert to markdown. Example: `jimmy-cli-linux notestation-test-books.nsx --format synology_note_station`
 
 ## Known Limitations
 

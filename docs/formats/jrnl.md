@@ -1,4 +1,4 @@
-This page describes how to import notes from jrnl to Joplin.
+This page describes how to import notes from jrnl to markdown.
 
 ## General Information
 
@@ -11,7 +11,7 @@ This page describes how to import notes from jrnl to Joplin.
     1. Export as json to preserve metadata.
     2. Example: `jrnl --format json --file myjournal.json`
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux myjournal.json --format jrnl`
+3. Convert to markdown. Example: `jimmy-cli-linux myjournal.json --format jrnl`
 
 ## Import Structure
 

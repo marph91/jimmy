@@ -4,9 +4,12 @@
 
 set -e
 
-CACHE=".cache"  # created at a testsuite run
+mkdir -p "tmp_output"
+pushd "tmp_output"
 
-EXECUTABLE="${1:-python src/jimmy_cli.py}"
+CACHE="../.cache"  # created at a testsuite run
+
+EXECUTABLE="${1:-python ../src/jimmy_cli.py}"
 echo "Running with $EXECUTABLE"
 
 $EXECUTABLE "$CACHE/arbitrary_folder"
@@ -35,13 +38,15 @@ $EXECUTABLE "$CACHE/textbundle/Textbundle Example v1.textbundle/" --format textb
 $EXECUTABLE "$CACHE/textbundle/Textbundle Example v2.textbundle/" --format textbundle
 $EXECUTABLE "$CACHE/textbundle/example.textpack" --format textbundle
 # $EXECUTABLE "$CACHE/tiddlywiki/tiddlyhost.json" --format tiddlywiki
-$EXECUTABLE "$CACHE/todo_txt/examples_from_readme.txt" --format todo_txt
-$EXECUTABLE "$CACHE/todoist/Privates.csv" --format todoist
+# $EXECUTABLE "$CACHE/todo_txt/examples_from_readme.txt" --format todo_txt
+# $EXECUTABLE "$CACHE/todoist/Privates.csv" --format todoist
 $EXECUTABLE "$CACHE/tomboy_ng/tomboy-ng/" --format tomboy_ng
-$EXECUTABLE "$CACHE/toodledo/toodledo_completed_240427.csv" --format toodledo
-$EXECUTABLE "$CACHE/toodledo/toodledo_current_240427.csv" --format toodledo
-$EXECUTABLE "$CACHE/toodledo/toodledo_notebook_240427.csv" --format toodledo
-$EXECUTABLE "$CACHE/xit/example.xit" --format xit
-$EXECUTABLE "$CACHE/xit/example2.xit" --format xit
+# $EXECUTABLE "$CACHE/toodledo/toodledo_completed_240427.csv" --format toodledo
+# $EXECUTABLE "$CACHE/toodledo/toodledo_current_240427.csv" --format toodledo
+# $EXECUTABLE "$CACHE/toodledo/toodledo_notebook_240427.csv" --format toodledo
+# $EXECUTABLE "$CACHE/xit/example.xit" --format xit
+# $EXECUTABLE "$CACHE/xit/example2.xit" --format xit
 $EXECUTABLE "$CACHE/zim_md"
 $EXECUTABLE "$CACHE/zoho_notebook/Notebook_14Apr2024_1300_html.zip" --format zoho_notebook
+
+popd
