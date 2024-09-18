@@ -8,6 +8,7 @@ import urllib.parse
 
 import frontmatter
 
+import common
 import intermediate_format as imf
 
 
@@ -67,7 +68,7 @@ class FilesystemImporter:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
             # TODO: support local and global resource folder
-            resource.path = note.path.parent / resource.filename.name
+            resource.path = common.safe_path(note.path.parent / resource.filename.name)
             # Don't create multiple Joplin resources for the same file.
             # Cache the original file paths and their corresponding Joplin ID.
             if not resource.path.is_file():
@@ -98,10 +99,12 @@ class FilesystemImporter:
         self.progress_bars["notebooks"].update(1)
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.path = (notebook.path / note.title).with_suffix(".md")
+            note.path = common.safe_path(
+                (notebook.path / note.title).with_suffix(".md")
+            )
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.path = notebook.path / child_notebook.title
+            child_notebook.path = common.safe_path(notebook.path / child_notebook.title)
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):

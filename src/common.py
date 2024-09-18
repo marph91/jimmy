@@ -5,6 +5,7 @@ import datetime as dt
 import logging
 from pathlib import Path
 import pkgutil
+import platform
 import re
 import tarfile
 import tempfile
@@ -49,6 +50,69 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
             source_key = target_key = key
         if (value := source.get(source_key)) is not None:
             target[target_key] = value
+
+
+SYSTEM = platform.system()
+
+
+def safe_path(path: Path, system: str = SYSTEM) -> Path:
+    r"""
+    Return a safe version of the provided path.
+    Only the last part is considered.
+
+    >>> str(safe_path(Path("a/."), "Linux"))
+    'a'
+    >>> str(safe_path(Path("ab\x00c"), "Linux"))
+    'ab_c'
+    >>> str(safe_path(Path("CON"), "Windows"))
+    'CON_'
+    >>> str(safe_path(Path("LPT7"), "Windows"))
+    'LPT7_'
+    >>> str(safe_path(Path("a/bc."), "Windows"))
+    'a/bc_'
+    >>> str(safe_path(Path("a/b:c"), "Windows"))
+    'a/b_c'
+    >>> str(safe_path(Path("a/b*c"), "Windows"))
+    'a/b_c'
+    """
+    # https://stackoverflow.com/a/31976060
+    match system:
+        case "Windows":
+            # fmt: off
+            forbidden_chars = [
+                "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
+            ] + [chr(value) for value in range(32)]
+            # fmt: on
+            safe_name = path.name
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = (
+                ["CON", "PRN", "AUX", "NUL"]
+                + [f"COM{i}" for i in range(1, 10)]
+                + [f"LPT{i}" for i in range(1, 10)]
+            )
+            if safe_name in forbidden_names:
+                safe_name += "_"
+
+            forbidden_last_chars = [" ", "."]
+            if safe_name[-1] in forbidden_last_chars:
+                safe_name = safe_name[:-1] + "_"
+            return path.with_name(safe_name)
+        case "Linux" | "Darwin":
+            # OSX may allow more chars.
+            forbidden_chars = ["/", "\x00"]
+            safe_name = path.name
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = [".", ".."]
+            if safe_name in forbidden_names:
+                safe_name += "_"
+            return path.with_name(safe_name)
+        case _:
+            LOGGER.warning(f"Unsupported system: {system}")
+            return path
 
 
 ###########################################################
