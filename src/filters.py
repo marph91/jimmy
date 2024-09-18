@@ -9,8 +9,8 @@ def select_notes(notebook: imf.Notebook, config):
     """Apply the configured filter to notes in a notebook."""
     selected_child_notes = []
     for child_note in notebook.child_notes:
-        title = child_note.data["title"]
-        tags = [tag.data["title"] for tag in child_note.tags]
+        title = child_note.title
+        tags = [tag.title for tag in child_note.tags]
 
         # select note by note title
         if config.exclude_notes is not None:
@@ -45,7 +45,7 @@ def select_tags(note: imf.Note, config):
     """Apply the configured filter to note tags."""
     selected_tags = []
     for tag in note.tags:
-        title = tag.data["title"]
+        title = tag.title
 
         if config.exclude_tags is not None:
             if not any(fnmatchcase(title, pattern) for pattern in config.exclude_tags):

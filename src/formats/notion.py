@@ -63,11 +63,9 @@ class Converter(converter.BaseConverter):
                     )
 
             note_imf = imf.Note(
-                {
-                    "title": title,
-                    "body": body,
-                    "source_application": self.format,
-                },
+                title,
+                body,
+                source_application=self.format,
                 original_id=original_id,
                 resources=resources,
                 note_links=note_links,

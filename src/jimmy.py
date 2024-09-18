@@ -74,13 +74,13 @@ def convert_all_inputs(inputs: list[Path], format_: str, output_folder):
 
 def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
     for notebook in root_notebooks:
-        new_root_notebook = root_tree.add("📘 " + notebook.data["title"])
+        new_root_notebook = root_tree.add("📘 " + notebook.title)
         for note in notebook.child_notes:
-            new_note = new_root_notebook.add("📖 " + note.data["title"])
+            new_note = new_root_notebook.add("📖 " + note.title)
             for resource in note.resources:
                 new_note.add("🎴 " + (resource.title or resource.filename.name))
             for tag in note.tags:
-                new_note.add("🔖 " + tag.data["title"])
+                new_note.add("🔖 " + tag.title)
             for note_link in note.note_links:
                 new_note.add("🔗 " + note_link.title)
         get_tree(notebook.child_notebooks, new_root_notebook)

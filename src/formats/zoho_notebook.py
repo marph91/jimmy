@@ -1,5 +1,6 @@
 """Convert Zoho Notebook notes to the intermediate format."""
 
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -88,10 +89,10 @@ class Converter(converter.BaseConverter):
         # Assume that notebooks can't be nested.
         notebook_data = {
             "title": metadata["data-notebook"]["name"],
-            "user_created_time": common.iso_to_unix_ms(
+            "created": dt.datetime.fromisoformat(
                 metadata["data-notebook"]["created_date"]
             ),
-            "user_updated_time": common.iso_to_unix_ms(
+            "updated": dt.datetime.fromisoformat(
                 metadata["data-notebook"]["modified_date"]
             ),
         }
@@ -99,45 +100,46 @@ class Converter(converter.BaseConverter):
         for notebook in self.root_notebook.child_notebooks:
             # TODO: Is there a notebook ID? We just identify by name and creation date.
             if (
-                notebook.data["title"] == notebook_data["title"]
-                and notebook.data["user_created_time"]
-                == notebook_data["user_created_time"]
-                and notebook.data["user_updated_time"]
-                == notebook_data["user_updated_time"]
+                notebook.title == notebook_data["title"]
+                and notebook.created == notebook_data["created"]
+                and notebook.updated == notebook_data["updated"]
             ):
                 # Use the existing notebook if possible.
                 parent_notebook = notebook
+                break
 
         # If there is no matching parent, create one.
         if parent_notebook is None:
-            parent_notebook = imf.Notebook(notebook_data)
+            parent_notebook = imf.Notebook(**notebook_data)
             self.root_notebook.child_notebooks.append(parent_notebook)
 
         # note metadata
         # TODO: optionally handle color
         note_data = {
             "title": metadata["data-notecard"]["name"],
-            "user_created_time": common.iso_to_unix_ms(
+            "created": dt.datetime.fromisoformat(
                 metadata["data-notecard"]["created_date"]
             ),
-            "user_updated_time": common.iso_to_unix_ms(
+            "updated": dt.datetime.fromisoformat(
                 metadata["data-notecard"]["modified_date"]
             ),
             "source_application": self.format,
         }
 
-        if (reminders := metadata.get("data-remainder")) is not None:
-            # There seem to be possibly multiple reminders, but we can handle
-            # only one. Take the first one.
-            note_data["is_todo"] = 1
-            note_data["user_creation_date"] = common.iso_to_unix_ms(
-                reminders[0]["ZReminderTime"]
-            )
-            if bool(int(reminders[0]["is-completed"])):
-                # There isn't a completed time. Just take the last modified time.
-                note_data["todo_completed"] = common.iso_to_unix_ms(
-                    reminders[0]["modified-time"]
-                )
+        # TODO: How to handle remainder?
+        # if (reminders := metadata.get("data-remainder")) is not None:
+        #     # There seem to be possibly multiple reminders, but we can handle
+        #     # only one. Take the first one.
+        #     note_data["is_todo"] = True
+        #     note_data["created"] = dt.datetime.fromisoformat(
+        #         reminders[0]["ZReminderTime"]
+        #     )
+        #     if bool(int(reminders[0]["is-completed"])):
+        #         note_data["completed"] = True
+        #         # There isn't a due time. Just take the last modified time.
+        #         note_data["due"] = dt.datetime.fromisoformat(
+        #             reminders[0]["modified-time"]
+        #         )
 
         # convert the note body to markdown
         # TODO:
@@ -156,8 +158,8 @@ class Converter(converter.BaseConverter):
         # create note
         parent_notebook.child_notes.append(
             imf.Note(
-                note_data,
-                tags=[imf.Tag({"title": tag}) for tag in metadata.get("data-tag", [])],
+                **note_data,
+                tags=[imf.Tag(tag) for tag in metadata.get("data-tag", [])],
                 resources=resources,
                 note_links=note_links,
                 original_id=file_.stem,

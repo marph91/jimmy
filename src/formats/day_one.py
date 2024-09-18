@@ -28,9 +28,9 @@ class Converter(converter.BaseConverter):
     def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
         def find_or_create_child_notebook(title, parent_notebook):
             for child_notebook in parent_notebook.child_notebooks:
-                if child_notebook.data["title"] == title:
+                if child_notebook.title == title:
                     return child_notebook
-            new_notebook = imf.Notebook({"title": title})
+            new_notebook = imf.Notebook(title)
             parent_notebook.child_notebooks.append(new_notebook)
             return new_notebook
 
@@ -147,8 +147,8 @@ class Converter(converter.BaseConverter):
             note_data = {
                 "title": guess_title(note_body),
                 "body": note_body,  # TODO: Is there any advantage of rich text?
-                "user_created_time": common.iso_to_unix_ms(entry["creationDate"]),
-                "user_updated_time": common.iso_to_unix_ms(entry["modifiedDate"]),
+                "created": dt.datetime.fromisoformat(entry["creationDate"]),
+                "updated": dt.datetime.fromisoformat(entry["modifiedDate"]),
                 "source_application": self.format,
             }
 
@@ -167,9 +167,9 @@ class Converter(converter.BaseConverter):
             )
 
             note_imf = imf.Note(
-                note_data,
+                **note_data,
                 resources=resources,
-                tags=[imf.Tag({"title": tag}) for tag in tags],
+                tags=[imf.Tag(tag) for tag in tags],
                 note_links=note_links,
                 original_id=entry["uuid"],
             )

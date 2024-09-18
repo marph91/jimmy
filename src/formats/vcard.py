@@ -78,7 +78,7 @@ class Converter(converter.BaseConverter):
                     case _:
                         self.logger.debug(f"ignoring unsupported {key}: {value}")
             note_imf = imf.Note(
-                {
+                **{
                     "title": contact.fn.value,
                     "body": "\n".join(body),
                     "source_application": self.format,

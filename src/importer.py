@@ -27,41 +27,37 @@ class FilesystemImporter:
         assert note.path is not None
         match self.frontmatter:
             case "joplin":
-                # TODO
                 # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
-                metadata = {"title": note.data["title"]}
+                # Arbitrary metadata will be ignored.
+                metadata = {}
                 if note.tags:
-                    metadata["tags"] = [tag.data["title"] for tag in note.tags]
+                    metadata["tags"] = [tag.title for tag in note.tags]
                 key_map = {
-                    "user_created_time": "created",
-                    "user_updated_time": "updated",
+                    "title": "title",
+                    "created": "created",
+                    "updated": "updated",
                     "author": "author",
                     "latitude": "latitude",
                     "longitude": "longitude",
                     "altitude": "altitude",
                 }
                 for original_key, mapped_key in key_map.items():
-                    if value := note.data.get(original_key):
+                    if value := getattr(note, original_key):
                         metadata[mapped_key] = value
-                if note.data.get("is_todo", False):
-                    metadata["completed?"] = (
-                        "yes" if note.data["todo_completed"] else "no"
-                    )
-                    if note.data["todo_due"] != 0:
-                        metadata["due"] = note.data["todo_due"]
-                post = frontmatter.Post(note.data.get("body", ""), **metadata)
+                post = frontmatter.Post(note.body, **metadata)
                 frontmatter.dump(post, note.path)
             case "obsidian":
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
+                # TODO: Add arbitrary metadata?
                 metadata = {}
                 if note.tags:
-                    metadata["tags"] = [tag.data["title"] for tag in note.tags]
-                    post = frontmatter.Post(note.data.get("body", ""), **metadata)
+                    metadata["tags"] = [tag.title for tag in note.tags]
+                    post = frontmatter.Post(note.body, **metadata)
                     frontmatter.dump(post, note.path)
                 else:
-                    note.path.write_text(note.data.get("body", ""))
+                    note.path.write_text(note.body)
             case _:
-                note.path.write_text(note.data.get("body", ""))
+                note.path.write_text(note.body)
 
     def import_note(self, note: imf.Note):
         assert note.path is not None
@@ -81,12 +77,10 @@ class FilesystemImporter:
             )
             if resource.original_text is None:
                 # append
-                note.data["body"] = f"{note.data.get('body', '')}\n{resource_markdown}"
+                note.body = f"{note.body}\n{resource_markdown}"
             else:
                 # replace existing link
-                note.data["body"] = note.data["body"].replace(
-                    resource.original_text, resource_markdown
-                )
+                note.body = note.body.replace(resource.original_text, resource_markdown)
 
         # needed to properly link notes later
         self.note_id_map[note.reference_id] = note.path
@@ -95,8 +89,7 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
             if not self.frontmatter:
                 LOGGER.warning(
-                    f"Tags of note \"{note.data['title']}\" "
-                    "will be lost without frontmatter."
+                    f'Tags of note "{note.title}" ' "will be lost without frontmatter."
                 )
         self.write_note(note)
 
@@ -105,15 +98,15 @@ class FilesystemImporter:
         self.progress_bars["notebooks"].update(1)
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.path = (notebook.path / note.data["title"]).with_suffix(".md")
+            note.path = (notebook.path / note.title).with_suffix(".md")
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.path = notebook.path / child_notebook.data["title"]
+            child_notebook.path = notebook.path / child_notebook.title
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):
         assert note.path is not None
-        if not note.note_links or not note.data.get("body", ""):
+        if not note.note_links or not note.body:
             return  # nothing to link
         for note_link in note.note_links:
             self.progress_bars["note_links"].update(1)
@@ -125,7 +118,7 @@ class FilesystemImporter:
             relative_path = os.path.relpath(
                 new_path.resolve(), start=note.path.parent.resolve()
             )
-            note.data["body"] = note.data["body"].replace(
+            note.body = note.body.replace(
                 note_link.original_text,
                 f"[{note_link.title}]({urllib.parse.quote(str(relative_path))})",
             )

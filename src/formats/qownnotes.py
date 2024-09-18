@@ -84,9 +84,7 @@ class Converter(converter.BaseConverter):
             # get related notes and assign the tags
             cur.execute("SELECT * FROM noteTagLink")
             for _, tag_id, note_id, *_ in cur.fetchall():
-                note_tag_map[note_id].append(
-                    imf.Tag({"title": tag_id_name_map[tag_id]}, tag_id)
-                )
+                note_tag_map[note_id].append(imf.Tag(tag_id_name_map[tag_id], tag_id))
         except sqlite3.OperationalError as exc:
             self.logger.warning("Parsing the tag DB failed.")
             self.logger.debug(exc, exc_info=True)
@@ -105,7 +103,7 @@ class Converter(converter.BaseConverter):
 
             resources, note_links = self.handle_markdown_links(note_body)
             note_imf = imf.Note(
-                {
+                **{
                     "title": note_qownnotes.stem,
                     "body": "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
                     **common.get_ctime_mtime_ms(note_qownnotes),

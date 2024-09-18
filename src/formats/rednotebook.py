@@ -56,7 +56,7 @@ class Converter(converter.BaseConverter):
 
         for file_ in self.root_path.glob("*.txt"):
             # TODO: Split year into separate notebook?
-            parent_notebook = imf.Notebook({"title": file_.stem})
+            parent_notebook = imf.Notebook(file_.stem)
             self.root_notebook.child_notebooks.append(parent_notebook)
 
             # data is encapsulated in yaml, notes are in txt2tags markup
@@ -68,11 +68,9 @@ class Converter(converter.BaseConverter):
                 body = common.markup_to_markdown(data["text"], format_="t2t")
                 body, resources = self.handle_markdown_links(body)
                 note_imf = imf.Note(
-                    {
-                        "title": str(day),
-                        "body": body,
-                        "source_application": self.format,
-                    },
+                    str(day),
+                    body,
+                    source_application=self.format,
                     resources=resources,
                 )
                 parent_notebook.child_notes.append(note_imf)

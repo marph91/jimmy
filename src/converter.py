@@ -42,9 +42,7 @@ class BaseConverter:
             output_folder = self.output_folder.with_name(
                 self.output_folder.stem + index_suffix
             )
-            self.root_notebook = imf.Notebook(
-                {"title": output_folder.name}, path=output_folder
-            )
+            self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
@@ -125,7 +123,7 @@ class DefaultConverter(BaseConverter):
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
         parent.child_notes.append(
             imf.Note(
-                {
+                **{
                     "title": file_.stem,
                     "body": note_body,
                     **common.get_ctime_mtime_ms(file_),
@@ -148,12 +146,7 @@ class DefaultConverter(BaseConverter):
                 )
         else:
             self.logger.debug(f"entering folder {file_or_folder.name}")
-            new_parent = imf.Notebook(
-                {
-                    "title": file_or_folder.stem,
-                    **common.get_ctime_mtime_ms(file_or_folder),
-                }
-            )
+            new_parent = imf.Notebook(file_or_folder.stem)
             folders = []
             for item in file_or_folder.iterdir():
                 if item.is_file():

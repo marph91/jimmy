@@ -115,14 +115,7 @@ class Converter(converter.BaseConverter):
             )
 
             self.root_notebook.child_notebooks.append(
-                imf.Notebook(
-                    {
-                        "title": notebook["title"],
-                        "user_created_time": notebook["ctime"],
-                        "user_updated_time": notebook["mtime"],
-                    },
-                    original_id=notebook_id,
-                )
+                imf.Notebook(notebook["title"], original_id=notebook_id)
             )
 
     def map_resources_by_hash(self, note: dict) -> list[imf.Resource]:
@@ -187,8 +180,8 @@ class Converter(converter.BaseConverter):
                 note_links: list[imf.NoteLink] = []
                 data = {
                     "title": note["title"],
-                    "user_created_time": note["ctime"],
-                    "user_updated_time": note["mtime"],
+                    "created": note["ctime"],
+                    "updated": note["mtime"],
                     "source_application": self.format,
                 }
                 if (content_html := note.get("content")) is not None:
@@ -201,15 +194,13 @@ class Converter(converter.BaseConverter):
                     resources.extend(resources_referenced)
                     data["body"] = content_markdown
 
-                common.try_transfer_dicts(
-                    note, data, ["latitude", "longitude", "source_url"]
-                )
+                common.try_transfer_dicts(note, data, ["latitude", "longitude"])
 
                 parent_notebook = self.find_parent_notebook(note["parent_id"])
                 parent_notebook.child_notes.append(
                     imf.Note(
-                        data,
-                        tags=[imf.Tag({"title": tag}) for tag in note.get("tag", [])],
+                        **data,
+                        tags=[imf.Tag(tag) for tag in note.get("tag", [])],
                         resources=resources,
                         note_links=note_links,
                         original_id=note_id,

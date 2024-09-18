@@ -9,30 +9,25 @@ import intermediate_format as imf
 
 TEST_NOTE_TREE = [
     imf.Notebook(
-        {"title": "Default root folder - imported always"},
+        "Default root folder - imported always",
         child_notebooks=[
             imf.Notebook(
-                {"title": "Nested notebook 1"},
+                "Nested notebook 1",
                 child_notes=[
                     imf.Note(
-                        {"title": "Nested note 1"},
-                        tags=[
-                            imf.Tag({"title": "test tag 1"}),
-                            imf.Tag({"title": "test tag 2"}),
-                        ],
+                        "Nested note 1",
+                        tags=[imf.Tag("test tag 1"), imf.Tag("test tag 2")],
                     ),
-                    imf.Note({"title": "Nested note 2"}),
+                    imf.Note("Nested note 2"),
                 ],
             ),
             imf.Notebook(
-                {"title": "Nested notebook 2"},
-                child_notebooks=[imf.Notebook({"title": "Nested notebook - level 2"})],
-                child_notes=[imf.Note({"title": "Nested note 3"})],
+                "Nested notebook 2",
+                child_notebooks=[imf.Notebook("Nested notebook - level 2")],
+                child_notes=[imf.Note("Nested note 3")],
             ),
         ],
-        child_notes=[
-            imf.Note({"title": "root note 1"}, tags=[imf.Tag({"title": "test tag 1"})])
-        ],
+        child_notes=[imf.Note("root note 1", tags=[imf.Tag("test tag 1")])],
     )
 ]
 

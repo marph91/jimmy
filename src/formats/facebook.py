@@ -85,7 +85,7 @@ class Converter(converter.BaseConverter):
             self.logger.info("Couldn't find json file for posts.")
             return
 
-        posts_notebook = imf.Notebook({"title": "Posts"})
+        posts_notebook = imf.Notebook("Posts")
         self.root_notebook.child_notebooks.append(posts_notebook)
 
         for posts_file in posts_files:
@@ -129,18 +129,15 @@ class Converter(converter.BaseConverter):
 
                 posts_notebook.child_notes.append(
                     imf.Note(
-                        {
+                        **{
                             "title": post_title,
                             "body": post_body,
-                            "user_created_time": post["timestamp"] * 1000,
-                            "user_updated_time": updated_time,
+                            "created": post["timestamp"] * 1000,
+                            "updated": updated_time,
                             "source_application": self.format,
                             **att_metadata,
                         },
-                        tags=[
-                            imf.Tag({"title": tag["name"]})
-                            for tag in post.get("tags", [])
-                        ],
+                        tags=[imf.Tag(tag["name"]) for tag in post.get("tags", [])],
                         resources=resources,
                     )
                 )
@@ -195,7 +192,7 @@ class Converter(converter.BaseConverter):
         # pylint: disable=too-many-locals
         assert self.root_path is not None  # for mypy
 
-        messages_notebook = imf.Notebook({"title": "Messages"})
+        messages_notebook = imf.Notebook("Messages")
         self.root_notebook.child_notebooks.append(messages_notebook)
 
         for conversation in (
@@ -255,11 +252,9 @@ class Converter(converter.BaseConverter):
 
                 messages_notebook.child_notes.append(
                     imf.Note(
-                        {
-                            "title": title,
-                            "body": note_body_str,
-                            "source_application": self.format,
-                        },
+                        title,
+                        note_body_str,
+                        source_application=self.format,
                         resources=resources,
                     )
                 )

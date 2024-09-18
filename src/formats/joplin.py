@@ -1,6 +1,7 @@
 """Convert Joplin notes to the intermediate format."""
 
 from collections import defaultdict
+import datetime as dt
 import enum
 from pathlib import Path
 
@@ -78,81 +79,52 @@ class Converter(converter.BaseConverter):
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
                 title, body = common.split_h1_title_from_body(markdown)
-                data = {
-                    "title": title.strip(),
-                    "body": body.strip(),
-                    "user_created_time": common.iso_to_unix_ms(
-                        metadata_json["created_time"]
-                    ),
-                    "user_updated_time": common.iso_to_unix_ms(
-                        metadata_json["updated_time"]
-                    ),
-                    "is_todo": bool(int(metadata_json.get("is_todo", 0))),
-                    "todo_completed": bool(
-                        int(metadata_json.get("todo_completed", False))
-                    ),
-                    "todo_due": int(metadata_json.get("todo_due", 0)),
-                    "source_application": self.format,
-                }
+                # # TODO: Not represented in frontmatter.
+                # common.try_transfer_dicts(
+                #     metadata_json,
+                #     data,
+                #     [
+                #         "is_conflict",
+                #         "author",
+                #         "source_url",
+                #         "source",
+                #         "application_data",
+                #         "order",
+                #         "encryption_cipher_text",
+                #         "encryption_applied",
+                #         "markup_language",
+                #         "is_shared",
+                #         "share_id",
+                #         "conflict_original_id",
+                #         "master_key_id",
+                #         "user_data",
+                #         "deleted_time",
+                #     ],
+                # )
+                note_imf = imf.Note(
+                    title.strip(),
+                    body.strip(),
+                    created=dt.datetime.fromisoformat(metadata_json["created_time"]),
+                    updated=dt.datetime.fromisoformat(metadata_json["updated_time"]),
+                    # TODO: How to handle todos?
+                    # is_todo=bool(int(metadata_json.get("is_todo", 0))),
+                    # completed=bool(
+                    #     int(metadata_json.get("todo_completed", False))
+                    # ),
+                    # due=int(metadata_json.get("todo_due", 0)),
+                    author=metadata_json.get("author"),
+                    source_application=self.format,
+                    original_id=metadata_json["id"],
+                )
                 for key in ("latitude", "longitude", "altitude"):
-                    if (value := metadata_json.get(key)) is not None:
-                        data[key] = float(value)
-                # TODO: Not represented in frontmatter.
-                common.try_transfer_dicts(
-                    metadata_json,
-                    data,
-                    [
-                        "is_conflict",
-                        "author",
-                        "source_url",
-                        "source",
-                        "application_data",
-                        "order",
-                        "encryption_cipher_text",
-                        "encryption_applied",
-                        "markup_language",
-                        "is_shared",
-                        "share_id",
-                        "conflict_original_id",
-                        "master_key_id",
-                        "user_data",
-                        "deleted_time",
-                    ],
-                )
-                parent_id_note_map.append(
-                    (
-                        metadata_json["parent_id"],
-                        imf.Note(data, original_id=metadata_json["id"]),
-                    )
-                )
+                    if (val := metadata_json.get(key)) is not None:
+                        setattr(note_imf, key, float(val))
+                parent_id_note_map.append((metadata_json["parent_id"], note_imf))
             elif type_ == ItemType.FOLDER:
-                data = {
-                    "title": markdown.strip(),
-                    "user_created_time": common.iso_to_unix_ms(
-                        metadata_json["created_time"]
-                    ),
-                    "user_updated_time": common.iso_to_unix_ms(
-                        metadata_json["updated_time"]
-                    ),
-                }
-                common.try_transfer_dicts(
-                    metadata_json,
-                    data,
-                    [
-                        "encryption_cipher_text",
-                        "encryption_applied",
-                        "is_shared",
-                        "share_id",
-                        "master_key_id",
-                        "icon",
-                        "user_data",
-                        "deleted_time",
-                    ],
-                )
                 parent_id_notebook_map.append(
                     (
                         metadata_json["parent_id"],
-                        imf.Notebook(data, original_id=metadata_json["id"]),
+                        imf.Notebook(markdown.strip(), original_id=metadata_json["id"]),
                     )
                 )
             elif type_ == ItemType.RESOURCE:
@@ -164,26 +136,9 @@ class Converter(converter.BaseConverter):
                     self.root_path / "resources" / filename
                 )
             elif type_ == ItemType.TAG:
-                data = {
-                    "title": markdown.strip(),
-                    "user_created_time": common.iso_to_unix_ms(
-                        metadata_json["created_time"]
-                    ),
-                    "user_updated_time": common.iso_to_unix_ms(
-                        metadata_json["updated_time"]
-                    ),
-                }
-                common.try_transfer_dicts(
-                    metadata_json,
-                    data,
-                    [
-                        "encryption_cipher_text",
-                        "encryption_applied",
-                        "is_shared",
-                        "user_data",
-                    ],
+                available_tags.append(
+                    imf.Tag(markdown.strip(), original_id=metadata_json["id"])
                 )
-                available_tags.append(imf.Tag(data, original_id=metadata_json["id"]))
             elif type_ == ItemType.NOTE_TAG:
                 note_tag_id_map[metadata_json["note_id"]].append(
                     metadata_json["tag_id"]
@@ -216,7 +171,7 @@ class Converter(converter.BaseConverter):
                         break
             # resources and internal links
             resources, note_links = handle_markdown_links(
-                note.data["body"], resource_id_filename_map
+                note.body, resource_id_filename_map
             )
             note.resources = resources
             note.note_links = note_links

@@ -1,9 +1,9 @@
 """Convert tomboy-ng notes to the intermediate format."""
 
+import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
-import common
 import converter
 import intermediate_format as imf
 
@@ -62,10 +62,13 @@ class Converter(converter.BaseConverter):
         # So we need to use the wildcard always: https://stackoverflow.com/q/13412496
         # TODO: are these tags or folders?
         tags_element = root_node.find("{*}tags")
-        if tags_element is None:
-            tags = []
-        else:
-            tags = [tag.text for tag in tags_element.findall("{*}tag")]
+        tags = []
+        if tags_element is not None:
+            tags = [
+                tag.text
+                for tag in tags_element.findall("{*}tag")
+                if tag.text is not None
+            ]
             if "system:template" in tags:
                 return  # ignore templates
 
@@ -78,11 +81,11 @@ class Converter(converter.BaseConverter):
         else:
             note_data["title"] = body.split("\n", 1)[0]
         if (date_ := root_node.find("{*}create-date")) is not None:
-            note_data["user_created_time"] = common.iso_to_unix_ms(str(date_.text))
+            note_data["created"] = dt.datetime.fromisoformat(str(date_.text))
         if (date_ := root_node.find("{*}last-change-date")) is not None:
-            note_data["user_updated_time"] = common.iso_to_unix_ms(str(date_.text))
+            note_data["updated"] = dt.datetime.fromisoformat(str(date_.text))
         self.root_notebook.child_notes.append(
-            imf.Note(note_data, tags=[imf.Tag({"title": tag}) for tag in tags])
+            imf.Note(**note_data, tags=[imf.Tag(tag) for tag in tags])
         )
 
     def convert(self, file_or_folder: Path):

@@ -356,9 +356,9 @@ def find_file_recursively(root_folder: Path, url: str) -> Path | None:
 def get_ctime_mtime_ms(item: Path) -> dict:
     data = {}
     if (ctime_ms := int(item.stat().st_ctime * 1000)) > 0:
-        data["user_created_time"] = ctime_ms
+        data["created"] = ctime_ms
     if (mtime_ms := int(item.stat().st_mtime * 1000)) > 0:
-        data["user_updated_time"] = mtime_ms
+        data["updated"] = mtime_ms
     return data
 
 

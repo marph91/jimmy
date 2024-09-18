@@ -190,11 +190,11 @@ class Converter(converter.BaseConverter):
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
-                        new_root_notebook = imf.Notebook({"title": note_name})
+                        new_root_notebook = imf.Notebook(note_name)
                         root_notebook.child_notebooks.append(new_root_notebook)
                     self.logger.debug(
-                        f"new notebook: {new_root_notebook.data['title']}, "
-                        f"parent: {root_notebook.data['title']}"
+                        f"new notebook: {new_root_notebook.title}, "
+                        f"parent: {root_notebook.title}"
                     )
                     self.convert_to_markdown(child, new_root_notebook)
                 case "codebox":
@@ -235,16 +235,16 @@ class Converter(converter.BaseConverter):
             tags.extend(tags_str.strip().split(" "))
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
-            note_data["user_created_time"] = int(created_time) * 1000
+            note_data["created"] = int(created_time) * 1000
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
-            note_data["user_updated_time"] = int(updated_time) * 1000
+            note_data["updated"] = int(updated_time) * 1000
         self.logger.debug(
-            f"new note: {note_data['title']}, parent: {root_notebook.data['title']}"
+            f"new note: {note_data['title']}, parent: {root_notebook.title}"
         )
         root_notebook.child_notes.append(
             imf.Note(
-                note_data,
-                tags=[imf.Tag({"title": tag}) for tag in tags],
+                **note_data,
+                tags=[imf.Tag(tag) for tag in tags],
                 resources=resources,
                 note_links=note_links,
                 original_id=unique_id,

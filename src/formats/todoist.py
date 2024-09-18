@@ -1,12 +1,12 @@
 """Convert todoist tasks to the intermediate format."""
 
-import csv
+# import csv
 from datetime import datetime
 from pathlib import Path
 
-import common
+# import common
 import converter
-import intermediate_format as imf
+# import intermediate_format as imf
 
 
 def parse_author(author_string: str) -> str:
@@ -94,40 +94,42 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".csv"]
 
     def convert(self, file_or_folder: Path):
-        # - Finished tasks don't get exported.
-        # - Todoist titles can be markdown formatted. Joplin titles are not.
-        #   If imported as task list, we would gain markdown and sub-tasks,
-        #   but lose the due date and priority tags.
+        return  # TODO: implement a checklist based approach
 
-        project_notebook = imf.Notebook({"title": file_or_folder.stem})
-        self.root_notebook.child_notebooks.append(project_notebook)
-        current_section = project_notebook
-        # "utf-8-sig" to prevent "\ufeffTYPE"
-        with open(file_or_folder, encoding="utf-8-sig") as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                if row["TYPE"] == "section":
-                    current_section = imf.Notebook({"title": row["CONTENT"]})
-                    project_notebook.child_notebooks.append(current_section)
-                elif row["TYPE"] == "task":
-                    title, labels = split_labels(row["CONTENT"])
-                    note_data = {
-                        "title": title,
-                        "body": row["DESCRIPTION"],
-                        "author": parse_author(row["AUTHOR"]),
-                        "is_todo": 1,
-                        "source_application": self.format,
-                    }
-                    if (due_date := parse_date(row["DATE"])) is not None:
-                        note_data["todo_due"] = common.datetime_to_ms(due_date)
+        # # - Finished tasks don't get exported.
+        # # - Todoist titles can be markdown formatted. Joplin titles are not.
+        # #   If imported as task list, we would gain markdown and sub-tasks,
+        # #   but lose the due date and priority tags.
 
-                    tags_string = [*labels, f"todoist-priority-{row['PRIORITY']}"]
-                    joplin_note = imf.Note(
-                        note_data,
-                        tags=[imf.Tag({"title": tag}) for tag in tags_string],
-                    )
-                    current_section.child_notes.append(joplin_note)
-                elif row["TYPE"] == "":
-                    continue  # ignore empty rows
-                else:
-                    self.logger.debug(f"Ignoring unknown type: {row['TYPE']}")
+        # project_notebook = imf.Notebook(file_or_folder.stem)
+        # self.root_notebook.child_notebooks.append(project_notebook)
+        # current_section = project_notebook
+        # # "utf-8-sig" to prevent "\ufeffTYPE"
+        # with open(file_or_folder, encoding="utf-8-sig") as csvfile:
+        #     reader = csv.DictReader(csvfile)
+        #     for row in reader:
+        #         if row["TYPE"] == "section":
+        #             current_section = imf.Notebook(row["CONTENT"])
+        #             project_notebook.child_notebooks.append(current_section)
+        #         elif row["TYPE"] == "task":
+        #             title, labels = split_labels(row["CONTENT"])
+        #             note_data = {
+        #                 "title": title,
+        #                 "body": row["DESCRIPTION"],
+        #                 "author": parse_author(row["AUTHOR"]),
+        #                 "is_todo": 1,
+        #                 "source_application": self.format,
+        #             }
+        #             if (due_date := parse_date(row["DATE"])) is not None:
+        #                 note_data["due"] = common.datetime_to_ms(due_date)
+
+        #             tags_string = [*labels, f"todoist-priority-{row['PRIORITY']}"]
+        #             joplin_note = imf.Note(
+        #                 **note_data,
+        #                 tags=[imf.Tag(tag) for tag in tags_string],
+        #             )
+        #             current_section.child_notes.append(joplin_note)
+        #         elif row["TYPE"] == "":
+        #             continue  # ignore empty rows
+        #         else:
+        #             self.logger.debug(f"Ignoring unknown type: {row['TYPE']}")

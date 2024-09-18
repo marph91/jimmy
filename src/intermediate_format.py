@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import datetime
 from pathlib import Path
 
 import common
@@ -30,6 +31,8 @@ class Resource:
     original_text: str | None = None
     # [title_or_filename](:/resource_id)
     title: str | None = None
+
+    # internal data
     is_image: bool = field(init=False)
     path: Path | None = None
 
@@ -45,7 +48,9 @@ class Resource:
 class Tag:
     """Represents a tag."""
 
-    data: dict
+    title: str
+
+    # internal data
     original_id: str | None = None
 
     @property
@@ -54,14 +59,27 @@ class Tag:
         Reference ID of the original app. Might be not unique,
         but this is sufficient for now.
         """
-        return self.original_id or self.data["title"]
+        return self.original_id or self.title
 
 
 @dataclass
 class Note:
     """Represents a note."""
 
-    data: dict
+    # pylint: disable=too-many-instance-attributes
+    title: str
+    body: str = ""
+    created: datetime.datetime | None = None
+    updated: datetime.datetime | None = None
+    author: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    altitude: float | None = None
+
+    # TODO: remove?
+    source_application: str | None = None
+
+    # internal data
     tags: list[Tag] = field(default_factory=list)
     resources: list[Resource] = field(default_factory=list)
     # list of complete links including original note ids
@@ -76,14 +94,18 @@ class Note:
         Reference ID of the original app. Might be not unique,
         but this is sufficient for now.
         """
-        return self.original_id or self.data["title"]
+        return self.original_id or self.title
 
 
 @dataclass
 class Notebook:
     """Represents a notebook and its children."""
 
-    data: dict
+    title: str
+    created: datetime.datetime | None = None
+    updated: datetime.datetime | None = None
+
+    # internal data
     child_notebooks: list[Notebook] = field(default_factory=list)
     child_notes: list[Note] = field(default_factory=list)
     original_id: str | None = None
