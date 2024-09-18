@@ -78,10 +78,7 @@ class Converter(converter.BaseConverter):
             completed_date_string = row.get("COMPLETED", "")
             if (completed_date := parse_date(completed_date_string)) is not None:
                 note_data["completed"] = common.datetime_to_ms(completed_date)
-            joplin_note = imf.Note(
-                **note_data,
-                tags=[imf.Tag(tag) for tag in tags],
-            )
+            joplin_note = imf.Note(**note_data, tags=[imf.Tag(tag) for tag in tags])
 
             if not row["FOLDER"]:
                 parent_notebook = self.root_notebook

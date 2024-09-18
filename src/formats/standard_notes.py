@@ -51,14 +51,12 @@ class Converter(converter.BaseConverter):
                 tags.append(imf.Tag("standard_notes-starred"))
 
             note_imf = imf.Note(
-                **{
-                    "title": item["content"]["title"],
-                    # TODO: "noteType" is ignored for now.
-                    "body": item["content"]["text"],
-                    "created": dt.datetime.fromisoformat(item["created_at"]),
-                    "updated": dt.datetime.fromisoformat(item["updated_at"]),
-                    "source_application": self.format,
-                },
+                item["content"]["title"],
+                # TODO: "noteType" is ignored for now.
+                item["content"]["text"],
+                created=dt.datetime.fromisoformat(item["created_at"]),
+                updated=dt.datetime.fromisoformat(item["updated_at"]),
+                source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=tags,
                 original_id=item["uuid"],

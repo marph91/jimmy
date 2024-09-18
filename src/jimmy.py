@@ -117,7 +117,8 @@ def jimmy(config) -> common.Stats:
         # target note IDs are unknown.
         file_system_importer.link_notes(note_tree)
     LOGGER.info(
-        "Converted notes successfully to markdown. "
+        "Converted notes successfully to markdown: "
+        f'"{config.output_folder.resolve()}". '
         "Please verify that everything was converted correctly."
     )
     LOGGER.info(

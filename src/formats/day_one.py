@@ -144,18 +144,6 @@ class Converter(converter.BaseConverter):
             # https://stackoverflow.com/a/55400921/7410886
             note_body = note_body.replace("\u200b", "")
 
-            note_data = {
-                "title": guess_title(note_body),
-                "body": note_body,  # TODO: Is there any advantage of rich text?
-                "created": dt.datetime.fromisoformat(entry["creationDate"]),
-                "updated": dt.datetime.fromisoformat(entry["modifiedDate"]),
-                "source_application": self.format,
-            }
-
-            common.try_transfer_dicts(
-                entry.get("location", {}), note_data, ["latitude", "longitude"]
-            )
-
             tags = entry.get("tags", [])
             if entry.get("starred"):
                 tags.append("day-one-starred")
@@ -167,12 +155,20 @@ class Converter(converter.BaseConverter):
             )
 
             note_imf = imf.Note(
-                **note_data,
+                guess_title(note_body),
+                note_body,  # TODO: Is there any advantage of rich text?
+                created=dt.datetime.fromisoformat(entry["creationDate"]),
+                updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
+                source_application=self.format,
                 resources=resources,
                 tags=[imf.Tag(tag) for tag in tags],
                 note_links=note_links,
                 original_id=entry["uuid"],
             )
+
+            if (location := entry.get("location")) is not None:
+                note_imf.latitude = location["latitude"]
+                note_imf.longitude = location["longitude"]
 
             creation_date = dt.datetime.fromisoformat(entry["creationDate"])
             parent_notebook = self.create_notebook_hierarchy(creation_date)

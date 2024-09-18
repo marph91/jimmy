@@ -24,13 +24,11 @@ class Converter(converter.BaseConverter):
 
         for note_clipto in file_dict.get("notes", []):
             note_imf = imf.Note(
-                **{
-                    "title": note_clipto["title"],
-                    "body": note_clipto["text"],
-                    "created": dt.datetime.fromisoformat(note_clipto["created"]),
-                    "updated": dt.datetime.fromisoformat(note_clipto["updated"]),
-                    "source_application": self.format,
-                },
+                note_clipto["title"],
+                note_clipto["text"],
+                created=dt.datetime.fromisoformat(note_clipto["created"]),
+                updated=dt.datetime.fromisoformat(note_clipto["updated"]),
+                source_application=self.format,
                 tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
             )
             self.root_notebook.child_notes.append(note_imf)

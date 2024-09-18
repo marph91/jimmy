@@ -1,17 +1,16 @@
 """Convert TiddlyWiki notes to the intermediate format."""
 
-from datetime import datetime
+import datetime as dt
 from pathlib import Path
 import json
 
-import common
 import converter
 import intermediate_format as imf
 
 
-def tiddlywiki_to_unix(tiddlywiki_time: str) -> int:
+def tiddlywiki_to_datetime(tiddlywiki_time: str) -> dt.datetime:
     """Format: https://tiddlywiki.com/static/DateFormat.html"""
-    return common.datetime_to_ms(datetime.strptime(tiddlywiki_time, "%Y%m%d%H%M%S%f"))
+    return dt.datetime.strptime(tiddlywiki_time, "%Y%m%d%H%M%S%f")
 
 
 def split_tags(tag_string: str) -> list[str]:
@@ -53,27 +52,20 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="utf-8"))
         for note_tiddlywiki in file_dict:
-            note_imf_data = {
-                "title": note_tiddlywiki["title"],
-                "body": note_tiddlywiki.get("text", ""),
-                "author": note_tiddlywiki.get("creator", ""),
-                "source_application": self.format,
-            }
-            if "created" in note_tiddlywiki:
-                note_imf_data["created"] = tiddlywiki_to_unix(
-                    note_tiddlywiki["created"]
-                )
-            if "modified" in note_tiddlywiki:
-                note_imf_data["updated"] = tiddlywiki_to_unix(
-                    note_tiddlywiki["modified"]
-                )
             note_imf = imf.Note(
-                **note_imf_data,
+                note_tiddlywiki["title"],
+                note_tiddlywiki.get("text", ""),
+                author=note_tiddlywiki.get("creator"),
+                source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[
                     imf.Tag(tag) for tag in split_tags(note_tiddlywiki.get("tags", ""))
                 ],
             )
+            if "created" in note_tiddlywiki:
+                note_imf.created = tiddlywiki_to_datetime(note_tiddlywiki["created"])
+            if "modified" in note_tiddlywiki:
+                note_imf.updated = tiddlywiki_to_datetime(note_tiddlywiki["modified"])
             if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
                 continue  # skip notes with special tags
             self.root_notebook.child_notes.append(note_imf)

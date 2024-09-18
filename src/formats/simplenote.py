@@ -41,17 +41,11 @@ class Converter(converter.BaseConverter):
                 tags.append("simplenote-pinned")
 
             note_imf = imf.Note(
-                **{
-                    "title": title.strip(),
-                    "body": body.lstrip(),
-                    "created": dt.datetime.fromisoformat(
-                        note_simplenote["creationDate"]
-                    ),
-                    "updated": dt.datetime.fromisoformat(
-                        note_simplenote["lastModified"]
-                    ),
-                    "source_application": self.format,
-                },
+                title.strip(),
+                body.lstrip(),
+                created=dt.datetime.fromisoformat(note_simplenote["creationDate"]),
+                updated=dt.datetime.fromisoformat(note_simplenote["lastModified"]),
+                source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag(tag) for tag in tags],
                 note_links=note_links,

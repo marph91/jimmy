@@ -24,13 +24,11 @@ class Converter(converter.BaseConverter):
                 tags.append("jrnl-starred")
 
             note_imf = imf.Note(
-                **{
-                    "title": title,
-                    "body": note_jrnl["body"],
-                    "created": unix_time,
-                    "updated": unix_time,
-                    "source_application": self.format,
-                },
+                title,
+                note_jrnl["body"],
+                created=unix_time,
+                updated=unix_time,
+                source_application=self.format,
                 tags=[imf.Tag(tag) for tag in tags],
             )
             self.root_notebook.child_notes.append(note_imf)

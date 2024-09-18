@@ -1,6 +1,7 @@
 """Convert cherrytree notes to the intermediate format."""
 
 import base64
+import datetime as dt
 from pathlib import Path
 import uuid
 import xml.etree.ElementTree as ET  # noqa: N817
@@ -220,12 +221,6 @@ class Converter(converter.BaseConverter):
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 
-        note_data = {
-            "title": note_name,
-            "body": note_body,
-            "source_application": self.format,
-        }
-
         tags = []
         # cherrytree bookmark -> tag
         unique_id = node.attrib["unique_id"]
@@ -234,22 +229,23 @@ class Converter(converter.BaseConverter):
         if tags_str := node.attrib.get("tags", ""):
             tags.extend(tags_str.strip().split(" "))
 
+        self.logger.debug(f"new note: {note_name}, parent: {root_notebook.title}")
+
+        note_imf = imf.Note(
+            note_name,
+            note_body,
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in tags],
+            resources=resources,
+            note_links=note_links,
+            original_id=unique_id,
+        )
+
         if (created_time := node.attrib.get("ts_creation")) is not None:
-            note_data["created"] = int(created_time) * 1000
+            note_imf.created = dt.datetime.utcfromtimestamp(int(created_time))
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
-            note_data["updated"] = int(updated_time) * 1000
-        self.logger.debug(
-            f"new note: {note_data['title']}, parent: {root_notebook.title}"
-        )
-        root_notebook.child_notes.append(
-            imf.Note(
-                **note_data,
-                tags=[imf.Tag(tag) for tag in tags],
-                resources=resources,
-                note_links=note_links,
-                original_id=unique_id,
-            )
-        )
+            note_imf.updated = dt.datetime.utcfromtimestamp(int(updated_time))
+        root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         self.root_path = common.get_temp_folder()

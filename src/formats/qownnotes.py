@@ -103,14 +103,12 @@ class Converter(converter.BaseConverter):
 
             resources, note_links = self.handle_markdown_links(note_body)
             note_imf = imf.Note(
-                **{
-                    "title": note_qownnotes.stem,
-                    "body": "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
-                    **common.get_ctime_mtime_ms(note_qownnotes),
-                    "source_application": self.format,
-                },
+                note_qownnotes.stem,
+                "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
+                source_application=self.format,
                 tags=note_tag_map.get(note_qownnotes.stem, []),
                 resources=resources,
                 note_links=note_links,
             )
+            note_imf.time_from_file(note_qownnotes)
             self.root_notebook.child_notes.append(note_imf)

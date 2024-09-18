@@ -87,44 +87,34 @@ class Converter(converter.BaseConverter):
 
         # get or find parent notebook
         # Assume that notebooks can't be nested.
-        notebook_data = {
-            "title": metadata["data-notebook"]["name"],
-            "created": dt.datetime.fromisoformat(
+        notebook_imf = imf.Notebook(
+            metadata["data-notebook"]["name"],
+            created=dt.datetime.fromisoformat(
                 metadata["data-notebook"]["created_date"]
             ),
-            "updated": dt.datetime.fromisoformat(
+            updated=dt.datetime.fromisoformat(
                 metadata["data-notebook"]["modified_date"]
             ),
-        }
+        )
         parent_notebook = None
-        for notebook in self.root_notebook.child_notebooks:
+        for potential_parent in self.root_notebook.child_notebooks:
             # TODO: Is there a notebook ID? We just identify by name and creation date.
             if (
-                notebook.title == notebook_data["title"]
-                and notebook.created == notebook_data["created"]
-                and notebook.updated == notebook_data["updated"]
+                potential_parent.title == notebook_imf.title
+                and potential_parent.created == notebook_imf.created
+                and potential_parent.updated == notebook_imf.updated
             ):
                 # Use the existing notebook if possible.
-                parent_notebook = notebook
+                parent_notebook = potential_parent
                 break
 
         # If there is no matching parent, create one.
         if parent_notebook is None:
-            parent_notebook = imf.Notebook(**notebook_data)
+            parent_notebook = notebook_imf
             self.root_notebook.child_notebooks.append(parent_notebook)
 
         # note metadata
         # TODO: optionally handle color
-        note_data = {
-            "title": metadata["data-notecard"]["name"],
-            "created": dt.datetime.fromisoformat(
-                metadata["data-notecard"]["created_date"]
-            ),
-            "updated": dt.datetime.fromisoformat(
-                metadata["data-notecard"]["modified_date"]
-            ),
-            "source_application": self.format,
-        }
 
         # TODO: How to handle remainder?
         # if (reminders := metadata.get("data-remainder")) is not None:
@@ -148,23 +138,30 @@ class Converter(converter.BaseConverter):
         if soup.body is not None:
             clean_tables(soup)
             clean_task_lists(soup)
-            note_data["body"] = common.markup_to_markdown(str(soup))
+            body = common.markup_to_markdown(str(soup))
 
             # resources and internal links
-            resources, note_links = self.parse_links(note_data["body"])
+            resources, note_links = self.parse_links(body)
         else:
             resources, note_links = [], []
 
         # create note
-        parent_notebook.child_notes.append(
-            imf.Note(
-                **note_data,
-                tags=[imf.Tag(tag) for tag in metadata.get("data-tag", [])],
-                resources=resources,
-                note_links=note_links,
-                original_id=file_.stem,
-            )
+        note_imf = imf.Note(
+            metadata["data-notecard"]["name"],
+            body,
+            created=dt.datetime.fromisoformat(
+                metadata["data-notecard"]["created_date"]
+            ),
+            updated=dt.datetime.fromisoformat(
+                metadata["data-notecard"]["modified_date"]
+            ),
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in metadata.get("data-tag", [])],
+            resources=resources,
+            note_links=note_links,
+            original_id=file_.stem,
         )
+        parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         self.root_path = self.prepare_input(file_or_folder)

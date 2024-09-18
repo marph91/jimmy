@@ -42,13 +42,11 @@ class Converter(converter.BaseConverter):
                     )
                     continue
                 note_imf = imf.Note(
-                    **{
-                        "title": Path(file_["filename"]).stem,
-                        "body": file_["content"],
-                        "created": dt.datetime.fromisoformat(file_["createdAt"]),
-                        "updated": dt.datetime.fromisoformat(file_["updatedAt"]),
-                        "source_application": self.format,
-                    },
+                    Path(file_["filename"]).stem,
+                    file_["content"],
+                    created=dt.datetime.fromisoformat(file_["createdAt"]),
+                    updated=dt.datetime.fromisoformat(file_["updatedAt"]),
+                    source_application=self.format,
                     # Tags are assigned per snippet (not per file).
                     tags=tags_per_note.get(snippet["guid"], []),
                     original_id=file_["guid"],

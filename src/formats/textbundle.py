@@ -52,13 +52,11 @@ class Converter(converter.BaseConverter):
             inline_tags = common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
             note_imf = imf.Note(
-                **{
-                    "title": title,
-                    "body": body,
-                    **common.get_ctime_mtime_ms(file_),
-                    "source_application": self.format,
-                },
+                title,
+                body,
+                source_application=self.format,
                 tags=[imf.Tag(tag) for tag in inline_tags],
                 resources=resources,
             )
+            note_imf.time_from_file(file_)
             self.root_notebook.child_notes.append(note_imf)

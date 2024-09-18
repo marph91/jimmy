@@ -19,7 +19,7 @@ def create_markdown_link(is_image: bool, title: str, uri: str) -> str:
 
 
 def timestamp_to_date_str(timestamp_s: float | int) -> str:
-    return dt.datetime.fromtimestamp(timestamp_s).strftime("%Y-%m-%d")
+    return dt.datetime.utcfromtimestamp(timestamp_s).strftime("%Y-%m-%d")
 
 
 class Converter(converter.BaseConverter):
@@ -129,14 +129,12 @@ class Converter(converter.BaseConverter):
 
                 posts_notebook.child_notes.append(
                     imf.Note(
-                        **{
-                            "title": post_title,
-                            "body": post_body,
-                            "created": post["timestamp"] * 1000,
-                            "updated": updated_time,
-                            "source_application": self.format,
-                            **att_metadata,
-                        },
+                        post_title,
+                        post_body,
+                        created=post["timestamp"] * 1000,
+                        updated=updated_time,
+                        source_application=self.format,
+                        **att_metadata,
                         tags=[imf.Tag(tag["name"]) for tag in post.get("tags", [])],
                         resources=resources,
                     )

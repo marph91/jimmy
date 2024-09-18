@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import datetime
+import datetime as dt
 from pathlib import Path
 
 import common
@@ -69,8 +69,8 @@ class Note:
     # pylint: disable=too-many-instance-attributes
     title: str
     body: str = ""
-    created: datetime.datetime | None = None
-    updated: datetime.datetime | None = None
+    created: dt.datetime | None = None
+    updated: dt.datetime | None = None
     author: str | None = None
     latitude: float | None = None
     longitude: float | None = None
@@ -96,14 +96,18 @@ class Note:
         """
         return self.original_id or self.title
 
+    def time_from_file(self, file_: Path):
+        self.created = dt.datetime.utcfromtimestamp(file_.stat().st_ctime)
+        self.updated = dt.datetime.utcfromtimestamp(file_.stat().st_mtime)
+
 
 @dataclass
 class Notebook:
     """Represents a notebook and its children."""
 
     title: str
-    created: datetime.datetime | None = None
-    updated: datetime.datetime | None = None
+    created: dt.datetime | None = None
+    updated: dt.datetime | None = None
 
     # internal data
     child_notebooks: list[Notebook] = field(default_factory=list)

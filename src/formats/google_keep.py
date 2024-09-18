@@ -31,13 +31,11 @@ class Converter(converter.BaseConverter):
                     imf.Resource(file_.parent.absolute() / resource_keep["filePath"])
                 )
             note_imf = imf.Note(
-                **{
-                    "title": note_keep["title"],
-                    "body": note_keep["textContent"],
-                    "created": note_keep["userEditedTimestampUsec"] // 1000,
-                    "updated": note_keep["userEditedTimestampUsec"] // 1000,
-                    "source_application": self.format,
-                },
+                note_keep["title"],
+                note_keep["textContent"],
+                created=note_keep["userEditedTimestampUsec"] // 1000,
+                updated=note_keep["userEditedTimestampUsec"] // 1000,
+                source_application=self.format,
                 # Labels / tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag(tag) for tag in tags_keep],
                 resources=resources_keep,

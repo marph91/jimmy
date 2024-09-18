@@ -121,18 +121,15 @@ class DefaultConverter(BaseConverter):
                 )
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
-        parent.child_notes.append(
-            imf.Note(
-                **{
-                    "title": file_.stem,
-                    "body": note_body,
-                    **common.get_ctime_mtime_ms(file_),
-                    "source_application": "jimmy",
-                },
-                resources=resources,
-                note_links=note_links,
-            )
+        note_imf = imf.Note(
+            file_.stem,
+            note_body,
+            source_application="jimmy",
+            resources=resources,
+            note_links=note_links,
         )
+        note_imf.time_from_file(file_)
+        parent.child_notes.append(note_imf)
 
     def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):
         """Default conversion function for folders."""

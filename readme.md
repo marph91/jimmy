@@ -22,7 +22,7 @@ If this app is useful for you, feel free to star it on [github](https://github.c
 - ✅ Cross-platform
 - ✅ Standalone (no python or node installation required)
 
-## General usage
+## General Usage
 
 ```mermaid
 flowchart LR

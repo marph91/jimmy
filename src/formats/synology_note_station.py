@@ -140,6 +140,8 @@ class Converter(converter.BaseConverter):
         return resources
 
     def convert(self, file_or_folder: Path):
+        # pylint: disable=too-many-locals
+
         self.root_path = self.prepare_input(file_or_folder)
         input_json = json.loads(
             (self.root_path / "config.json").read_text(encoding="utf-8")
@@ -178,12 +180,6 @@ class Converter(converter.BaseConverter):
                 resources = self.map_resources_by_hash(note)
 
                 note_links: list[imf.NoteLink] = []
-                data = {
-                    "title": note["title"],
-                    "created": note["ctime"],
-                    "updated": note["mtime"],
-                    "source_application": self.format,
-                }
                 if (content_html := note.get("content")) is not None:
                     content_html = streamline_html(content_html)
                     content_markdown = common.markup_to_markdown(content_html)
@@ -192,20 +188,28 @@ class Converter(converter.BaseConverter):
                         note["title"], content_markdown, note_id_title_map
                     )
                     resources.extend(resources_referenced)
-                    data["body"] = content_markdown
+                    body = content_markdown
+                else:
+                    body = ""
 
-                common.try_transfer_dicts(note, data, ["latitude", "longitude"])
+                note_imf = imf.Note(
+                    note["title"],
+                    body,
+                    created=note["ctime"],
+                    updated=note["mtime"],
+                    source_application=self.format,
+                    tags=[imf.Tag(tag) for tag in note.get("tag", [])],
+                    resources=resources,
+                    note_links=note_links,
+                    original_id=note_id,
+                )
+                if (latitude := note.get("latitude")) is not None:
+                    note_imf.latitude = latitude
+                if (longitude := note.get("longitude")) is not None:
+                    note_imf.longitude = longitude
 
                 parent_notebook = self.find_parent_notebook(note["parent_id"])
-                parent_notebook.child_notes.append(
-                    imf.Note(
-                        **data,
-                        tags=[imf.Tag(tag) for tag in note.get("tag", [])],
-                        resources=resources,
-                        note_links=note_links,
-                        original_id=note_id,
-                    )
-                )
+                parent_notebook.child_notes.append(note_imf)
             except Exception as exc:  # pylint: disable=broad-except
                 self.logger.warning(f"Failed to convert note \"{note['title']}\"")
                 # https://stackoverflow.com/a/52466005/7410886

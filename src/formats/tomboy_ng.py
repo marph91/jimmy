@@ -75,18 +75,18 @@ class Converter(converter.BaseConverter):
         content = root_node.find("{*}text/{*}note-content")
         body = self.parse_content(content)
 
-        note_data = {"body": body}
-        if (title := root_node.find("{*}title")) is not None:
-            note_data["title"] = title.text
+        if (
+            note_title := root_node.find("{*}title")
+        ) is not None and note_title.text is not None:
+            title = note_title.text
         else:
-            note_data["title"] = body.split("\n", 1)[0]
+            title = body.split("\n", 1)[0]
+        note_imf = imf.Note(title, body, tags=[imf.Tag(tag) for tag in tags])
         if (date_ := root_node.find("{*}create-date")) is not None:
-            note_data["created"] = dt.datetime.fromisoformat(str(date_.text))
+            note_imf.created = dt.datetime.fromisoformat(str(date_.text))
         if (date_ := root_node.find("{*}last-change-date")) is not None:
-            note_data["updated"] = dt.datetime.fromisoformat(str(date_.text))
-        self.root_notebook.child_notes.append(
-            imf.Note(**note_data, tags=[imf.Tag(tag) for tag in tags])
-        )
+            note_imf.updated = dt.datetime.fromisoformat(str(date_.text))
+        self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_dir():

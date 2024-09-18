@@ -2,6 +2,18 @@
 
 **jimmy** is a tool to import your notes from different formats to markdown.
 
+## Features
+
+- ✅ Many input formats, like Google Keep, Standard Notes, Synology Note Station, Zoho Notebook and more
+- ✅ Markdown + Frontmatter output
+    - Compatible with any text editor
+    - Can be imported to Joplin/Obsidian/...
+    - Preserves resources, tags and note links when possible
+- ✅ Offline
+- ✅ Open Source
+- ✅ Cross-platform
+- ✅ Standalone (no python or node installation required)
+
 ## Installation
 
 **Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin)**
@@ -14,7 +26,27 @@ Alternative installation options:
 
 1. CLI app: `jimmy-cli-*`. Available at the [release page](https://github.com/marph91/jimmy/releases/latest).
 2. Clone the repository and use it from python by `python src/jimmy_cli.py`.
-3. GUI app (experimental). Can be used from python `python src/jimmy_gui.py` or built manually by `python -m PyInstaller jimmy_gui.spec`.
+
+## General Usage
+
+```mermaid
+flowchart LR
+    A[App 1] -->|Backup| D
+    B[App 2] -->|Export| D
+    C[Filesystem] --> D
+    D(ZIP archive/JSON/folder) --> E
+    E{jimmy} --> F(Markdown + Frontmatter)
+    F -->|Import| G[Joplin]
+    F -->|Import| H[Obsidian]
+    F --> I[...]
+    F --> J[Editor, e. g. VSCode]
+```
+
+1. Export/backup notes from your note application
+2. Run `jimmy`, which converts your notes to markdown
+3. Import the result to Joplin/Obsidian or even use any editor like VSCode
+
+For detailed instructions, see the page of the specific format.
 
 ## Quickstart
 
