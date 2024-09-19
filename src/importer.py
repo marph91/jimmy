@@ -6,6 +6,7 @@ from pathlib import Path
 import platform
 import shutil
 import urllib.parse
+import uuid
 
 import frontmatter
 
@@ -29,16 +30,20 @@ def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
     'CON_'
     >>> str(safe_path(Path("LPT7"), "Windows"))
     'LPT7_'
-    >>> str(safe_path(Path("a/bc."), "Windows"))
-    'a/bc_'
-    >>> str(safe_path(Path("a/b:c"), "Windows"))
-    'a/b_c'
-    >>> str(safe_path(Path("a/b*c"), "Windows"))
-    'a/b_c'
-    >>> str(safe_path("a/b/c", "Windows"))
+    >>> str(safe_path(Path("bc."), "Windows"))
+    'bc_'
+    >>> safe_path("b:c", "Windows")
+    'b_c'
+    >>> str(safe_path(Path("b*c"), "Windows"))
+    'b_c'
+    >>> safe_path("a/b/c", "Windows")
     'a_b_c'
+    >>> safe_path("", "Windows")  # doctest:+ELLIPSIS
+    'unnamed_...'
     """
     safe_name = path if isinstance(path, str) else path.name
+    if safe_name == "":
+        return f"unnamed_{uuid.uuid4().hex}"
 
     # https://stackoverflow.com/a/31976060
     match system:
@@ -86,6 +91,7 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
     '../im%20age.png'
     """
+    # TODO: doctest works only on linux. quote seems to be working for windows, though.
     relative_path = os.path.relpath(target.resolve(), start=source.resolve())
     return urllib.parse.quote(str(relative_path))
 
