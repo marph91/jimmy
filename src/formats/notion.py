@@ -62,14 +62,12 @@ class Converter(converter.BaseConverter):
                         imf.Resource(self.root_path / link.url, str(link), link.text)
                     )
 
-            note_joplin = imf.Note(
-                {
-                    "title": title,
-                    "body": body,
-                    "source_application": self.format,
-                },
+            note_imf = imf.Note(
+                title,
+                body,
+                source_application=self.format,
                 original_id=original_id,
                 resources=resources,
                 note_links=note_links,
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

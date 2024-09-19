@@ -1,6 +1,7 @@
 """Convert Standard Notes notes to the intermediate format."""
 
 from collections import defaultdict
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -30,19 +31,14 @@ class Converter(converter.BaseConverter):
             if item["content_type"] != "Tag" or item["deleted"]:
                 continue
             tag = imf.Tag(
-                {
-                    "title": item["content"]["title"],
-                    "user_created_time": common.iso_to_unix_ms(item["created_at"]),
-                    # TODO: seems to be 0 always
-                    # "user_updated_time": common.iso_to_unix_ms(item["updated_at"]),
-                },
+                item["content"]["title"],
                 original_id=item["uuid"],
             )
             for reference in item["content"]["references"]:
                 note_id_tag_map[reference["uuid"]].append(tag)
 
-        archive_notebook = imf.Notebook({"title": "Archive"})
-        trash_notebook = imf.Notebook({"title": "Trash"})
+        archive_notebook = imf.Notebook("Archive")
+        trash_notebook = imf.Notebook("Trash")
         self.root_notebook.child_notebooks.extend([archive_notebook, trash_notebook])
 
         # second pass: get all notes and assign tags to notes
@@ -52,17 +48,15 @@ class Converter(converter.BaseConverter):
 
             tags = note_id_tag_map.get(item["uuid"], [])
             if item["content"].get("starred", False):
-                tags.append(imf.Tag({"title": "standard_notes-starred"}))
+                tags.append(imf.Tag("standard_notes-starred"))
 
-            note_joplin = imf.Note(
-                {
-                    "title": item["content"]["title"],
-                    # TODO: "noteType" is ignored for now.
-                    "body": item["content"]["text"],
-                    "user_created_time": common.iso_to_unix_ms(item["created_at"]),
-                    "user_updated_time": common.iso_to_unix_ms(item["updated_at"]),
-                    "source_application": self.format,
-                },
+            note_imf = imf.Note(
+                item["content"]["title"],
+                # TODO: "noteType" is ignored for now.
+                item["content"]["text"],
+                created=dt.datetime.fromisoformat(item["created_at"]),
+                updated=dt.datetime.fromisoformat(item["updated_at"]),
+                source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=tags,
                 original_id=item["uuid"],
@@ -75,4 +69,4 @@ class Converter(converter.BaseConverter):
                 parent = archive_notebook
             else:
                 parent = self.root_notebook
-            parent.child_notes.append(note_joplin)
+            parent.child_notes.append(note_imf)

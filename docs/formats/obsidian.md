@@ -1,4 +1,4 @@
-This page describes how to import notes from Obsidian to Joplin.
+This page describes how to convert notes from Obsidian to Markdown.
 
 ## General Information
 
@@ -8,4 +8,4 @@ This page describes how to import notes from Obsidian to Joplin.
 ## Instructions
 
 1. [Install jimmy](../index.md#installation)
-2. Import to Joplin. Example: `jimmy-cli-linux obsidian_vault/ --format obsidian`
+2. Convert to Markdown. Example: `jimmy-cli-linux obsidian_vault/ --format obsidian`

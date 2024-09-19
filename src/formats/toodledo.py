@@ -1,6 +1,6 @@
 """Convert toodledo tasks to the intermediate format."""
 
-import csv
+# import csv
 import datetime as dt
 from pathlib import Path
 
@@ -33,7 +33,7 @@ class Converter(converter.BaseConverter):
 
     def find_parent_notebook(self, notebook_name, current_notebook):
         for notebook in current_notebook.child_notebooks:
-            if notebook.data["title"] == notebook_name:
+            if notebook.title == notebook_name:
                 return notebook
             matching_nested_notebook = self.find_parent_notebook(
                 notebook_name, current_notebook=notebook
@@ -66,22 +66,19 @@ class Converter(converter.BaseConverter):
             note_data = {
                 "title": row["TASK"],
                 "body": row["NOTE"],
-                "is_todo": 1,
+                # "is_todo": 1,
                 "source_application": self.format,
             }
             if (due_date := parse_date(row["DUEDATE"], row["DUETIME"])) is not None:
-                note_data["todo_due"] = common.datetime_to_ms(due_date)
+                note_data["due"] = common.datetime_to_ms(due_date)
             if (
                 start_date := parse_date(row["STARTDATE"], row["STARTTIME"])
             ) is not None:
-                note_data["user_created_time"] = common.datetime_to_ms(start_date)
+                note_data["created"] = common.datetime_to_ms(start_date)
             completed_date_string = row.get("COMPLETED", "")
             if (completed_date := parse_date(completed_date_string)) is not None:
-                note_data["todo_completed"] = common.datetime_to_ms(completed_date)
-            joplin_note = imf.Note(
-                note_data,
-                tags=[imf.Tag({"title": tag}) for tag in tags],
-            )
+                note_data["completed"] = common.datetime_to_ms(completed_date)
+            joplin_note = imf.Note(**note_data, tags=[imf.Tag(tag) for tag in tags])
 
             if not row["FOLDER"]:
                 parent_notebook = self.root_notebook
@@ -90,7 +87,7 @@ class Converter(converter.BaseConverter):
                     row["FOLDER"], self.root_notebook
                 )
                 if parent_notebook is None:
-                    parent_notebook = imf.Notebook({"title": row["FOLDER"]})
+                    parent_notebook = imf.Notebook(row["FOLDER"])
                     self.root_notebook.child_notebooks.append(parent_notebook)
             parent_notebook.child_notes.append(joplin_note)
 
@@ -102,10 +99,10 @@ class Converter(converter.BaseConverter):
                 "source_application": self.format,
             }
             if (created_time := parse_date(row["ADDED"])) is not None:
-                note_data["user_created_time"] = common.datetime_to_ms(created_time)
+                note_data["created"] = common.datetime_to_ms(created_time)
             if (updated_time := parse_date(row["MODIFIED"])) is not None:
-                note_data["user_updated_time"] = common.datetime_to_ms(updated_time)
-            joplin_note = imf.Note(note_data)
+                note_data["updated"] = common.datetime_to_ms(updated_time)
+            joplin_note = imf.Note(**note_data)
 
             if not row["FOLDER"]:
                 parent_notebook = self.root_notebook
@@ -114,20 +111,22 @@ class Converter(converter.BaseConverter):
                     row["FOLDER"], self.root_notebook
                 )
                 if parent_notebook is None:
-                    parent_notebook = imf.Notebook({"title": row["FOLDER"]})
+                    parent_notebook = imf.Notebook(row["FOLDER"])
                     self.root_notebook.child_notebooks.append(parent_notebook)
             parent_notebook.child_notes.append(joplin_note)
 
     def convert(self, file_or_folder: Path):
-        with open(file_or_folder, encoding="utf-8") as csvfile:
-            reader = csv.DictReader(csvfile)
+        return  # TODO: implement a checklist based approach
 
-            # Guess the export type based on the file name.
-            if file_or_folder.stem.startswith("toodledo_current"):
-                return self.parse_tasks(reader)
-            if file_or_folder.stem.startswith("toodledo_completed"):
-                return self.parse_tasks(reader)
-            if file_or_folder.stem.startswith("toodledo_notebook"):
-                return self.parse_notebooks(reader)
-            self.logger.error("Unsupported format for toodledo")
-            return None
+        # with open(file_or_folder, encoding="utf-8") as csvfile:
+        #     reader = csv.DictReader(csvfile)
+
+        #     # Guess the export type based on the file name.
+        #     if file_or_folder.stem.startswith("toodledo_current"):
+        #         return self.parse_tasks(reader)
+        #     if file_or_folder.stem.startswith("toodledo_completed"):
+        #         return self.parse_tasks(reader)
+        #     if file_or_folder.stem.startswith("toodledo_notebook"):
+        #         return self.parse_notebooks(reader)
+        #     self.logger.error("Unsupported format for toodledo")
+        #     return None

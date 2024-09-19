@@ -28,7 +28,7 @@ class Config:
 
 
 def get_stats(inputs, format_):
-    note_tree = jimmy.convert_all_inputs(inputs, format_)
+    note_tree = jimmy.convert_all_inputs(inputs, format_, Path("tmp"))
     return common.get_import_stats(note_tree)
 
 

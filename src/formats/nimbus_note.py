@@ -24,11 +24,9 @@ class Converter(converter.BaseConverter):
                     with zip_ref.open(html_note) as zip_note:
                         note_body_html = zip_note.read().decode("UTF-8")
                     note_body_markdown = common.markup_to_markdown(note_body_html)
-                    note_joplin = imf.Note(
-                        {
-                            "title": file_.stem,
-                            "body": note_body_markdown.strip(),
-                            "source_application": self.format,
-                        }
+                    note_imf = imf.Note(
+                        file_.stem,
+                        note_body_markdown.strip(),
+                        source_application=self.format,
                     )
-                    self.root_notebook.child_notes.append(note_joplin)
+                    self.root_notebook.child_notes.append(note_imf)

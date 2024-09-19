@@ -1,5 +1,6 @@
 """Convert simplenote notes to the intermediate format."""
 
+import datetime as dt
 import json
 from pathlib import Path
 
@@ -39,21 +40,15 @@ class Converter(converter.BaseConverter):
             if note_simplenote.get("pinned"):
                 tags.append("simplenote-pinned")
 
-            note_joplin = imf.Note(
-                {
-                    "title": title.strip(),
-                    "body": body.lstrip(),
-                    "user_created_time": common.iso_to_unix_ms(
-                        note_simplenote["creationDate"]
-                    ),
-                    "user_updated_time": common.iso_to_unix_ms(
-                        note_simplenote["lastModified"]
-                    ),
-                    "source_application": self.format,
-                },
+            note_imf = imf.Note(
+                title.strip(),
+                body.lstrip(),
+                created=dt.datetime.fromisoformat(note_simplenote["creationDate"]),
+                updated=dt.datetime.fromisoformat(note_simplenote["lastModified"]),
+                source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag({"title": tag}) for tag in tags],
+                tags=[imf.Tag(tag) for tag in tags],
                 note_links=note_links,
                 original_id=note_simplenote["id"],
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

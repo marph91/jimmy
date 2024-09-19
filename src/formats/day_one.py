@@ -28,9 +28,9 @@ class Converter(converter.BaseConverter):
     def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
         def find_or_create_child_notebook(title, parent_notebook):
             for child_notebook in parent_notebook.child_notebooks:
-                if child_notebook.data["title"] == title:
+                if child_notebook.title == title:
                     return child_notebook
-            new_notebook = imf.Notebook({"title": title})
+            new_notebook = imf.Notebook(title)
             parent_notebook.child_notebooks.append(new_notebook)
             return new_notebook
 
@@ -144,18 +144,6 @@ class Converter(converter.BaseConverter):
             # https://stackoverflow.com/a/55400921/7410886
             note_body = note_body.replace("\u200b", "")
 
-            note_data = {
-                "title": guess_title(note_body),
-                "body": note_body,  # TODO: Is there any advantage of rich text?
-                "user_created_time": common.iso_to_unix_ms(entry["creationDate"]),
-                "user_updated_time": common.iso_to_unix_ms(entry["modifiedDate"]),
-                "source_application": self.format,
-            }
-
-            common.try_transfer_dicts(
-                entry.get("location", {}), note_data, ["latitude", "longitude"]
-            )
-
             tags = entry.get("tags", [])
             if entry.get("starred"):
                 tags.append("day-one-starred")
@@ -166,14 +154,22 @@ class Converter(converter.BaseConverter):
                 note_body, resource_id_filename_map
             )
 
-            note_joplin = imf.Note(
-                note_data,
+            note_imf = imf.Note(
+                guess_title(note_body),
+                note_body,  # TODO: Is there any advantage of rich text?
+                created=dt.datetime.fromisoformat(entry["creationDate"]),
+                updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
+                source_application=self.format,
                 resources=resources,
-                tags=[imf.Tag({"title": tag}) for tag in tags],
+                tags=[imf.Tag(tag) for tag in tags],
                 note_links=note_links,
                 original_id=entry["uuid"],
             )
 
+            if (location := entry.get("location")) is not None:
+                note_imf.latitude = location["latitude"]
+                note_imf.longitude = location["longitude"]
+
             creation_date = dt.datetime.fromisoformat(entry["creationDate"])
             parent_notebook = self.create_notebook_hierarchy(creation_date)
-            parent_notebook.child_notes.append(note_joplin)
+            parent_notebook.child_notes.append(note_imf)

@@ -314,9 +314,7 @@ def get_single_child_folder(parent_folder: Path) -> Path:
 
 def get_temp_folder() -> Path:
     """Return a temporary folder."""
-    temp_folder = (
-        Path(tempfile.gettempdir()) / f"joplin_export_{int(time.time() * 1000)}"
-    )
+    temp_folder = Path(tempfile.gettempdir()) / f"jimmy_{int(time.time() * 1000)}"
     temp_folder.mkdir(exist_ok=True)
     return temp_folder
 
@@ -358,9 +356,9 @@ def find_file_recursively(root_folder: Path, url: str) -> Path | None:
 def get_ctime_mtime_ms(item: Path) -> dict:
     data = {}
     if (ctime_ms := int(item.stat().st_ctime * 1000)) > 0:
-        data["user_created_time"] = ctime_ms
+        data["created"] = ctime_ms
     if (mtime_ms := int(item.stat().st_mtime * 1000)) > 0:
-        data["user_updated_time"] = mtime_ms
+        data["updated"] = mtime_ms
     return data
 
 

@@ -1,4 +1,4 @@
-This page describes how to import notes from Todo.txt to Joplin.
+This page describes how to convert notes from Todo.txt to Markdown.
 
 ## General Information
 
@@ -14,4 +14,4 @@ This page describes how to import notes from Todo.txt to Joplin.
 
 1. Export from any of the mentioned apps
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux examples_from_readme.txt --format todo_txt`
+3. Convert to Markdown. Example: `jimmy-cli-linux examples_from_readme.txt --format todo_txt`

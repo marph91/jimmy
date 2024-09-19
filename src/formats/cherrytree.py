@@ -1,6 +1,7 @@
 """Convert cherrytree notes to the intermediate format."""
 
 import base64
+import datetime as dt
 from pathlib import Path
 import uuid
 import xml.etree.ElementTree as ET  # noqa: N817
@@ -184,19 +185,17 @@ class Converter(converter.BaseConverter):
         for child in node:
             match child.tag:
                 case "rich_text":
-                    content_md, note_links_joplin = convert_rich_text(
-                        child, self.logger
-                    )
+                    content_md, note_links_imf = convert_rich_text(child, self.logger)
                     note_body += content_md
-                    note_links.extend(note_links_joplin)
+                    note_links.extend(note_links_imf)
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
-                        new_root_notebook = imf.Notebook({"title": note_name})
+                        new_root_notebook = imf.Notebook(note_name)
                         root_notebook.child_notebooks.append(new_root_notebook)
                     self.logger.debug(
-                        f"new notebook: {new_root_notebook.data['title']}, "
-                        f"parent: {root_notebook.data['title']}"
+                        f"new notebook: {new_root_notebook.title}, "
+                        f"parent: {root_notebook.title}"
                     )
                     self.convert_to_markdown(child, new_root_notebook)
                 case "codebox":
@@ -214,44 +213,39 @@ class Converter(converter.BaseConverter):
                         continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
-                    resource_md, resource_joplin = convert_png(child, self.root_path)
+                    resource_md, resource_imf = convert_png(child, self.root_path)
                     note_body += resource_md
-                    resources.append(resource_joplin)
+                    resources.append(resource_imf)
                 case "table":
                     note_body += convert_table(child)
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 
-        note_data = {
-            "title": note_name,
-            "body": note_body,
-            "source_application": self.format,
-        }
-
         tags = []
-        # cherrytree bookmark -> joplin tag
+        # cherrytree bookmark -> tag
         unique_id = node.attrib["unique_id"]
         if unique_id in self.bookmarked_nodes:
             tags.append("cherrytree-bookmarked")
         if tags_str := node.attrib.get("tags", ""):
             tags.extend(tags_str.strip().split(" "))
 
+        self.logger.debug(f"new note: {note_name}, parent: {root_notebook.title}")
+
+        note_imf = imf.Note(
+            note_name,
+            note_body,
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in tags],
+            resources=resources,
+            note_links=note_links,
+            original_id=unique_id,
+        )
+
         if (created_time := node.attrib.get("ts_creation")) is not None:
-            note_data["user_created_time"] = int(created_time) * 1000
+            note_imf.created = dt.datetime.utcfromtimestamp(int(created_time))
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
-            note_data["user_updated_time"] = int(updated_time) * 1000
-        self.logger.debug(
-            f"new note: {note_data['title']}, parent: {root_notebook.data['title']}"
-        )
-        root_notebook.child_notes.append(
-            imf.Note(
-                note_data,
-                tags=[imf.Tag({"title": tag}) for tag in tags],
-                resources=resources,
-                note_links=note_links,
-                original_id=unique_id,
-            )
-        )
+            note_imf.updated = dt.datetime.utcfromtimestamp(int(updated_time))
+        root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         self.root_path = common.get_temp_folder()

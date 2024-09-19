@@ -1,4 +1,4 @@
-This page describes how to import notes from Textbundle to Joplin.
+This page describes how to convert notes from Textbundle to Markdown.
 
 ## General Information
 
@@ -19,6 +19,6 @@ Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
 
 1. Export from any of the mentioned apps
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Examples:
+3. Convert to Markdown. Examples:
     1. `jimmy-cli-linux "Textbundle Example v1.textbundle/" --format textbundle`
     2. `jimmy-cli-linux "example.textpack" --format textbundle`

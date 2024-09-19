@@ -53,19 +53,15 @@ class Converter(converter.BaseConverter):
 
                 parent.child_notes.append(
                     imf.Note(
-                        {
-                            "title": item.stem,
-                            "body": body,
-                            "source_application": self.format,
-                        },
-                        tags=[imf.Tag({"title": tag}) for tag in tags],
+                        item.stem,
+                        body,
+                        source_application=self.format,
+                        tags=[imf.Tag(tag) for tag in tags],
                         resources=resources,
                         note_links=note_links,
                     )
                 )
             else:
-                new_parent = imf.Notebook(
-                    {"title": item.name, **common.get_ctime_mtime_ms(item)}
-                )
+                new_parent = imf.Notebook(item.name)
                 self.convert_folder(item, new_parent)
                 parent.child_notebooks.append(new_parent)

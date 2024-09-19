@@ -1,9 +1,9 @@
 """Convert tomboy-ng notes to the intermediate format."""
 
+import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
-import common
 import converter
 import intermediate_format as imf
 
@@ -62,28 +62,31 @@ class Converter(converter.BaseConverter):
         # So we need to use the wildcard always: https://stackoverflow.com/q/13412496
         # TODO: are these tags or folders?
         tags_element = root_node.find("{*}tags")
-        if tags_element is None:
-            tags = []
-        else:
-            tags = [tag.text for tag in tags_element.findall("{*}tag")]
+        tags = []
+        if tags_element is not None:
+            tags = [
+                tag.text
+                for tag in tags_element.findall("{*}tag")
+                if tag.text is not None
+            ]
             if "system:template" in tags:
                 return  # ignore templates
 
         content = root_node.find("{*}text/{*}note-content")
         body = self.parse_content(content)
 
-        note_data = {"body": body}
-        if (title := root_node.find("{*}title")) is not None:
-            note_data["title"] = title.text
+        if (
+            note_title := root_node.find("{*}title")
+        ) is not None and note_title.text is not None:
+            title = note_title.text
         else:
-            note_data["title"] = body.split("\n", 1)[0]
+            title = body.split("\n", 1)[0]
+        note_imf = imf.Note(title, body, tags=[imf.Tag(tag) for tag in tags])
         if (date_ := root_node.find("{*}create-date")) is not None:
-            note_data["user_created_time"] = common.iso_to_unix_ms(str(date_.text))
+            note_imf.created = dt.datetime.fromisoformat(str(date_.text))
         if (date_ := root_node.find("{*}last-change-date")) is not None:
-            note_data["user_updated_time"] = common.iso_to_unix_ms(str(date_.text))
-        self.root_notebook.child_notes.append(
-            imf.Note(note_data, tags=[imf.Tag({"title": tag}) for tag in tags])
-        )
+            note_imf.updated = dt.datetime.fromisoformat(str(date_.text))
+        self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_dir():

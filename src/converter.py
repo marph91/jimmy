@@ -1,6 +1,5 @@
 """Provides the base class for all converters."""
 
-from datetime import datetime
 import logging
 from pathlib import Path
 import subprocess
@@ -15,11 +14,12 @@ class BaseConverter:
     accepted_extensions: list[str] | None = None
     accept_folder = False
 
-    def __init__(self, format_: str):
+    def __init__(self, format_: str, output_folder):
         self.logger = logging.getLogger("jimmy")
-        self.format = "Joplin Custom Importer" if format_ is None else format_
+        self.format = "Jimmy" if format_ is None else format_
         self.root_notebook: imf.Notebook
         self.root_path: Path | None = None
+        self.output_folder = output_folder
 
     def has_valid_format(self, input_: Path) -> bool:
         """Check if the input has a valid format."""
@@ -38,11 +38,11 @@ class BaseConverter:
         """This is the main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
-            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            index_suffix = "" if len(files_or_folders) == 1 else f" ({input_index})"
-            self.root_notebook = imf.Notebook(
-                {"title": f"{now} - Import from {self.format}{index_suffix}"}
+            index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
+            output_folder = self.output_folder.with_name(
+                self.output_folder.stem + index_suffix
             )
+            self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
@@ -121,18 +121,15 @@ class DefaultConverter(BaseConverter):
                 )
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
-        parent.child_notes.append(
-            imf.Note(
-                {
-                    "title": file_.stem,
-                    "body": note_body,
-                    **common.get_ctime_mtime_ms(file_),
-                    "source_application": "jimmy",
-                },
-                resources=resources,
-                note_links=note_links,
-            )
+        note_imf = imf.Note(
+            file_.stem,
+            note_body,
+            source_application="jimmy",
+            resources=resources,
+            note_links=note_links,
         )
+        note_imf.time_from_file(file_)
+        parent.child_notes.append(note_imf)
 
     def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):
         """Default conversion function for folders."""
@@ -146,12 +143,7 @@ class DefaultConverter(BaseConverter):
                 )
         else:
             self.logger.debug(f"entering folder {file_or_folder.name}")
-            new_parent = imf.Notebook(
-                {
-                    "title": file_or_folder.stem,
-                    **common.get_ctime_mtime_ms(file_or_folder),
-                }
-            )
+            new_parent = imf.Notebook(file_or_folder.stem)
             folders = []
             for item in file_or_folder.iterdir():
                 if item.is_file():

@@ -1,120 +1,226 @@
-"""Convert the intermediate format to Joplin notes."""
+"""Convert the intermediate format to Markdown."""
 
 import logging
+import os.path
 from pathlib import Path
+import platform
+import shutil
+import urllib.parse
+import uuid
 
-import requests
+import frontmatter
 
 import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("jimmy")
+SYSTEM = platform.system()
 
 
-class JoplinImporter:
-    """Import notebooks, notes and related data to Joplin."""
+def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
+    r"""
+    Return a safe version of the provided path or string.
+    Only the last part is considered if a pth is provided.
 
-    def __init__(self, api, progress_bars):
-        self.api = api
-        # Cache created tags and resources to create them only once.
-        # original id - joplin id
-        self.tag_map: dict[str, imf.Tag] = {}
-        # original path - joplin id
-        self.resource_map: dict[Path, imf.Resource] = {}
-        # original id - joplin id
-        self.note_id_map: dict[str, str] = {}
+    >>> str(safe_path(Path("a/."), "Linux"))
+    'a'
+    >>> str(safe_path(Path("ab\x00c"), "Linux"))
+    'ab_c'
+    >>> str(safe_path(Path("CON"), "Windows"))
+    'CON_'
+    >>> str(safe_path(Path("LPT7"), "Windows"))
+    'LPT7_'
+    >>> str(safe_path(Path("bc."), "Windows"))
+    'bc_'
+    >>> safe_path("b:c", "Windows")
+    'b_c'
+    >>> str(safe_path(Path("b*c"), "Windows"))
+    'b_c'
+    >>> safe_path("a/b/c", "Windows")
+    'a_b_c'
+    >>> safe_path("", "Windows")  # doctest:+ELLIPSIS
+    'unnamed_...'
+    """
+    safe_name = path if isinstance(path, str) else path.name
+    if safe_name == "":
+        return f"unnamed_{uuid.uuid4().hex}"
 
+    # https://stackoverflow.com/a/31976060
+    match system:
+        case "Windows":
+            # fmt: off
+            forbidden_chars = [
+                "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
+            ] + [chr(value) for value in range(32)]
+            # fmt: on
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = (
+                ["CON", "PRN", "AUX", "NUL"]
+                + [f"COM{i}" for i in range(1, 10)]
+                + [f"LPT{i}" for i in range(1, 10)]
+            )
+            if safe_name in forbidden_names:
+                safe_name += "_"
+
+            forbidden_last_chars = [" ", "."]
+            if safe_name[-1] in forbidden_last_chars:
+                safe_name = safe_name[:-1] + "_"
+        case "Linux" | "Darwin":
+            # OSX may allow more chars.
+            forbidden_chars = ["/", "\x00"]
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = [".", ".."]
+            if safe_name in forbidden_names:
+                safe_name += "_"
+        case _:
+            LOGGER.warning(f"Unsupported system: {system}")
+
+    return safe_name if isinstance(path, str) else path.with_name(safe_name)
+
+
+def get_quoted_relative_path(source: Path, target: Path) -> str:
+    """
+    >>> get_quoted_relative_path(Path("sample"), Path("sample"))
+    '.'
+    >>> get_quoted_relative_path(Path("sample/a"), Path("sample/b"))
+    '../b'
+    >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
+    '../im%20age.png'
+    """
+    # TODO: doctest works only on linux. quote seems to be working for windows, though.
+    relative_path = os.path.relpath(target.resolve(), start=source.resolve())
+    return urllib.parse.quote(str(relative_path))
+
+
+class FilesystemImporter:
+    """Import notebooks, notes and related data to the filesystem."""
+
+    def __init__(self, progress_bars, config):
+        self.frontmatter = config.frontmatter
+        self.root_path = None
+        self.global_resource_folder = config.global_resource_folder
+        # reference id - path (new id)
+        self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
 
-    def add_tag(self, tag: imf.Tag) -> str | None:
-        self.progress_bars["tags"].update(1)
-        try:
-            # Try to create a new tag.
-            tag_id = self.api.add_tag(**tag.data)
-            self.tag_map[tag.reference_id] = tag_id
-            return tag_id
-        except requests.exceptions.HTTPError:
-            # Tag exists already. Search for it. Joplin only supports lower case
-            # tags. If not converted to lower case, this can cause some trouble.
-            # See: https://github.com/marph91/jimmy/issues/6#issuecomment-2184981456
-            title = tag.data["title"].lower()
-            result = self.api.search(query=title, type="tag")
-            matching_tags = [
-                joplin_tag for joplin_tag in result.items if joplin_tag.title == title
-            ]
-            if len(matching_tags) == 0:
-                LOGGER.warning(
-                    f'Ignoring tag "{title}". It exists,'
-                    "but there aren't search results."
-                )
-                return None
-            if len(matching_tags) > 1:
-                LOGGER.warning(
-                    f'Too many search results for tag "{title}". '
-                    f'Taking first match "{matching_tags[0].id}".'
-                )
-            self.tag_map[tag.reference_id] = matching_tags[0].id
-            return matching_tags[0].id
+    def write_note(self, note: imf.Note):
+        assert note.path is not None
+        match self.frontmatter:
+            case "joplin":
+                # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
+                # Arbitrary metadata will be ignored.
+                metadata = {}
+                if note.tags:
+                    metadata["tags"] = [tag.title for tag in note.tags]
+                supported_keys = [
+                    "title",
+                    "created",
+                    "updated",
+                    "author",
+                    "latitude",
+                    "longitude",
+                    "altitude",
+                ]
+                for key in supported_keys:
+                    if (value := getattr(note, key)) is not None:
+                        metadata[key] = value
+                post = frontmatter.Post(note.body, **metadata)
+                frontmatter.dump(post, note.path)
+            case "obsidian":
+                # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
+                # TODO: Add arbitrary metadata?
+                metadata = {}
+                if note.tags:
+                    metadata["tags"] = [tag.title for tag in note.tags]
+                    post = frontmatter.Post(note.body, **metadata)
+                    frontmatter.dump(post, note.path)
+                else:
+                    note.path.write_text(note.body)
+            case _:
+                note.path.write_text(note.body)
 
     def import_note(self, note: imf.Note):
+        assert note.path is not None
         self.progress_bars["notes"].update(1)
         # Handle resources first, since the note body changes.
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
+            # TODO: support local and global resource folder
+            if self.global_resource_folder is None:
+                # local resources (next to the markdown files)
+                resource.path = note.path.parent / safe_path(resource.filename.name)
+            else:
+                # global resource folder
+                resource.path = (
+                    self.root_path
+                    / self.global_resource_folder
+                    / safe_path(resource.filename.name)
+                )
             # Don't create multiple Joplin resources for the same file.
             # Cache the original file paths and their corresponding Joplin ID.
-            try:
-                resource_id = self.resource_map[resource.filename]
-            except KeyError:
-                resource_id = self.api.add_resource(
-                    filename=str(resource.filename), title=resource_title
-                )
-                self.resource_map[resource.filename] = resource_id
+            assert resource.path is not None
+            if not resource.path.is_file():
+                shutil.copy(resource.filename, resource.path)
+            relative_path = get_quoted_relative_path(note.path.parent, resource.path)
             resource_markdown = (
-                f"{'!' * resource.is_image}[{resource_title}](:/{resource_id})"
+                f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
             )
             if resource.original_text is None:
                 # append
-                note.data["body"] = f"{note.data.get('body', '')}\n{resource_markdown}"
+                note.body = f"{note.body}\n{resource_markdown}"
             else:
                 # replace existing link
-                note.data["body"] = note.data["body"].replace(
-                    resource.original_text, resource_markdown
-                )
+                note.body = note.body.replace(resource.original_text, resource_markdown)
 
-        note_id = self.api.add_note(**note.data)
         # needed to properly link notes later
-        note.joplin_id = note_id
-        self.note_id_map[note.reference_id] = note_id
+        self.note_id_map[note.reference_id] = note.path
 
-        for tag in note.tags:
-            tag_id = self.tag_map.get(tag.reference_id, self.add_tag(tag))
-            if tag_id is not None:
-                self.api.add_tag_to_note(tag_id=tag_id, note_id=note_id)
+        if len(note.tags) > 0:
+            self.progress_bars["tags"].update(len(note.tags))
+            if not self.frontmatter:
+                LOGGER.warning(
+                    f'Tags of note "{note.title}" will be lost without frontmatter.'
+                )
+        self.write_note(note)
 
     def import_notebook(self, notebook: imf.Notebook):
+        assert notebook.path is not None
         self.progress_bars["notebooks"].update(1)
-        notebook_id = self.api.add_notebook(**notebook.data)
+        if self.root_path is None:
+            self.root_path = notebook.path
+            if self.global_resource_folder is not None:
+                (self.root_path / safe_path(self.global_resource_folder)).mkdir(
+                    exist_ok=True, parents=True
+                )
+        notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.data["parent_id"] = notebook_id
+            note.path = (notebook.path / safe_path(note.title)).with_suffix(".md")
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.data["parent_id"] = notebook_id
+            child_notebook.path = notebook.path / safe_path(child_notebook.title)
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):
-        if not note.note_links or not note.data.get("body", ""):
+        assert note.path is not None
+        if not note.note_links or not note.body:
             return  # nothing to link
         for note_link in note.note_links:
             self.progress_bars["note_links"].update(1)
-            joplin_id = self.note_id_map.get(note_link.original_id)
-            if joplin_id is None:
+            new_path = self.note_id_map.get(note_link.original_id)
+            if new_path is None:
                 LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")
-            note.data["body"] = note.data["body"].replace(
-                note_link.original_text, f"[{note_link.title}](:/{joplin_id})"
+                continue
+
+            relative_path = get_quoted_relative_path(note.path.parent, new_path)
+            note.body = note.body.replace(
+                note_link.original_text, f"[{note_link.title}]({relative_path})"
             )
-        self.api.modify_note(note.joplin_id, body=note.data["body"])
+        self.write_note(note)  # update note
 
     def link_notes(self, notebook: imf.Notebook):
         for note in notebook.child_notes:

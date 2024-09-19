@@ -1,5 +1,5 @@
 site_name: jimmy
-site_description: A tool to import your notes from various formats to Joplin.
+site_description: A tool to import your notes from various formats to Markdown.
 
 # Repository
 repo_name: marph91/jimmy
@@ -67,13 +67,15 @@ nav:
     - Synology Note Station: formats/synology_note_station.md
     - Textbundle: formats/textbundle.md
     - Tiddlywiki: formats/tiddlywiki.md
-    - Todo.txt: formats/todo.txt.md
-    - Todoist: formats/todoist.md
+    # TODO
+    # - Todo.txt: formats/todo.txt.md
+    # - Todoist: formats/todoist.md
     - Tomboy-ng: formats/tomboy_ng.md
-    - Toodledo: formats/toodledo.md
+    # - Toodledo: formats/toodledo.md
     - vCard: formats/vcard.md
-    - xit: formats/xit.md
+    # - xit: formats/xit.md
     - Zoho Notebook: formats/zoho_notebook.md
+  - Import Instructions: import_instructions.md
   - Additional features:
     - Filters: additional_features/filters.md
     - Show the Note Tree: additional_features/show_note_tree.md

@@ -30,16 +30,14 @@ class Converter(converter.BaseConverter):
                 resources_keep.append(
                     imf.Resource(file_.parent.absolute() / resource_keep["filePath"])
                 )
-            note_joplin = imf.Note(
-                {
-                    "title": note_keep["title"],
-                    "body": note_keep["textContent"],
-                    "user_created_time": note_keep["userEditedTimestampUsec"] // 1000,
-                    "user_updated_time": note_keep["userEditedTimestampUsec"] // 1000,
-                    "source_application": self.format,
-                },
+            note_imf = imf.Note(
+                note_keep["title"],
+                note_keep["textContent"],
+                created=note_keep["userEditedTimestampUsec"] // 1000,
+                updated=note_keep["userEditedTimestampUsec"] // 1000,
+                source_application=self.format,
                 # Labels / tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag({"title": tag}) for tag in tags_keep],
+                tags=[imf.Tag(tag) for tag in tags_keep],
                 resources=resources_keep,
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

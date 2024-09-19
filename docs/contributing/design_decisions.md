@@ -1,10 +1,8 @@
 # Design Decisions
 
-## Why Joplin's data API is used?
+## Why Markdown?
 
-- Plain markdown: [Tags aren't supported](https://discourse.joplinapp.org/t/import-tags-from-markdown-files/1752).
-- JEX: Requires to work with some internals that I would rather not touch.
-- Joplin's data API: Straight forward to use and supports all needed functions.
+To provide a flexible base for migrating your notes to the app of your choice.
 
 ## Why enlighten and not tqdm for progress bars?
 

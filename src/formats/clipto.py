@@ -1,9 +1,9 @@
 """Convert clipto notes to the intermediate format."""
 
+import datetime as dt
 from pathlib import Path
 import json
 
-import common
 import converter
 import intermediate_format as imf
 
@@ -20,17 +20,15 @@ class Converter(converter.BaseConverter):
         tags = []
         # tags are contained in filters
         for filter_ in file_dict.get("filters"):
-            tags.append(imf.Tag({"title": filter_["name"]}, filter_["uid"]))
+            tags.append(imf.Tag(filter_["name"], filter_["uid"]))
 
         for note_clipto in file_dict.get("notes", []):
-            note_joplin = imf.Note(
-                {
-                    "title": note_clipto["title"],
-                    "body": note_clipto["text"],
-                    "user_created_time": common.iso_to_unix_ms(note_clipto["created"]),
-                    "user_updated_time": common.iso_to_unix_ms(note_clipto["updated"]),
-                    "source_application": self.format,
-                },
+            note_imf = imf.Note(
+                note_clipto["title"],
+                note_clipto["text"],
+                created=dt.datetime.fromisoformat(note_clipto["created"]),
+                updated=dt.datetime.fromisoformat(note_clipto["updated"]),
+                source_application=self.format,
                 tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
             )
-            self.root_notebook.child_notes.append(note_joplin)
+            self.root_notebook.child_notes.append(note_imf)

@@ -1,4 +1,4 @@
-This page describes how to import notes from Simplenote to Joplin.
+This page describes how to convert notes from Simplenote to Markdown.
 
 ## General Information
 
@@ -9,4 +9,4 @@ This page describes how to import notes from Simplenote to Joplin.
 
 1. Export as described in <https://simplenote.com/help/#export>
 2. [Install jimmy](../index.md#installation)
-3. Import to Joplin. Example: `jimmy-cli-linux notes.zip --format simplenote`
+3. Convert to Markdown. Example: `jimmy-cli-linux notes.zip --format simplenote`
