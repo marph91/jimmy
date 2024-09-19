@@ -35,7 +35,11 @@ plugins:
 markdown_extensions:
   - admonition
   # code block highlighting
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        # mermaid code blocks
+        - name: mermaid
+          class: mermaid
   # disable the toc, since there is not that much content
   # https://github.com/squidfunk/mkdocs-material/discussions/2644#discussioncomment-715040
   - toc:

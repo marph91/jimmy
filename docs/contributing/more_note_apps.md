@@ -73,7 +73,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | https://github.com/marph91/jimmy/issues/4 |
 | [Supernotes](https://supernotes.app/) | [doc](https://help.supernotes.app/en/articles/3068672-printing-exporting#h_f37e2930e4) |     |
 | [Tana](https://tana.inc/) | [thread](https://www.reddit.com/r/TanaInc/comments/13jjiwi/comment/jkgca57/) |     |
-| [Takenote](https://takenote.ai/) | Export via settings to zipped md and json | - No tags/metadata? <br>- [demo](/tmp/.mount_JoplinqJrP4H/resources/app.asar/Demo) |
+| [Takenote](https://takenote.ai/) | Export via settings to zipped md and json | No tags/metadata? |
 | [Taskade](https://www.taskade.com/) | [doc](https://help.taskade.com/en/collections/8400888-export) |     |
 | [Telegram](https://telegram.org/) |     | https://github.com/marph91/jimmy/issues/7 |
 | [TheBrain](https://www.thebrain.com/) | - [thread](https://forums.thebrain.com/post/exporting-brain-possible-9725592) <br>- [script](https://github.com/sanderdatema/thebrain2markdown) |     |
