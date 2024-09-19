@@ -131,7 +131,7 @@ class Converter(converter.BaseConverter):
         #             reminders[0]["modified-time"]
         #         )
 
-        # convert the note body to markdown
+        # convert the note body to Markdown
         # TODO:
         # - checklists are note working, even with "+task_lists"
         # - tables are not working

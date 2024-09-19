@@ -13,7 +13,7 @@ import common
 class NoteLink:
     """Represents an internal link from one note to another note."""
 
-    # This text will be replaced with the Joplin-internal resource ID.
+    # This text will be replaced with the path to the linked file after conversion.
     original_text: str
     # For convenience. Should be included in "original_text", too.
     original_id: str
@@ -26,7 +26,7 @@ class Resource:
     """Represents a resource."""
 
     filename: Path
-    # This text will be replaced with the Joplin-internal resource ID.
+    # This text will be replaced with the path to the resource after conversion.
     # If None, the resource gets appended.
     original_text: str | None = None
     # [title_or_filename](:/resource_id)

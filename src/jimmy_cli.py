@@ -12,6 +12,24 @@ import jimmy
 LOGGER = logging.getLogger("jimmy")
 
 
+def relative_path(path: str | Path) -> Path:
+    """
+    Checks if a path is relative.
+
+    >>> str(relative_path("a"))
+    'a'
+    >>> relative_path("/a")
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Please specify a relative output path.
+    """
+    # https://stackoverflow.com/a/37472037
+    path_to_check = Path(path)
+    if path_to_check.is_absolute():
+        raise argparse.ArgumentTypeError("Please specify a relative output path.")
+    return path_to_check
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -33,6 +51,12 @@ def main():
         "--output-folder",
         type=Path,
         help="The output folder.",
+    )
+    parser.add_argument(
+        "--global-resource-folder",
+        type=relative_path,
+        help="The resource folder for images, PDF and other data. "
+        "Relative to the output folder.",
     )
     parser.add_argument(
         "--print-tree",

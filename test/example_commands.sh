@@ -37,7 +37,7 @@ $EXECUTABLE "$CACHE/synology_note_station/test.nsx" --format synology_note_stati
 $EXECUTABLE "$CACHE/textbundle/Textbundle Example v1.textbundle/" --format textbundle
 $EXECUTABLE "$CACHE/textbundle/Textbundle Example v2.textbundle/" --format textbundle
 $EXECUTABLE "$CACHE/textbundle/example.textpack" --format textbundle
-# $EXECUTABLE "$CACHE/tiddlywiki/tiddlyhost.json" --format tiddlywiki
+$EXECUTABLE "$CACHE/tiddlywiki/tiddlyhost.json" --format tiddlywiki
 # $EXECUTABLE "$CACHE/todo_txt/examples_from_readme.txt" --format todo_txt
 # $EXECUTABLE "$CACHE/todoist/Privates.csv" --format todoist
 $EXECUTABLE "$CACHE/tomboy_ng/tomboy-ng/" --format tomboy_ng

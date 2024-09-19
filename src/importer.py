@@ -1,25 +1,102 @@
-"""Convert the intermediate format to markdown."""
+"""Convert the intermediate format to Markdown."""
 
 import logging
 import os.path
 from pathlib import Path
+import platform
 import shutil
 import urllib.parse
 
 import frontmatter
 
-import common
 import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("jimmy")
+SYSTEM = platform.system()
+
+
+def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
+    r"""
+    Return a safe version of the provided path or string.
+    Only the last part is considered if a pth is provided.
+
+    >>> str(safe_path(Path("a/."), "Linux"))
+    'a'
+    >>> str(safe_path(Path("ab\x00c"), "Linux"))
+    'ab_c'
+    >>> str(safe_path(Path("CON"), "Windows"))
+    'CON_'
+    >>> str(safe_path(Path("LPT7"), "Windows"))
+    'LPT7_'
+    >>> str(safe_path(Path("a/bc."), "Windows"))
+    'a/bc_'
+    >>> str(safe_path(Path("a/b:c"), "Windows"))
+    'a/b_c'
+    >>> str(safe_path(Path("a/b*c"), "Windows"))
+    'a/b_c'
+    >>> str(safe_path("a/b/c", "Windows"))
+    'a_b_c'
+    """
+    safe_name = path if isinstance(path, str) else path.name
+
+    # https://stackoverflow.com/a/31976060
+    match system:
+        case "Windows":
+            # fmt: off
+            forbidden_chars = [
+                "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
+            ] + [chr(value) for value in range(32)]
+            # fmt: on
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = (
+                ["CON", "PRN", "AUX", "NUL"]
+                + [f"COM{i}" for i in range(1, 10)]
+                + [f"LPT{i}" for i in range(1, 10)]
+            )
+            if safe_name in forbidden_names:
+                safe_name += "_"
+
+            forbidden_last_chars = [" ", "."]
+            if safe_name[-1] in forbidden_last_chars:
+                safe_name = safe_name[:-1] + "_"
+        case "Linux" | "Darwin":
+            # OSX may allow more chars.
+            forbidden_chars = ["/", "\x00"]
+            for char in forbidden_chars:
+                safe_name = safe_name.replace(char, "_")
+
+            forbidden_names = [".", ".."]
+            if safe_name in forbidden_names:
+                safe_name += "_"
+        case _:
+            LOGGER.warning(f"Unsupported system: {system}")
+
+    return safe_name if isinstance(path, str) else path.with_name(safe_name)
+
+
+def get_quoted_relative_path(source: Path, target: Path) -> str:
+    """
+    >>> get_quoted_relative_path(Path("sample"), Path("sample"))
+    '.'
+    >>> get_quoted_relative_path(Path("sample/a"), Path("sample/b"))
+    '../b'
+    >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
+    '../im%20age.png'
+    """
+    relative_path = os.path.relpath(target.resolve(), start=source.resolve())
+    return urllib.parse.quote(str(relative_path))
 
 
 class FilesystemImporter:
     """Import notebooks, notes and related data to the filesystem."""
 
-    def __init__(self, progress_bars, frontmatter_):
-        self.frontmatter = frontmatter_
+    def __init__(self, progress_bars, config):
+        self.frontmatter = config.frontmatter
+        self.root_path = None
+        self.global_resource_folder = config.global_resource_folder
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
@@ -33,18 +110,18 @@ class FilesystemImporter:
                 metadata = {}
                 if note.tags:
                     metadata["tags"] = [tag.title for tag in note.tags]
-                key_map = {
-                    "title": "title",
-                    "created": "created",
-                    "updated": "updated",
-                    "author": "author",
-                    "latitude": "latitude",
-                    "longitude": "longitude",
-                    "altitude": "altitude",
-                }
-                for original_key, mapped_key in key_map.items():
-                    if value := getattr(note, original_key):
-                        metadata[mapped_key] = value
+                supported_keys = [
+                    "title",
+                    "created",
+                    "updated",
+                    "author",
+                    "latitude",
+                    "longitude",
+                    "altitude",
+                ]
+                for key in supported_keys:
+                    if (value := getattr(note, key)) is not None:
+                        metadata[key] = value
                 post = frontmatter.Post(note.body, **metadata)
                 frontmatter.dump(post, note.path)
             case "obsidian":
@@ -68,13 +145,24 @@ class FilesystemImporter:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
             # TODO: support local and global resource folder
-            resource.path = common.safe_path(note.path.parent / resource.filename.name)
+            if self.global_resource_folder is None:
+                # local resources (next to the markdown files)
+                resource.path = note.path.parent / safe_path(resource.filename.name)
+            else:
+                # global resource folder
+                resource.path = (
+                    self.root_path
+                    / self.global_resource_folder
+                    / safe_path(resource.filename.name)
+                )
             # Don't create multiple Joplin resources for the same file.
             # Cache the original file paths and their corresponding Joplin ID.
+            assert resource.path is not None
             if not resource.path.is_file():
                 shutil.copy(resource.filename, resource.path)
+            relative_path = get_quoted_relative_path(note.path.parent, resource.path)
             resource_markdown = (
-                f"{'!' * resource.is_image}[{resource_title}]({resource.path.name})"
+                f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
             )
             if resource.original_text is None:
                 # append
@@ -90,21 +178,25 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
             if not self.frontmatter:
                 LOGGER.warning(
-                    f'Tags of note "{note.title}" ' "will be lost without frontmatter."
+                    f'Tags of note "{note.title}" will be lost without frontmatter.'
                 )
         self.write_note(note)
 
     def import_notebook(self, notebook: imf.Notebook):
         assert notebook.path is not None
         self.progress_bars["notebooks"].update(1)
+        if self.root_path is None:
+            self.root_path = notebook.path
+            if self.global_resource_folder is not None:
+                (self.root_path / safe_path(self.global_resource_folder)).mkdir(
+                    exist_ok=True, parents=True
+                )
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.path = common.safe_path(
-                (notebook.path / note.title).with_suffix(".md")
-            )
+            note.path = (notebook.path / safe_path(note.title)).with_suffix(".md")
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.path = common.safe_path(notebook.path / child_notebook.title)
+            child_notebook.path = notebook.path / safe_path(child_notebook.title)
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):
@@ -118,12 +210,9 @@ class FilesystemImporter:
                 LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")
                 continue
 
-            relative_path = os.path.relpath(
-                new_path.resolve(), start=note.path.parent.resolve()
-            )
+            relative_path = get_quoted_relative_path(note.path.parent, new_path)
             note.body = note.body.replace(
-                note_link.original_text,
-                f"[{note_link.title}]({urllib.parse.quote(str(relative_path))})",
+                note_link.original_text, f"[{note_link.title}]({relative_path})"
             )
         self.write_note(note)  # update note
 

@@ -1,4 +1,4 @@
-"""Importer for many (note) formats to markdown."""
+"""Importer for many (note) formats to Markdown."""
 
 import importlib
 import logging
@@ -109,16 +109,15 @@ def jimmy(config) -> common.Stats:
     LOGGER.info("Start writing to file system")
     progress_bars = stats.create_progress_bars()
     for note_tree in root_notebooks:
-        file_system_importer = importer.FilesystemImporter(
-            progress_bars, config.frontmatter
-        )
+        file_system_importer = importer.FilesystemImporter(progress_bars, config)
         file_system_importer.import_notebook(note_tree)
         # We need another pass, since at the first pass
         # target note IDs are unknown.
         file_system_importer.link_notes(note_tree)
     LOGGER.info(
-        "Converted notes successfully to markdown: "
-        f'"{config.output_folder.resolve()}". '
+        "Converted notes successfully to Markdown: "
+        f"[link={config.output_folder.resolve().as_uri()}]"
+        f'"{config.output_folder.name}"[/link]. '
         "Please verify that everything was converted correctly."
     )
     LOGGER.info(
