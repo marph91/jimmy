@@ -1,5 +1,6 @@
 """Convert the intermediate format to Markdown."""
 
+import dataclasses
 import logging
 import os.path
 from pathlib import Path
@@ -110,6 +111,26 @@ class FilesystemImporter:
     def write_note(self, note: imf.Note):
         assert note.path is not None
         match self.frontmatter:
+            case "all":
+                metadata = {}
+                for field in dataclasses.fields(imf.Note):
+                    match field.name:
+                        case (
+                            "body"
+                            | "resources"
+                            | "note_links"
+                            | "original_id"
+                            | "joplin_id"
+                            | "path"
+                        ):
+                            continue  # included elsewhere or no metadata
+                        case "tags":
+                            metadata["tags"] = [tag.title for tag in note.tags]
+                        case _:
+                            if (value := getattr(note, field.name)) is not None:
+                                metadata[field.name] = value
+                post = frontmatter.Post(note.body, **metadata)
+                frontmatter.dump(post, note.path)
             case "joplin":
                 # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
                 # Arbitrary metadata will be ignored.
@@ -132,7 +153,6 @@ class FilesystemImporter:
                 frontmatter.dump(post, note.path)
             case "obsidian":
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
-                # TODO: Add arbitrary metadata?
                 metadata = {}
                 if note.tags:
                     metadata["tags"] = [tag.title for tag in note.tags]

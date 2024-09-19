@@ -90,14 +90,16 @@ class Converter(converter.BaseConverter):
 
         for posts_file in posts_files:
             for post in json.loads(posts_file.read_text(encoding="utf-8")):
-                updated_time = post["timestamp"] * 1000
+                updated_time = dt.datetime.utcfromtimestamp(post["timestamp"])
                 post_body = ""
 
                 for post_datum in post["data"]:
                     for post_data_key, post_data_value in post_datum.items():
                         match post_data_key:
                             case "update_timestamp":
-                                updated_time = post_data_value * 1000
+                                updated_time = dt.datetime.utcfromtimestamp(
+                                    post_data_value
+                                )
                             case "post":
                                 post_body = fix_encoding_error(post_data_value)
                             case _:
@@ -131,7 +133,7 @@ class Converter(converter.BaseConverter):
                     imf.Note(
                         post_title,
                         post_body,
-                        created=post["timestamp"] * 1000,
+                        created=dt.datetime.utcfromtimestamp(post["timestamp"]),
                         updated=updated_time,
                         source_application=self.format,
                         **att_metadata,

@@ -76,7 +76,6 @@ class Note:
     longitude: float | None = None
     altitude: float | None = None
 
-    # TODO: remove?
     source_application: str | None = None
 
     # internal data

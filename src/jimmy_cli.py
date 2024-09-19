@@ -44,7 +44,7 @@ def main():
     parser.add_argument(
         "--frontmatter",
         default=None,
-        choices=(None, "joplin", "obsidian"),
+        choices=(None, "all", "joplin", "obsidian"),
         help="Frontmatter type.",
     )
     parser.add_argument(

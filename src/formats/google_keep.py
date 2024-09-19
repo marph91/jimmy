@@ -1,5 +1,6 @@
 """Convert Google Keep notes to the intermediate format."""
 
+import datetime as dt
 from pathlib import Path
 import json
 
@@ -33,8 +34,12 @@ class Converter(converter.BaseConverter):
             note_imf = imf.Note(
                 note_keep["title"],
                 note_keep["textContent"],
-                created=note_keep["userEditedTimestampUsec"] // 1000,
-                updated=note_keep["userEditedTimestampUsec"] // 1000,
+                created=dt.datetime.utcfromtimestamp(
+                    note_keep["userEditedTimestampUsec"] // (10**6)
+                ),
+                updated=dt.datetime.utcfromtimestamp(
+                    note_keep["userEditedTimestampUsec"] // (10**6)
+                ),
                 source_application=self.format,
                 # Labels / tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag(tag) for tag in tags_keep],

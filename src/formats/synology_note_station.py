@@ -1,6 +1,7 @@
 """Convert Synology Note Station notes to the intermediate format."""
 
 from dataclasses import dataclass
+import datetime as dt
 import difflib
 import hashlib
 import json
@@ -195,8 +196,8 @@ class Converter(converter.BaseConverter):
                 note_imf = imf.Note(
                     note["title"],
                     body,
-                    created=note["ctime"],
-                    updated=note["mtime"],
+                    created=dt.datetime.utcfromtimestamp(note["ctime"]),
+                    updated=dt.datetime.utcfromtimestamp(note["mtime"]),
                     source_application=self.format,
                     tags=[imf.Tag(tag) for tag in note.get("tag", [])],
                     resources=resources,
