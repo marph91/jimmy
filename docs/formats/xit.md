@@ -1,4 +1,4 @@
-This page describes how to import notes from [x]it! to markdown.
+This page describes how to convert notes from [x]it! to Markdown.
 
 ## General Information
 
@@ -8,10 +8,10 @@ This page describes how to import notes from [x]it! to markdown.
 ## Instructions
 
 1. [Install jimmy](../index.md#installation)
-2. Convert to markdown. Example: `jimmy-cli-linux example.xit --format xit`
+2. Convert to Markdown. Example: `jimmy-cli-linux example.xit --format xit`
 
 ## Import Structure
 
 - xit groups are converted to folders
-- xit items are converted to markdown todos
+- xit items are converted to Markdown todos
 - Priority, tags and due dates are converted to metadata and removed from the todo title

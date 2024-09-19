@@ -1,4 +1,4 @@
-This page describes how to import notes from Dynalist to markdown.
+This page describes how to convert notes from Dynalist to Markdown.
 
 ## General Information
 
@@ -9,4 +9,4 @@ This page describes how to import notes from Dynalist to markdown.
 
 1. Export as described in <https://help.dynalist.io/article/79-back-up-your-data>
 2. [Install jimmy](../index.md#installation)
-3. Convert to markdown. Example: `jimmy-cli-linux dynalist-backup-2024-04-12.zip --format dynalist`
+3. Convert to Markdown. Example: `jimmy-cli-linux dynalist-backup-2024-04-12.zip --format dynalist`

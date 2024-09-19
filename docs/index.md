@@ -1,6 +1,6 @@
 # Welcome to jimmy's documentation!
 
-**jimmy** is a tool to import your notes from different formats to markdown.
+**jimmy** is a tool to import your notes from different formats to Markdown.
 
 ## Features
 
@@ -43,7 +43,7 @@ flowchart LR
 ```
 
 1. Export/backup notes from your note application
-2. Run `jimmy`, which converts your notes to markdown
+2. Run `jimmy`, which converts your notes to Markdown
 3. Import the result to Joplin/Obsidian or even use any editor like VSCode
 
 For detailed instructions, see the page of the specific format.
@@ -51,4 +51,4 @@ For detailed instructions, see the page of the specific format.
 ## Quickstart
 
 1. [Import from text files](./formats/default.md) or import from specific apps, like [Google Keep](./formats/google_keep.md)
-2. Verify that everything was converted properly. The markdown notes should be available in a new folder named like `YYYY-MM-DD HH:MM:SS - Jimmy Import`.
+2. Verify that everything was converted properly. The Markdown notes should be available in a new folder named like `YYYY-MM-DD HH:MM:SS - Jimmy Import`.

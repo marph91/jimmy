@@ -22,15 +22,15 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Didthis](https://didthis.app/) |     |     |
 | [DokuWiki](https://www.dokuwiki.org/) | [doc](https://www.dokuwiki.org/faq:backup) |     |
 | [Drafts](https://getdrafts.com/) |     | apple only |
-| [Dropbox Paper](https://paper.dropbox.com/) | [doc](https://help.dropbox.com/de-de/view-edit/paper-export-docs) (markdown) |     |
+| [Dropbox Paper](https://paper.dropbox.com/) | [doc](https://help.dropbox.com/de-de/view-edit/paper-export-docs) (Markdown) |     |
 | eml mails |     |     |
 | [Endnote](https://web.endnote.com/) |     |     |
 | [Fellow](https://fellow.app/) | [doc](https://help.fellow.app/en/articles/5451749-how-to-export-personal-data) (json) |     |
 | [FSNotes](https://fsnot.es/) |     | apple only |
 | [Ghostwriter](https://kde.github.io/ghostwriter/) |     |     |
 | [Goodnotes](https://www.goodnotes.com/) | [doc](https://support.goodnotes.com/hc/en-us/articles/7353742824975-Export-documents-or-pages#export-documents-or-pages-0-0) (goodnotes, PDF, image) |     |
-| [Heptabase](https://heptabase.com/) | - [doc](https://wiki.heptabase.com/how-sustainable-is-heptabase) (markdown) <br>- [script](https://github.com/link-ding/Heptabase-Export) |     |
-| [iaWriter](https://ia.net/writer) | [doc](https://ia.net/writer/support/preview/export-share-print) (markdown) |     |
+| [Heptabase](https://heptabase.com/) | - [doc](https://wiki.heptabase.com/how-sustainable-is-heptabase) (Markdown) <br>- [script](https://github.com/link-ding/Heptabase-Export) |     |
+| [iaWriter](https://ia.net/writer) | [doc](https://ia.net/writer/support/preview/export-share-print) (Markdown) |     |
 | [Inkdrop](https://www.inkdrop.app/) |     |     |
 | [Journalify](https://www.journalify.com/) |     |     |
 | [Journey.cloud](https://journey.cloud/) |     | [demo](https://journey.cloud/app/timeline) |
@@ -49,7 +49,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Monday](https://monday.com/) | [doc](https://help.taskade.com/en/articles/8958596-import-from-monday) |     |
 | [MyInfo](https://www.myinfoapp.com/) | [doc](https://www.myinfoapp.com/features) |     |
 | Nixnote/[Nixnote 2](https://github.com/baumgarr/Nixnote2) | - [doc](https://github.com/baumgarr/nixnote2/issues/483) <br>- [thread](https://discourse.joplinapp.org/t/import-from-nixnote/183/7) | [dead](https://github.com/robert7/nixnote2/issues/181) |
-| [Notable](https://notable.app/) | notes stored as markdown in folder |     |
+| [Notable](https://notable.app/) | notes stored as Markdown in folder |     |
 | [Notejoy](https://notejoy.com/) | [doc](https://notejoy.com/help/export-notes) (paid only) |     |
 | [Notesnook](https://notesnook.com/) |     | - [unzip code](https://github.com/streetwriters/notesnook/blob/1f0fc83a7c5694eeda17dc70f35d69ca0df26bf2/apps/web/src/utils/compressor.ts#L44-L55) <br>- [Basic plan can only export to text](https://notesnook.com/pricing/) <br>- No attachments without login |
 | [notezilla](https://www.conceptworld.com/Notezilla) | [doc](https://www.conceptworld.com/Notezilla) (csv) | How are nested memoboards/notebooks handled? |
@@ -61,7 +61,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Primenote](https://gitlab.com/william.belanger/primenote) |     |     |
 | [QNAP Notes Station](https://www.qnap.com/de-de/software/notes-station) |     |     |
 | [raindrop.io](https://raindrop.io/) | - [doc](https://help.raindrop.io/backups) <br>- [script](https://github.com/bobscott45/raindrop2enex) |     |
-| [Reflect](https://reflect.app/) | [doc](https://reflect.academy/import-export-backups) (markdown or json?) |     |
+| [Reflect](https://reflect.app/) | [doc](https://reflect.academy/import-export-backups) (Markdown or json?) |     |
 | [Remnote](https://www.remnote.com/) | - [doc](https://help.remnote.com/en/articles/7898019-exporting-notes#h_fffe55a9a8) <br>- [script](https://github.com/AnweshGangula/PKMigrator/tree/main/Remnote2Obsidian) <br>- [example file](https://github.com/AnweshGangula/PKMigrator/blob/main/Data/RemNote_Export_August_23rd_2021_Guest_json.zip) |     |
 | [Reor](https://github.com/reorproject/reor) |     |     |
 | [Rightnote](https://www.bauerapps.com/rightnote/) |     |     |
@@ -80,16 +80,16 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Things](https://github.com/thingsapi/things-cli) |     |     |
 | Treepad | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
 | [Trello](https://trello.com/) | [doc](https://support.atlassian.com/trello/docs/exporting-data-from-trello/) (json) |     |
-| [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (markdown?) |     |
+| [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (Markdown?) |     |
 | [Turtl](https://turtlapp.com/) | [thread](https://discourse.joplinapp.org/t/turtl-to-md-directory-python/29010) | dead |
-| [Ulysses](https://ulysses.app/) | [thread](https://github.com/obsidianmd/obsidian-importer/issues/18) (markdown) |     |
-| [UpNote](https://getupnote.com/) | [doc](https://medium.com/upnote/export-your-notes-3d8d6f7739d7) (markdown, paid only) |     |
-| [Vnote](https://github.com/vnotex/vnote) | [doc](https://app.vnote.fun/en_us/#!docs/Users/Export.md) (markdown?) |     |
+| [Ulysses](https://ulysses.app/) | [thread](https://github.com/obsidianmd/obsidian-importer/issues/18) (Markdown) |     |
+| [UpNote](https://getupnote.com/) | [doc](https://medium.com/upnote/export-your-notes-3d8d6f7739d7) (Markdown, paid only) |     |
+| [Vnote](https://github.com/vnotex/vnote) | [doc](https://app.vnote.fun/en_us/#!docs/Users/Export.md) (Markdown?) |     |
 | [Wenote](https://play.google.com/store/apps/details?id=com.yocto.wenote) |     | mobile only |
 | [Wiznote](https://www.wiz.cn/) | [script](https://github.com/scher000/wiz2joplin) |     |
 | [Workflowy](https://workflowy.com/) | [doc](https://workflowy.com/help/exporting/) (unusable?) |     |
 | Wunderlist | [script](https://github.com/eschlot/Wunderlist2Joplin) | dead? |
 | [Xiaomi Notes](https://i.mi.com/note/h5) |     | account needed |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
-| [Zim](https://zim-wiki.org/index.html) | - [doc](https://zim-wiki.org/manual/Help/Export.html) (markdown) <br>- [script](https://gist.github.com/reagle/7418f54fb6e40fe8d925e1c3f5325076) |     |
+| [Zim](https://zim-wiki.org/index.html) | - [doc](https://zim-wiki.org/manual/Help/Export.html) (Markdown) <br>- [script](https://gist.github.com/reagle/7418f54fb6e40fe8d925e1c3f5325076) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |

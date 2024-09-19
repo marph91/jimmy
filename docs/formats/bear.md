@@ -1,4 +1,4 @@
-This page describes how to import notes from Bear to markdown.
+This page describes how to convert notes from Bear to Markdown.
 
 ## General Information
 
@@ -9,4 +9,4 @@ This page describes how to import notes from Bear to markdown.
 
 1. Export as described in <https://bear.app/faq/backup-restore/>
 2. [Install jimmy](../index.md#installation)
-3. Convert to markdown. Example: `jimmy-cli-linux backup.bear2bk --format bear`
+3. Convert to Markdown. Example: `jimmy-cli-linux backup.bear2bk --format bear`

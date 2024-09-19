@@ -1,4 +1,4 @@
-This page describes how to import notes from RedNotebook to markdown.
+This page describes how to convert notes from RedNotebook to Markdown.
 
 ## General Information
 
@@ -9,7 +9,7 @@ This page describes how to import notes from RedNotebook to markdown.
 
 1. Create a backup of your notes as described [here](https://rednotebook.app/help.html#toc13) or specify the data folder (for example `$HOME/.rednotebook/data`)
 2. [Install jimmy](../index.md#installation)
-3. Convert to markdown. Examples:
+3. Convert to Markdown. Examples:
    1. `jimmy-cli-linux RedNotebook-Backup-2024-09-15.zip --format rednotebook`
    2. `jimmy-cli-linux ~/.rednotebook/data/ --format rednotebook`
 

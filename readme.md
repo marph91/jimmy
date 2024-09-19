@@ -1,6 +1,6 @@
 # jimmy
 
-Free your notes by converting them to markdown.
+Free your notes by converting them to Markdown.
 
 For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
@@ -38,10 +38,10 @@ flowchart LR
 ```
 
 1. Export/backup notes from your note application
-2. Run `jimmy`, which converts your notes to markdown
-3. Import the result to Joplin/Obsidian or even use any editor like VSCode
+2. Run `jimmy`, which converts your notes to Markdown
+3. Import the result to Joplin/Obsidian or use any editor to view the notes
 
-For detailed instructions, see the page of the specific format.
+For detailed instructions, see the page of the [specific format](https://marph91.github.io/jimmy/formats/default/).
 
 ## Quickstart
 
@@ -59,14 +59,13 @@ jimmy-cli-linux path/to/folder
 jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
 ```
 
-After importing, the notes should be available in a new Joplin notebook named like `YYYY-MM-DD HH:MM:SS - Import`. Make sure your data is imported properly :exclamation:
+After conversion, the notes should be available in a folder named like `YYYY-MM-DD HH:MM:SS - Import`. Make sure your data is converted properly :exclamation:
 
 What is converted (in most cases)?
 
 - Note content
 - Tags / Labels
-- Resources / Attachments
-- Images
+- Images / Resources / Attachments
 - External links and internal note links
 
 If something is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with jimmy.
@@ -75,7 +74,24 @@ If something is not working, please check the issues first. If you can't find an
 
 ## Demo
 
-<https://github.com/marph91/jimmy/assets/33229141/de8f8e96-f925-4eef-8ff3-f69b5ee067ef>
+This is an example of a successful conversion:
+
+```bash
+$ jimmy-cli-linux .cache/google_keep/takeout-20240401T160516Z-001.zip --format google_keep --frontmatter joplin
+[09/19/24 15:15:34] INFO     Importing notes from ".cache/google_keep/takeout-20240401T160516Z-001.zip"
+                    INFO     Start parsing
+                    INFO     Finished parsing: 1 notebooks, 3 notes, 1 resources, 3 tags
+                    INFO     Start filtering
+                    INFO     Finished filtering: 1 notebooks, 3 notes, 1 resources, 3 tags
+                    INFO     Start writing to file system
+                    INFO     Converted notes successfully to Markdown: "20240919T131534Z - Jimmy Import from google_keep". Please verify that everything was converted correctly.
+                    INFO     Feel free to open an issue on Github, write a message at the Joplin forum or an email.
+
+Notebooks  100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00]
+Notes      100%|████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00]
+Resources  100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00]
+Tags       100%|████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00]
+```
 
 ## Similar Projects
 

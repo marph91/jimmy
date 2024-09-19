@@ -1,4 +1,4 @@
-This page describes how to import notes from vCard to markdown.
+This page describes how to convert notes from vCard to Markdown.
 
 ## General Information
 
@@ -9,7 +9,7 @@ This page describes how to import notes from vCard to markdown.
 
 1. Export your contacts in vCard format
 2. [Install jimmy](../index.md#installation)
-3. Convert to markdown. Example: `jimmy-cli-linux vcards_20240811_175319.vcf--format vcard`
+3. Convert to Markdown. Example: `jimmy-cli-linux vcards_20240811_175319.vcf--format vcard`
 
 ## Import Structure
 

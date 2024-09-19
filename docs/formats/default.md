@@ -1,4 +1,4 @@
-This page describes how to import notes from single files or folders (recursively) to markdown.
+This page describes how to convert notes from single files or folders (recursively) to Markdown.
 
 ## Supported Formats
 
@@ -25,7 +25,7 @@ The default import covers the following formats:
 ## Instructions
 
 1. [Install jimmy](../index.md#installation)
-2. Convert to markdown. Examples:
+2. Convert to Markdown. Examples:
 
 ```sh
 # import a single file supported by pandoc
@@ -41,4 +41,4 @@ jimmy-cli-linux path/to/folder
 ## Import Structure
 
 - Folders stay folders
-- Files are converted to markdown notes
+- Files are converted to Markdown notes

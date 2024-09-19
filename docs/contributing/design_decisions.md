@@ -1,6 +1,6 @@
 # Design Decisions
 
-## Why markdown?
+## Why Markdown?
 
 To provide a flexible base for migrating your notes to the app of your choice.
 

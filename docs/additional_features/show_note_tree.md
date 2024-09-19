@@ -27,7 +27,7 @@ Note Tree
                     INFO     Start filtering
                     INFO     Finished filtering: 3 notebooks, 7 notes, 3 resources, 1 note links
                     INFO     Start writing to file system
-                    INFO     Converted notes successfully to markdown. Please verify that everything was converted correctly.
+                    INFO     Converted notes successfully to Markdown. Please verify that everything was converted correctly.
                     INFO     Feel free to open an issue on Github, write a message at the Joplin forum or an email.
 
 Notebooks  100%|████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00]
@@ -74,7 +74,7 @@ Note Tree Filtered
             ├── 🔗 Sample note
             └── 🔗 Sample note alias
                     INFO     Start writing to file system
-                    INFO     Converted notes successfully to markdown. Please verify that everything was converted correctly.
+                    INFO     Converted notes successfully to Markdown. Please verify that everything was converted correctly.
                     INFO     Feel free to open an issue on Github, write a message at the Joplin forum or an email.
 
 Notebooks  100%|████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00]
