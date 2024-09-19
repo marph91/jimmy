@@ -9,6 +9,7 @@ This page describes how to convert notes from QOwnNotes to Markdown.
 
 1. [Install jimmy](../index.md#installation)
 2. Convert to Markdown. Example: `jimmy-cli-linux qownnotes_folder/ --format qownnotes`
+3. [Import to your app](../import_instructions.md)
 
 ## Import Structure
 

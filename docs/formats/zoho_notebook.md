@@ -11,6 +11,7 @@ This page describes how to convert notes from Zoho Notebook to Markdown.
     1. Export as HTML
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux Notebook_14Apr2024_1300_html.zip --format zoho_notebook`
+4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations
 

@@ -38,6 +38,8 @@ jimmy-cli-linux plaintext.txt markdown.md
 jimmy-cli-linux path/to/folder
 ```
 
+3. [Import to your app](../import_instructions.md)
+
 ## Import Structure
 
 - Folders stay folders

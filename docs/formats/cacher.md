@@ -10,6 +10,7 @@ This page describes how to convert notes from Cacher to Markdown.
 1. Export as described in <https://www.cacher.io/docs/guides/snippets/exporting-snippets#how-to-export-1>
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux cacher-export-202406182304.json --format cacher`
+4. [Import to your app](../import_instructions.md)
 
 ## Import Structure
 

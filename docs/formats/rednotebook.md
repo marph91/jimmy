@@ -12,6 +12,7 @@ This page describes how to convert notes from RedNotebook to Markdown.
 3. Convert to Markdown. Examples:
    1. `jimmy-cli-linux RedNotebook-Backup-2024-09-15.zip --format rednotebook`
    2. `jimmy-cli-linux ~/.rednotebook/data/ --format rednotebook`
+4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations
 

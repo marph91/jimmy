@@ -12,6 +12,7 @@ This page describes how to convert posts and messages from Facebook to Markdown.
     2. The export may take some time. For a 450 MB file it took two days.
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux facebook-xyz-07.07.2024-m9lv24pS.zip --format facebook`
+4. [Import to your app](../import_instructions.md)
 
 ## Import Structure
 

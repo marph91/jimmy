@@ -22,3 +22,4 @@ Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
 3. Convert to Markdown. Examples:
     1. `jimmy-cli-linux "Textbundle Example v1.textbundle/" --format textbundle`
     2. `jimmy-cli-linux "example.textpack" --format textbundle`
+4. [Import to your app](../import_instructions.md)
