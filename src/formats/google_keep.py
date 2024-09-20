@@ -34,6 +34,8 @@ class Converter(converter.BaseConverter):
                 for label in note_keep.get("labels", [])
                 if "name" in label
             ]
+            if note_keep.get("isPinned"):
+                tags_keep.append("google-keep-pinned")
 
             resources_keep = []
             for resource_keep in note_keep.get("attachments", []):
@@ -43,7 +45,7 @@ class Converter(converter.BaseConverter):
 
             note_imf = imf.Note(
                 title,
-                note_keep.get("textContent", ""),
+                note_keep.get("textContent", note_keep.get("textContentHtml", "")),
                 source_application=self.format,
                 # Labels / tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag(tag) for tag in tags_keep],

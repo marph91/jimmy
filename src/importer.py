@@ -192,7 +192,7 @@ class FilesystemImporter:
             )
             if resource.original_text is None:
                 # append
-                note.body = f"{note.body}\n{resource_markdown}"
+                note.body = f"{note.body}\n\n{resource_markdown}"
             else:
                 # replace existing link
                 note.body = note.body.replace(resource.original_text, resource_markdown)
