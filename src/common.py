@@ -9,6 +9,7 @@ import re
 import tarfile
 import tempfile
 import time
+import uuid
 import zipfile
 
 import enlighten
@@ -49,6 +50,10 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
             source_key = target_key = key
         if (value := source.get(source_key)) is not None:
             target[target_key] = value
+
+
+def create_unique_title() -> str:
+    return f"unnamed_{uuid.uuid4().hex}"
 
 
 ###########################################################

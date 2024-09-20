@@ -7,10 +7,10 @@ from pathlib import Path
 import platform
 import shutil
 import urllib.parse
-import uuid
 
 import frontmatter
 
+import common
 import intermediate_format as imf
 
 
@@ -44,7 +44,7 @@ def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
     """
     safe_name = path if isinstance(path, str) else path.name
     if safe_name == "":
-        return f"unnamed_{uuid.uuid4().hex}"
+        return common.create_unique_title()
 
     # https://stackoverflow.com/a/31976060
     match system:
