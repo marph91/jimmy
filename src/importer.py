@@ -5,6 +5,7 @@ import logging
 import os.path
 from pathlib import Path
 import platform
+import re
 import shutil
 import urllib.parse
 
@@ -97,6 +98,34 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     return urllib.parse.quote(str(relative_path))
 
 
+OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
+
+
+def normalize_obsidian_tag(tag: str) -> str:
+    """
+    tag format: https://help.obsidian.md/Editing+and+formatting/Tags#Tag+format
+
+    >>> normalize_obsidian_tag("nested/tag")
+    'nested/tag'
+    >>> normalize_obsidian_tag("kebab-case")
+    'kebab-case'
+    >>> normalize_obsidian_tag("snake_case")
+    'snake_case'
+    >>> normalize_obsidian_tag("grüße-cześć-привет-你好")
+    'grüße-cześć-привет-你好'
+    >>> normalize_obsidian_tag("mul & tip...le")
+    'mul___tip___le'
+    >>> normalize_obsidian_tag("1984")
+    '1984_'
+    >>> normalize_obsidian_tag("y1984")
+    'y1984'
+    """
+    valid_char_tag = OBSIDIAN_TAG_REGEX.sub("_", tag)
+    if valid_char_tag.isdigit():
+        valid_char_tag += "_"
+    return valid_char_tag
+
+
 class FilesystemImporter:
     """Import notebooks, notes and related data to the filesystem."""
 
@@ -152,10 +181,13 @@ class FilesystemImporter:
                 post = frontmatter.Post(note.body, **metadata)
                 frontmatter.dump(post, note.path)
             case "obsidian":
+                # frontmatter format:
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
                 metadata = {}
                 if note.tags:
-                    metadata["tags"] = [tag.title for tag in note.tags]
+                    metadata["tags"] = [
+                        normalize_obsidian_tag(tag.title) for tag in note.tags
+                    ]
                     post = frontmatter.Post(note.body, **metadata)
                     frontmatter.dump(post, note.path)
                 else:
