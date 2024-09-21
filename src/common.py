@@ -37,7 +37,7 @@ def get_available_formats() -> list[str]:
 def is_image(file_: Path) -> bool:
     try:
         return puremagic.from_file(file_, mime=True).startswith("image/")
-    except (puremagic.main.PureError, ValueError):
+    except (FileNotFoundError, puremagic.main.PureError, ValueError):
         return False
 
 

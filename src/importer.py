@@ -238,9 +238,9 @@ class FilesystemImporter:
                     post = frontmatter.Post(note.body, **metadata)
                     frontmatter.dump(post, note.path)
                 else:
-                    note.path.write_text(note.body)
+                    note.path.write_text(note.body, encoding="utf-8")
             case _:
-                note.path.write_text(note.body)
+                note.path.write_text(note.body, encoding="utf-8")
 
     def import_note(self, note: imf.Note):
         assert note.path is not None
