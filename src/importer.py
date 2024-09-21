@@ -10,6 +10,7 @@ import shutil
 import urllib.parse
 
 import frontmatter
+import puremagic
 
 import common
 import intermediate_format as imf
@@ -137,6 +138,53 @@ class FilesystemImporter:
         self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
 
+    def import_resources(self, note: imf.Note):
+        assert note.path is not None
+        for resource in note.resources:
+            self.progress_bars["resources"].update(1)
+            resource_title = resource.title or resource.filename.name
+
+            # determine new resource path
+            if self.global_resource_folder is None:
+                # local resources (next to the markdown files)
+                resource.path = note.path.parent / safe_path(resource.filename.name)
+            else:
+                # global resource folder
+                resource.path = (
+                    self.root_path
+                    / self.global_resource_folder
+                    / safe_path(resource.filename.name)
+                )
+            # add extension if possible
+            assert resource.path is not None
+            if resource.path.suffix == "":
+                if (
+                    resource.title is not None
+                    and (suffix := Path(resource.title).suffix) != ""
+                ):
+                    resource.path = resource.path.with_suffix(suffix)
+                else:
+                    guessed_suffix = puremagic.from_file(resource.filename)
+                    # regular jpg files seem to be guessed as jfif sometimes
+                    if guessed_suffix == ".jfif":
+                        guessed_suffix = ".jpg"
+                    resource.path = resource.path.with_suffix(guessed_suffix)
+
+            # Don't create multiple Joplin resources for the same file.
+            # Cache the original file paths and their corresponding Joplin ID.
+            if not resource.path.is_file():
+                shutil.copy(resource.filename, resource.path)
+            relative_path = get_quoted_relative_path(note.path.parent, resource.path)
+            resource_markdown = (
+                f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
+            )
+            if resource.original_text is None:
+                # append
+                note.body = f"{note.body}\n\n{resource_markdown}"
+            else:
+                # replace existing link
+                note.body = note.body.replace(resource.original_text, resource_markdown)
+
     def write_note(self, note: imf.Note):
         assert note.path is not None
         match self.frontmatter:
@@ -197,36 +245,9 @@ class FilesystemImporter:
     def import_note(self, note: imf.Note):
         assert note.path is not None
         self.progress_bars["notes"].update(1)
+
         # Handle resources first, since the note body changes.
-        for resource in note.resources:
-            self.progress_bars["resources"].update(1)
-            resource_title = resource.title or resource.filename.name
-            # TODO: support local and global resource folder
-            if self.global_resource_folder is None:
-                # local resources (next to the markdown files)
-                resource.path = note.path.parent / safe_path(resource.filename.name)
-            else:
-                # global resource folder
-                resource.path = (
-                    self.root_path
-                    / self.global_resource_folder
-                    / safe_path(resource.filename.name)
-                )
-            # Don't create multiple Joplin resources for the same file.
-            # Cache the original file paths and their corresponding Joplin ID.
-            assert resource.path is not None
-            if not resource.path.is_file():
-                shutil.copy(resource.filename, resource.path)
-            relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-            resource_markdown = (
-                f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
-            )
-            if resource.original_text is None:
-                # append
-                note.body = f"{note.body}\n\n{resource_markdown}"
-            else:
-                # replace existing link
-                note.body = note.body.replace(resource.original_text, resource_markdown)
+        self.import_resources(note)
 
         # needed to properly link notes later
         self.note_id_map[note.reference_id] = note.path
