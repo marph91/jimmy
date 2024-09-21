@@ -84,7 +84,6 @@ class Note:
     # list of complete links including original note ids
     note_links: list[NoteLink] = field(default_factory=list)
     original_id: str | None = None
-    joplin_id: str | None = None
     path: Path | None = None
 
     @property

@@ -149,7 +149,6 @@ class FilesystemImporter:
                             | "resources"
                             | "note_links"
                             | "original_id"
-                            | "joplin_id"
                             | "path"
                         ):
                             continue  # included elsewhere or no metadata
@@ -265,7 +264,10 @@ class FilesystemImporter:
             self.progress_bars["note_links"].update(1)
             new_path = self.note_id_map.get(note_link.original_id)
             if new_path is None:
-                LOGGER.debug(f"Couldn't find matching note: {note_link.original_text}")
+                LOGGER.debug(
+                    f'Note "{note.title}": '
+                    f'could not find linked note: "{note_link.original_text}"'
+                )
                 continue
 
             relative_path = get_quoted_relative_path(note.path.parent, new_path)

@@ -13,6 +13,10 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.id_path_map = {".": "."}
+
     def prepare_input(self, input_: Path) -> Path:
         temp_folder = common.get_temp_folder()
 
@@ -33,14 +37,32 @@ class Converter(converter.BaseConverter):
                 item.rmdir()
         return temp_folder
 
-    def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
+    def convert_directory(self, parent_notebook):
+        assert self.root_path is not None
+        relative_parent_path = self.id_path_map[parent_notebook.original_id]
 
-        for item in self.root_path.iterdir():
-            if item.is_dir() or item.suffix.lower() != ".md":
+        for item in (self.root_path / relative_parent_path).iterdir():
+            if item.is_file() and item.suffix.lower() != ".md":
                 continue
             # id is appended to filename
-            title, original_id = item.stem.rsplit(" ", 1)
+            title, _ = item.name.rsplit(" ", 1)
+
+            # propagate the path through all parents
+            # separator is always "/"
+            _, id_ = item.stem.rsplit(" ", 1)
+            if parent_notebook.original_id != ".":
+                self.id_path_map[id_] = relative_parent_path + "/" + item.name
+            else:
+                # TODO: check if "./" works on windows
+                self.id_path_map[id_] = item.name
+
+            if item.is_dir():
+                child_notebook = imf.Notebook(title, original_id=id_)
+                parent_notebook.child_notebooks.append(child_notebook)
+                self.convert_directory(child_notebook)
+                continue
+
+            self.logger.debug(f'Converting note "{title}"')
             # first line is title, second is whitespace
             body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
 
@@ -50,24 +72,34 @@ class Converter(converter.BaseConverter):
             for link in common.get_markdown_links(body):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links
+                unquoted_url = unquote(link.url)
                 if link.url.endswith(".md"):
                     # internal link
-                    _, linked_note_id = Path(unquote(link.url)).stem.rsplit(" ", 1)
+                    _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
                     note_links.append(
                         imf.NoteLink(str(link), linked_note_id, link.text)
                     )
-                elif (self.root_path / link.url).is_file():
+                elif (self.root_path / unquoted_url).is_file():
                     # resource
                     resources.append(
-                        imf.Resource(self.root_path / link.url, str(link), link.text)
+                        imf.Resource(
+                            self.root_path / unquoted_url, str(link), link.text
+                        )
                     )
+                else:
+                    self.logger.debug(f'Unhandled link "{link}"')
 
             note_imf = imf.Note(
                 title,
                 body,
                 source_application=self.format,
-                original_id=original_id,
+                original_id=id_,
                 resources=resources,
                 note_links=note_links,
             )
-            self.root_notebook.child_notes.append(note_imf)
+            parent_notebook.child_notes.append(note_imf)
+
+    def convert(self, file_or_folder: Path):
+        self.root_path = self.prepare_input(file_or_folder)
+        self.root_notebook.original_id = "."
+        self.convert_directory(self.root_notebook)
