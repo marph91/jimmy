@@ -43,12 +43,15 @@ class Converter(converter.BaseConverter):
         for file_ in self.root_path.iterdir():
             if file_.suffix.lower() not in (".md", ".markdown"):
                 # take only the exports in markdown format
-                self.logger.debug(f"Ignoring file {file_.name}")
+                self.logger.debug(f"Ignoring folder or file {file_.name}")
                 continue
 
-            title, body = common.split_h1_title_from_body(
-                file_.read_text(encoding="utf-8")
-            )
+            # Filename from textbundle name seems to be more robust
+            # than taking the first line of the body.
+            title = file_.parent.stem
+            self.logger.debug(f'Converting note "{title}"')
+
+            body = file_.read_text(encoding="utf-8")
             inline_tags = common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
             note_imf = imf.Note(
