@@ -99,7 +99,7 @@ class Converter(converter.BaseConverter):
         note_tag_map = self.parse_tags()
 
         for note_qownnotes in file_or_folder.glob("*.md"):
-            note_body = note_qownnotes.read_text()
+            note_body = note_qownnotes.read_text(encoding="utf-8")
 
             resources, note_links = self.handle_markdown_links(note_body)
             note_imf = imf.Note(

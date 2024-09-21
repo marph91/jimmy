@@ -61,7 +61,7 @@ class Converter(converter.BaseConverter):
 
             # data is encapsulated in yaml, notes are in txt2tags markup
             # see: https://rednotebook.app/help.html#toc38
-            note_dict = yaml.safe_load(file_.read_text())
+            note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
             for day, data in note_dict.items():
                 # TODO: Could be done with https://pypi.org/project/txt2tags/
                 # TODO: links are converted, but not correctly
