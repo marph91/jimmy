@@ -18,7 +18,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Clickup](https://clickup.com/) | - [doc](https://help.clickup.com/hc/en-us/articles/6310551109527-Task-data-export) <br>- [script](https://github.com/jordanbates/clickup_to_joplin) | project management |
 | [Craft](https://www.craft.do/) | - [doc](https://support.craft.do/hc/en-us/articles/4418134683665-Exporting-documents-from-Craft) <br>- [script](https://github.com/coofdy/craft-to-obsidian) |     |
 | [Cryptee](https://crypt.ee/) |     |     |
-| [Diaro](https://diaroapp.com/) | [doc](https://diaroapp.com/faq/how-do-i-backup-my-data-2/) | [script](https://forum.obsidian.md/t/meta-migration-workflows/15252/46) |
+| [Diaro](https://diaroapp.com/) | - [doc](https://diaroapp.com/faq/how-do-i-backup-my-data-2/) <br>- [script](https://forum.obsidian.md/t/meta-migration-workflows/15252/46) |     |
 | [Didthis](https://didthis.app/) |     |     |
 | [DokuWiki](https://www.dokuwiki.org/) | [doc](https://www.dokuwiki.org/faq:backup) |     |
 | [Drafts](https://getdrafts.com/) |     | apple only |
@@ -42,7 +42,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Marknote](https://apps.kde.org/de/marknote/) |     | flatpak only |
 | [massCode](https://masscode.io/) | - [doc](https://masscode.io/documentation/essentials/storage.html) <br>- [script](https://discourse.joplinapp.org/t/masscode2md/38607) | snap only |
 | [Manuskript](https://www.theologeek.ch/manuskript/) | - [doc](https://www.theologeek.ch/manuskript/2016/03/31/open-plain-text-file-format/) <br>- [doc](https://github.com/olivierkes/manuskript/wiki/Import-and-Export-capabilities) |     |
-| [Mem.ai](https://get.mem.ai/) | [doc](https://support.mem.ai/article/73-exporting-your-mems) |     |
+| [Mem.ai](https://get.mem.ai/) | - [doc](https://support.mem.ai/article/73-exporting-your-mems) <br>- [script](https://github.com/jack-song/MigrateMem) |     |
 | [memos](https://github.com/usememos/memos) | [doc](https://github.com/usememos/memos/pull/2854) | [export incomplete](https://github.com/usememos/memos/issues/3295) |
 | [Milanote](https://milanote.com/) | [doc](https://help.milanote.com/en/articles/111395-exporting-your-work) |     |
 | [Miro](https://miro.com/) | [doc](https://help.taskade.com/en/articles/8958608-import-from-miro) |     |
@@ -92,4 +92,5 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Xiaomi Notes](https://i.mi.com/note/h5) |     | account needed |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
 | [Zim](https://zim-wiki.org/index.html) | - [doc](https://zim-wiki.org/manual/Help/Export.html) (Markdown) <br>- [script](https://gist.github.com/reagle/7418f54fb6e40fe8d925e1c3f5325076) |     |
+| [Zettelkasten](http://zettelkasten.danielluedecke.de/) | [doc](https://github.com/Zettelkasten-Team/Zettelkasten/wiki/Exports) (Markdown) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |
