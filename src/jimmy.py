@@ -127,7 +127,8 @@ def jimmy(config) -> common.Stats:
         "[link=https://discourse.joplinapp.org/t/jimmy-a-joplin-import-tool/38503]"
         "Joplin forum[/link], "
         "[link=https://forum.obsidian.md/t/jimmy-convert-your-notes-to-markdown/88685]"
-        "Obsidian forum[/link] or an [link=mailto:martin.d@andix.de]email[/link].[/bold]"
+        "Obsidian forum[/link] or an [link=mailto:martin.d@andix.de]email[/link]."
+        "[/bold]"
     )
 
     return stats

@@ -92,5 +92,4 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Xiaomi Notes](https://i.mi.com/note/h5) |     | account needed |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
 | [Zim](https://zim-wiki.org/index.html) | - [doc](https://zim-wiki.org/manual/Help/Export.html) (Markdown) <br>- [script](https://gist.github.com/reagle/7418f54fb6e40fe8d925e1c3f5325076) |     |
-| [Zettelkasten](http://zettelkasten.danielluedecke.de/) | [doc](https://github.com/Zettelkasten-Team/Zettelkasten/wiki/Exports) (Markdown) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |

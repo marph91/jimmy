@@ -41,6 +41,7 @@ def main():
         [cache / "tiddlywiki/tiddlyhost.json", "--format" ,"tiddlywiki"],
         [cache / "tomboy_ng/gnote/", "--format" ,"tomboy_ng"],
         [cache / "tomboy_ng/tomboy-ng/", "--format" ,"tomboy_ng"],
+        [cache / "zettelkasten/example/test_zettelkasten.zkn3", "--format" ,"zettelkasten"],
         [cache / "zim_md"],
         [cache / "zoho_notebook/Notebook_14Apr2024_1300_html.zip", "--format" ,"zoho_notebook"],
     ]

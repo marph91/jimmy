@@ -87,7 +87,7 @@ class DefaultConverter(BaseConverter):
             case ".md" | ".markdown" | ".txt" | ".text":
                 note_body = file_.read_text(encoding="utf-8")
             case ".fountain":
-                # Simply wrap in a code block. This is supported in 
+                # Simply wrap in a code block. This is supported in
                 # Joplin and Obsidian via plugins.
                 note_body_fountain = file_.read_text(encoding="utf-8")
                 note_body = f"```fountain\n{note_body_fountain}\n```\n"
