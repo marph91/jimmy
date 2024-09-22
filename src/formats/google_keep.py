@@ -23,7 +23,7 @@ class Converter(converter.BaseConverter):
         self.root_path = self.prepare_input(file_or_folder)
 
         # take only the exports in json format
-        for file_ in self.root_path.glob("**/*.json"):
+        for file_ in self.root_path.rglob("*.json"):
             note_keep = json.loads(Path(file_).read_text(encoding="utf-8"))
 
             title = note_keep.get("title", "")

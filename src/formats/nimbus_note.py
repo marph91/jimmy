@@ -12,7 +12,7 @@ class Converter(converter.BaseConverter):
     accept_folder = True
 
     def convert(self, file_or_folder: Path):
-        for file_ in file_or_folder.glob("**/*.zip"):
+        for file_ in file_or_folder.rglob("*.zip"):
             with zipfile.ZipFile(file_) as zip_ref:
                 # HTML note seems to have the name "note.html" always
                 html_notes = [
