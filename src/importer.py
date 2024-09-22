@@ -170,8 +170,8 @@ class FilesystemImporter:
                         guessed_suffix = ".jpg"
                     resource.path = resource.path.with_suffix(guessed_suffix)
 
-            # Don't create multiple Joplin resources for the same file.
-            # Cache the original file paths and their corresponding Joplin ID.
+            # Don't create multiple resources for the same file.
+            # Cache the original file paths and their corresponding ID.
             if not resource.path.is_file():
                 shutil.copy(resource.filename, resource.path)
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)

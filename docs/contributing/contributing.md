@@ -1,6 +1,8 @@
 ## Contact
 
-- General discussion at the [Joplin forum](https://discourse.joplinapp.org/t/jimmy-a-joplin-import-tool/38503)
+- General discussion at the
+    - [Joplin forum](https://discourse.joplinapp.org/t/jimmy-a-joplin-import-tool/38503)
+    - [Obsidian Forum](https://forum.obsidian.md/t/jimmy-convert-your-notes-to-markdown/88685)
 - Report a bug or request a new feature at [github](https://github.com/marph91/jimmy/issues/new/choose)
 
 ## How to add a new format?

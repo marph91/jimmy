@@ -18,7 +18,9 @@ The default import covers the following formats:
     - RTF
     - txt2tags
 - [asciidoc](https://docs.asciidoctor.org/asciidoc/latest/) (requires [asciidoctor](https://asciidoctor.org/) installed and in path)
-- [Fountain](https://fountain.io/) (has a [built-in Joplin plugin](https://joplinapp.org/help/apps/markdown/#markdown-plugins) that needs to be activated in the settings)
+- [Fountain](https://fountain.io/):
+    - There is a [built-in Joplin plugin](https://joplinapp.org/help/apps/markdown/#markdown-plugins) that can be activated in the settings.
+    - There is a [Obsidian plugin](https://github.com/Darakah/obsidian-fountain).
 - Markdown ([Commonmark](https://commonmark.org/))
 - txt
 

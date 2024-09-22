@@ -15,6 +15,7 @@ def main():
         [cache / "arbitrary_folder"],
         [cache / "arbitrary_folder", cache / "arbitrary_folder"],
         [cache / "bear/backup.bear2bk", "--format", "bear"],
+        [cache / "bear/backup-2.bear2bk", "--format", "bear"],
         [cache / "cacher/cacher-export-202406182304.json", "--format" ,"cacher"],
         [cache / "cherrytree/cherry.ctb.ctd", "--format" ,"cherrytree"],
         [cache / "clipto/clipto_backup_240401_105154.json", "--format" ,"clipto"],
