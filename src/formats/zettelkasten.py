@@ -14,6 +14,7 @@ import intermediate_format as imf
 def bbcode_to_markdown(
     bbcode_str: str,
 ) -> tuple[str, list[imf.NoteLink], list[imf.Resource]]:
+    # pylint: disable=unused-argument
     note_links = []
     images = []
 
@@ -130,6 +131,8 @@ class Converter(converter.BaseConverter):
                     self.logger.warning(f"ignoring attribute {key}={value}")
 
     def convert(self, file_or_folder: Path):
+        # TODO
+        # pylint: disable=too-many-branches,too-many-locals
         self.root_path = self.prepare_input(file_or_folder)
 
         attachments_folder = file_or_folder.parent / "attachments"
@@ -177,7 +180,8 @@ class Converter(converter.BaseConverter):
                         if images_available:
                             for image in images:
                                 image.filename = images_folder / image.filename
-                                # Set manually, because with invalid path its set to False.
+                                # Set manually, because with invalid path it's
+                                # set to False.
                                 image.is_image = True
                                 note_imf.resources.append(image)
                     case "author":
