@@ -15,4 +15,4 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 
 ## Known Limitations
 
-Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText) and not converted to Markdown.
+Note content is imported in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText). It is converted, but Markdown supports only a subset.
