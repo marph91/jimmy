@@ -4,10 +4,10 @@ import datetime as dt
 from pathlib import Path
 import json
 import re
-import string
 
 import pyparsing as pp
 
+import common
 import converter
 import intermediate_format as imf
 
@@ -21,18 +21,45 @@ import intermediate_format as imf
 pp.ParserElement.set_default_whitespace_chars("")
 
 # speedup: https://github.com/pyparsing/pyparsing/wiki/Performance-Tips
-# - pp.ParserElement.enablePackrat() -> seems to be even slower
-# - use regex -> TODO
+# - pp.ParserElement.enable_packrat() -> seems to be even slower
+# - use regex instead of chaining
 multiline_quote_re = re.compile(r"<<<\n([\S\s]*?)\n<<<(.*)")
+horizontal_line_re = re.compile(r"^-{3,}$", re.MULTILINE)
+link_re = re.compile(r"\[(ext|img)?.*\[(.*)\]\]")
+list_re = re.compile(r"^([*#>]+) ", re.MULTILINE)
+table_row_re = re.compile(r"\|(.*)\|([kchf])?\n")
+# Problem: "//" is part of many URI (between scheme and host).
+# We need to exclude them to prevent unwanted conversions.
+# https://en.wikipedia.org/wiki/List_of_URI_schemes
+schemes = [
+    "file",
+    "ftp",
+    "http",
+    "https",
+    "imap",
+    "irc",
+    "udp",
+    "tcp",
+    "ntp",
+    "app",
+    "s3",
+]
+NEG_LOOKBEHINDS = "".join(f"(?<!{scheme}:)" for scheme in schemes)
+italic_re = re.compile(rf"{NEG_LOOKBEHINDS}\/\/(.*){NEG_LOOKBEHINDS}\/\/")
 
 
-def single(source_tag, target_tag, start_of_line=False):
-    """Conversion of a single character."""
-    if start_of_line:
-        return (pp.LineStart() + pp.Literal(source_tag)).setParseAction(
-            lambda: target_tag
-        )
-    return pp.Literal(source_tag).setParseAction(lambda: target_tag)
+def dash():
+    def to_md(_, t):  # noqa
+        return "–" if len(t) == 2 else "—"
+
+    return pp.Literal("-")[2, 3].set_parse_action(to_md)
+
+
+def heading():
+    def to_md(_, t):  # noqa
+        return "#" * len(t)
+
+    return (pp.LineStart() + pp.Literal("!")[1, 6]).set_parse_action(to_md)
 
 
 def quote(source_tag, target_tag):
@@ -41,61 +68,49 @@ def quote(source_tag, target_tag):
     def to_md(_, t):  # noqa
         return target_tag + t[0] + target_tag
 
-    return pp.QuotedString(source_tag).setParseAction(to_md)
+    return pp.QuotedString(source_tag).set_parse_action(to_md)
+
+
+def italic():
+    def to_md(_, t):  # noqa
+        return "*" + t[0][0] + "*"
+
+    return pp.Regex(italic_re, as_group_list=True).set_parse_action(to_md)
 
 
 def horizontal_line():
-    return (pp.LineStart() + pp.Literal("-")[3, ...] + pp.LineEnd()).setParseAction(
-        lambda: "---\n"
-    )
-
-
-def image():
-    def to_md(_, t):  # noqa
-        text = t[0][t[0].find("[") + 1 :]
-        try:
-            title, url = text.split("|", maxsplit=1)
-        except ValueError:
-            title = ""
-            url = text
-        return f"![{title}]({url})"
-
-    return pp.QuotedString("[img", endQuoteChar="]]").setParseAction(to_md)
+    return pp.Regex(horizontal_line_re).set_parse_action(lambda: "---")
 
 
 def link():
     def to_md(_, t):  # noqa
-        text = t[0][t[0].find("[") + 1 :]
+        type_, content = t[0]
+        match type_:
+            case "img":
+                prefix = "!"
+            case "ext" | None:
+                prefix = ""
+            case _:
+                print(f"Unknown link type: {type_}")
+                return content
         try:
-            title, url = text.split("|", maxsplit=1)
+            title, url = content.split("|", maxsplit=1)
         except ValueError:
             title = ""
-            url = text
-        return f"[{title}]({url})"
+            url = content
+        return f"{prefix}[{title}]({url})"
 
-    return pp.QuotedString("[[", endQuoteChar="]]").setParseAction(to_md)
-
-
-def external_link():
-    def to_md(_, t):  # noqa
-        text = t[0][t[0].find("[") + 1 :]
-        try:
-            title, url = text.split("|", maxsplit=1)
-        except ValueError:
-            title = ""
-            url = text
-        return f"[{title}]({url})"
-
-    return pp.QuotedString("[ext", endQuoteChar="]]").setParseAction(to_md)
+    return pp.Regex(link_re, as_group_list=True).set_parse_action(to_md)
 
 
 def list_():
     def to_md(_, t):  # noqa
-        spaces = (len(t[-1]) - 1) * 4
-        list_character = {"*": "*", "#": "1.", ">": ">"}[t[-1][-1]]
-        return f"{' ' * spaces}{list_character}"
+        match = t[0][0]
+        spaces = (len(match) - 1) * 4
+        list_character = {"*": "*", "#": "1.", ">": ">"}[match[-1]]
+        return f"{' ' * spaces}{list_character} "
 
-    return (pp.LineStart() + pp.Word("*#>")).setParseAction(to_md)
+    return pp.Regex(list_re, as_group_list=True).set_parse_action(to_md)
 
 
 def multiline_quote():
@@ -104,18 +119,10 @@ def multiline_quote():
         author = f"\n> *{t[0][1].strip()}*" if t[0][1] else ""
         return citation + author
 
-    return pp.Regex(multiline_quote_re, as_group_list=True).setParseAction(to_md)
+    return pp.Regex(multiline_quote_re, as_group_list=True).set_parse_action(to_md)
 
 
 def table():
-    table_row = (
-        pp.LineStart()
-        + pp.Literal("|")
-        + (pp.Word(string.printable, exclude_chars="|\n") + pp.Literal("|"))[1, ...]
-        + pp.Char("kchf")[0, 1]
-        + pp.LineEnd()
-    )
-
     def clean_cell(text: str) -> str:
         # remove unsupported directives and whitespace
         text = text.strip()
@@ -126,70 +133,53 @@ def table():
         return text
 
     def to_md(_, t):  # noqa
-        table_md: list[str] = []
-        current_row: list[str] = []
-        is_header = False
-        caption = ""
-        for index, value in enumerate(t):
-            if value == "|":
-                continue
-            if value == "\n":
-                if t[index - 1] != "|":
-                    # The last row is a pseudo-row with a single control char:
-                    # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
-                    control = current_row.pop(-1)
-                    match control:
-                        case "c":
-                            caption = current_row.pop() + "\n\n"
-                            current_row = []
-                            is_header = False
-                            continue
-                        case "c" | "k":
-                            # ignore css classes
-                            current_row = []
-                            is_header = False
-                            continue
-                        case "f":
-                            pass  # handle footer as usual row
-                        case "h":
-                            is_header = True
-                        case _:
-                            print(f"Unknown control character {control}")
+        table_md = common.MarkdownTable()
+        for row in t:
+            content, control = row
 
-                # new row
-                if is_header and "| --- |" not in table_md:
-                    # header can only be the first row
-                    table_md.insert(0, "| " + " | ".join(current_row) + " |")
-                    separator = ["---"] * len(current_row)
-                    table_md.insert(1, "| " + " | ".join(separator) + " |")
-                else:
-                    table_md.append("| " + " | ".join(current_row) + " |")
-                current_row = []
-                is_header = False
-            else:
-                if value.startswith("!"):
-                    # header row
+            # The last row is a pseudo-row with a single control char:
+            # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
+            is_header = False
+            match control:
+                case "c":
+                    table_md.caption = clean_cell(content)
+                    continue
+                case "k":
+                    continue  # ignore css classes
+                case "f" | None:
+                    pass  # handle as usual row
+                case "h":
                     is_header = True
-                    current_row.append(clean_cell(value[1:]))
-                else:
-                    current_row.append(clean_cell(value))
-        return caption + "\n".join(table_md) + "\n"
+                case _:
+                    print(f"Unknown control: {control}")
 
-    return (table_row[1, ...]).setParseAction(to_md)
+            cells = [clean_cell(c) for c in content.split("|")]
+            if all(c.startswith("!") for c in cells):
+                is_header = True
+                cells = [c[1:].strip() for c in cells]
+
+            # new row
+            if is_header:
+                table_md.header_rows.append(cells)
+            else:
+                table_md.data_rows.append(cells)
+        return table_md.create_md()
+
+    return pp.Regex(table_row_re, as_group_list=True)[1, ...].set_parse_action(to_md)
 
 
 def wikitext_to_md(wikitext: str) -> str:
     r"""
     Main tiddlywiki wikitext to Markdown conversion function.
 
-    TODO:
-    # >>> wikitext_to_md("from http://127.0.0.1/MyApp to default http://127.0.0.1/.")
-    # 'from http://127.0.0.1/MyApp to default http://127.0.0.1/.'
-
     >>> wikitext_to_md("Double single quotes are used for ''bold'' text")
     'Double single quotes are used for **bold** text'
-    >>> wikitext_to_md("! level 1 heading!\n!! level 2! heading")
-    '# level 1 heading!\n## level 2! heading'
+    >>> wikitext_to_md("//italic text://")
+    '*italic text:*'
+    >>> wikitext_to_md("from http://127.0.0.1/MyApp to default http://127.0.0.1/.")
+    'from http://127.0.0.1/MyApp to default http://127.0.0.1/.'
+    >>> wikitext_to_md("! level 1 heading!\n!!!!!! level 6! heading")
+    '# level 1 heading!\n###### level 6! heading'
     >>> wikitext_to_md("<<<\nThis is a block quoted paragraph\nwritten in English\n<<<")
     '\n> This is a block quoted paragraph\n> written in English'
     >>> wikitext_to_md("<<<\nComputers are like a bicycle for our minds\n<<< S. Jobs")
@@ -197,7 +187,9 @@ def wikitext_to_md(wikitext: str) -> str:
     >>> wikitext_to_md("> Quoted text\n> Another line of quoted text")
     '> Quoted text\n> Another line of quoted text'
     >>> wikitext_to_md("* -- n-dash\n* --- m-dash --- example\n----")
-    '* – n-dash\n* — m-dash — example\n---\n'
+    '* – n-dash\n* — m-dash — example\n---'
+    >>> wikitext_to_md("----\n---")
+    '---\n---'
     >>> wikitext_to_md("[img[Motovun Jack.jpg]]")
     '![](Motovun Jack.jpg)'
     >>> wikitext_to_md("[img[https://tiddlywiki.com/favicon.ico]]")
@@ -247,32 +239,24 @@ def wikitext_to_md(wikitext: str) -> str:
         # basic formatting:
         # https://tiddlywiki.com/static/Formatting%2520in%2520WikiText.html
         quote("''", "**")
-        | quote("//", "*")
         | quote("__", "++")
         | quote("^^", "^")
         | quote(",,", "~")
         # | quote("~~", "~~")
         | quote("@@", "**")  # highlight -> bold
+        | italic()
         # https://tiddlywiki.com/static/Horizontal%2520Rules%2520in%2520WikiText.html
         | horizontal_line()
         # inline code and code blocks
         # https://tiddlywiki.com/static/Code%2520Blocks%2520in%2520WikiText.html
         # | quote("`", "`")
         # dashes: https://tiddlywiki.com/static/Dashes%2520in%2520WikiText.html
-        | single("---", "—")
-        | single("--", "–")
+        | dash()
         # headings: https://tiddlywiki.com/static/Headings%2520in%2520WikiText.html
-        | single("!" * 6, "#" * 6, start_of_line=True)
-        | single("!" * 5, "#" * 5, start_of_line=True)
-        | single("!" * 4, "#" * 4, start_of_line=True)
-        | single("!" * 3, "#" * 3, start_of_line=True)
-        | single("!" * 2, "#" * 2, start_of_line=True)
-        | single("!", "#" * 1, start_of_line=True)
-        # https://tiddlywiki.com/static/Images%2520in%2520WikiText.html
-        | image()
-        # https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html
+        | heading()
+        # (external) links: https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html
+        # images: https://tiddlywiki.com/static/Images%2520in%2520WikiText.html
         | link()
-        | external_link()
         # https://tiddlywiki.com/static/Lists%2520in%2520WikiText.html
         | list_()
         # block quote:
@@ -281,7 +265,7 @@ def wikitext_to_md(wikitext: str) -> str:
         # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
         | table()
     )
-    return wikitext_markup.transformString(wikitext)
+    return wikitext_markup.transform_string(wikitext)
 
 
 ###########################################################
