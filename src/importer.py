@@ -271,7 +271,10 @@ class FilesystemImporter:
                 )
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.path = (notebook.path / safe_path(note.title)).with_suffix(".md")
+            note.path = notebook.path / safe_path(note.title)
+            # Don't overwrite existing suffices.
+            if note.path.suffix != ".md":
+                note.path = note.path.with_suffix(note.path.suffix + ".md")
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
             child_notebook.path = notebook.path / safe_path(child_notebook.title)
