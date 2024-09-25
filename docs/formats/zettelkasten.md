@@ -1,4 +1,4 @@
-This page describes how to convert notes from Zettelkasten to Markdown.
+This page describes how to convert notes from Zettelkasten (zkn3) to Markdown.
 
 ## General Information
 
@@ -18,6 +18,7 @@ Zettelkasten supports Markdown export. However, it doesn't convert everything an
 - Each zettel is converted to a separate note.
 - The note body of Zettelkasten is converted from [BBCode](https://en.wikipedia.org/wiki/BBCode) to Markdown.
 - Resources and attachments are converted, if the original folders are next to the `.zkn3` file. I. e. `img` for images and `attachments` for attachments.
+- Note sequences (Folgezettel) are linked at the end of the note.
 
 ## Known Limitations
 

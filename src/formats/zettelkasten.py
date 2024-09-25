@@ -1,4 +1,4 @@
-"""Convert Zettelkasten notes to the intermediate format."""
+"""Convert Zettelkasten (zkn3) notes to the intermediate format."""
 
 import datetime as dt
 from pathlib import Path
@@ -202,7 +202,22 @@ class Converter(converter.BaseConverter):
                             note_imf.resources.append(
                                 imf.Resource(attachments_folder / link.text)
                             )
-                    case "luhmann" | "misc" | "zettel":
+                    case "luhmann":  # folgezettel
+                        if item.text is None:
+                            continue
+                        # TODO: Ensure that this is called always
+                        # after the initial note content is parsed.
+                        sequences = []
+                        for note_id in item.text.split(","):
+                            text = f"[{note_id}]({note_id})"
+                            sequences.append(text)
+                            note_imf.note_links.append(
+                                imf.NoteLink(text, note_id, note_id)
+                            )
+                        note_imf.body += (
+                            "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
+                        )
+                    case "misc" | "zettel":
                         pass  # always None
                     case "manlinks":
                         pass  # TODO: Should correspond to the parsed note links.
