@@ -21,5 +21,5 @@ This page describes how to convert notes from Day One to Markdown.
 
 ## Known Limitations
 
-- Unreferenced photos are not imported.
+- Unreferenced photos are not converted.
 - Photos that are references by multiple notes are only imported once (i. e. in one note). This seems to be a bug in the Day One export.

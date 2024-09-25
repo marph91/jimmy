@@ -25,6 +25,6 @@ This page describes how to convert posts and messages from Facebook to Markdown.
 
 The import was tested with many messages (450 MB, >50000 messages) and only a few posts (~20 posts). The import may be not robust enough yet.
 
-- Shared posts are not imported.
-- Profile images, stories and shorts are not imported.
-- Group chats are not imported, since Facebook creates a new file everytime a person joins or leaves. It's not possible to merge them by ID.
+- Shared posts are not converted.
+- Profile images, stories and shorts are not converted.
+- Group chats are not converted, since Facebook creates a new file everytime a person joins or leaves. It's not possible to merge them by ID.
