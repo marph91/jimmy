@@ -236,6 +236,10 @@ def wikitext_to_md(wikitext: str) -> str:
     '| t l | t c | t r |\n| m l | m c | m r |\n| b l | b c | b r |\n'
     >>> wikitext_to_md("|cls|k\n|caption |c\n|C1 |C2|\n|C3|C4 |\n|H1|H2|h\n|F1|F2|f\n")
     'caption\n\n| H1 | H2 |\n| --- | --- |\n| C1 | C2 |\n| C3 | C4 |\n| F1 | F2 |\n'
+    >>> wikitext_to_md("- ''modifier''\n- __underlined__")
+    '- **modifier**\n- ++underlined++'
+    >>> wikitext_to_md("|C1 |''modifier''|\n")
+    '| C1 | **modifier** |\n'
     """
     wikitext_markup = (
         # basic formatting:
@@ -261,13 +265,16 @@ def wikitext_to_md(wikitext: str) -> str:
         | link()
         # https://tiddlywiki.com/static/Lists%2520in%2520WikiText.html
         | list_()
+    )
+    # TODO: Why does "table" overwrite other rules when executes in the same run?
+    wikitext_complex =(
         # block quote:
         # https://tiddlywiki.com/static/Block%2520Quotes%2520in%2520WikiText.html
-        | multiline_quote()
+        multiline_quote()
         # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
         | table()
     )
-    return wikitext_markup.transform_string(wikitext)
+    return wikitext_complex.transform_string(wikitext_markup.transform_string(wikitext))
 
 
 ###########################################################
