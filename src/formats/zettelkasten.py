@@ -81,19 +81,17 @@ def bbcode_to_markdown(
 
     # tables
     def _render_table(name, value, options, parent, context):
-        table_md = []
+        table_md = common.MarkdownTable()
         for line in value.split("\n"):
+            if not line.strip():
+                continue
             if "^" in line:
-                # header
-                table_md.append("| " + " | ".join(line.split("^")) + " |")
-                separator = ["---"] * len(line.split("^"))
-                table_md.append("| " + " | ".join(separator) + " |")
+                table_md.header_rows.append(line.split("^"))
             elif "|" in line:
-                # row
-                table_md.append("| " + " | ".join(line.split("|")) + " |")
+                table_md.data_rows.append(line.split("|"))
             else:
-                table_md.append(line)
-        return "\n".join(table_md)
+                table_md.caption += line
+        return table_md.create_md()
 
     parser.add_formatter("table", _render_table)
     parser.add_simple_formatter("tc", "%(value)s\n")

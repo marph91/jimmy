@@ -168,7 +168,7 @@ class MarkdownTable:
         # column sanity check
         columns = [len(row) for row in self.header_rows + self.data_rows]
         if len(set(columns)) not in (0, 1):
-            print(f"Amount of columns differs: {columns}")
+            LOGGER.warning(f"Amount of columns differs: {columns}")
 
         def create_md_row(cells: list[str]) -> str:
             return "| " + " | ".join(cells) + " |"

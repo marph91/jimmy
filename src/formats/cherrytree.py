@@ -12,12 +12,7 @@ import intermediate_format as imf
 
 
 def convert_table(node):
-    table_md = []
-    # TODO: a constant row and column count is expected
-    # | Syntax | Description |
-    # | --- | --- |
-    # | Header | Title |
-    # | Paragraph | Text |
+    table_md = common.MarkdownTable()
     for row_index, row in enumerate(node):
         assert row.tag == "row"
         columns = []
@@ -25,13 +20,12 @@ def convert_table(node):
             assert cell.tag == "cell"
             cell_text = "" if cell.text is None else cell.text.replace("\n", "<br>")
             columns.append(cell_text)
-        table_md.append("| " + " | ".join(columns) + " |")
 
-        if row_index == 0:
-            # header row
-            separator = ["---"] * len(columns)
-            table_md.append("| " + " | ".join(separator) + " |")
-    return "\n".join(table_md)
+        if row_index == 0:  # header row
+            table_md.header_rows.append(columns)
+        else:
+            table_md.data_rows.append(columns)
+    return table_md.create_md()
 
 
 def fix_inline_formatting(md_content: str) -> str:
