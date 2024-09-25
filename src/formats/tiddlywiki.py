@@ -1,9 +1,11 @@
 """Convert TiddlyWiki notes to the intermediate format."""
 
+import base64
 import datetime as dt
 from pathlib import Path
 import json
 import re
+import uuid
 
 import pyparsing as pp
 
@@ -315,19 +317,52 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".json"]
 
     def convert(self, file_or_folder: Path):
+        resource_folder = common.get_temp_folder()
+
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="utf-8"))
         for note_tiddlywiki in file_dict:
             title = note_tiddlywiki["title"]
             self.logger.debug(f'Converting note "{title}"')
+
+            resources = []
+            mime = note_tiddlywiki.get("type", "")
+            if mime == "image/svg+xml":
+                continue  # TODO
+            if (
+                mime.startswith("image/")
+                or mime == "application/pdf"
+                or mime == "audio/mp3"
+            ):
+                if (text_base64 := note_tiddlywiki.get("text")) is not None:
+                    resource_title = note_tiddlywiki.get("alt-text", title)
+                    temp_filename = (resource_folder / str(uuid.uuid4())).with_suffix(
+                        Path(title).suffix
+                    )
+                    temp_filename.write_bytes(base64.b64decode(text_base64))
+                    body = f"![{resource_title}]({temp_filename})"
+                    resources.append(imf.Resource(temp_filename, body, resource_title))
+                elif (source := note_tiddlywiki.get("source")) is not None:
+                    body = f"![{title}]({source})"
+                elif (uri := note_tiddlywiki.get("_canonical_uri")) is not None:
+                    body = f"[{title}]({uri})"
+                else:
+                    body = wikitext_to_md(note_tiddlywiki.get("text", ""))
+                    self.logger.warning(f"Unhandled attachment type {mime}")
+            elif mime == "application/json":
+                body = "```\n" + note_tiddlywiki.get("text", "") + "\n```"
+            else:
+                body = wikitext_to_md(note_tiddlywiki.get("text", ""))
+
             note_imf = imf.Note(
                 title,
-                wikitext_to_md(note_tiddlywiki.get("text", "")),
+                body,
                 author=note_tiddlywiki.get("creator"),
                 source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[
                     imf.Tag(tag) for tag in split_tags(note_tiddlywiki.get("tags", ""))
                 ],
+                resources=resources,
             )
             if "created" in note_tiddlywiki:
                 note_imf.created = tiddlywiki_to_datetime(note_tiddlywiki["created"])
