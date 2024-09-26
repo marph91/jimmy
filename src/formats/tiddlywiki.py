@@ -267,7 +267,7 @@ def wikitext_to_md(wikitext: str) -> str:
         | list_()
     )
     # TODO: Why does "table" overwrite other rules when executes in the same run?
-    wikitext_complex =(
+    wikitext_complex = (
         # block quote:
         # https://tiddlywiki.com/static/Block%2520Quotes%2520in%2520WikiText.html
         multiline_quote()

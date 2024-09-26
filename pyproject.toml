@@ -18,7 +18,6 @@ extra_checks = true
 disable_error_code = "attr-defined"
 [[tool.mypy.overrides]]
 module = [
-    "bbcode",
     "enlighten",
     "frontmatter",
     "puremagic",
