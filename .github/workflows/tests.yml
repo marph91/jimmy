@@ -21,6 +21,6 @@ jobs:
       - name: Install pip dependencies
         run: pip install -r requirements/requirements-dev.txt
       - name: install optional system depencencies
-        run: apt install -y asciidoctor
+        run: sudo apt install -y asciidoctor
       - name: Run tests
         run: ./test.sh
