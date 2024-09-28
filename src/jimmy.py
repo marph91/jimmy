@@ -49,7 +49,7 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs: list[Path], format_: str, output_folder):
+def convert_all_inputs(inputs: list[Path], format_: str, output_folder: Path):
     """
     Convert the input data to an intermediate representation
     that can be used by the importer later.
@@ -107,7 +107,7 @@ def jimmy(config) -> common.Stats:
         print(get_tree(root_notebooks, Tree("Note Tree Filtered")))
 
     LOGGER.info("Start writing to file system")
-    progress_bars = stats.create_progress_bars()
+    progress_bars = stats.create_progress_bars(config.no_progress_bars)
     for note_tree in root_notebooks:
         file_system_importer = importer.FilesystemImporter(progress_bars, config)
         file_system_importer.import_notebook(note_tree)

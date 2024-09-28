@@ -74,6 +74,11 @@ def main():
         choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
         help="Create a log file next to the executable.",
     )
+    parser.add_argument(
+        "--no-progress-bar",
+        action="store_false",
+        help="Disable the progress bar. Useful for tests.",
+    )
 
     filters = parser.add_mutually_exclusive_group()
     filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")

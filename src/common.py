@@ -1,5 +1,6 @@
 """Common functions."""
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 import datetime as dt
 import logging
@@ -61,6 +62,11 @@ def create_unique_title() -> str:
 ###########################################################
 
 
+class CounterMock:  # pylint: disable=too-few-public-methods
+    def update(self, *_):
+        pass
+
+
 @dataclass
 class Stats:
     notebooks: int = 0
@@ -69,7 +75,9 @@ class Stats:
     tags: int = 0
     note_links: int = 0
 
-    def create_progress_bars(self) -> dict:
+    def create_progress_bars(self, no_progress_bars: bool) -> dict:
+        if no_progress_bars:
+            return defaultdict(CounterMock)
         manager = enlighten.get_manager()
         common = {
             "bar_format": "{desc:11s}{percentage:3.0f}%|{bar}| "
