@@ -110,3 +110,6 @@ class Notebook:
     child_notes: list[Note] = field(default_factory=list)
     original_id: str | None = None
     path: Path | None = None
+
+    def is_empty(self) -> bool:
+        return not self.child_notebooks and not self.child_notes

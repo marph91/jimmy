@@ -58,8 +58,12 @@ class Converter(converter.BaseConverter):
 
             if item.is_dir():
                 child_notebook = imf.Notebook(title, original_id=id_)
-                parent_notebook.child_notebooks.append(child_notebook)
                 self.convert_directory(child_notebook)
+                # It can happen that the folder only contains resources.
+                # They are added to the note one level higher with the same name.
+                # In this case, the notebook is no longer of use.
+                if not child_notebook.is_empty():
+                    parent_notebook.child_notebooks.append(child_notebook)
                 continue
 
             self.logger.debug(f'Converting note "{title}"')
