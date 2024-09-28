@@ -47,7 +47,7 @@ def streamline_html(content_html: str) -> str:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".nsx", ".zip"]
+    accepted_extensions = [".nsx"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
