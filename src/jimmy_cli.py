@@ -75,9 +75,9 @@ def main():
         help="Create a log file next to the executable.",
     )
     parser.add_argument(
-        "--no-progress-bar",
+        "--no-progress-bars",
         action="store_false",
-        help="Disable the progress bar. Useful for tests.",
+        help="Disable the progress bars. Useful for tests.",
     )
 
     filters = parser.add_mutually_exclusive_group()
