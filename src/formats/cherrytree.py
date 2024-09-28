@@ -3,7 +3,6 @@
 import base64
 import datetime as dt
 from pathlib import Path
-import uuid
 import xml.etree.ElementTree as ET  # noqa: N817
 
 import common
@@ -150,7 +149,7 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     suffix = "" if original_name is None else Path(original_name).suffix
 
     # Use always the uuid to avoid name clashes.
-    temp_filename = (resource_folder / str(uuid.uuid4())).with_suffix(suffix)
+    temp_filename = (resource_folder / common.unique_title()).with_suffix(suffix)
     temp_filename.write_bytes(base64.b64decode(node.text))
 
     # assemble the markdown

@@ -46,7 +46,7 @@ def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
     """
     safe_name = path if isinstance(path, str) else path.name
     if safe_name == "":
-        return common.create_unique_title()
+        return common.unique_title()
 
     # https://stackoverflow.com/a/31976060
     match system:
@@ -172,7 +172,7 @@ class FilesystemImporter:
 
             # Don't create multiple resources for the same file.
             # Cache the original file paths and their corresponding ID.
-            if not resource.path.is_file():
+            if not resource.path.is_file() and resource.filename.is_file():
                 shutil.copy(resource.filename, resource.path)
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
             resource_markdown = (

@@ -5,7 +5,6 @@ import datetime as dt
 from pathlib import Path
 import json
 import re
-import uuid
 
 import pyparsing as pp
 
@@ -342,9 +341,9 @@ class Converter(converter.BaseConverter):
             ):
                 if (text_base64 := note_tiddlywiki.get("text")) is not None:
                     resource_title = note_tiddlywiki.get("alt-text", title)
-                    temp_filename = (resource_folder / str(uuid.uuid4())).with_suffix(
-                        Path(title).suffix
-                    )
+                    temp_filename = (
+                        resource_folder / common.unique_title()
+                    ).with_suffix(Path(title).suffix)
                     temp_filename.write_bytes(base64.b64decode(text_base64))
                     body = f"![{resource_title}]({temp_filename})"
                     resources.append(imf.Resource(temp_filename, body, resource_title))

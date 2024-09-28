@@ -6,6 +6,7 @@ import datetime as dt
 import logging
 from pathlib import Path
 import pkgutil
+import random
 import re
 import tarfile
 import tempfile
@@ -53,8 +54,9 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
             target[target_key] = value
 
 
-def create_unique_title() -> str:
-    return f"unnamed_{uuid.uuid4().hex}"
+def unique_title() -> str:
+    """Create a pseudorandom unique title."""
+    return f"unnamed_{uuid.UUID(int=random.getrandbits(128), version=4).hex}"
 
 
 ###########################################################
