@@ -191,6 +191,9 @@ class Converter(converter.BaseConverter):
                         f"parent: {root_notebook.title}"
                     )
                     self.convert_to_markdown(child, new_root_notebook)
+                    if new_root_notebook.is_empty():
+                        # Delete the notebook if it's empty.
+                        del root_notebook.child_notebooks[-1]
                 case "codebox":
                     language = child.attrib.get("syntax_highlighting", "")
                     note_body += f"\n```{language}\n{child.text}\n```\n"
@@ -238,7 +241,11 @@ class Converter(converter.BaseConverter):
             note_imf.created = dt.datetime.utcfromtimestamp(int(created_time))
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
             note_imf.updated = dt.datetime.utcfromtimestamp(int(updated_time))
-        root_notebook.child_notes.append(note_imf)
+
+        # If the cherrytree node is only used to contain children (i. e. a folder),
+        # don't create a superfluous empty note.
+        if not note_imf.is_empty():
+            root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         self.root_path = common.get_temp_folder()

@@ -96,6 +96,9 @@ class Note:
         self.created = dt.datetime.utcfromtimestamp(file_.stat().st_ctime)
         self.updated = dt.datetime.utcfromtimestamp(file_.stat().st_mtime)
 
+    def is_empty(self) -> bool:
+        return not self.body.strip() and not self.tags and not self.resources
+
 
 @dataclass
 class Notebook:
