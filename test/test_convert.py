@@ -20,6 +20,22 @@ class EndToEnd(unittest.TestCase):
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
 
+        # mock a argparse namespace
+        # https://stackoverflow.com/a/51197422/7410886
+        self.config = SimpleNamespace(
+            format=None,
+            frontmatter=None,
+            global_resource_folder=None,
+            print_tree=False,
+            exclude_notes=None,
+            exclude_notes_with_tags=None,
+            exclude_tags=None,
+            include_notes=None,
+            include_notes_with_tags=None,
+            include_tags=None,
+            no_progress_bars=True,
+        )
+
     def assert_dir_trees_equal(self, dir1: Path, dir2: Path):
         """Check that two directories are equal, including file contents."""
         self.assertTrue(dir1.exists(), dir1)
@@ -112,22 +128,10 @@ class EndToEnd(unittest.TestCase):
         shutil.rmtree(test_data_output, ignore_errors=True)
         reference_data = Path("test/data/reference_data") / test_input[0].parent
 
-        config = SimpleNamespace(
-            input=test_data,
-            format=test_input[0].parts[0],
-            output_folder=test_data_output,
-            frontmatter=None,
-            global_resource_folder=None,
-            print_tree=False,
-            exclude_notes=None,
-            exclude_notes_with_tags=None,
-            exclude_tags=None,
-            include_notes=None,
-            include_notes_with_tags=None,
-            include_tags=None,
-            no_progress_bars=True,
-        )
-        jimmy.jimmy(config)
+        self.config.input = test_data
+        self.config.format = test_input[0].parts[0]
+        self.config.output_folder = test_data_output
+        jimmy.jimmy(self.config)
 
         # Skip only here to catch potential errors during conversion.
         if not reference_data.exists():
@@ -137,11 +141,11 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
-            ("single_folder", ["default_format/arbitrary_folder"]),
-            ("multiple_folders", ["default_format/arbitrary_folder"] * 2),
-            ("single_file", ["default_format/arbitrary_folder/plaintext.txt"]),
-            ("multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2),
-            ("markdown_file", ["default_format/arbitrary_folder/sample.md"]),
+            ["single_folder", ["default_format/arbitrary_folder"]],
+            ["multiple_folders", ["default_format/arbitrary_folder"] * 2],
+            ["single_file", ["default_format/arbitrary_folder/plaintext.txt"]],
+            ["multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2],
+            ["markdown_file", ["default_format/arbitrary_folder/sample.md"]],
         ]
     )
     def test_default_format(self, test_name, test_input):
@@ -155,22 +159,9 @@ class EndToEnd(unittest.TestCase):
         # separate folder for each input
         reference_data = Path("test/data/reference_data/default_format") / test_name
 
-        config = SimpleNamespace(
-            input=test_data,
-            format=None,
-            output_folder=test_data_output,
-            frontmatter=None,
-            global_resource_folder=None,
-            print_tree=False,
-            exclude_notes=None,
-            exclude_notes_with_tags=None,
-            exclude_tags=None,
-            include_notes=None,
-            include_notes_with_tags=None,
-            include_tags=None,
-            no_progress_bars=True,
-        )
-        jimmy.jimmy(config)
+        self.config.input = test_data
+        self.config.output_folder = test_data_output
+        jimmy.jimmy(self.config)
 
         if len(test_input) == 1:
             self.assert_dir_trees_equal(test_data_output, reference_data)
@@ -181,3 +172,21 @@ class EndToEnd(unittest.TestCase):
                 )
                 reference = reference_data.parent / (reference_data.name + f" {index}")
                 self.assert_dir_trees_equal(actual_data, reference)
+
+    @parameterized.expand(["all", "joplin", "obsidian"])
+    def test_frontmatter(self, frontmatter):
+        """Test the frontmatter generation."""
+
+        test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
+        test_data_output = Path("tmp_output/frontmatter") / frontmatter
+        shutil.rmtree(test_data_output, ignore_errors=True)
+        # separate folder for each input
+        reference_data = Path("test/data/reference_data/frontmatter") / frontmatter
+
+        self.config.input = test_data
+        self.config.format = "joplin"
+        self.config.output_folder = test_data_output
+        self.config.frontmatter = frontmatter
+        jimmy.jimmy(self.config)
+
+        self.assert_dir_trees_equal(test_data_output, reference_data)
