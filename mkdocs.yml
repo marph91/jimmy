@@ -59,6 +59,7 @@ nav:
     - Dynalist: formats/dynalist.md
     - Facebook: formats/facebook.md
     - FuseBase: formats/fusebase.md
+    - Google Docs: formats/google_docs.md
     - Google Keep: formats/google_keep.md
     - Joplin: formats/joplin.md
     - jrnl: formats/jrnl.md

@@ -10,7 +10,7 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip", ".tgz"]
+    accepted_extensions = [".tgz", ".zip"]
 
     def prepare_input(self, input_: Path) -> Path:
         match input_.suffix.lower():

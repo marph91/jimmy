@@ -26,15 +26,16 @@ If this app is useful for you, feel free to star it on [github](https://github.c
 
 ```mermaid
 flowchart LR
-    A[App 1] -->|Backup| D
-    B[App 2] -->|Export| D
-    C[Filesystem] --> D
-    D(ZIP archive/JSON/folder) --> E
-    E{jimmy} --> F(Markdown + Frontmatter)
-    F -->|Import| G[Joplin]
-    F -->|Import| H[Obsidian]
-    F --> I[...]
-    F --> J[Editor, e. g. VSCode]
+    A[App 1] -->|Backup| M
+    B[App 2] -->|Export| M
+    C[...] --> M
+    D[Filesystem] --> M
+    M(ZIP archive/JSON/Folder) --> N
+    N{jimmy} --> O(Markdown + Frontmatter)
+    O -->|Import| P[Joplin]
+    O -->|Import| Q[Obsidian]
+    O --> R[...]
+    O --> S[Editor, e. g. VSCode]
 ```
 
 1. Export/backup notes from your note application

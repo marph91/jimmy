@@ -86,6 +86,7 @@ class EndToEnd(unittest.TestCase):
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
             [["dynalist/test_1/dynalist-backup-2024-04-12.zip"]],
+            [["google_docs/test_1/takeout-20240929T124909Z-001.zip"]],
             [["google_keep/test_1/takeout-20240401T160556Z-001.tgz"]],
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
             [["joplin/test_1/29_04_2024.jex"]],
