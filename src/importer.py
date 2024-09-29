@@ -17,31 +17,30 @@ import intermediate_format as imf
 
 
 LOGGER = logging.getLogger("jimmy")
-SYSTEM = platform.system()
 
 
-def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
+def safe_path(path: Path | str) -> Path | str:
     r"""
     Return a safe version of the provided path or string.
-    Only the last part is considered if a pth is provided.
+    Only the last part is considered if a path is provided.
 
-    >>> str(safe_path(Path("a/."), "Linux"))
+    >>> str(safe_path(Path("a/.")))
     'a'
-    >>> str(safe_path(Path("ab\x00c"), "Linux"))
+    >>> str(safe_path(Path("ab\x00c")))
     'ab_c'
-    >>> str(safe_path(Path("CON"), "Windows"))
+    >>> str(safe_path(Path("CON")))
     'CON_'
-    >>> str(safe_path(Path("LPT7"), "Windows"))
+    >>> str(safe_path(Path("LPT7")))
     'LPT7_'
-    >>> str(safe_path(Path("bc."), "Windows"))
+    >>> str(safe_path(Path("bc.")))
     'bc_'
-    >>> safe_path("b:c", "Windows")
+    >>> safe_path("b:c")
     'b_c'
-    >>> str(safe_path(Path("b*c"), "Windows"))
+    >>> str(safe_path(Path("b*c")))
     'b_c'
-    >>> safe_path("a/b/c", "Windows")
+    >>> safe_path("a/b/c")
     'a_b_c'
-    >>> safe_path("", "Windows")  # doctest:+ELLIPSIS
+    >>> safe_path("")  # doctest:+ELLIPSIS
     'unnamed_...'
     """
     safe_name = path if isinstance(path, str) else path.name
@@ -49,38 +48,35 @@ def safe_path(path: Path | str, system: str = SYSTEM) -> Path | str:
         return common.unique_title()
 
     # https://stackoverflow.com/a/31976060
-    match system:
-        case "Windows":
-            # fmt: off
-            forbidden_chars = [
-                "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
-            ] + [chr(value) for value in range(32)]
-            # fmt: on
-            for char in forbidden_chars:
-                safe_name = safe_name.replace(char, "_")
+    # Windows restrictions
+    # fmt: off
+    forbidden_chars = [
+        "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
+    ] + [chr(value) for value in range(32)]
+    # fmt: on
+    for char in forbidden_chars:
+        safe_name = safe_name.replace(char, "_")
 
-            forbidden_names = (
-                ["CON", "PRN", "AUX", "NUL"]
-                + [f"COM{i}" for i in range(1, 10)]
-                + [f"LPT{i}" for i in range(1, 10)]
-            )
-            if safe_name in forbidden_names:
-                safe_name += "_"
+    forbidden_names = (
+        ["CON", "PRN", "AUX", "NUL"]
+        + [f"COM{i}" for i in range(1, 10)]
+        + [f"LPT{i}" for i in range(1, 10)]
+    )
+    if safe_name in forbidden_names:
+        safe_name += "_"
 
-            forbidden_last_chars = [" ", "."]
-            if safe_name[-1] in forbidden_last_chars:
-                safe_name = safe_name[:-1] + "_"
-        case "Linux" | "Darwin":
-            # OSX may allow more chars.
-            forbidden_chars = ["/", "\x00"]
-            for char in forbidden_chars:
-                safe_name = safe_name.replace(char, "_")
+    forbidden_last_chars = [" ", "."]
+    if safe_name[-1] in forbidden_last_chars:
+        safe_name = safe_name[:-1] + "_"
 
-            forbidden_names = [".", ".."]
-            if safe_name in forbidden_names:
-                safe_name += "_"
-        case _:
-            LOGGER.warning(f"Unsupported system: {system}")
+    # Linux and MacOS restrictions
+    forbidden_chars = ["/", "\x00"]
+    for char in forbidden_chars:
+        safe_name = safe_name.replace(char, "_")
+
+    forbidden_names = [".", ".."]
+    if safe_name in forbidden_names:
+        safe_name += "_"
 
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
