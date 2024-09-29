@@ -3,6 +3,7 @@
 from collections import defaultdict
 import datetime as dt
 import enum
+import math
 from pathlib import Path
 
 import common
@@ -79,28 +80,6 @@ class Converter(converter.BaseConverter):
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
                 title, body = common.split_h1_title_from_body(markdown)
-                # # TODO: Not represented in frontmatter.
-                # common.try_transfer_dicts(
-                #     metadata_json,
-                #     data,
-                #     [
-                #         "is_conflict",
-                #         "author",
-                #         "source_url",
-                #         "source",
-                #         "application_data",
-                #         "order",
-                #         "encryption_cipher_text",
-                #         "encryption_applied",
-                #         "markup_language",
-                #         "is_shared",
-                #         "share_id",
-                #         "conflict_original_id",
-                #         "master_key_id",
-                #         "user_data",
-                #         "deleted_time",
-                #     ],
-                # )
                 note_imf = imf.Note(
                     title.strip(),
                     body.strip(),
@@ -112,13 +91,16 @@ class Converter(converter.BaseConverter):
                     #     int(metadata_json.get("todo_completed", False))
                     # ),
                     # due=int(metadata_json.get("todo_due", 0)),
-                    author=metadata_json.get("author"),
+                    author=metadata_json.get("author") or None,
                     source_application=self.format,
                     original_id=metadata_json["id"],
                 )
+                # not set is exported as 0.0
                 for key in ("latitude", "longitude", "altitude"):
-                    if (val := metadata_json.get(key)) is not None:
-                        setattr(note_imf, key, float(val))
+                    if (val := metadata_json.get(key)) is not None and not math.isclose(
+                        val_float := float(val), 0.0
+                    ):
+                        setattr(note_imf, key, val_float)
                 parent_id_note_map.append((metadata_json["parent_id"], note_imf))
             elif type_ == ItemType.FOLDER:
                 parent_id_notebook_map.append(

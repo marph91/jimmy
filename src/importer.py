@@ -4,7 +4,6 @@ import dataclasses
 import logging
 import os.path
 from pathlib import Path
-import platform
 import re
 import shutil
 import urllib.parse
