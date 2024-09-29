@@ -88,6 +88,7 @@ class Converter(converter.BaseConverter):
             title = note_title.text
         else:
             title = body.split("\n", 1)[0]
+        self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title, body, tags=[imf.Tag(tag) for tag in tags], note_links=note_links
         )

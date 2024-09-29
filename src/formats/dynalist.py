@@ -46,6 +46,8 @@ class Converter(converter.BaseConverter):
                 # opml is supported by pandoc, but the import is not working properly.
                 if item.suffix.lower() != ".txt":
                     continue
+                title = item.stem
+                self.logger.debug(f'Converting note "{title}"')
                 body = item.read_text(encoding="utf-8")
 
                 resources, note_links = handle_markdown_links(body, self.root_path)
@@ -53,7 +55,7 @@ class Converter(converter.BaseConverter):
 
                 parent.child_notes.append(
                     imf.Note(
-                        item.stem,
+                        title,
                         body,
                         source_application=self.format,
                         tags=[imf.Tag(tag) for tag in tags],

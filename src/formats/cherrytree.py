@@ -169,7 +169,7 @@ class Converter(converter.BaseConverter):
     def convert_to_markdown(self, node, root_notebook):
         # TODO
         # pylint: disable=too-many-locals
-        note_name = node.attrib.get("name", "")
+        title = node.attrib.get("name", "")
 
         new_root_notebook = None  # only needed if there are sub notes
         resources = []
@@ -184,7 +184,7 @@ class Converter(converter.BaseConverter):
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
-                        new_root_notebook = imf.Notebook(note_name)
+                        new_root_notebook = imf.Notebook(title)
                         root_notebook.child_notebooks.append(new_root_notebook)
                     self.logger.debug(
                         f"new notebook: {new_root_notebook.title}, "
@@ -217,6 +217,8 @@ class Converter(converter.BaseConverter):
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 
+        self.logger.debug(f'Converting note "{title}", parent "{root_notebook.title}"')
+
         tags = []
         # cherrytree bookmark -> tag
         unique_id = node.attrib["unique_id"]
@@ -225,10 +227,8 @@ class Converter(converter.BaseConverter):
         if tags_str := node.attrib.get("tags", ""):
             tags.extend(tags_str.strip().split(" "))
 
-        self.logger.debug(f"new note: {note_name}, parent: {root_notebook.title}")
-
         note_imf = imf.Note(
-            note_name,
+            title,
             note_body,
             source_application=self.format,
             tags=[imf.Tag(tag) for tag in tags],

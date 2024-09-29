@@ -24,6 +24,7 @@ class Converter(converter.BaseConverter):
         for note_simplenote in input_json["activeNotes"]:
             # title is the first line
             title, body = common.split_h1_title_from_body(note_simplenote["content"])
+            self.logger.debug(f'Converting note "{title}"')
 
             note_links = []
             for link in common.get_markdown_links(body):

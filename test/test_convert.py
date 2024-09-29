@@ -17,6 +17,8 @@ def name_func(testcase_func, param_num, param):
 
 class EndToEnd(unittest.TestCase):
     def setUp(self):
+        jimmy.setup_logging(False, "DEBUG")
+
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
 

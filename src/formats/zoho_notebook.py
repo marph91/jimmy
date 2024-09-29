@@ -85,6 +85,9 @@ class Converter(converter.BaseConverter):
             for key, value in soup.body.attrs.items():
                 metadata[key] = json.loads(value)
 
+        title = metadata["data-notecard"]["name"]
+        self.logger.debug(f'Converting note "{title}"')
+
         # get or find parent notebook
         # Assume that notebooks can't be nested.
         notebook_imf = imf.Notebook(
@@ -147,7 +150,7 @@ class Converter(converter.BaseConverter):
 
         # create note
         note_imf = imf.Note(
-            metadata["data-notecard"]["name"],
+            title,
             body,
             created=dt.datetime.fromisoformat(
                 metadata["data-notecard"]["created_date"]

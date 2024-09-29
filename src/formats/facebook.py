@@ -115,6 +115,7 @@ class Converter(converter.BaseConverter):
                 post_title = (
                     f"{timestamp_to_date_str(post['timestamp'])}: {post_body[:80]}"
                 )
+                self.logger.debug(f'Converting note "{post_title}"')
 
                 att_body, att_metadata = self.handle_post_attachments(
                     post.get("attachments", [])

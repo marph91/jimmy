@@ -99,11 +99,13 @@ class Converter(converter.BaseConverter):
         note_tag_map = self.parse_tags()
 
         for note_qownnotes in file_or_folder.glob("*.md"):
+            title = note_qownnotes.stem
+            self.logger.debug(f'Converting note "{title}"')
             note_body = note_qownnotes.read_text(encoding="utf-8")
 
             resources, note_links = self.handle_markdown_links(note_body)
             note_imf = imf.Note(
-                note_qownnotes.stem,
+                title,
                 "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
                 source_application=self.format,
                 tags=note_tag_map.get(note_qownnotes.stem, []),

@@ -31,6 +31,9 @@ class Converter(converter.BaseConverter):
         for contact in vobject.readComponents(
             file_or_folder.read_text(encoding="utf-8")
         ):
+            title = contact.fn.value
+            self.logger.debug(f'Converting note "{title}"')
+
             body = []
 
             for key, value in contact.contents.items():

@@ -68,6 +68,8 @@ class Converter(converter.BaseConverter):
             if item.is_file():
                 if item.suffix.lower() != ".md":
                     continue
+                title = item.stem
+                self.logger.debug(f'Converting note "{title}"')
                 note_links = []
                 resources = []
                 body = item.read_text(encoding="utf-8")
@@ -96,7 +98,7 @@ class Converter(converter.BaseConverter):
 
                 parent.child_notes.append(
                     imf.Note(
-                        item.stem,
+                        title,
                         body,
                         source_application=self.format,
                         tags=[imf.Tag(tag) for tag in inline_tags + frontmatter_tags],

@@ -13,6 +13,8 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         for file_ in file_or_folder.rglob("*.zip"):
+            title = file_.stem
+            self.logger.debug(f'Converting note "{title}"')
             with zipfile.ZipFile(file_) as zip_ref:
                 # HTML note seems to have the name "note.html" always
                 html_notes = [
@@ -25,7 +27,7 @@ class Converter(converter.BaseConverter):
                         note_body_html = zip_note.read().decode("UTF-8")
                     note_body_markdown = common.markup_to_markdown(note_body_html)
                     note_imf = imf.Note(
-                        file_.stem,
+                        title,
                         note_body_markdown.strip(),
                         source_application=self.format,
                     )

@@ -45,13 +45,15 @@ class Converter(converter.BaseConverter):
         for item in input_json["items"]:
             if item["content_type"] != "Note" or item["deleted"]:
                 continue
+            title = item["content"]["title"]
+            self.logger.debug(f'Converting note "{title}"')
 
             tags = note_id_tag_map.get(item["uuid"], [])
             if item["content"].get("starred", False):
                 tags.append(imf.Tag("standard_notes-starred"))
 
             note_imf = imf.Note(
-                item["content"]["title"],
+                title,
                 # TODO: "noteType" is ignored for now.
                 item["content"]["text"],
                 created=dt.datetime.fromisoformat(item["created_at"]),

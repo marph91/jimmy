@@ -80,6 +80,7 @@ class Converter(converter.BaseConverter):
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
                 title, body = common.split_h1_title_from_body(markdown)
+                self.logger.debug(f'Converting note "{title}"')
                 note_imf = imf.Note(
                     title.strip(),
                     body.strip(),

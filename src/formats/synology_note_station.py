@@ -176,6 +176,8 @@ class Converter(converter.BaseConverter):
                 if note["parent_id"].rsplit("_")[-1] == "#00000000":
                     self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
                     continue
+                title = note["title"]
+                self.logger.debug(f'Converting note "{title}"')
 
                 # resources / attachments
                 resources = self.map_resources_by_hash(note)
@@ -194,7 +196,7 @@ class Converter(converter.BaseConverter):
                     body = ""
 
                 note_imf = imf.Note(
-                    note["title"],
+                    title,
                     body,
                     created=dt.datetime.utcfromtimestamp(note["ctime"]),
                     updated=dt.datetime.utcfromtimestamp(note["mtime"]),

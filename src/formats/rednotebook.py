@@ -63,6 +63,7 @@ class Converter(converter.BaseConverter):
             # see: https://rednotebook.app/help.html#toc38
             note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
             for day, data in note_dict.items():
+                self.logger.debug(f'Converting note "{day}"')
                 # TODO: Could be done with https://pypi.org/project/txt2tags/
                 # TODO: links are converted, but not correctly
                 body = common.markup_to_markdown(data["text"], format_="t2t")

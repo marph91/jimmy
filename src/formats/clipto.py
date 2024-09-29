@@ -23,8 +23,10 @@ class Converter(converter.BaseConverter):
             tags.append(imf.Tag(filter_["name"], filter_["uid"]))
 
         for note_clipto in file_dict.get("notes", []):
+            title = note_clipto["title"]
+            self.logger.debug(f'Converting note "{title}"')
             note_imf = imf.Note(
-                note_clipto["title"],
+                title,
                 note_clipto["text"],
                 created=dt.datetime.fromisoformat(note_clipto["created"]),
                 updated=dt.datetime.fromisoformat(note_clipto["updated"]),

@@ -144,6 +144,9 @@ class Converter(converter.BaseConverter):
             # https://stackoverflow.com/a/55400921/7410886
             note_body = note_body.replace("\u200b", "")
 
+            title = guess_title(note_body)
+            self.logger.debug(f'Converting note "{title}"')
+
             tags = entry.get("tags", [])
             if entry.get("starred"):
                 tags.append("day-one-starred")
@@ -155,7 +158,7 @@ class Converter(converter.BaseConverter):
             )
 
             note_imf = imf.Note(
-                guess_title(note_body),
+                title,
                 note_body,  # TODO: Is there any advantage of rich text?
                 created=dt.datetime.fromisoformat(entry["creationDate"]),
                 updated=dt.datetime.fromisoformat(entry["modifiedDate"]),

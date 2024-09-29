@@ -41,8 +41,10 @@ class Converter(converter.BaseConverter):
                         "Only markdown supported for now."
                     )
                     continue
+                title = Path(file_["filename"]).stem
+                self.logger.debug(f'Converting note "{title}"')
                 note_imf = imf.Note(
-                    Path(file_["filename"]).stem,
+                    title,
                     file_["content"],
                     created=dt.datetime.fromisoformat(file_["createdAt"]),
                     updated=dt.datetime.fromisoformat(file_["updatedAt"]),

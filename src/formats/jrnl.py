@@ -15,6 +15,8 @@ class Converter(converter.BaseConverter):
         file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
         for note_jrnl in file_dict.get("entries", []):
             title = f"{note_jrnl['date']} {note_jrnl['time']} {note_jrnl['title']}"
+            self.logger.debug(f'Converting note "{title}"')
+
             unix_time = dt.datetime.fromisoformat(
                 f"{note_jrnl['date']}T{note_jrnl['time']}"
             )
