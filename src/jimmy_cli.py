@@ -76,7 +76,7 @@ def main():
     )
     parser.add_argument(
         "--no-progress-bars",
-        action="store_false",
+        action="store_true",
         help="Disable the progress bars. Useful for tests.",
     )
 
