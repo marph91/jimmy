@@ -66,6 +66,8 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Reor](https://github.com/reorproject/reor) |     |     |
 | [Rightnote](https://www.bauerapps.com/rightnote/) |     |     |
 | [Roam](https://roamresearch.com/) | [format doc](https://github.com/obsidianmd/obsidian-importer/blob/master/src/formats/roam-json.ts) |     |
+| [Samsung Notes](https://www.samsung.com/uk/apps/samsung-notes/) | [script](https://github.com/LucasMatuszewski/snb2md-recursive) | Samsung only |
+https://github.com/LucasMatuszewski/snb2md-recursive
 | [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) |     |
 | [Signal](https://signal.org/de/) |     | https://github.com/marph91/jimmy/issues/8 |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
