@@ -95,6 +95,7 @@ class EndToEnd(unittest.TestCase):
             [["jrnl/test_1/myjournal.json"]],
             [["nimbus_note/test_1/Food"]],
             [["notion/test_1/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
+            [["notion/test_2/export-testexport-nofolders.zip"]],
             [["obsidian/test_1"]],
             [["qownnotes/test_1"]],
             [["rednotebook/test_1/data"]],
