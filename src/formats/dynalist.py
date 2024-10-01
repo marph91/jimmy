@@ -29,16 +29,10 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_)
-
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
         self.convert_folder(self.root_path, self.root_notebook)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        assert self.root_path is not None  # for mypy
-
         for item in folder.iterdir():
             if item.is_file():
                 # We get a zip with opml and txt. Only advantage of opml over txt is

@@ -1,5 +1,6 @@
 """Provides the base class for all converters."""
 
+import abc
 import logging
 from pathlib import Path
 import subprocess
@@ -10,7 +11,7 @@ import common
 import intermediate_format as imf
 
 
-class BaseConverter:
+class BaseConverter(abc.ABC):
     accepted_extensions: list[str] | None = None
     accept_folder = False
 
@@ -18,8 +19,22 @@ class BaseConverter:
         self.logger = logging.getLogger("jimmy")
         self.format = "Jimmy" if format_ is None else format_
         self.root_notebook: imf.Notebook
-        self.root_path: Path | None = None
+        self.root_path: Path
         self.output_folder = output_folder
+
+    def prepare_input(self, input_: Path) -> Path:
+        """Prepare the input for further processing. For example extract an archive."""
+        # define some generally useful conversions
+        match input_.suffix.lower():
+            case ".bear2bk" | ".textpack":
+                temp_folder = common.extract_zip(input_)
+                return common.get_single_child_folder(temp_folder)
+            case ".jex" | ".tgz" | ".tar.gz":
+                return common.extract_tar(input_)
+            case ".nsx" | ".zip" | ".zkn3":
+                return common.extract_zip(input_)
+            case _:  # ".textbundle", folder
+                return input_
 
     def has_valid_format(self, input_: Path) -> bool:
         """Check if the input has a valid format."""
@@ -30,12 +45,8 @@ class BaseConverter:
             return True
         return self.accept_folder and input_.is_dir()
 
-    def prepare_input(self, input_: Path) -> Path:
-        """Prepare the input for further processing. For example extract an archive."""
-        return input_
-
     def convert_multiple(self, files_or_folders: list[Path]) -> list[imf.Notebook]:
-        """This is the main conversion function."""
+        """Main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
@@ -43,6 +54,7 @@ class BaseConverter:
                 self.output_folder.stem + index_suffix
             )
             self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
+            self.root_path = self.prepare_input(file_or_folder)
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
@@ -54,8 +66,20 @@ class BaseConverter:
             notebooks.append(self.root_notebook)
         return notebooks
 
+    @abc.abstractmethod
     def convert(self, file_or_folder: Path):
-        pass
+        """Conversion function for a single input."""
+        # example implementation:
+        # - extract notebooks and their title
+        # - append to the root notebook
+        # - for each note in a notebook:
+        #     - extract the title
+        #     - log the title
+        #     - extract the body and metadata
+        #     - extract resources
+        #     - extract tags
+        #     - extract note links
+        #     - append note to the notebook
 
 
 class DefaultConverter(BaseConverter):

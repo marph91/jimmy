@@ -16,7 +16,6 @@ class Converter(converter.BaseConverter):
         return common.extract_zip(input_, "source/notes.json")
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
         input_json = json.loads(
             (self.root_path / "source/notes.json").read_text(encoding="utf-8")
         )

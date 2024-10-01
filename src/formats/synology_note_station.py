@@ -53,9 +53,6 @@ class Converter(converter.BaseConverter):
         super().__init__(*args, **kwargs)
         self.available_resources = []
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_)
-
     def find_parent_notebook(self, parent_id: str) -> imf.Notebook:
         for notebook in self.root_notebook.child_notebooks:
             if notebook.original_id == parent_id:
@@ -142,8 +139,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
-
-        self.root_path = self.prepare_input(file_or_folder)
         input_json = json.loads(
             (self.root_path / "config.json").read_text(encoding="utf-8")
         )

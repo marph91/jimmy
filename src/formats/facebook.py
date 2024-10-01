@@ -25,9 +25,6 @@ def timestamp_to_date_str(timestamp_s: float | int) -> str:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_)
-
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
         for link in common.get_markdown_links(body):
@@ -76,8 +73,6 @@ class Converter(converter.BaseConverter):
         return post_body, post_metadata
 
     def convert_posts(self):
-        assert self.root_path is not None  # for mypy
-
         posts_files = list(
             (self.root_path / "your_facebook_activity/posts").glob("your_posts*.json")
         )
@@ -191,8 +186,6 @@ class Converter(converter.BaseConverter):
     def convert_messages(self):
         # TODO
         # pylint: disable=too-many-locals
-        assert self.root_path is not None  # for mypy
-
         messages_notebook = imf.Notebook("Messages")
         self.root_notebook.child_notebooks.append(messages_notebook)
 
@@ -261,7 +254,5 @@ class Converter(converter.BaseConverter):
                 )
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
-
         self.convert_posts()
         self.convert_messages()

@@ -14,13 +14,6 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
     accept_folder = True
 
-    def prepare_input(self, input_: Path) -> Path:
-        match input_.suffix.lower():
-            case ".zip":
-                return common.extract_zip(input_)
-            case _:  # data folder:
-                return input_
-
     def handle_markdown_links(self, body: str) -> tuple[str, list]:
         resources = []
         for link in common.get_markdown_links(body):
@@ -52,8 +45,6 @@ class Converter(converter.BaseConverter):
         return body, resources
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
-
         for file_ in self.root_path.glob("*.txt"):
             # TODO: Split year into separate notebook?
             parent_notebook = imf.Notebook(file_.stem)

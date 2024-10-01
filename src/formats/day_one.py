@@ -22,9 +22,6 @@ def guess_title(body):
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_)
-
     def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
         def find_or_create_child_notebook(title, parent_notebook):
             for child_notebook in parent_notebook.child_notebooks:
@@ -50,8 +47,6 @@ class Converter(converter.BaseConverter):
             "photos": {},
             "videos": {},
         }
-
-        assert self.root_path is not None  # for mypy
 
         for entry in entries:
             for json_key_name, actual_map in resource_id_filename_maps.items():
@@ -81,7 +76,6 @@ class Converter(converter.BaseConverter):
         note_links = []
 
         def handle_resource(original_id: str, type_: str):
-            assert self.root_path is not None  # for mypy
             if original_id not in resource_id_filename_map[type_]:
                 self.logger.warning(f"Couldn't find audio with id {original_id}")
                 return
@@ -122,8 +116,6 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
-
         potential_sources = list(self.root_path.glob("*.json"))
         if len(potential_sources) != 1:
             self.logger.warning(

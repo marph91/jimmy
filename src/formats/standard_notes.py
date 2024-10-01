@@ -17,7 +17,6 @@ class Converter(converter.BaseConverter):
         return common.extract_zip(input_, "Standard Notes Backup and Import File.txt")
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
         input_json = json.loads(
             (self.root_path / "Standard Notes Backup and Import File.txt").read_text(
                 encoding="utf-8"

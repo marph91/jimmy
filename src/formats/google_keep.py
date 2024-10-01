@@ -4,7 +4,6 @@ import datetime as dt
 from pathlib import Path
 import json
 
-import common
 import converter
 import intermediate_format as imf
 
@@ -12,16 +11,7 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     accepted_extensions = [".tgz", ".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        match input_.suffix.lower():
-            case ".zip":
-                return common.extract_zip(input_)
-            case _:  # ".tgz":
-                return common.extract_tar(input_)
-
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
-
         # take only the exports in json format
         for file_ in self.root_path.rglob("*.json"):
             note_keep = json.loads(Path(file_).read_text(encoding="utf-8"))

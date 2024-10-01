@@ -18,7 +18,6 @@ class Converter(converter.BaseConverter):
         self.convert_folder(file_or_folder, self.root_notebook)
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
-        assert self.root_path is not None
         note_links = []
         resources = []
         for link in common.get_markdown_links(body):
@@ -38,7 +37,6 @@ class Converter(converter.BaseConverter):
 
     def handle_wikilink_links(self, body: str) -> tuple[list, list]:
         # https://help.obsidian.md/Linking+notes+and+files/Internal+links
-        assert self.root_path is not None
         note_links = []
         resources = []
         for file_prefix, url, description in common.get_wikilink_links(body):
@@ -68,8 +66,6 @@ class Converter(converter.BaseConverter):
         )
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        assert self.root_path is not None  # for mypy
-
         for item in folder.iterdir():
             if item.is_dir() and item.name == ".obsidian":
                 continue  # ignore the internal obsidian folder

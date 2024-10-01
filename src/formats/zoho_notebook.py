@@ -167,8 +167,6 @@ class Converter(converter.BaseConverter):
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
-
         for item in self.root_path.iterdir():
             if item.suffix != ".html" or item.name == "index.html":
                 continue  # we want only the notes

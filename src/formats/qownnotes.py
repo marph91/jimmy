@@ -58,7 +58,6 @@ class Converter(converter.BaseConverter):
 
     def parse_tags(self):
         """Parse tags from the sqlite DB."""
-        assert self.root_path is not None
         db_file = self.root_path / "notes.sqlite"
         if not db_file.is_file():
             self.logger.debug(f"Couldn't find {db_file}")

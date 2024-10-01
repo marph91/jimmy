@@ -178,9 +178,6 @@ def bbcode_to_md(wikitext: str) -> str:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zkn3"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_)
-
     def parse_attributes(self, zettel, note_imf: imf.Note):
         for key, value in zettel.attrib.items():
             match key:
@@ -220,8 +217,6 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         # TODO
         # pylint: disable=too-many-branches,too-many-locals
-        self.root_path = self.prepare_input(file_or_folder)
-
         attachments_folder = file_or_folder.parent / "attachments"
         attachments_available = attachments_folder.is_dir()
         if not attachments_available:

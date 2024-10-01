@@ -38,7 +38,6 @@ class Converter(converter.BaseConverter):
         return temp_folder
 
     def convert_directory(self, parent_notebook):
-        assert self.root_path is not None
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
 
         for item in (self.root_path / relative_parent_path).iterdir():
@@ -104,6 +103,5 @@ class Converter(converter.BaseConverter):
             parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        self.root_path = self.prepare_input(file_or_folder)
         self.root_notebook.original_id = "."
         self.convert_directory(self.root_notebook)

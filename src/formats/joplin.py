@@ -52,13 +52,8 @@ def handle_markdown_links(
 class Converter(converter.BaseConverter):
     accepted_extensions = [".jex"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_tar(input_)
-
-    def parse_data(self, file_or_folder: Path):
+    def parse_data(self):
         # pylint: disable=too-many-locals
-        self.root_path = self.prepare_input(file_or_folder)
-
         parent_id_note_map = []
         parent_id_notebook_map = []
         resource_id_filename_map = {}
@@ -175,7 +170,5 @@ class Converter(converter.BaseConverter):
                 self.root_notebook.child_notebooks.append(notebook)
 
     def convert(self, file_or_folder: Path):
-        data = self.parse_data(file_or_folder)
-        if data is None:
-            return
+        data = self.parse_data()
         self.convert_data(*data)
