@@ -2,7 +2,6 @@
 
 import dataclasses
 import logging
-import os.path
 from pathlib import Path
 import re
 import shutil
@@ -90,8 +89,7 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     '../im%20age.png'
     """
     # TODO: doctest works only on linux. quote seems to be working for windows, though.
-    relative_path = os.path.relpath(target.resolve(), start=source.resolve())
-    return urllib.parse.quote(str(relative_path))
+    return urllib.parse.quote(str(target.relative_to(source, walk_up=True)))
 
 
 OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
