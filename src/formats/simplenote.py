@@ -13,9 +13,6 @@ import markdown_lib
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_, "source/notes.json")
-
     def convert(self, file_or_folder: Path):
         input_json = json.loads(
             (self.root_path / "source/notes.json").read_text(encoding="utf-8")

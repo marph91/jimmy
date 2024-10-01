@@ -13,9 +13,6 @@ import intermediate_format as imf
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def prepare_input(self, input_: Path) -> Path:
-        return common.extract_zip(input_, "Standard Notes Backup and Import File.txt")
-
     def convert(self, file_or_folder: Path):
         input_json = json.loads(
             (self.root_path / "Standard Notes Backup and Import File.txt").read_text(
