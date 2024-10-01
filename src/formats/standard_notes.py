@@ -5,7 +5,6 @@ import datetime as dt
 import json
 from pathlib import Path
 
-import common
 import converter
 import intermediate_format as imf
 
