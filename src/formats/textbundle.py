@@ -3,9 +3,9 @@
 from pathlib import Path
 from urllib.parse import unquote
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 class Converter(converter.BaseConverter):
@@ -13,7 +13,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.text.startswith("^"):
@@ -41,7 +41,7 @@ class Converter(converter.BaseConverter):
             self.logger.debug(f'Converting note "{title}"')
 
             body = file_.read_text(encoding="utf-8")
-            inline_tags = common.get_inline_tags(body, ["#"])
+            inline_tags = markdown_lib.common.get_inline_tags(body, ["#"])
             resources, _ = self.handle_markdown_links(body)
             note_imf = imf.Note(
                 title,

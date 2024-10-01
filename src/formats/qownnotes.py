@@ -6,9 +6,9 @@ import re
 import sqlite3
 from urllib.parse import unquote
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 QOWNNOTE_LINK_RE = re.compile(r"<(.*?.md)>")
@@ -36,7 +36,7 @@ class Converter(converter.BaseConverter):
         # markdown style links
         note_links = []
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.endswith(".md"):

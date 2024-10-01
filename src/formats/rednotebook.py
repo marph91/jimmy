@@ -5,9 +5,9 @@ from urllib.parse import urlparse
 
 import yaml
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 class Converter(converter.BaseConverter):
@@ -16,7 +16,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> tuple[str, list]:
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             # Links are usually enclosed with double quotation marks.
             # They get removed in some cases when parsing. Add them again
             # to get the original string.
@@ -57,7 +57,9 @@ class Converter(converter.BaseConverter):
                 self.logger.debug(f'Converting note "{day}"')
                 # TODO: Could be done with https://pypi.org/project/txt2tags/
                 # TODO: links are converted, but not correctly
-                body = common.markup_to_markdown(data["text"], format_="t2t")
+                body = markdown_lib.common.markup_to_markdown(
+                    data["text"], format_="t2t"
+                )
                 body, resources = self.handle_markdown_links(body)
                 note_imf = imf.Note(
                     str(day),

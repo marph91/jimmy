@@ -5,11 +5,12 @@ from pathlib import Path
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
     note_links = []
-    for link in common.get_markdown_links(body):
+    for link in markdown_lib.common.get_markdown_links(body):
         if link.url.startswith("https://dynalist.io/d"):
             # Most likely internal link. We can only try to match against the name
             # (that might be modified in the meantime).
@@ -45,7 +46,7 @@ class Converter(converter.BaseConverter):
                 body = item.read_text(encoding="utf-8")
 
                 resources, note_links = handle_markdown_links(body, self.root_path)
-                tags = common.get_inline_tags(body, ["#", "@"])
+                tags = markdown_lib.common.get_inline_tags(body, ["#", "@"])
 
                 parent.child_notes.append(
                     imf.Note(

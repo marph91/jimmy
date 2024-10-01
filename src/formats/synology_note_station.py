@@ -10,9 +10,9 @@ import re
 
 from bs4 import BeautifulSoup
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 @dataclass
@@ -65,7 +65,7 @@ class Converter(converter.BaseConverter):
     ) -> tuple[list, list]:
         resources = []
         note_links = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
 
@@ -180,7 +180,9 @@ class Converter(converter.BaseConverter):
                 note_links: list[imf.NoteLink] = []
                 if (content_html := note.get("content")) is not None:
                     content_html = streamline_html(content_html)
-                    content_markdown = common.markup_to_markdown(content_html)
+                    content_markdown = markdown_lib.common.markup_to_markdown(
+                        content_html
+                    )
                     # note title only needed for debug message
                     resources_referenced, note_links = self.handle_markdown_links(
                         note["title"], content_markdown, note_id_title_map

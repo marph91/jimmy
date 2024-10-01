@@ -9,6 +9,7 @@ import pypandoc
 
 import common
 import intermediate_format as imf
+import markdown_lib.common
 
 
 class BaseConverter(abc.ABC):
@@ -89,7 +90,7 @@ class DefaultConverter(BaseConverter):
     def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
         note_links = []
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = path / link.url
@@ -132,7 +133,9 @@ class DefaultConverter(BaseConverter):
                     ]
                 )
                 # fmt: on
-                note_body = common.markup_to_markdown(note_body_html.decode())
+                note_body = markdown_lib.common.markup_to_markdown(
+                    note_body_html.decode()
+                )
                 note_body_splitted = note_body.split("\n")
                 if note_body_splitted[-2].startswith("Last updated "):
                     # Remove unnecessarily added lines if needed.
@@ -140,7 +143,7 @@ class DefaultConverter(BaseConverter):
             case _:
                 note_body = pypandoc.convert_file(
                     file_,
-                    common.PANDOC_OUTPUT_FORMAT,
+                    markdown_lib.common.PANDOC_OUTPUT_FORMAT,
                     # somehow the temp folder is needed to create the resources properly
                     extra_args=[f"--extract-media={common.get_temp_folder()}"],
                 )

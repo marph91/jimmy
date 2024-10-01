@@ -4,9 +4,9 @@ import datetime as dt
 from pathlib import Path
 import json
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 def guess_title(body):
@@ -86,7 +86,7 @@ class Converter(converter.BaseConverter):
                 return
             resources.append(imf.Resource(source_path, str(link), link.text))
 
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("dayone://view?entryId="):

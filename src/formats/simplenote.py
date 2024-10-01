@@ -7,6 +7,7 @@ from pathlib import Path
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 class Converter(converter.BaseConverter):
@@ -22,11 +23,13 @@ class Converter(converter.BaseConverter):
 
         for note_simplenote in input_json["activeNotes"]:
             # title is the first line
-            title, body = common.split_h1_title_from_body(note_simplenote["content"])
+            title, body = markdown_lib.common.split_h1_title_from_body(
+                note_simplenote["content"]
+            )
             self.logger.debug(f'Converting note "{title}"')
 
             note_links = []
-            for link in common.get_markdown_links(body):
+            for link in markdown_lib.common.get_markdown_links(body):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links
                 if link.url.startswith("simplenote://"):

@@ -8,6 +8,7 @@ import frontmatter
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 class Converter(converter.BaseConverter):
@@ -20,7 +21,7 @@ class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         note_links = []
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.endswith(".md"):
@@ -39,7 +40,9 @@ class Converter(converter.BaseConverter):
         # https://help.obsidian.md/Linking+notes+and+files/Internal+links
         note_links = []
         resources = []
-        for file_prefix, url, description in common.get_wikilink_links(body):
+        for file_prefix, url, description in markdown_lib.common.get_wikilink_links(
+            body
+        ):
             alias = "" if description.strip() == "" else f"|{description}"
             original_text = f"{file_prefix}[[{url}{alias}]]"
             if file_prefix:
@@ -79,7 +82,7 @@ class Converter(converter.BaseConverter):
                 resources, note_links = self.handle_links(body)
 
                 # https://help.obsidian.md/Editing+and+formatting/Tags
-                inline_tags = common.get_inline_tags(body, ["#"])
+                inline_tags = markdown_lib.common.get_inline_tags(body, ["#"])
 
                 # frontmatter tags
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties

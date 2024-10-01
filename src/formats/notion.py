@@ -8,6 +8,7 @@ import zipfile
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 class Converter(converter.BaseConverter):
@@ -72,7 +73,7 @@ class Converter(converter.BaseConverter):
             # find links
             resources = []
             note_links = []
-            for link in common.get_markdown_links(body):
+            for link in markdown_lib.common.get_markdown_links(body):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links
                 unquoted_url = unquote(link.url)

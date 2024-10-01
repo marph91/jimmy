@@ -7,6 +7,7 @@ from pathlib import Path
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 def fix_encoding_error(input_str: str) -> str:
@@ -27,7 +28,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:
         resources = []
-        for link in common.get_markdown_links(body):
+        for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = self.root_path / link.url

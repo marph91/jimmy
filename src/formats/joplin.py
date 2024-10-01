@@ -6,9 +6,9 @@ import enum
 import math
 from pathlib import Path
 
-import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 class ItemType(enum.IntEnum):
@@ -36,7 +36,7 @@ def handle_markdown_links(
 ) -> tuple[list, list]:
     note_links = []
     resources = []
-    for link in common.get_markdown_links(body):
+    for link in markdown_lib.common.get_markdown_links(body):
         if link.is_web_link or link.is_mail_link:
             continue  # keep the original links
         resource_path = resource_id_filename_map.get(link.url[2:])
@@ -74,7 +74,7 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                title, body = common.split_h1_title_from_body(markdown)
+                title, body = markdown_lib.common.split_h1_title_from_body(markdown)
                 self.logger.debug(f'Converting note "{title}"')
                 note_imf = imf.Note(
                     title.strip(),

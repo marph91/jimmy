@@ -3,9 +3,9 @@
 from pathlib import Path
 import zipfile
 
-import common
 import converter
 import intermediate_format as imf
+from markdown_lib.common import markup_to_markdown
 
 
 class Converter(converter.BaseConverter):
@@ -25,7 +25,7 @@ class Converter(converter.BaseConverter):
                 for html_note in html_notes:
                     with zip_ref.open(html_note) as zip_note:
                         note_body_html = zip_note.read().decode("UTF-8")
-                    note_body_markdown = common.markup_to_markdown(note_body_html)
+                    note_body_markdown = markup_to_markdown(note_body_html)
                     note_imf = imf.Note(
                         title,
                         note_body_markdown.strip(),

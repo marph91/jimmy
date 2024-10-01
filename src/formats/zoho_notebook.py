@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 def clean_tables(soup):
@@ -55,7 +56,7 @@ class Converter(converter.BaseConverter):
     def parse_links(self, note_body: str):
         resources = []
         note_links = []
-        for link in common.get_markdown_links(note_body):
+        for link in markdown_lib.common.get_markdown_links(note_body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("zohonotebook://"):
@@ -141,7 +142,7 @@ class Converter(converter.BaseConverter):
         if soup.body is not None:
             clean_tables(soup)
             clean_task_lists(soup)
-            body = common.markup_to_markdown(str(soup))
+            body = markdown_lib.common.markup_to_markdown(str(soup))
 
             # resources and internal links
             resources, note_links = self.parse_links(body)

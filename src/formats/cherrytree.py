@@ -8,10 +8,11 @@ import xml.etree.ElementTree as ET  # noqa: N817
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib
 
 
 def convert_table(node):
-    table_md = common.MarkdownTable()
+    table_md = markdown_lib.common.MarkdownTable()
     for row_index, row in enumerate(node):
         assert row.tag == "row"
         columns = []
