@@ -210,7 +210,7 @@ class EndToEnd(unittest.TestCase):
         """Test the attachment folders."""
 
         test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
-        value_safe = str(value).replace("/", "_").replace(":", "_")
+        value_safe = str(value).replace("/", "_").replace(".", "_").replace(":", "_")
         test_data_output = (
             Path("tmp_output/attachment_folder") / f"{folder_option}_{value_safe}"
         )
