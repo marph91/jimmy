@@ -1,7 +1,6 @@
 """Convert cherrytree notes to the intermediate format."""
 
 import base64
-import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
@@ -239,9 +238,9 @@ class Converter(converter.BaseConverter):
         )
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
-            note_imf.created = dt.datetime.utcfromtimestamp(int(created_time))
+            note_imf.created = common.timestamp_to_datetime(int(created_time))
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
-            note_imf.updated = dt.datetime.utcfromtimestamp(int(updated_time))
+            note_imf.updated = common.timestamp_to_datetime(int(updated_time))
 
         # If the cherrytree node is only used to contain children (i. e. a folder),
         # don't create a superfluous empty note.

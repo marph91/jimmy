@@ -168,7 +168,7 @@ def extract_tar(input_: Path) -> Path:
     """Extract a tar file to a new temporary directory."""
     temp_folder = get_temp_folder()
     with tarfile.open(input_) as tar_ref:
-        tar_ref.extractall(temp_folder)
+        tar_ref.extractall(temp_folder, filter="data")
     return temp_folder
 
 
@@ -222,5 +222,5 @@ def date_to_unix_ms(date_: dt.date) -> int:
     )
 
 
-def iso_to_unix_ms(iso_time: str) -> int:
-    return datetime_to_ms(dt.datetime.fromisoformat(iso_time))
+def timestamp_to_datetime(timestamp_s: int | float) -> dt.datetime:
+    return dt.datetime.fromtimestamp(timestamp_s, dt.UTC)

@@ -1,6 +1,5 @@
 """Convert Facebook posts and messages to the intermediate format."""
 
-import datetime as dt
 import json
 from pathlib import Path
 
@@ -20,7 +19,7 @@ def create_markdown_link(is_image: bool, title: str, uri: str) -> str:
 
 
 def timestamp_to_date_str(timestamp_s: float | int) -> str:
-    return dt.datetime.utcfromtimestamp(timestamp_s).strftime("%Y-%m-%d")
+    return common.timestamp_to_datetime(timestamp_s).strftime("%Y-%m-%d")
 
 
 class Converter(converter.BaseConverter):
@@ -86,14 +85,14 @@ class Converter(converter.BaseConverter):
 
         for posts_file in posts_files:
             for post in json.loads(posts_file.read_text(encoding="utf-8")):
-                updated_time = dt.datetime.utcfromtimestamp(post["timestamp"])
+                updated_time = common.timestamp_to_datetime(post["timestamp"])
                 post_body = ""
 
                 for post_datum in post["data"]:
                     for post_data_key, post_data_value in post_datum.items():
                         match post_data_key:
                             case "update_timestamp":
-                                updated_time = dt.datetime.utcfromtimestamp(
+                                updated_time = common.timestamp_to_datetime(
                                     post_data_value
                                 )
                             case "post":
@@ -130,7 +129,7 @@ class Converter(converter.BaseConverter):
                     imf.Note(
                         post_title,
                         post_body,
-                        created=dt.datetime.utcfromtimestamp(post["timestamp"]),
+                        created=common.timestamp_to_datetime(post["timestamp"]),
                         updated=updated_time,
                         source_application=self.format,
                         **att_metadata,

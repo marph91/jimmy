@@ -93,8 +93,8 @@ class Note:
         return self.original_id or self.title
 
     def time_from_file(self, file_: Path):
-        self.created = dt.datetime.utcfromtimestamp(file_.stat().st_ctime)
-        self.updated = dt.datetime.utcfromtimestamp(file_.stat().st_mtime)
+        self.created = common.timestamp_to_datetime(file_.stat().st_ctime)
+        self.updated = common.timestamp_to_datetime(file_.stat().st_mtime)
 
     def is_empty(self) -> bool:
         return not self.body.strip() and not self.tags and not self.resources

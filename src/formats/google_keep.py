@@ -1,9 +1,9 @@
 """Convert Google Keep notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import json
 
+import common
 import converter
 import intermediate_format as imf
 
@@ -53,7 +53,7 @@ class Converter(converter.BaseConverter):
                 resources=resources_keep,
             )
             if (value := note_keep.get("createdTimestampUsec")) is not None:
-                note_imf.created = dt.datetime.utcfromtimestamp(value // (10**6))
+                note_imf.created = common.timestamp_to_datetime(value // (10**6))
             if (value := note_keep.get("userEditedTimestampUsec")) is not None:
-                note_imf.updated = dt.datetime.utcfromtimestamp(value // (10**6))
+                note_imf.updated = common.timestamp_to_datetime(value // (10**6))
             self.root_notebook.child_notes.append(note_imf)
