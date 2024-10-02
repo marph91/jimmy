@@ -21,12 +21,22 @@ def relative_path(path: str | Path) -> Path:
     >>> relative_path("/a")
     Traceback (most recent call last):
     ...
-    argparse.ArgumentTypeError: Please specify a relative output path.
+    argparse.ArgumentTypeError: Please specify a relative path.
+    >>> relative_path("a/b")
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Nested paths are not supported.
+    >>> str(relative_path("a/"))
+    'a'
+    >>> str(relative_path("./a"))
+    'a'
     """
     # https://stackoverflow.com/a/37472037
     path_to_check = Path(path)
     if path_to_check.is_absolute():
-        raise argparse.ArgumentTypeError("Please specify a relative output path.")
+        raise argparse.ArgumentTypeError("Please specify a relative path.")
+    if len(path_to_check.parts) > 1:
+        raise argparse.ArgumentTypeError("Nested paths are not supported.")
     return path_to_check
 
 
@@ -57,6 +67,13 @@ def main():
         type=relative_path,
         help="The resource folder for images, PDF and other data. "
         "Relative to the output folder.",
+    )
+    parser.add_argument(
+        "--local-resource-folder",
+        type=relative_path,
+        help="The resource folder for images, PDF and other data. "
+        "Relative to the location of the corresponding note.",
+        default=Path("."),  # next to the note
     )
     parser.add_argument(
         "--print-tree",

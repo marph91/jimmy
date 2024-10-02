@@ -52,7 +52,7 @@ class BaseConverter(abc.ABC):
         for input_index, file_or_folder in enumerate(files_or_folders):
             index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
             output_folder = self.output_folder.with_name(
-                self.output_folder.stem + index_suffix
+                self.output_folder.name + index_suffix
             )
             self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
             self.root_path = self.prepare_input(file_or_folder)

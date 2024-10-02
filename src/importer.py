@@ -126,13 +126,23 @@ class FilesystemImporter:
     def __init__(self, progress_bars, config):
         self.frontmatter = config.frontmatter
         self.root_path = None
-        self.global_resource_folder = config.global_resource_folder
+        self.global_resource_folder = (
+            None
+            if config.global_resource_folder is None
+            else safe_path(config.global_resource_folder)
+        )
+        self.local_resource_folder = (
+            config.local_resource_folder
+            if config.local_resource_folder == Path(".")
+            else safe_path(config.local_resource_folder)
+        )
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
 
     def import_resources(self, note: imf.Note):
         assert note.path is not None
+        assert self.root_path is not None
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
             resource_title = resource.title or resource.filename.name
@@ -140,7 +150,13 @@ class FilesystemImporter:
             # determine new resource path
             if self.global_resource_folder is None:
                 # local resources (next to the markdown files)
-                resource.path = note.path.parent / safe_path(resource.filename.name)
+                resource_folder = note.path.parent / self.local_resource_folder
+                # TODO: done for each resource in each note
+                if self.local_resource_folder != Path("."):
+                    resource_folder.mkdir(
+                        exist_ok=True, parents=len(self.local_resource_folder.parts) > 1
+                    )
+                resource.path = resource_folder / safe_path(resource.filename.name)
             else:
                 # global resource folder
                 resource.path = (
@@ -259,7 +275,7 @@ class FilesystemImporter:
         if self.root_path is None:
             self.root_path = notebook.path
             if self.global_resource_folder is not None:
-                (self.root_path / safe_path(self.global_resource_folder)).mkdir(
+                (self.root_path / self.global_resource_folder).mkdir(
                     exist_ok=True, parents=True
                 )
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
