@@ -12,7 +12,7 @@
 - ✅ Offline
 - ✅ Open Source
 - ✅ Cross-platform
-- ✅ Standalone (no python or node installation required)
+- ✅ Standalone (no Docker, Python or NodeJS installation required)
 
 ## Installation
 

@@ -50,7 +50,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [MyInfo](https://www.myinfoapp.com/) | [doc](https://www.myinfoapp.com/features) |     |
 | Nixnote/[Nixnote 2](https://github.com/baumgarr/Nixnote2) | - [doc](https://github.com/baumgarr/nixnote2/issues/483) <br>- [thread](https://discourse.joplinapp.org/t/import-from-nixnote/183/7) | [dead](https://github.com/robert7/nixnote2/issues/181) |
 | [Notable](https://notable.app/) | notes stored as Markdown in folder |     |
-| [Notejoy](https://notejoy.com/) | [doc](https://notejoy.com/help/export-notes) (paid only) |     |
+| [Notejoy](https://notejoy.com/) | [doc](https://notejoy.com/help/export-notes) (paid only and to Google Drive only) |     |
 | [Notesnook](https://notesnook.com/) |     | - [unzip code](https://github.com/streetwriters/notesnook/blob/1f0fc83a7c5694eeda17dc70f35d69ca0df26bf2/apps/web/src/utils/compressor.ts#L44-L55) <br>- [Basic plan can only export to text](https://notesnook.com/pricing/) <br>- No attachments without login |
 | [notezilla](https://www.conceptworld.com/Notezilla) | [doc](https://www.conceptworld.com/Notezilla) (csv) | How are nested memoboards/notebooks handled? |
 | [Nuclino](https://www.nuclino.com/) | [doc](https://help.nuclino.com/fb60e6f6-export-a-workspace) |     |
