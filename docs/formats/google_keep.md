@@ -13,3 +13,9 @@ This page describes how to convert notes from Google Keep to Markdown.
     1. `jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep`
     2. `jimmy-cli-linux takeout-20240401T160556Z-001.tgz --format google_keep`
 4. [Import to your app](../import_instructions.md)
+
+## Import Structure
+
+- Each note is converted to a Markdown file.
+- Links, attachments and tags are preserved. 
+- Annotations are appended at the end of a note.
