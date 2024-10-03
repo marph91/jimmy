@@ -2,6 +2,7 @@
 
 import io
 from pathlib import Path
+import shutil
 from urllib.parse import unquote
 import zipfile
 
@@ -31,6 +32,7 @@ class Converter(converter.BaseConverter):
                         nested_zip_filedata = io.BytesIO(nested_zip.read())
                         with zipfile.ZipFile(nested_zip_filedata) as nested_zip_ref:
                             nested_zip_ref.extractall(temp_folder)
+                temp_folder = common.get_single_child_folder(temp_folder)
             elif not any(is_zip):
                 # unusual structure: zipped files
                 # guess that the user extracted the outer zip already
@@ -39,19 +41,32 @@ class Converter(converter.BaseConverter):
                 # unusual structure: zipped files and other files
                 # stop here
                 self.logger.error("Unexpected file formats inside zip.")
-                return
+                return temp_folder
 
-        # remove MacOS backup folder
+        # remove MacOS trash? folder
         shutil.rmtree(temp_folder / "__MACOSX", ignore_errors=True)
 
-        # Flatten folder structure. I. e. move all files to root directory.
-        # https://stackoverflow.com/a/50368037/7410886
-        for item in temp_folder.iterdir():
-            if item.is_dir():
-                for file_ in item.iterdir():
-                    file_.rename(file_.parents[1] / file_.name)
-                item.rmdir()
         return temp_folder
+
+    def handle_markdown_links(self, body: str, item: Path) -> tuple[list, list]:
+        resources = []
+        note_links = []
+        for link in markdown_lib.common.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            unquoted_url = unquote(link.url)
+            if link.url.endswith(".md") or link.url.endswith(".html"):
+                # internal link
+                _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
+                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
+            elif (item.parent / unquoted_url).is_file():
+                # resource
+                resources.append(
+                    imf.Resource(item.parent / unquoted_url, str(link), link.text)
+                )
+            else:
+                self.logger.debug(f'Unhandled link "{link}"')
+        return resources, note_links
 
     def convert_directory(self, parent_notebook):
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
@@ -94,27 +109,7 @@ class Converter(converter.BaseConverter):
                 body = markdown_lib.common.markup_to_markdown(body)
 
             # find links
-            resources = []
-            note_links = []
-            for link in markdown_lib.common.get_markdown_links(body):
-                if link.is_web_link or link.is_mail_link:
-                    continue  # keep the original links
-                unquoted_url = unquote(link.url)
-                if link.url.endswith(".md") or link.url.endswith(".html"):
-                    # internal link
-                    _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
-                    note_links.append(
-                        imf.NoteLink(str(link), linked_note_id, link.text)
-                    )
-                elif (self.root_path / unquoted_url).is_file():
-                    # resource
-                    resources.append(
-                        imf.Resource(
-                            self.root_path / unquoted_url, str(link), link.text
-                        )
-                    )
-                else:
-                    self.logger.debug(f'Unhandled link "{link}"')
+            resources, note_links = self.handle_markdown_links(body, item)
 
             note_imf = imf.Note(
                 title,

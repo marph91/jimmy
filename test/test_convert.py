@@ -99,7 +99,13 @@ class EndToEnd(unittest.TestCase):
             [["jrnl/test_1/myjournal.json"]],
             [["nimbus_note/test_1/Food"]],
             [["notion/test_1/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
-            [["notion/test_2/export-testexport-nofolders.zip"]],
+            [["notion/test_2/testexport-nofolders.zip"]],
+            # unzipped zip, HTML
+            [["notion/test_3/Archive.zip"]],
+            # unzipped zip, HTML
+            [["notion/test_4/cb177660-18fe-45a8-b1dd-b07f44a8af5e_Export.zip"]],
+            # same as test 1, but HTML
+            [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
             [["obsidian/test_1"]],
             [["qownnotes/test_1"]],
             [["rednotebook/test_1/data"]],
