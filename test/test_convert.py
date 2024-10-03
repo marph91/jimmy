@@ -77,6 +77,9 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
+            [["anki/test_1/MEILLEUR_DECK_ANGLAIS_3000.apkg"]],
+            [["anki/test_2/Ukrainian_Prepositions_pictsaudio_ENG-UA__UA-ENG.apkg"]],
+            [["anki/test_3/Hebrew_Alphabet_with_vowels.apkg"]],
             [["bear/test_1/backup.bear2bk"]],
             [["bear/test_2/backup-2.bear2bk"]],
             [["cacher/test_1/cacher-export-202406182304.json"]],

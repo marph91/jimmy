@@ -76,6 +76,10 @@ def safe_path(path: Path | str) -> Path | str:
     if safe_name in forbidden_names:
         safe_name += "_"
 
+    # Limit filename to 200 characters
+    # https://serverfault.com/a/9548
+    safe_name = safe_name[:200]
+
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
 

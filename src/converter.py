@@ -32,7 +32,7 @@ class BaseConverter(abc.ABC):
                 return common.get_single_child_folder(temp_folder)
             case ".jex" | ".tgz" | ".tar.gz":
                 return common.extract_tar(input_)
-            case ".nsx" | ".zip" | ".zkn3":
+            case ".apkg" | ".nsx" | ".zip" | ".zkn3":
                 return common.extract_zip(input_)
             case _:  # ".textbundle", folder
                 return input_
