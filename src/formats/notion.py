@@ -23,11 +23,26 @@ class Converter(converter.BaseConverter):
 
         # unzip nested zip file in notion format
         with zipfile.ZipFile(input_) as zip_ref:
-            for nested_zip_name in zip_ref.namelist():
-                with zip_ref.open(nested_zip_name) as nested_zip:
-                    nested_zip_filedata = io.BytesIO(nested_zip.read())
-                    with zipfile.ZipFile(nested_zip_filedata) as nested_zip_ref:
-                        nested_zip_ref.extractall(temp_folder)
+            is_zip = [f.endswith(".zip") for f in zip_ref.namelist()]
+            if all(is_zip):
+                # usual structure: zip of zips
+                for nested_zip_name in zip_ref.namelist():
+                    with zip_ref.open(nested_zip_name) as nested_zip:
+                        nested_zip_filedata = io.BytesIO(nested_zip.read())
+                        with zipfile.ZipFile(nested_zip_filedata) as nested_zip_ref:
+                            nested_zip_ref.extractall(temp_folder)
+            elif not any(is_zip):
+                # unusual structure: zipped files
+                # guess that the user extracted the outer zip already
+                zip_ref.extractall(temp_folder)
+            else:
+                # unusual structure: zipped files and other files
+                # stop here
+                self.logger.error("Unexpected file formats inside zip.")
+                return
+
+        # remove MacOS backup folder
+        shutil.rmtree(temp_folder / "__MACOSX", ignore_errors=True)
 
         # Flatten folder structure. I. e. move all files to root directory.
         # https://stackoverflow.com/a/50368037/7410886
@@ -42,7 +57,11 @@ class Converter(converter.BaseConverter):
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
 
         for item in (self.root_path / relative_parent_path).iterdir():
-            if item.is_file() and item.suffix.lower() != ".md":
+            if (
+                item.is_file()
+                and item.suffix.lower() not in (".md", ".html")
+                or item.name == "index.html"
+            ):
                 continue
             # id is appended to filename
             title, _ = item.name.rsplit(" ", 1)
@@ -67,8 +86,12 @@ class Converter(converter.BaseConverter):
                 continue
 
             self.logger.debug(f'Converting note "{title}"')
-            # first line is title, second is whitespace
-            body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
+            body = item.read_text(encoding="utf-8")
+            if item.suffix.lower() == ".md":
+                # first line is title, second is whitespace
+                body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
+            else:  # html
+                body = markdown_lib.common.markup_to_markdown(body)
 
             # find links
             resources = []
@@ -77,7 +100,7 @@ class Converter(converter.BaseConverter):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links
                 unquoted_url = unquote(link.url)
-                if link.url.endswith(".md"):
+                if link.url.endswith(".md") or link.url.endswith(".html"):
                     # internal link
                     _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
                     note_links.append(
