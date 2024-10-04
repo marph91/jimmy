@@ -285,7 +285,11 @@ class FilesystemImporter:
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
                 note.path = note.path.with_suffix(note.path.suffix + ".md")
-            self.import_note(note)
+            try:
+                self.import_note(note)
+            except Exception as exc:  # pylint: disable=broad-except
+                LOGGER.error(f'Failed to write note "{note.title}"')
+                LOGGER.debug(exc, exc_info=True)
         for child_notebook in notebook.child_notebooks:
             child_notebook.path = notebook.path / safe_path(child_notebook.title)
             self.import_notebook(child_notebook)
