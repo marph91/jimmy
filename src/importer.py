@@ -16,7 +16,7 @@ import intermediate_format as imf
 LOGGER = logging.getLogger("jimmy")
 
 
-def safe_path(path: Path | str) -> Path | str:
+def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     r"""
     Return a safe version of the provided path or string.
     Only the last part is considered if a path is provided.
@@ -39,6 +39,8 @@ def safe_path(path: Path | str) -> Path | str:
     'a_b_c'
     >>> safe_path("")  # doctest:+ELLIPSIS
     'unnamed_...'
+    >>> safe_path("g" * 50, max_name_length=4)
+    'gggg'
     """
     safe_name = path if isinstance(path, str) else path.name
     if safe_name == "":
@@ -75,9 +77,8 @@ def safe_path(path: Path | str) -> Path | str:
     if safe_name in forbidden_names:
         safe_name += "_"
 
-    # Limit filename to 200 characters
-    # https://serverfault.com/a/9548
-    safe_name = safe_name[:200]
+    # Limit filename length: https://serverfault.com/a/9548
+    safe_name = safe_name[:max_name_length]
 
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
