@@ -106,8 +106,8 @@ class EndToEnd(unittest.TestCase):
             [["notion/test_4/cb177660-18fe-45a8-b1dd-b07f44a8af5e_Export.zip"]],
             # same as test 1, but HTML
             [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
-            [["obsidian/test_1"]],
-            [["qownnotes/test_1"]],
+            [["obsidian/test_1/vault"]],
+            [["qownnotes/test_1/note_folder"]],
             [["rednotebook/test_1/data"]],
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
             [["simplenote/test_1/notes.zip"]],
@@ -116,7 +116,7 @@ class EndToEnd(unittest.TestCase):
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
             [["synology_note_station/test_3/notestation-test-books.nsx"]],
             [["synology_note_station/test_4/test.nsx"]],
-            [["textbundle/test_1/textpack_example/example.textpack"]],
+            [["textbundle/test_1/example.textpack"]],
             [["textbundle/test_2/Bug report in tables_bear.textbundle"]],
             [["textbundle/test_3/Python CHP NOTES.textbundle"]],
             [["textbundle/test_4/Textbundle Example v1.textbundle"]],
@@ -131,19 +131,26 @@ class EndToEnd(unittest.TestCase):
     )
     def test_formats(self, test_input):
         """Test the conversion of custom formats to Markdown."""
-        test_input = [Path(i) for i in test_input]
+        test_input = Path(test_input[0])
+
+        if len(test_input.parts) != 3:
+            self.fail(
+                'Test data should in folder "<format>/test_<index>/<data>". '
+                "Look at the other tests for examples."
+            )
+
         # can be multiple
-        test_data = [Path("test/data/test_data") / i for i in test_input]
+        test_data = [Path("test/data/test_data") / test_input]
         for datum in test_data:
             if not datum.exists():
                 self.skipTest(f"No test data available at {datum}")
 
-        test_data_output = Path("tmp_output") / test_input[0].parent
+        test_data_output = Path("tmp_output") / test_input.parent
         shutil.rmtree(test_data_output, ignore_errors=True)
-        reference_data = Path("test/data/reference_data") / test_input[0].parent
+        reference_data = Path("test/data/reference_data") / test_input.parent
 
         self.config.input = test_data
-        self.config.format = test_input[0].parts[0]
+        self.config.format = test_input.parts[0]
         self.config.output_folder = test_data_output
         jimmy.jimmy(self.config)
 
