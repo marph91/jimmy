@@ -8,7 +8,6 @@ import shutil
 import urllib.parse
 
 import frontmatter
-import puremagic
 
 import common
 import intermediate_format as imf
@@ -177,10 +176,7 @@ class FilesystemImporter:
                 ):
                     resource.path = resource.path.with_suffix(suffix)
                 else:
-                    guessed_suffix = puremagic.from_file(resource.filename)
-                    # regular jpg files seem to be guessed as jfif sometimes
-                    if guessed_suffix == ".jfif":
-                        guessed_suffix = ".jpg"
+                    guessed_suffix = common.guess_suffix(resource.filename)
                     resource.path = resource.path.with_suffix(guessed_suffix)
 
             # Don't create multiple resources for the same file.

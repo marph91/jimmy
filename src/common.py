@@ -31,10 +31,37 @@ def get_available_formats() -> list[str]:
     return [module.name for module in pkgutil.iter_modules(formats.__path__)]
 
 
+def guess_suffix(file_: Path) -> str:
+    """
+    >>> guess_suffix(Path(__file__))
+    '.py'
+    >>> guess_suffix(Path("."))
+    ''
+    >>> guess_suffix(Path("non/existing.txt"))
+    ''
+    """
+    try:
+        guessed_suffix = puremagic.from_file(file_)
+        # regular jpg files seem to be guessed as jfif sometimes
+        if guessed_suffix == ".jfif":
+            guessed_suffix = ".jpg"
+        return guessed_suffix
+    except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
+        return ""
+
+
 def is_image(file_: Path) -> bool:
+    """
+    >>> is_image(Path(__file__))
+    False
+    >>> is_image(Path("."))
+    False
+    >>> is_image(Path("non/existing.txt"))
+    False
+    """
     try:
         return puremagic.from_file(file_, mime=True).startswith("image/")
-    except (FileNotFoundError, puremagic.main.PureError, ValueError):
+    except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
         return False
 
 
