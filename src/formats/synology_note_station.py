@@ -1,8 +1,7 @@
 """Convert Synology Note Station notes to the intermediate format."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import difflib
-import hashlib
 import json
 from pathlib import Path
 import re
@@ -21,8 +20,8 @@ class Attachment:
 
     filename: Path
     md5: str
-    ref: str | None = None
-    title: str | None = None
+    refs: list[str] = field(default_factory=list)
+    titles: list[str] = field(default_factory=list)
 
 
 def streamline_html(content_html: str) -> str:
@@ -89,7 +88,7 @@ class Converter(converter.BaseConverter):
                 # resource
                 # Find resource file by "ref".
                 matched_resources = [
-                    res for res in self.available_resources if res.ref == link.url
+                    res for res in self.available_resources if link.url in res.refs
                 ]
                 if len(matched_resources) != 1:
                     self.logger.debug(
@@ -99,11 +98,12 @@ class Converter(converter.BaseConverter):
                     )
                     continue
                 resource = matched_resources[0]
-                resources.append(
-                    imf.Resource(
-                        resource.filename, str(link), link.text or resource.title
+                for resource_title in resource.titles:
+                    resources.append(
+                        imf.Resource(
+                            resource.filename, str(link), link.text or resource_title
+                        )
                     )
-                )
         return resources, note_links
 
     def convert_notebooks(self, input_json: dict):
@@ -121,11 +121,13 @@ class Converter(converter.BaseConverter):
         if note.get("attachment") is None:
             return resources
         for note_resource in note["attachment"].values():
+            # TODO: access directly by filename (e. g. "file_<md5>")
             for file_resource in self.available_resources:
                 if note_resource["md5"] == file_resource.md5:
                     if (ref := note_resource.get("ref")) is not None:
-                        file_resource.ref = ref
-                        file_resource.title = note_resource["name"]
+                        # The same resource can be linked multiple times.
+                        file_resource.refs.append(ref)
+                        file_resource.titles.append(note_resource["name"])
                     else:
                         # The attachment is not referenced. Add it here.
                         # Referenced attachments are added later.
@@ -152,8 +154,12 @@ class Converter(converter.BaseConverter):
         # to the note content is by MD5 hash.
         for item in self.root_path.iterdir():
             if item.is_file() and item.stem.startswith("file_"):
+                if item.stem.startswith("file_thumb"):
+                    continue  # ignore thumbnails
+                # Don't use the actual hash: hashlib.md5(item.read_bytes()).hexdigest()
+                # It can change. So we need to take the hash from the filename.
                 self.available_resources.append(
-                    Attachment(item, hashlib.md5(item.read_bytes()).hexdigest())
+                    Attachment(item, item.stem.split("_")[-1])
                 )
 
         # for internal links, we need to store the note titles

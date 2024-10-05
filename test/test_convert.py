@@ -116,6 +116,7 @@ class EndToEnd(unittest.TestCase):
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
             [["synology_note_station/test_3/notestation-test-books.nsx"]],
             [["synology_note_station/test_4/test.nsx"]],
+            [["synology_note_station/test_5/20241005_184010_8701_demouser.nsx"]],
             [["textbundle/test_1/example.textpack"]],
             [["textbundle/test_2/Bug report in tables_bear.textbundle"]],
             [["textbundle/test_3/Python CHP NOTES.textbundle"]],
