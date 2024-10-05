@@ -196,7 +196,13 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
 # markdown output formats:
 # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
 # Don't use "commonmark_x". There would be too many noise.
-PANDOC_OUTPUT_FORMAT = "markdown_strict+pipe_tables+backtick_code_blocks-raw_html"
+PANDOC_OUTPUT_FORMAT = (
+    "markdown_strict"
+    "+pipe_tables"
+    "+backtick_code_blocks"
+    "+task_lists"
+    "-raw_html"
+)
 
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:

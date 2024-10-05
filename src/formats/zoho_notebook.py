@@ -20,13 +20,6 @@ def clean_tables(soup):
                 text_only = td.text
                 td.clear()
                 td.append(text_only)
-        # tables seem to be headerless always
-        #         # make first row to header
-        #         if row_index == 0:
-        #             td.name = "th"
-        # # remove "tbody"
-        # body = table.find("tbody")
-        # body.unwrap()
 
 
 def clean_task_lists(soup):
@@ -136,9 +129,6 @@ class Converter(converter.BaseConverter):
         #         )
 
         # convert the note body to Markdown
-        # TODO:
-        # - checklists are note working, even with "+task_lists"
-        # - tables are not working
         if soup.body is not None:
             clean_tables(soup)
             clean_task_lists(soup)
