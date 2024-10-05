@@ -15,7 +15,6 @@ class Converter(converter.BaseConverter):
     accept_folder = True
 
     def convert(self, file_or_folder: Path):
-        self.root_path = file_or_folder
         self.convert_folder(file_or_folder, self.root_notebook)
 
     def handle_markdown_links(self, body: str) -> tuple[list, list]:

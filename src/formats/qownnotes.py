@@ -93,8 +93,6 @@ class Converter(converter.BaseConverter):
         return note_tag_map
 
     def convert(self, file_or_folder: Path):
-        self.root_path = file_or_folder
-
         note_tag_map = self.parse_tags()
 
         for note_qownnotes in file_or_folder.glob("*.md"):

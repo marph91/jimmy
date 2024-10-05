@@ -187,5 +187,4 @@ class DefaultConverter(BaseConverter):
             parent.child_notebooks.append(new_parent)
 
     def convert(self, file_or_folder: Path):
-        self.root_path = file_or_folder
         self.convert_file_or_folder(file_or_folder, self.root_notebook)
