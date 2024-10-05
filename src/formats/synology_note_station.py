@@ -34,7 +34,7 @@ def streamline_html(content_html: str) -> str:
     for table in soup.find_all("table"):
         # Remove all divs, since they cause pandoc to fail converting the table.
         # https://stackoverflow.com/a/32064299/7410886
-        for div in table.find_all("div"): 
+        for div in table.find_all("div"):
             div.unwrap()
 
         for row_index, row in enumerate(table.find_all("tr")):

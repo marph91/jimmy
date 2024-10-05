@@ -89,7 +89,7 @@ def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
 
 
 def jimmy(config) -> common.Stats:
-    LOGGER.info(f"Jimmy 0.0.22 (Pandoc {pypandoc.get_pandoc_version()})")
+    LOGGER.info(f"Jimmy 0.0.23 (Pandoc {pypandoc.get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
