@@ -32,15 +32,21 @@ def streamline_html(content_html: str) -> str:
     # another hack: make the first row of a table to the header
     soup = BeautifulSoup(content_html, "html.parser")
     for table in soup.find_all("table"):
+        # Remove all divs, since they cause pandoc to fail converting the table.
+        # https://stackoverflow.com/a/32064299/7410886
+        for div in table.find_all("div"): 
+            div.unwrap()
+
         for row_index, row in enumerate(table.find_all("tr")):
             for td in row.find_all("td"):
                 # tables seem to be headerless always
                 # make first row to header
                 if row_index == 0:
                     td.name = "th"
+
         # remove "tbody"
-        body = table.find("tbody")
-        body.unwrap()
+        if (body := table.find("tbody")) is not None:
+            body.unwrap()
 
     return str(soup)
 
