@@ -3,6 +3,7 @@ __pycache__
 jimmy.log
 .cache
 .obsidian
+.version
 build
 dist
 test_profile

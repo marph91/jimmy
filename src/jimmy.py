@@ -3,6 +3,7 @@
 import importlib
 import logging
 from pathlib import Path
+import sys
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
@@ -88,8 +89,20 @@ def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
     return root_tree
 
 
+def get_jimmy_version():
+    # Pyinstaller has different path than module.
+    # https://stackoverflow.com/a/44352931/7410886
+    base_path = getattr(sys, "_MEIPASS", Path(__file__).parent)
+    version_file = Path(base_path) / ".version"
+    return (
+        version_file.read_text().lstrip("v").rstrip()
+        if version_file.is_file()
+        else "dev"
+    )
+
+
 def jimmy(config) -> common.Stats:
-    LOGGER.info(f"Jimmy 0.0.23 (Pandoc {pypandoc.get_pandoc_version()})")
+    LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {pypandoc.get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")

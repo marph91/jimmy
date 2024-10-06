@@ -2,7 +2,7 @@
 from PyInstaller.utils.hooks import collect_data_files
 
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
-datas = []
+datas = [(".version", ".")]
 datas += collect_data_files('pypandoc')
 
 
