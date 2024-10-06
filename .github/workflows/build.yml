@@ -22,7 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-tags: true
+          # fetch all tags for the "git describe" later
+          fetch-depth: 0
           submodules: true
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
