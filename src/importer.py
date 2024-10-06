@@ -180,10 +180,13 @@ class FilesystemImporter:
                     guessed_suffix = common.guess_suffix(resource.filename)
                     resource.path = resource.path.with_suffix(guessed_suffix)
 
-            # Don't create multiple resources for the same file.
-            # Cache the original file paths and their corresponding ID.
-            if not resource.path.is_file() and resource.filename.is_file():
-                shutil.copy(resource.filename, resource.path)
+            if resource.filename.is_file():
+                # Don't create multiple resources for the same file.
+                # Cache the original file paths and their corresponding ID.
+                if not resource.path.is_file():
+                    shutil.copy2(resource.filename, resource.path)
+            else:
+                LOGGER.warning(f'Resource "{resource.filename}" does not exist.')
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
             resource_markdown = (
                 f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
