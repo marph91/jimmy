@@ -22,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-tags: true
           submodules: true
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -35,7 +36,6 @@ jobs:
       - name: Build executables with pyinstaller
         run: |
           # store the latest tag in static file
-          git fetch --tags
           git describe --tags --abbrev=0 > .version
           python -m PyInstaller jimmy_cli.spec
           # python -m PyInstaller jimmy_gui.spec
