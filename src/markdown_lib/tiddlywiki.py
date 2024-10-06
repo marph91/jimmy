@@ -19,28 +19,9 @@ pp.ParserElement.set_default_whitespace_chars("")
 # - pp.ParserElement.enable_packrat() -> seems to be even slower
 # - use regex instead of chaining
 multiline_quote_re = re.compile(r"<<<\n([\S\s]*?)\n<<<(.*)")
-horizontal_line_re = re.compile(r"^-{3,}$", re.MULTILINE)
 link_re = re.compile(r"\[(ext|img)?.*\[(.*)\]\]")
 list_re = re.compile(r"^([*#>]+) ", re.MULTILINE)
 table_row_re = re.compile(r"\|(.*?)\|([kchf])?\n")
-# Problem: "//" is part of many URI (between scheme and host).
-# We need to exclude them to prevent unwanted conversions.
-# https://en.wikipedia.org/wiki/List_of_URI_schemes
-schemes = [
-    "file",
-    "ftp",
-    "http",
-    "https",
-    "imap",
-    "irc",
-    "udp",
-    "tcp",
-    "ntp",
-    "app",
-    "s3",
-]
-NEG_LOOKBEHINDS = "".join(f"(?<!{scheme}:)" for scheme in schemes)
-italic_re = re.compile(rf"{NEG_LOOKBEHINDS}\/\/(.*?){NEG_LOOKBEHINDS}\/\/")
 
 
 def dash():
@@ -70,11 +51,15 @@ def italic():
     def to_md(_, t):  # noqa
         return "*" + t[0][0] + "*"
 
-    return pp.Regex(italic_re, as_group_list=True).set_parse_action(to_md)
+    return pp.Regex(
+        markdown_lib.common.double_slash_re, as_group_list=True
+    ).set_parse_action(to_md)
 
 
 def horizontal_line():
-    return pp.Regex(horizontal_line_re).set_parse_action(lambda: "---")
+    return pp.Regex(markdown_lib.common.horizontal_line_re).set_parse_action(
+        lambda: "---"
+    )
 
 
 def link():

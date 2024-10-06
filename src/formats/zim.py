@@ -1,0 +1,105 @@
+"""Convert TiddlyWiki notes to the intermediate format."""
+
+import datetime as dt
+from pathlib import Path
+import re
+
+import common
+import converter
+import intermediate_format as imf
+import markdown_lib.common
+from markdown_lib.zim import zim_to_md
+
+
+ZIM_IMAGE_REGEX = re.compile(r"(\{\{(.*?)\}\})")
+
+
+class Converter(converter.BaseConverter):
+    accept_folder = True
+
+    def handle_zim_links(self, body: str) -> tuple[list, list]:
+        # https://zim-wiki.org/manual/Help/Links.html
+        # https://zim-wiki.org/manual/Help/Wiki_Syntax.html
+        note_links = []
+        resources = []
+        for _, url, description in markdown_lib.common.get_wikilink_links(body):
+            original_text = f"[[{url}]]"
+            if "/" in url:
+                # resource
+                # Links containing a '/' are considered links to external files
+                resource_path = common.find_file_recursively(self.root_path, url)
+                if resource_path is None:
+                    continue
+                resources.append(
+                    imf.Resource(resource_path, original_text, description or url)
+                )
+            elif "?" in url:
+                # Links that contain a '?' are interwiki links
+                pass  # interwiki links can't be resolved
+            elif url.startswith("#"):
+                # Links that start with a '#' are resolved as links
+                # within the page to a heading or an object
+                pass  # they don't need to be resolved
+            else:
+                # Ignore other directives for now.
+                # TODO: Find a way to map them. Right now we only map by
+                # matching the original_id.
+                original_id = url.split(":")[-1].lstrip("+")
+                note_links.append(
+                    imf.NoteLink(original_text, original_id, description or original_id)
+                )
+        return resources, note_links
+
+    def handle_zim_images(self, body: str) -> list[imf.Resource]:
+        images = []
+        for original_text, image_link in ZIM_IMAGE_REGEX.findall(body):
+            image_link = Path(image_link)
+            images.append(imf.Resource(image_link, original_text, image_link.name))
+        return images
+
+    def convert_folder(self, folder: Path, parent: imf.Notebook):
+        for item in folder.iterdir():
+            if item.is_dir():
+                # notebook
+                new_parent = imf.Notebook(item.name)
+                self.convert_folder(item, new_parent)
+                parent.child_notebooks.append(new_parent)
+                continue
+            if item.name == "notebook.zim" or item.suffix.lower() != ".txt":
+                continue
+
+            # note
+            title = item.stem.replace("_", " ")  # underscores seem to be replaced
+            self.logger.debug(f'Converting note "{title}"')
+
+            imf_note = imf.Note(
+                title, source_application=self.format, original_id=title
+            )
+
+            metadata, _, body = item.read_text(encoding="utf-8").split(
+                "\n\n", maxsplit=2
+            )
+            for line in metadata.split("\n"):
+                key, value = line.split(": ", maxsplit=1)
+                if key == "Creation-Date":
+                    imf_note.created = dt.datetime.fromisoformat(value)
+
+            imf_note.body = zim_to_md(body)
+
+            resources, note_links = self.handle_zim_links(imf_note.body)
+            imf_note.resources = resources
+            imf_note.note_links = note_links
+
+            imf_note.resources.extend(self.handle_zim_images(imf_note.body))
+
+            # tags: https://zim-wiki.org/manual/Help/Tags.html
+            # TODO: exclude invalid characters
+            imf_note.tags = [
+                imf.Tag(tag) for tag in markdown_lib.common.get_inline_tags(body, ["@"])
+            ]
+
+            parent.child_notes.append(imf_note)
+
+    def convert(self, file_or_folder: Path):
+        self.root_path = file_or_folder
+        self.convert_folder(file_or_folder, self.root_notebook)

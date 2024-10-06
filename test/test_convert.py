@@ -126,6 +126,7 @@ class EndToEnd(unittest.TestCase):
             [["tomboy_ng/test_1/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
+            [["zim/test_1/notebook"]],
             [["zoho_notebook/test_1/Notebook_14Apr2024_1300_html.zip"]],
         ],
         name_func=name_func,

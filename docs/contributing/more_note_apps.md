@@ -93,5 +93,4 @@ https://github.com/LucasMatuszewski/snb2md-recursive
 | Wunderlist | [script](https://github.com/eschlot/Wunderlist2Joplin) | dead? |
 | [Xiaomi Notes](https://i.mi.com/note/h5) |     | account needed |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
-| [Zim](https://zim-wiki.org/index.html) | - [doc](https://zim-wiki.org/manual/Help/Export.html) (Markdown) <br>- [script](https://gist.github.com/reagle/7418f54fb6e40fe8d925e1c3f5325076) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |

@@ -37,6 +37,8 @@ class Resource:
     path: Path | None = None
 
     def __post_init__(self):
+        # resolve the user directory to prevent issues with puremagic
+        self.filename = self.filename.expanduser()
         # We can't simply match by extension, because sometimes the files/images
         # are stored as binary blob without extension.
         self.is_image = common.is_image(self.filename)

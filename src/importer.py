@@ -307,7 +307,9 @@ class FilesystemImporter:
             if new_path is None:
                 LOGGER.debug(
                     f'Note "{note.title}": '
-                    f'could not find linked note: "{note_link.original_text}"'
+                    f'could not find linked note: "{note_link.original_text}"',
+                    # prevent [[]] syntax titles to be handled as markup
+                    extra={"markup": None},
                 )
                 continue
 

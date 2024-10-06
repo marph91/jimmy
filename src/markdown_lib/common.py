@@ -196,6 +196,7 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
 # markdown output formats:
 # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
 # Don't use "commonmark_x". There would be too many noise.
+# fmt: off
 PANDOC_OUTPUT_FORMAT = (
     "markdown_strict"
     "+pipe_tables"
@@ -203,7 +204,29 @@ PANDOC_OUTPUT_FORMAT = (
     "+task_lists"
     "-raw_html"
 )
+# fmt:on
 
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:
     return pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
+
+
+# Problem: "//" is part of many URI (between scheme and host).
+# We need to exclude them to prevent unwanted conversions.
+# https://en.wikipedia.org/wiki/List_of_URI_schemes
+schemes = [
+    "file",
+    "ftp",
+    "http",
+    "https",
+    "imap",
+    "irc",
+    "udp",
+    "tcp",
+    "ntp",
+    "app",
+    "s3",
+]
+NEG_LOOKBEHINDS = "".join(f"(?<!{scheme}:)" for scheme in schemes)
+double_slash_re = re.compile(rf"{NEG_LOOKBEHINDS}\/\/(.*?){NEG_LOOKBEHINDS}\/\/")
+horizontal_line_re = re.compile(r"^-{3,}$", re.MULTILINE)

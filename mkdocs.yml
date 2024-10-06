@@ -82,6 +82,7 @@ nav:
     - vCard: formats/vcard.md
     # - xit: formats/xit.md
     - Zettelkasten: formats/zettelkasten.md
+    - Zim: formats/zim.md
     - Zoho Notebook: formats/zoho_notebook.md
   - Import Instructions: import_instructions.md
   - Additional features:
