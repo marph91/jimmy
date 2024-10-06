@@ -4,7 +4,6 @@ import datetime as dt
 from pathlib import Path
 import re
 
-import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
@@ -17,7 +16,15 @@ ZIM_IMAGE_REGEX = re.compile(r"(\{\{(.*?)\}\})")
 class Converter(converter.BaseConverter):
     accept_folder = True
 
-    def handle_zim_links(self, body: str) -> tuple[list, list]:
+    @staticmethod
+    def resolve_resource(resource_path: Path, url: Path) -> Path:
+        # relative resources are stored in a folder named like the note
+        # example:
+        # - note.md
+        # - note/image.png
+        return url if Path(url).is_absolute() else resource_path / url
+
+    def handle_zim_links(self, body: str, resource_path: Path) -> tuple[list, list]:
         # https://zim-wiki.org/manual/Help/Links.html
         # https://zim-wiki.org/manual/Help/Wiki_Syntax.html
         note_links = []
@@ -27,11 +34,12 @@ class Converter(converter.BaseConverter):
             if "/" in url:
                 # resource
                 # Links containing a '/' are considered links to external files
-                resource_path = common.find_file_recursively(self.root_path, url)
-                if resource_path is None:
-                    continue
                 resources.append(
-                    imf.Resource(resource_path, original_text, description or url)
+                    imf.Resource(
+                        self.resolve_resource(resource_path, url),
+                        original_text,
+                        description or url,
+                    )
                 )
             elif "?" in url:
                 # Links that contain a '?' are interwiki links
@@ -50,11 +58,17 @@ class Converter(converter.BaseConverter):
                 )
         return resources, note_links
 
-    def handle_zim_images(self, body: str) -> list[imf.Resource]:
+    def handle_zim_images(self, body: str, resource_path: Path) -> list[imf.Resource]:
         images = []
         for original_text, image_link in ZIM_IMAGE_REGEX.findall(body):
             image_link = Path(image_link)
-            images.append(imf.Resource(image_link, original_text, image_link.name))
+            images.append(
+                imf.Resource(
+                    self.resolve_resource(resource_path, image_link),
+                    original_text,
+                    image_link.name,
+                )
+            )
         return images
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
@@ -86,11 +100,14 @@ class Converter(converter.BaseConverter):
 
             imf_note.body = zim_to_md(body)
 
-            resources, note_links = self.handle_zim_links(imf_note.body)
+            resource_path = folder / item.stem
+            resources, note_links = self.handle_zim_links(imf_note.body, resource_path)
             imf_note.resources = resources
             imf_note.note_links = note_links
 
-            imf_note.resources.extend(self.handle_zim_images(imf_note.body))
+            imf_note.resources.extend(
+                self.handle_zim_images(imf_note.body, resource_path)
+            )
 
             # tags: https://zim-wiki.org/manual/Help/Tags.html
             # TODO: exclude invalid characters
