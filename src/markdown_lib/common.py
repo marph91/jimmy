@@ -2,12 +2,15 @@
 
 from dataclasses import dataclass, field
 import logging
+from pathlib import Path
 import re
 
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 import pypandoc
+
+import common
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -208,7 +211,22 @@ PANDOC_OUTPUT_FORMAT = (
 
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:
-    return pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
+    text_md = pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
+    if "[TABLE]" in text_md:
+        LOGGER.warning("Table is too complex and can't be converted to markdown.")
+    return text_md
+
+
+def file_to_markdown(file_: Path) -> str:
+    file_md = pypandoc.convert_file(
+        file_,
+        PANDOC_OUTPUT_FORMAT,
+        # somehow the temp folder is needed to create the resources properly
+        extra_args=[f"--extract-media={common.get_temp_folder()}"],
+    )
+    if "[TABLE]" in file_md:
+        LOGGER.warning("Table is too complex and can't be converted to markdown.")
+    return file_md
 
 
 # Problem: "//" is part of many URI (between scheme and host).

@@ -5,8 +5,6 @@ import logging
 from pathlib import Path
 import subprocess
 
-import pypandoc
-
 import common
 import intermediate_format as imf
 import markdown_lib.common
@@ -141,12 +139,7 @@ class DefaultConverter(BaseConverter):
                     # Remove unnecessarily added lines if needed.
                     note_body = "\n".join(note_body_splitted[:-2])
             case _:
-                note_body = pypandoc.convert_file(
-                    file_,
-                    markdown_lib.common.PANDOC_OUTPUT_FORMAT,
-                    # somehow the temp folder is needed to create the resources properly
-                    extra_args=[f"--extract-media={common.get_temp_folder()}"],
-                )
+                note_body = markdown_lib.common.file_to_markdown(file_)
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
         note_imf = imf.Note(
