@@ -7,13 +7,13 @@ The default import covers the following formats:
 - Every format that is supported by [pandoc](https://pandoc.org/). Some formats may need some tweaking, though. A few examples:
     - CSV
     - DocBook
-    - docx
+    - DOCX
     - EPUB
     - HTML
-    - Jupyter notebook
+    - Jupyter Notebook
+    - MediaWiki
     - ODT
     - OPML
-    - MediaWiki
     - reStructuredText
     - RTF
     - txt2tags

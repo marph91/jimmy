@@ -3,7 +3,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | App/Format | Backup/Export | Remarks |
 | --- | --- | --- |
 | [Affine](https://github.com/toeverything/AFFiNE) | [doc](https://docs.affine.pro/docs/settings) |     |
-| [Agenda](https://agenda.com/) |     | apple only |
+| [Agenda](https://agenda.com/) | [doc](https://agenda.community/t/sharing-import-export-and-printing/56) | apple only |
 | [Anytype](https://anytype.io/) |     |     |
 | [Apple Notes](https://www.icloud.com/notes) | [script](https://github.com/mattrose/AppleNotes2Joplin) | apple only |
 | [Appflowy](https://appflowy.io/) | [seems to be not possible yet](https://github.com/AppFlowy-IO/AppFlowy/issues/4387) |     |
