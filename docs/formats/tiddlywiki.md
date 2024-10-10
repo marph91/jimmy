@@ -7,7 +7,7 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 
 ## Instructions
 
-1. Export as described in <https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html>
+1. Export as described [at the website](https://tiddlywiki.com/static/How%2520to%2520export%2520tiddlers.html)
     1. Choose json export
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux tiddlers.json --format tiddlywiki`

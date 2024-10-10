@@ -50,7 +50,9 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [MyInfo](https://www.myinfoapp.com/) | [doc](https://www.myinfoapp.com/features) |     |
 | Nixnote/[Nixnote 2](https://github.com/baumgarr/Nixnote2) | - [doc](https://github.com/baumgarr/nixnote2/issues/483) <br>- [thread](https://discourse.joplinapp.org/t/import-from-nixnote/183/7) | [dead](https://github.com/robert7/nixnote2/issues/181) |
 | [Notable](https://notable.app/) | notes stored as Markdown in folder |     |
+| [Notebooks](https://www.notebooksapp.com/) | [doc](https://www.notebooksapp.com/ios/backup/) |     |
 | [Notejoy](https://notejoy.com/) | [doc](https://notejoy.com/help/export-notes) (paid only and to Google Drive only) |     |
+| [NotePlan](https://noteplan.co/) | [doc](https://help.noteplan.co/article/32-how-to-make-a-backup-of-my-notes) |     |
 | [Notesnook](https://notesnook.com/) |     | - [unzip code](https://github.com/streetwriters/notesnook/blob/1f0fc83a7c5694eeda17dc70f35d69ca0df26bf2/apps/web/src/utils/compressor.ts#L44-L55) <br>- [Basic plan can only export to text](https://notesnook.com/pricing/) <br>- No attachments without login |
 | [notezilla](https://www.conceptworld.com/Notezilla) | [doc](https://www.conceptworld.com/Notezilla) (csv) | How are nested memoboards/notebooks handled? |
 | [Nuclino](https://www.nuclino.com/) | [doc](https://help.nuclino.com/fb60e6f6-export-a-workspace) |     |
@@ -72,6 +74,7 @@ https://github.com/LucasMatuszewski/snb2md-recursive
 | [Signal](https://signal.org/de/) |     | https://github.com/marph91/jimmy/issues/8 |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
 | [Skiff Pages](https://skiff.com/pages) |     |     |
+| [Slite](https://slite.com/) | [doc](https://slite.slite.page/p/GB20MuMNuUTvwM/Backing-Up-Your-Data) (Markdown, paid only) |     |
 | [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | https://github.com/marph91/jimmy/issues/4 |
 | [Supernotes](https://supernotes.app/) | [doc](https://help.supernotes.app/en/articles/3068672-printing-exporting#h_f37e2930e4) |     |
 | [Tana](https://tana.inc/) | [thread](https://www.reddit.com/r/TanaInc/comments/13jjiwi/comment/jkgca57/) |     |
@@ -84,6 +87,7 @@ https://github.com/LucasMatuszewski/snb2md-recursive
 | [Trello](https://trello.com/) | [doc](https://support.atlassian.com/trello/docs/exporting-data-from-trello/) (json) |     |
 | [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (Markdown?) |     |
 | [Turtl](https://turtlapp.com/) | [thread](https://discourse.joplinapp.org/t/turtl-to-md-directory-python/29010) | dead |
+| [Twos](https://www.twosapp.com/) | [export](https://www.twosapp.com/export) (markdown, only single notes?) |     |
 | [Ulysses](https://ulysses.app/) | [thread](https://github.com/obsidianmd/obsidian-importer/issues/18) (Markdown) |     |
 | [UpNote](https://getupnote.com/) | [doc](https://medium.com/upnote/export-your-notes-3d8d6f7739d7) (Markdown, paid only) |     |
 | [Vnote](https://github.com/vnotex/vnote) | [doc](https://app.vnote.fun/en_us/#!docs/Users/Export.md) (Markdown?) |     |

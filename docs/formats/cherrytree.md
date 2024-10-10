@@ -7,7 +7,7 @@ This page describes how to convert notes from CherryTree to Markdown.
 
 ## Instructions
 
-1. Export as described in <https://www.giuspen.com/cherrytreemanual/#_exporting>
+1. Export as described [at the website](https://www.giuspen.com/cherrytreemanual/#_exporting)
     1. Choose "Export" -> "Export to CherryTreeDocument" -> "All the Tree" -> "XML, Not Protected (.cdt)"
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux cherry.ctd --format cherrytree`

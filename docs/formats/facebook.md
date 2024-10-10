@@ -7,7 +7,7 @@ This page describes how to convert posts and messages from Facebook to Markdown.
 
 ## Instructions
 
-1. Export as described at [this help page](https://www.facebook.com/help/212802592074644/)
+1. Export as described at [at the website](https://www.facebook.com/help/212802592074644/)
     1. Choose JSON
     2. The export may take some time. For a 450 MB file it took two days.
 2. [Install jimmy](../index.md#installation)

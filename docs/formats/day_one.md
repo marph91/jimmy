@@ -7,7 +7,7 @@ This page describes how to convert notes from Day One to Markdown.
 
 ## Instructions
 
-1. Export as described in <https://dayoneapp.com/guides/tips-and-tutorials/exporting-entries/>
+1. Export as described [at the website](https://dayoneapp.com/guides/tips-and-tutorials/exporting-entries/)
     1. Choose "Day One JSON (.zip)"
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux Export-Tagebuch.zip --format day_one`
