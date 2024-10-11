@@ -14,7 +14,7 @@ class BaseConverter(abc.ABC):
     accepted_extensions: list[str] | None = None
     accept_folder = False
 
-    def __init__(self, format_: str, output_folder):
+    def __init__(self, format_: str, output_folder: Path):
         self.logger = logging.getLogger("jimmy")
         self.format = "Jimmy" if format_ is None else format_
         self.root_notebook: imf.Notebook
@@ -85,6 +85,11 @@ class DefaultConverter(BaseConverter):
     accepted_extensions = ["*"]
     accept_folder = True
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # we need a resource folder to avoid writing files to the source folder
+        self.resource_folder = common.get_temp_folder()
+
     def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
         note_links = []
         resources = []
@@ -107,13 +112,6 @@ class DefaultConverter(BaseConverter):
     def convert_file(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
         match file_.suffix.lower():
-            case ".md" | ".markdown" | ".txt" | ".text":
-                note_body = file_.read_text(encoding="utf-8")
-            case ".fountain":
-                # Simply wrap in a code block. This is supported in
-                # Joplin and Obsidian via plugins.
-                note_body_fountain = file_.read_text(encoding="utf-8")
-                note_body = f"```fountain\n{note_body_fountain}\n```\n"
             case ".adoc" | ".asciidoc":
                 # asciidoc -> html -> markdown
                 # Technically, the first line is the document title and gets
@@ -138,8 +136,17 @@ class DefaultConverter(BaseConverter):
                 if note_body_splitted[-2].startswith("Last updated "):
                     # Remove unnecessarily added lines if needed.
                     note_body = "\n".join(note_body_splitted[:-2])
+            case ".fountain":
+                # Simply wrap in a code block. This is supported in
+                # Joplin and Obsidian via plugins.
+                note_body_fountain = file_.read_text(encoding="utf-8")
+                note_body = f"```fountain\n{note_body_fountain}\n```\n"
+            case ".md" | ".markdown" | ".txt" | ".text":
+                note_body = file_.read_text(encoding="utf-8")
             case _:
-                note_body = markdown_lib.common.file_to_markdown(file_)
+                note_body = markdown_lib.common.file_to_markdown(
+                    file_, self.resource_folder
+                )
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)
         note_imf = imf.Note(
@@ -155,6 +162,10 @@ class DefaultConverter(BaseConverter):
     def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):
         """Default conversion function for folders."""
         if file_or_folder.is_file():
+            if not file_or_folder.suffix.lower():
+                # We can't guess the extansion, so we can ignore it.
+                self.logger.debug(f"ignored {file_or_folder.name}: No extension.")
+                return
             try:
                 self.convert_file(file_or_folder, parent)
                 self.logger.debug(f"ok   {file_or_folder.name}")

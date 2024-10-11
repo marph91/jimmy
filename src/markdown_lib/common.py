@@ -10,8 +10,6 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 import pypandoc
 
-import common
-
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -217,12 +215,12 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
     return text_md
 
 
-def file_to_markdown(file_: Path) -> str:
+def file_to_markdown(file_: Path, resource_folder: Path) -> str:
     file_md = pypandoc.convert_file(
         file_,
         PANDOC_OUTPUT_FORMAT,
         # somehow the temp folder is needed to create the resources properly
-        extra_args=[f"--extract-media={common.get_temp_folder()}"],
+        extra_args=[f"--extract-media={resource_folder}"],
     )
     if "[TABLE]" in file_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
