@@ -184,7 +184,7 @@ class FilesystemImporter:
                 # Don't create multiple resources for the same file.
                 # Cache the original file paths and their corresponding ID.
                 if not resource.path.is_file():
-                    shutil.copy2(resource.filename, resource.path)
+                    shutil.copy(resource.filename, resource.path)
             else:
                 LOGGER.warning(f'Resource "{resource.filename}" does not exist.')
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
