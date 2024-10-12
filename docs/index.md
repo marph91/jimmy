@@ -20,6 +20,8 @@
 
 ## Supported Apps
 
+Export data from your app and convert it to Markdown. For details, click on the links.
+
 ||||||
 | :---: | :---: | :---: | :---: | :---: |
 | <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Anki-icon.svg/240px-Anki-icon.svg.png" style="height:100px;max-width:100px;"><br>[Anki](https://marph91.github.io/jimmy/formats/anki/) | <img src="https://bear.app/images/logo.png" style="height:100px;max-width:100px;"><br>[Bear](https://marph91.github.io/jimmy/formats/bear/) | <img src="https://raw.githubusercontent.com/CacherApp/cacher-cli/e241f06867dba740131db5314ef7fe279135baf6/images/cacher-icon.png" style="height:100px;max-width:100px;"><br>[Cacher](https://marph91.github.io/jimmy/formats/cacher/) | <img src="https://raw.githubusercontent.com/giuspen/cherrytree/c822b16681b002b8882645d8d1e8f109514ddb58/icons/cherrytree.svg" style="height:100px;max-width:100px;"><br>[CherryTree](https://marph91.github.io/jimmy/formats/cherrytree/) | <img src="https://avatars.githubusercontent.com/u/53916365?s=200&v=4" style="height:100px;max-width:100px;"><br>[Clipto](https://marph91.github.io/jimmy/formats/clipto/) |
@@ -30,6 +32,8 @@
 | <img src="https://zim-wiki.org/images/globe.png" style="height:100px;max-width:100px;"><br>[Zim](https://marph91.github.io/jimmy/formats/zim/) | <img src="https://zohowebstatic.com/sites/default/files/ogimage/notebook-logo.png" style="height:100px;max-width:100px;"><br>[Zoho&nbsp;Notebook](https://marph91.github.io/jimmy/formats/zoho_notebook/) ||||
 
 ## Supported Formats
+
+Import a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example you can import a folder with two Asciidoc files and one docx file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
 
 ||||||
 | :---: | :---: | :---: | :---: | :---: |
