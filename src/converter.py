@@ -8,6 +8,7 @@ import subprocess
 import common
 import intermediate_format as imf
 import markdown_lib.common
+import markdown_lib.eml
 
 
 class BaseConverter(abc.ABC):
@@ -136,6 +137,10 @@ class DefaultConverter(BaseConverter):
                 if note_body_splitted[-2].startswith("Last updated "):
                     # Remove unnecessarily added lines if needed.
                     note_body = "\n".join(note_body_splitted[:-2])
+            case ".eml":
+                note_imf = markdown_lib.eml.eml_to_note(file_, self.resource_folder)
+                parent.child_notes.append(note_imf)
+                return  # don't use the common conversion
             case ".fountain":
                 # Simply wrap in a code block. This is supported in
                 # Joplin and Obsidian via plugins.

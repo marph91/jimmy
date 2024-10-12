@@ -18,6 +18,7 @@ The default import covers the following formats:
     - [Rich Text Format (RTF))](https://en.wikipedia.org/wiki/Rich_Text_Format)
     - [txt2tags](https://txt2tags.org/)
 - [asciidoc](https://docs.asciidoctor.org/asciidoc/latest/) (requires [asciidoctor](https://asciidoctor.org/) installed and in path)
+- [Email (eml)](https://en.wikipedia.org/wiki/Email#Filename_extensions)
 - [Fountain](https://fountain.io/):
     - There is a [built-in Joplin plugin](https://joplinapp.org/help/apps/markdown/#markdown-plugins) that can be activated in the settings.
     - There is a [Obsidian plugin](https://github.com/Darakah/obsidian-fountain).

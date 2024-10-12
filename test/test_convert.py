@@ -169,6 +169,7 @@ class EndToEnd(unittest.TestCase):
             ["single_file", ["default_format/arbitrary_folder/plaintext.txt"]],
             ["multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2],
             ["markdown_file", ["default_format/arbitrary_folder/sample.md"]],
+            ["eml", ["default_format/eml"]],
         ]
     )
     def test_default_format(self, test_name, test_input):
