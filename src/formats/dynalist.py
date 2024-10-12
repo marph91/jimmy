@@ -34,7 +34,7 @@ class Converter(converter.BaseConverter):
         self.convert_folder(self.root_path, self.root_notebook)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        for item in folder.iterdir():
+        for item in sorted(folder.iterdir()):
             if item.is_file():
                 # We get a zip with opml and txt. Only advantage of opml over txt is
                 # the owner attribute. So just use txt, because it's simpler.

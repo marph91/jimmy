@@ -68,7 +68,7 @@ class Converter(converter.BaseConverter):
         )
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        for item in folder.iterdir():
+        for item in sorted(folder.iterdir()):
             if item.is_dir() and item.name == ".obsidian":
                 continue  # ignore the internal obsidian folder
             if item.is_file():

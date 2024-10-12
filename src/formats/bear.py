@@ -16,7 +16,7 @@ class Converter(converter.BaseConverter):
         # see BaseConverter.convert_multiple()
         textbundle_converter = TextbundleConverter(self.format, self.output_folder)
         textbundle_converter.root_notebook = self.root_notebook
-        for textbundle in self.root_path.glob("*.textbundle"):
+        for textbundle in sorted(self.root_path.glob("*.textbundle")):
             # TODO: handle info.json metadata
             textbundle_converter.root_path = textbundle_converter.prepare_input(
                 textbundle

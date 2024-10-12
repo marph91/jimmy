@@ -72,7 +72,7 @@ class Converter(converter.BaseConverter):
         return images
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        for item in folder.iterdir():
+        for item in sorted(folder.iterdir()):
             if item.is_dir():
                 # notebook
                 new_parent = imf.Notebook(item.name)

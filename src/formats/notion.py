@@ -71,7 +71,7 @@ class Converter(converter.BaseConverter):
     def convert_directory(self, parent_notebook):
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
 
-        for item in (self.root_path / relative_parent_path).iterdir():
+        for item in sorted((self.root_path / relative_parent_path).iterdir()):
             if (
                 item.is_file()
                 and item.suffix.lower() not in (".md", ".html")

@@ -59,7 +59,7 @@ class Converter(converter.BaseConverter):
         resource_id_filename_map = {}
         available_tags = []
         note_tag_id_map = defaultdict(list)
-        for file_ in self.root_path.rglob("*.md"):
+        for file_ in sorted(self.root_path.rglob("*.md")):
             markdown_raw = file_.read_text(encoding="utf-8")
             try:
                 markdown, metadata_raw = markdown_raw.rsplit("\n\n", 1)

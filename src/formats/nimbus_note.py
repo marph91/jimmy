@@ -12,7 +12,7 @@ class Converter(converter.BaseConverter):
     accept_folder = True
 
     def convert(self, file_or_folder: Path):
-        for file_ in file_or_folder.rglob("*.zip"):
+        for file_ in sorted(file_or_folder.rglob("*.zip")):
             title = file_.stem
             self.logger.debug(f'Converting note "{title}"')
             with zipfile.ZipFile(file_) as zip_ref:

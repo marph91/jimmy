@@ -211,7 +211,7 @@ def extract_zip(input_: Path, file_to_extract: str | None = None) -> Path:
 
 
 def find_file_recursively(root_folder: Path, url: str) -> Path | None:
-    potential_matches = list(root_folder.rglob(url))
+    potential_matches = sorted(root_folder.rglob(url))
     if not potential_matches:
         LOGGER.debug(f"Couldn't find match for resource {url}")
         return None

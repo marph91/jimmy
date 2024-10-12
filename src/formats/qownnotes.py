@@ -95,7 +95,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         note_tag_map = self.parse_tags()
 
-        for note_qownnotes in file_or_folder.glob("*.md"):
+        for note_qownnotes in sorted(file_or_folder.glob("*.md")):
             title = note_qownnotes.stem
             self.logger.debug(f'Converting note "{title}"')
             note_body = note_qownnotes.read_text(encoding="utf-8")

@@ -45,7 +45,7 @@ class Converter(converter.BaseConverter):
         return body, resources
 
     def convert(self, file_or_folder: Path):
-        for file_ in self.root_path.glob("*.txt"):
+        for file_ in sorted(self.root_path.glob("*.txt")):
             # TODO: Split year into separate notebook?
             parent_notebook = imf.Notebook(file_.stem)
             self.root_notebook.child_notebooks.append(parent_notebook)

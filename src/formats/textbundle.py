@@ -29,7 +29,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         # TODO: Are internal links and nested folders supported by this format?
 
-        for file_ in self.root_path.iterdir():
+        for file_ in sorted(self.root_path.iterdir()):
             if file_.suffix.lower() not in (".md", ".markdown"):
                 # take only the exports in markdown format
                 self.logger.debug(f"Ignoring folder or file {file_.name}")

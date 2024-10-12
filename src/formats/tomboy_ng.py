@@ -100,7 +100,7 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_dir():
-            for note in file_or_folder.glob("*.note"):
+            for note in sorted(file_or_folder.glob("*.note")):
                 self.convert_note(note)
         else:
             self.convert_note(file_or_folder)

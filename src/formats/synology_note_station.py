@@ -158,7 +158,7 @@ class Converter(converter.BaseConverter):
 
         # dirty hack: Only option to map the files from file system
         # to the note content is by MD5 hash.
-        for item in self.root_path.iterdir():
+        for item in sorted(self.root_path.iterdir()):
             if item.is_file() and item.stem.startswith("file_"):
                 if item.stem.startswith("file_thumb"):
                     continue  # ignore thumbnails

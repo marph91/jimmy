@@ -189,9 +189,9 @@ class Converter(converter.BaseConverter):
         messages_notebook = imf.Notebook("Messages")
         self.root_notebook.child_notebooks.append(messages_notebook)
 
-        for conversation in (
-            self.root_path / "your_facebook_activity/messages/inbox"
-        ).iterdir():
+        for conversation in sorted(
+            (self.root_path / "your_facebook_activity/messages/inbox").iterdir()
+        ):
             conversation_files = list(conversation.glob("message_*.json"))
             if not conversation_files:
                 self.logger.debug(f"No messages in {conversation.name}.")

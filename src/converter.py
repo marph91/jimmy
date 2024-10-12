@@ -181,7 +181,7 @@ class DefaultConverter(BaseConverter):
             self.logger.debug(f"entering folder {file_or_folder.name}")
             new_parent = imf.Notebook(file_or_folder.stem)
             folders = []
-            for item in file_or_folder.iterdir():
+            for item in sorted(file_or_folder.iterdir()):
                 if item.is_file():
                     self.convert_file_or_folder(item, new_parent)
                 else:
