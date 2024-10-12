@@ -70,12 +70,16 @@ class Converter(converter.BaseConverter):
                 or mime == "audio/mp3"
             ):
                 if (text_base64 := note_tiddlywiki.get("text")) is not None:
-                    resource_title = note_tiddlywiki.get("alt-text", title)
-                    temp_filename = (
-                        resource_folder / common.unique_title()
-                    ).with_suffix(Path(title).suffix)
+                    # Use the original filename if possible.
+                    # TODO: Files with same name are replaced.
+                    resource_title = note_tiddlywiki.get("alt-text")
+                    temp_filename = resource_folder / (
+                        common.unique_title()
+                        if resource_title is None
+                        else resource_title
+                    )
                     temp_filename.write_bytes(base64.b64decode(text_base64))
-                    body = f"![{resource_title}]({temp_filename})"
+                    body = f"![{temp_filename.name}]({temp_filename})"
                     resources.append(imf.Resource(temp_filename, body, resource_title))
                 elif (source := note_tiddlywiki.get("source")) is not None:
                     body = f"![{title}]({source})"

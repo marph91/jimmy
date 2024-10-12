@@ -146,15 +146,16 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
 
     # Keep the original filename and extension if possible.
     original_name = node.attrib.get("filename")
-    suffix = "" if original_name is None else Path(original_name).suffix
 
-    # Use always the uuid to avoid name clashes.
-    temp_filename = (resource_folder / common.unique_title()).with_suffix(suffix)
+    # Use the original filename if possible.
+    # TODO: Files with same name are replaced.
+    temp_filename = resource_folder / (
+        common.unique_title() if original_name is None else original_name
+    )
     temp_filename.write_bytes(base64.b64decode(node.text))
 
     # assemble the markdown
-    display_name = original_name or temp_filename.name
-    resource_md = f"![{display_name}]({temp_filename})"
+    resource_md = f"![{temp_filename.name}]({temp_filename})"
     resource_imf = imf.Resource(temp_filename, resource_md, temp_filename.name)
     return resource_md + "\n", resource_imf
 
