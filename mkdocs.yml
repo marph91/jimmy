@@ -86,6 +86,7 @@ nav:
     - Zoho Notebook: formats/zoho_notebook.md
   - Import Instructions: import_instructions.md
   - Additional features:
+    - Customizing the Output: additional_features/output_customization.md
     - Filters: additional_features/filters.md
     - Show the Note Tree: additional_features/show_note_tree.md
     - Miscellaneous: additional_features/miscellaneous.md
