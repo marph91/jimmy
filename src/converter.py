@@ -124,6 +124,9 @@ class DefaultConverter(BaseConverter):
                 note_body_html = subprocess.check_output(
                     [
                         "asciidoctor",
+                        # Don't generate the "last updated" footer.
+                        # https://stackoverflow.com/a/41777672/7410886
+                        "--attribute", "nofooter",
                         "--backend", "html",
                         "--out-file", "-",
                         str(file_.resolve()),
@@ -131,12 +134,8 @@ class DefaultConverter(BaseConverter):
                 )
                 # fmt: on
                 note_body = markdown_lib.common.markup_to_markdown(
-                    note_body_html.decode()
+                    note_body_html.decode("utf8")
                 )
-                note_body_splitted = note_body.split("\n")
-                if note_body_splitted[-2].startswith("Last updated "):
-                    # Remove unnecessarily added lines if needed.
-                    note_body = "\n".join(note_body_splitted[:-2])
             case ".eml":
                 note_imf = markdown_lib.eml.eml_to_note(file_, self.resource_folder)
                 parent.child_notes.append(note_imf)

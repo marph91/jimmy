@@ -212,7 +212,7 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
     text_md = pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
-    return text_md
+    return text_md.strip()
 
 
 def file_to_markdown(file_: Path, resource_folder: Path) -> str:
@@ -224,7 +224,7 @@ def file_to_markdown(file_: Path, resource_folder: Path) -> str:
     )
     if "[TABLE]" in file_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
-    return file_md
+    return file_md.strip()
 
 
 # Problem: "//" is part of many URI (between scheme and host).
