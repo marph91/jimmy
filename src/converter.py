@@ -15,12 +15,13 @@ class BaseConverter(abc.ABC):
     accepted_extensions: list[str] | None = None
     accept_folder = False
 
-    def __init__(self, format_: str, output_folder: Path):
+    def __init__(self, config, *_args, **_kwargs):
+        self._config = config
         self.logger = logging.getLogger("jimmy")
-        self.format = "Jimmy" if format_ is None else format_
+        self.format = "Jimmy" if config.format is None else config.format
         self.root_notebook: imf.Notebook
         self.root_path: Path
-        self.output_folder = output_folder
+        self.output_folder = config.output_folder
 
     def prepare_input(self, input_: Path) -> Path:
         """Prepare the input for further processing. For example extract an archive."""

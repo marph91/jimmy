@@ -51,7 +51,7 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.addHandler(console_handler)
 
 
-def convert_all_inputs(inputs: list[Path], format_: str, output_folder: Path):
+def convert_all_inputs(config):
     """
     Convert the input data to an intermediate representation
     that can be used by the importer later.
@@ -59,18 +59,18 @@ def convert_all_inputs(inputs: list[Path], format_: str, output_folder: Path):
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
     try:
-        LOGGER.debug(f"Try converting with converter {format_}")
-        module = importlib.import_module(f"formats.{format_}")
-        converter_ = module.Converter(format_, output_folder)
+        LOGGER.debug(f"Try converting with converter {config.format}")
+        module = importlib.import_module(f"formats.{config.format}")
+        converter_ = module.Converter(config)
     except ModuleNotFoundError as exc:
         LOGGER.debug(f"Fallback to default converter: {exc}")
-        if str(exc) == f"No module named 'formats.{format_}'":
-            converter_ = converter.DefaultConverter(format_, output_folder)
+        if str(exc) == f"No module named 'formats.{config.format}'":
+            converter_ = converter.DefaultConverter(config)
         else:
             raise exc  # this is unexpected -> reraise
     # TODO: Children are added to the parent node / node tree implicitly.
     # This is an anti-pattern, but works for now.
-    parent = converter_.convert_multiple(inputs)
+    parent = converter_.convert_multiple(config.input)
     return parent
 
 
@@ -106,9 +106,7 @@ def jimmy(config) -> common.Stats:
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
-    root_notebooks = convert_all_inputs(
-        config.input, config.format, config.output_folder
-    )
+    root_notebooks = convert_all_inputs(config)
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:

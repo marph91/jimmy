@@ -52,6 +52,11 @@ def main():
         help="The source format.",
     )
     parser.add_argument(
+        "--password",
+        default="",
+        help="Password to decrypt the input.",
+    )
+    parser.add_argument(
         "--frontmatter",
         default=None,
         choices=(None, "all", "joplin", "obsidian"),

@@ -1,6 +1,5 @@
 """Convert an Email (.eml) to the intermediate format."""
 
-import datetime as dt
 import email
 import email.policy
 import logging
@@ -91,7 +90,7 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
         and (parsed_date := email.utils.parsedate(message["Received"].split("; ")[-1]))
         is not None
     ):
-        date = dt.datetime.fromtimestamp(int(time.mktime(parsed_date)))
+        date = common.timestamp_to_datetime(int(time.mktime(parsed_date)))
     else:
         LOGGER.debug("failed to obtain date")
         date = None
