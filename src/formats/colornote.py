@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 import struct
 
-from Cryptodome.Cipher import AES
-from Cryptodome.Util.Padding import unpad
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
 
 import common
 import converter
@@ -21,8 +21,14 @@ def decrypt(salt: bytes, password: bytes, ciphertext: bytes) -> bytes:
     # https://github.com/olejorgenb/ColorNote-backup-decryptor/blob/61e105d6f13b2cd22b5141b6334bb098617665e1/src/ColorNoteBackupDecrypt.java
     key = hashlib.md5(password + salt).digest()
     iv = hashlib.md5(key + password + salt).digest()
-    decoder = AES.new(key, AES.MODE_CBC, iv)
-    return unpad(decoder.decrypt(ciphertext), 16)
+
+    cipher = Cipher(algorithms.AES128(key), modes.CBC(iv))
+    decryptor = cipher.decryptor()
+    plaintext_padded = decryptor.update(ciphertext) + decryptor.finalize()
+
+    unpadder = padding.PKCS7(cipher.algorithm.block_size).unpadder()
+    plaintext = unpadder.update(plaintext_padded) + unpadder.finalize()
+    return plaintext
 
 
 class Converter(converter.BaseConverter):
