@@ -13,7 +13,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Calibre](https://calibre-ebook.com/) | - [doc](https://manual.calibre-ebook.com/en/faq.html#how-do-i-move-my-calibre-data-from-one-computer-to-another) <br>- [script](https://github.com/Mick2nd/Calibre-Import) |     |
 | [Capacities](https://capacities.io/) | [doc](https://docs.capacities.io/reference/export#export) |     |
 | [CintaNotes](http://cintanotes.com/) | [doc](http://cintanotes.com/help/#export) (text export) |     |
-| [Colornote](https://www.colornote.com/) | [script](https://github.com/shervinemami/colornote_to_joplin) |     |
 | [Confluence](https://www.atlassian.com/software/confluence) | - [doc](https://support.atlassian.com/confluence-cloud/docs/export-content-to-word-pdf-html-and-xml/#Export-a-space) <br>- [script](https://github.com/KkEi34/confluence-to-obsidian-plugin) |     |
 | [Clickup](https://clickup.com/) | - [doc](https://help.clickup.com/hc/en-us/articles/6310551109527-Task-data-export) <br>- [script](https://github.com/jordanbates/clickup_to_joplin) | project management |
 | [Craft](https://www.craft.do/) | - [doc](https://support.craft.do/hc/en-us/articles/4418134683665-Exporting-documents-from-Craft) <br>- [script](https://github.com/coofdy/craft-to-obsidian) |     |

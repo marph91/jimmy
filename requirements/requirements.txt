@@ -3,6 +3,7 @@ enlighten==1.12.4
 markdown==3.7
 platformdirs==4.3.3
 puremagic==1.27
+pycryptodomex==3.21.0
 pypandoc==1.13
 python-frontmatter==1.1.0
 pytodotxt==1.5.0

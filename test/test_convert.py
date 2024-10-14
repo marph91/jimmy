@@ -26,6 +26,7 @@ class EndToEnd(unittest.TestCase):
         # https://stackoverflow.com/a/51197422/7410886
         self.config = SimpleNamespace(
             format=None,
+            password="1234",  # TODO: only used at colornote for now
             frontmatter=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),
@@ -83,6 +84,7 @@ class EndToEnd(unittest.TestCase):
             [["bear/test_1/backup.bear2bk"]],
             [["bear/test_2/backup-2.bear2bk"]],
             [["cacher/test_1/cacher-export-202406182304.json"]],
+            [["colornote/test_1/colornote-20241014.backup"]],
             [["cherrytree/test_1/cherry.ctb.ctd"]],
             [["cherrytree/test_2/cherrytree_manual.ctd"]],
             [["cherrytree/test_3/lab_report.ctd"]],
