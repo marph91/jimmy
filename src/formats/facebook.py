@@ -25,7 +25,7 @@ def timestamp_to_date_str(timestamp_s: float | int) -> str:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def handle_markdown_links(self, body: str) -> tuple[list, list]:
+    def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
@@ -34,7 +34,7 @@ class Converter(converter.BaseConverter):
             # resource
             resources.append(imf.Resource(resource_path, str(link), link.text))
 
-        return resources, []
+        return resources
 
     #################################################################
     # posts
@@ -123,8 +123,6 @@ class Converter(converter.BaseConverter):
                     )
                     continue
 
-                resources, _ = self.handle_markdown_links(post_body)
-
                 posts_notebook.child_notes.append(
                     imf.Note(
                         post_title,
@@ -134,7 +132,7 @@ class Converter(converter.BaseConverter):
                         source_application=self.format,
                         **att_metadata,
                         tags=[imf.Tag(tag["name"]) for tag in post.get("tags", [])],
-                        resources=resources,
+                        resources=self.handle_markdown_links(post_body),
                     )
                 )
 
@@ -242,14 +240,12 @@ class Converter(converter.BaseConverter):
                 if file_index != 0:
                     title = f"{title} ({file_index})"
 
-                resources, _ = self.handle_markdown_links(note_body_str)
-
                 messages_notebook.child_notes.append(
                     imf.Note(
                         title,
                         note_body_str,
                         source_application=self.format,
-                        resources=resources,
+                        resources=self.handle_markdown_links(note_body_str),
                     )
                 )
 

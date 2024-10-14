@@ -67,7 +67,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(
         self, title: str, body: str, note_id_title_map: dict
-    ) -> tuple[list, list]:
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in markdown_lib.common.get_markdown_links(body):
@@ -122,8 +122,8 @@ class Converter(converter.BaseConverter):
                 imf.Notebook(notebook["title"], original_id=notebook_id)
             )
 
-    def map_resources_by_hash(self, note: dict) -> list[imf.Resource]:
-        resources: list[imf.Resource] = []
+    def map_resources_by_hash(self, note: dict) -> imf.Resources:
+        resources: imf.Resources = []
         if note.get("attachment") is None:
             return resources
         for note_resource in note["attachment"].values():
@@ -189,7 +189,7 @@ class Converter(converter.BaseConverter):
                 # resources / attachments
                 resources = self.map_resources_by_hash(note)
 
-                note_links: list[imf.NoteLink] = []
+                note_links: imf.NoteLinks = []
                 if (content_html := note.get("content")) is not None:
                     content_html = streamline_html(content_html)
                     content_markdown = markdown_lib.common.markup_to_markdown(

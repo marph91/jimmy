@@ -8,7 +8,7 @@ import intermediate_format as imf
 import markdown_lib
 
 
-def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
+def handle_markdown_links(body: str, root_folder: Path) -> imf.NoteLinks:
     note_links = []
     for link in markdown_lib.common.get_markdown_links(body):
         if link.url.startswith("https://dynalist.io/d"):
@@ -24,7 +24,7 @@ def handle_markdown_links(body: str, root_folder: Path) -> tuple[list, list]:
         else:
             # TODO: There are no resources in dynalist free plan.
             pass
-    return [], note_links
+    return note_links
 
 
 class Converter(converter.BaseConverter):
@@ -43,21 +43,22 @@ class Converter(converter.BaseConverter):
                     continue
                 title = item.stem
                 self.logger.debug(f'Converting note "{title}"')
-                body = item.read_text(encoding="utf-8")
 
-                resources, note_links = handle_markdown_links(body, self.root_path)
-                tags = markdown_lib.common.get_inline_tags(body, ["#", "@"])
-
-                parent.child_notes.append(
-                    imf.Note(
-                        title,
-                        body,
-                        source_application=self.format,
-                        tags=[imf.Tag(tag) for tag in tags],
-                        resources=resources,
-                        note_links=note_links,
-                    )
+                note_imf = imf.Note(
+                    title,
+                    item.read_text(encoding="utf-8"),
+                    source_application=self.format,
                 )
+                note_imf.tags = [
+                    imf.Tag(tag)
+                    for tag in markdown_lib.common.get_inline_tags(
+                        note_imf.body, ["#", "@"]
+                    )
+                ]
+                note_imf.note_links = handle_markdown_links(
+                    note_imf.body, self.root_path
+                )
+                parent.child_notes.append(note_imf)
             else:
                 new_parent = imf.Notebook(item.name)
                 self.convert_folder(item, new_parent)

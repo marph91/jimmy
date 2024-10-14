@@ -46,7 +46,7 @@ class BaseConverter(abc.ABC):
             return True
         return self.accept_folder and input_.is_dir()
 
-    def convert_multiple(self, files_or_folders: list[Path]) -> list[imf.Notebook]:
+    def convert_multiple(self, files_or_folders: list[Path]) -> imf.Notebooks:
         """Main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
@@ -92,7 +92,9 @@ class DefaultConverter(BaseConverter):
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
-    def handle_markdown_links(self, body: str, path) -> tuple[list, list]:
+    def handle_markdown_links(
+        self, body: str, path
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):

@@ -74,7 +74,7 @@ def convert_all_inputs(config):
     return parent
 
 
-def get_tree(root_notebooks: list[imf.Notebook], root_tree: Tree) -> Tree:
+def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
     for notebook in root_notebooks:
         new_root_notebook = root_tree.add("📘 " + notebook.title)
         for note in notebook.child_notes:

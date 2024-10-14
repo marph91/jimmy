@@ -14,7 +14,7 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
     accept_folder = True
 
-    def handle_markdown_links(self, body: str) -> tuple[str, list]:
+    def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):
             # Links are usually enclosed with double quotation marks.

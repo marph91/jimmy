@@ -79,10 +79,10 @@ class Note:
     source_application: str | None = None
 
     # internal data
-    tags: list[Tag] = field(default_factory=list)
-    resources: list[Resource] = field(default_factory=list)
+    tags: Tags = field(default_factory=list)
+    resources: Resources = field(default_factory=list)
     # list of complete links including original note ids
-    note_links: list[NoteLink] = field(default_factory=list)
+    note_links: NoteLinks = field(default_factory=list)
     original_id: str | None = None
     path: Path | None = None
 
@@ -111,10 +111,18 @@ class Notebook:
     updated: dt.datetime | None = None
 
     # internal data
-    child_notebooks: list[Notebook] = field(default_factory=list)
-    child_notes: list[Note] = field(default_factory=list)
+    child_notebooks: Notebooks = field(default_factory=list)
+    child_notes: Notes = field(default_factory=list)
     original_id: str | None = None
     path: Path | None = None
 
     def is_empty(self) -> bool:
         return not self.child_notebooks and not self.child_notes
+
+
+# some type definitions for convenience
+Notes = list[Note]
+Notebooks = list[Notebook]
+NoteLinks = list[NoteLink]
+Resources = list[Resource]
+Tags = list[Tag]

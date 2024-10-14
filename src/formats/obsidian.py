@@ -17,7 +17,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         self.convert_folder(file_or_folder, self.root_notebook)
 
-    def handle_markdown_links(self, body: str) -> tuple[list, list]:
+    def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):
@@ -35,7 +35,7 @@ class Converter(converter.BaseConverter):
                 resources.append(imf.Resource(resource_path, str(link), link.text))
         return resources, note_links
 
-    def handle_wikilink_links(self, body: str) -> tuple[list, list]:
+    def handle_wikilink_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # https://help.obsidian.md/Linking+notes+and+files/Internal+links
         note_links = []
         resources = []
@@ -57,7 +57,7 @@ class Converter(converter.BaseConverter):
                 note_links.append(imf.NoteLink(original_text, url, description or url))
         return resources, note_links
 
-    def handle_links(self, body: str) -> tuple[list, list]:
+    def handle_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # Resources can be anywhere:
         # https://help.obsidian.md/Editing+and+formatting/Attachments#Change+default+attachment+location
         wikilink_resources, wikilink_note_links = self.handle_wikilink_links(body)

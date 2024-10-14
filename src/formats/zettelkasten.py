@@ -28,7 +28,9 @@ class Converter(converter.BaseConverter):
                 case _:
                     self.logger.warning(f"ignoring attribute {key}={value}")
 
-    def handle_markdown_links(self, body, source_folder) -> tuple[list, list]:
+    def handle_markdown_links(
+        self, body: str, source_folder: Path
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):

@@ -24,7 +24,9 @@ class Converter(converter.BaseConverter):
         # - note/image.png
         return url if Path(url).is_absolute() else resource_path / url
 
-    def handle_zim_links(self, body: str, resource_path: Path) -> tuple[list, list]:
+    def handle_zim_links(
+        self, body: str, resource_path: Path
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         # https://zim-wiki.org/manual/Help/Links.html
         # https://zim-wiki.org/manual/Help/Wiki_Syntax.html
         note_links = []
@@ -58,7 +60,7 @@ class Converter(converter.BaseConverter):
                 )
         return resources, note_links
 
-    def handle_zim_images(self, body: str, resource_path: Path) -> list[imf.Resource]:
+    def handle_zim_images(self, body: str, resource_path: Path) -> imf.Resources:
         images = []
         for original_text, image_link in ZIM_IMAGE_REGEX.findall(body):
             image_link = Path(image_link)

@@ -59,7 +59,7 @@ def select_tags(note: imf.Note, config):
     note.tags = selected_tags
 
 
-def apply_filters(root_notebooks: list[imf.Notebook], config):
+def apply_filters(root_notebooks: imf.Notebooks, config):
     """
     Apply the configured filter to the complete note tree.
     Filters are mutually exclusive and case sensitive!

@@ -71,7 +71,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(
         self, body: str, resource_id_filename_map: dict
-    ) -> tuple[list, list]:
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
 

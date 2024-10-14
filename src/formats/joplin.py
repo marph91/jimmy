@@ -33,7 +33,7 @@ class ItemType(enum.IntEnum):
 
 def handle_markdown_links(
     body: str, resource_id_filename_map: dict
-) -> tuple[list, list]:
+) -> tuple[imf.Resources, imf.NoteLinks]:
     note_links = []
     resources = []
     for link in markdown_lib.common.get_markdown_links(body):

@@ -32,7 +32,7 @@ class Converter(converter.BaseConverter):
         super().__init__(config)
         self.password = config.password
 
-    def handle_wikilink_links(self, body: str) -> list[imf.NoteLink]:
+    def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
         # only internal links
         # https://www.colornote.com/faq-question/how-can-i-link-a-note-with-another-note/
         note_links = []

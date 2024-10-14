@@ -32,7 +32,7 @@ def get_qownnote_links(body: str) -> list[str]:
 class Converter(converter.BaseConverter):
     accept_folder = True
 
-    def handle_markdown_links(self, body: str) -> tuple[list, list]:
+    def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # markdown style links
         note_links = []
         resources = []

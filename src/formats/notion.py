@@ -48,7 +48,9 @@ class Converter(converter.BaseConverter):
 
         return temp_folder
 
-    def handle_markdown_links(self, body: str, item: Path) -> tuple[list, list]:
+    def handle_markdown_links(
+        self, body: str, item: Path
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in markdown_lib.common.get_markdown_links(body):

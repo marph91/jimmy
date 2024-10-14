@@ -11,7 +11,7 @@ import markdown_lib
 class Converter(converter.BaseConverter):
     accepted_extensions = [".textbundle", ".textpack"]
 
-    def handle_markdown_links(self, body: str) -> tuple[list, list]:
+    def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
@@ -24,7 +24,7 @@ class Converter(converter.BaseConverter):
                 self.logger.warning(f"Couldn't find resource {resource_path}")
                 continue
             resources.append(imf.Resource(resource_path, str(link), link.text))
-        return resources, []
+        return resources
 
     def convert(self, file_or_folder: Path):
         # TODO: Are internal links and nested folders supported by this format?
@@ -40,15 +40,14 @@ class Converter(converter.BaseConverter):
             title = file_.parent.stem
             self.logger.debug(f'Converting note "{title}"')
 
-            body = file_.read_text(encoding="utf-8")
-            inline_tags = markdown_lib.common.get_inline_tags(body, ["#"])
-            resources, _ = self.handle_markdown_links(body)
             note_imf = imf.Note(
-                title,
-                body,
-                source_application=self.format,
-                tags=[imf.Tag(tag) for tag in inline_tags],
-                resources=resources,
+                title, file_.read_text(encoding="utf-8"), source_application=self.format
             )
+            note_imf.tags = [
+                imf.Tag(tag)
+                for tag in markdown_lib.common.get_inline_tags(note_imf.body, ["#"])
+            ]
+            note_imf.resources = self.handle_markdown_links(note_imf.body)
             note_imf.time_from_file(file_)
+
             self.root_notebook.child_notes.append(note_imf)

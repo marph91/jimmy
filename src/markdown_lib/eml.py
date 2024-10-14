@@ -22,7 +22,7 @@ def decode_payload(part) -> str:
         return part.get_payload(decode=True).decode("utf-8")
 
 
-def handle_part(part, attachment_folder: Path) -> tuple[list[str], list[imf.Resource]]:
+def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
     mime = part.get_content_type()
     if mime == "text/html":
         return [markdown_lib.common.markup_to_markdown(decode_payload(part))], []
@@ -46,9 +46,7 @@ def handle_part(part, attachment_folder: Path) -> tuple[list[str], list[imf.Reso
     return [], []
 
 
-def parse_message(
-    message, attachment_folder: Path
-) -> tuple[list[str], list[imf.Resource]]:
+def parse_message(message, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
     body = []
     resources = []
     if message.is_multipart():
