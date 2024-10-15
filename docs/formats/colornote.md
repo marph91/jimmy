@@ -9,5 +9,6 @@ This page describes how to convert notes from ColorNote to Markdown.
 
 1. Export as described [at the website](https://www.colornote.com/faq-question/what-is-device-backup/)
 2. [Install jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux colornote-20241013.backup --format colornote --password 1234`
+3. Convert to Markdown. Example: `jimmy-cli-linux colornote-20241013.backup --format colornote --password 0000`
+    1. The default password for automatic backups is `0000`.
 4. [Import to your app](../import_instructions.md)
