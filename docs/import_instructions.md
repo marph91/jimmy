@@ -41,6 +41,10 @@ Since Logseq doesn't support folders, this will only work with "flat exports". I
 
 This will only import your Markdown notes. Importing resources seems to be not supported.
 
+## UpNote
+
+Import from Markdown will most likely work as described [at their website](https://help.getupnote.com/import-export-share-and-print/import-content-to-upnote/import-from-markdown). The feature is behind a paywall, so I couldn't test it. Be aware that export to Markdown is behind a paywall, too!
+
 ## VNote
 
 Choose "Import Folder" as described in the [documentation](https://vnote.readthedocs.io/en/latest/docs/en_us/docs/Users/Notes%20Management.html?#import-files-and-folders).
