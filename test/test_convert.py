@@ -127,6 +127,7 @@ class EndToEnd(unittest.TestCase):
             # [["tiddlywiki/test_1/tiddlers.json"]],
             [["tomboy_ng/test_1/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
+            [["turtl/test_1/turtl-backup.json"]],
             [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
             [["zim/test_1/notebook"]],
             [["zoho_notebook/test_1/Notebook_14Apr2024_1300_html.zip"]],

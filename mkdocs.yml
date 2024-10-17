@@ -80,6 +80,7 @@ nav:
     # - Todoist: formats/todoist.md
     - Tomboy-ng: formats/tomboy_ng.md
     # - Toodledo: formats/toodledo.md
+    - Turtl: formats/turtl.md
     - vCard: formats/vcard.md
     # - xit: formats/xit.md
     - Zettelkasten: formats/zettelkasten.md

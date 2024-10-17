@@ -20,3 +20,8 @@ Documentation how to get sample exports from "difficult" apps. Difficult means t
 1. Go to the [demo page](https://demo.synology.com/de-de/dsm) and press the "Test" button
 2. Open Note Station by Apps -> Note Station on the top left
 3. Files can be transferred through the file system
+
+## Turtl
+
+- Linux app crashes always
+- Android app still works

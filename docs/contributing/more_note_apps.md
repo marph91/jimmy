@@ -83,7 +83,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | Treepad | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
 | [Trello](https://trello.com/) | [doc](https://support.atlassian.com/trello/docs/exporting-data-from-trello/) (json) |     |
 | [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (Markdown?) |     |
-| [Turtl](https://turtlapp.com/) | [thread](https://discourse.joplinapp.org/t/turtl-to-md-directory-python/29010) | dead |
 | [Twos](https://www.twosapp.com/) | [export](https://www.twosapp.com/export) (markdown, only single notes?) |     |
 | [Ulysses](https://ulysses.app/) | [thread](https://github.com/obsidianmd/obsidian-importer/issues/18) (Markdown) |     |
 | [UpNote](https://getupnote.com/) | [doc](https://medium.com/upnote/export-your-notes-3d8d6f7739d7) (Markdown, paid only) |     |
@@ -92,6 +91,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Wiznote](https://www.wiz.cn/) | [script](https://github.com/scher000/wiz2joplin) |     |
 | [Workflowy](https://workflowy.com/) | [doc](https://workflowy.com/help/exporting/) (unusable?) |     |
 | Wunderlist | [script](https://github.com/eschlot/Wunderlist2Joplin) | dead? |
-| [Xiaomi Notes](https://i.mi.com/note/h5) |     | account needed |
+| [Xiaomi Notes](https://i.mi.com/note/h5) |     | - account needed <br>- [export possible?](https://www.reddit.com/r/Xiaomi/comments/je76bz/is_there_any_way_to_export_all_your_notes_stored/) |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |

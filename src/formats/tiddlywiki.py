@@ -52,9 +52,12 @@ def split_tags(tag_string: str) -> list[str]:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".json"]
 
-    def convert(self, file_or_folder: Path):
-        resource_folder = common.get_temp_folder()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # we need a resource folder to avoid writing files to the source folder
+        self.resource_folder = common.get_temp_folder()
 
+    def convert(self, file_or_folder: Path):
         file_dict = json.loads(Path(file_or_folder).read_text(encoding="utf-8"))
         for note_tiddlywiki in file_dict:
             title = note_tiddlywiki["title"]
@@ -73,7 +76,7 @@ class Converter(converter.BaseConverter):
                     # Use the original filename if possible.
                     # TODO: Files with same name are replaced.
                     resource_title = note_tiddlywiki.get("alt-text")
-                    temp_filename = resource_folder / (
+                    temp_filename = self.resource_folder / (
                         common.unique_title()
                         if resource_title is None
                         else resource_title
