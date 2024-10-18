@@ -125,7 +125,7 @@ class LinkExtractorExtension(Extension):
 MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
 
 
-def get_markdown_links(text: str) -> list:
+def get_markdown_links(text: str) -> list[MarkdownLink]:
     """
     >>> get_markdown_links("![](image.png)")
     [MarkdownLink(text='', url='image.png', is_image=True)]
@@ -209,7 +209,9 @@ PANDOC_OUTPUT_FORMAT = (
 
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:
-    text_md = pypandoc.convert_text(text, PANDOC_OUTPUT_FORMAT, format=format_)
+    text_md = pypandoc.convert_text(
+        text, PANDOC_OUTPUT_FORMAT, format=format_, sandbox=True
+    )
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
     return text_md.strip()
@@ -219,6 +221,7 @@ def file_to_markdown(file_: Path, resource_folder: Path) -> str:
     file_md = pypandoc.convert_file(
         file_,
         PANDOC_OUTPUT_FORMAT,
+        sandbox=True,  # offline mode
         # somehow the temp folder is needed to create the resources properly
         extra_args=[f"--extract-media={resource_folder}"],
     )
