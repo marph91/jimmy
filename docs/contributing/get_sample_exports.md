@@ -4,6 +4,12 @@ Documentation how to get sample exports from "difficult" apps. Difficult means t
 
 !!! note "TODO"
 
+## FuseBase/NimbusNote
+
+> Server backups are available only with Plus or Ultimate plans.
+
+Server backups contain the whole workspace. At least single page exports are possible. 
+
 ## Samsung Notes
 
 !!! note "Doesn't work yet"

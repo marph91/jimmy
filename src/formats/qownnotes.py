@@ -51,8 +51,10 @@ class Converter(converter.BaseConverter):
                 )
 
         # qownnote style links
-        for link in get_qownnote_links(body):
-            note_links.append(imf.NoteLink(f"<{link}>", Path(unquote(link)).stem, link))
+        for qlink in get_qownnote_links(body):
+            note_links.append(
+                imf.NoteLink(f"<{qlink}>", Path(unquote(qlink)).stem, qlink)
+            )
 
         return resources, note_links
 

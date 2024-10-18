@@ -46,7 +46,9 @@ class Converter(converter.BaseConverter):
         # There is always one subfolder that contains all data.
         return common.get_single_child_folder(unzipped_input)
 
-    def parse_links(self, note_body: str):
+    def handle_markdown_links(
+        self, note_body: str
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in markdown_lib.common.get_markdown_links(note_body):
@@ -135,7 +137,7 @@ class Converter(converter.BaseConverter):
             body = markdown_lib.common.markup_to_markdown(str(soup))
 
             # resources and internal links
-            resources, note_links = self.parse_links(body)
+            resources, note_links = self.handle_markdown_links(body)
         else:
             resources, note_links = [], []
 
