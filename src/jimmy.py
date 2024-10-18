@@ -23,11 +23,6 @@ LOGGER = logging.getLogger("jimmy")
 def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.handlers.clear()
 
-    # mute other loggers
-    # https://stackoverflow.com/a/53250066/7410886
-    logging.getLogger("pypandoc").setLevel(logging.WARNING)
-    logging.getLogger("python-markdown").setLevel(logging.WARNING)
-
     # setup the root logger, but don't propagate. We will log using our own
     # log handler. See: https://stackoverflow.com/a/71365918/7410886
     logging.basicConfig(level=logging.DEBUG)
@@ -49,6 +44,15 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
     console_handler.setFormatter(console_handler_formatter)
     console_handler.setLevel(stdout_log_level)
     LOGGER.addHandler(console_handler)
+
+    # handle other loggers
+    # https://stackoverflow.com/a/53250066/7410886
+    other_loggers = [logging.getLogger(log) for log in ("pypandoc", "python-markdown")]
+    for log in other_loggers:
+        log.propagate = False
+        log.handlers.clear()
+        log.setLevel(logging.WARNING)
+        log.addHandler(console_handler)
 
 
 def convert_all_inputs(config):
