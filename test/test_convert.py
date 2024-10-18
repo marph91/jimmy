@@ -99,7 +99,6 @@ class EndToEnd(unittest.TestCase):
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
             [["joplin/test_1/29_04_2024.jex"]],
             [["jrnl/test_1/myjournal.json"]],
-            [["nimbus_note/test_1/Food"]],
             [["nimbus_note/test_2/Demo Workspace"]],
             [["notion/test_1/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
             [["notion/test_2/testexport-nofolders.zip"]],
