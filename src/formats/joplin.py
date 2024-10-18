@@ -138,7 +138,7 @@ class Converter(converter.BaseConverter):
         resource_id_filename_map,
         available_tags,
         note_tag_id_map,
-    ):  # pylint: disable=too-many-arguments
+    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         for parent_id, note in parent_id_note_map:
             # assign tags
             assert note.original_id is not None

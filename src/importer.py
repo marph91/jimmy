@@ -138,7 +138,7 @@ class FilesystemImporter:
         self.local_resource_folder = (
             config.local_resource_folder
             if config.local_resource_folder == Path(".")
-            else safe_path(config.local_resource_folder)
+            else Path(safe_path(config.local_resource_folder))
         )
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
