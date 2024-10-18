@@ -199,9 +199,12 @@ def extract_tar(input_: Path) -> Path:
     return temp_folder
 
 
-def extract_zip(input_: Path, file_to_extract: str | None = None) -> Path:
+def extract_zip(
+    input_: Path, file_to_extract: str | None = None, temp_folder: Path | None = None
+) -> Path:
     """Extract a zip file to a new temporary directory."""
-    temp_folder = get_temp_folder()
+    if temp_folder is None:
+        temp_folder = get_temp_folder()
     with zipfile.ZipFile(input_) as zip_ref:
         if file_to_extract is None:
             zip_ref.extractall(temp_folder)
