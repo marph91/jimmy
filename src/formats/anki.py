@@ -158,6 +158,4 @@ class Converter(converter.BaseConverter):
                 self.root_notebook.child_notes.append(note_imf)
 
         # Don't export empty notebooks
-        self.root_notebook.child_notebooks = [
-            nb for nb in self.root_notebook.child_notebooks if not nb.is_empty()
-        ]
+        self.remove_empty_notebooks()

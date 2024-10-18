@@ -129,3 +129,6 @@ class Converter(converter.BaseConverter):
                 note["space_id"], note["board_id"]
             )
             parent_notebook.child_notes.append(note_imf)
+
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()

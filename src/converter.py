@@ -82,6 +82,19 @@ class BaseConverter(abc.ABC):
         #     - extract note links
         #     - append note to the notebook
 
+    def remove_empty_notebooks(self, root_notebook: imf.Notebook | None = None):
+        """Remove empty notebooks before exporting."""
+        if root_notebook is None:
+            root_notebook = self.root_notebook
+        non_empty_child_notebooks = []
+        for notebook in root_notebook.child_notebooks:
+            # Remove empty notebooks before the is_empty() check
+            # to handle nested empty notebooks.
+            self.remove_empty_notebooks(notebook)
+            if not notebook.is_empty():
+                non_empty_child_notebooks.append(notebook)
+        root_notebook.child_notebooks = non_empty_child_notebooks
+
 
 class DefaultConverter(BaseConverter):
     accepted_extensions = ["*"]
