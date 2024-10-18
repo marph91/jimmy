@@ -105,8 +105,15 @@ def get_jimmy_version():
     )
 
 
+def get_pandoc_version():
+    try:
+        return pypandoc.get_pandoc_version()
+    except OSError:
+        return "unknown"
+
+
 def jimmy(config) -> common.Stats:
-    LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {pypandoc.get_pandoc_version()})")
+    LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
     LOGGER.info("Start parsing")
