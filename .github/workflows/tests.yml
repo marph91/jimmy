@@ -19,9 +19,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pip dependencies
-        run: |
-          pip install -r requirements/requirements-dev.txt
-          python -c 'from pypandoc.pandoc_download import download_pandoc; download_pandoc(version="3.5")'
+        run: pip install -r requirements/requirements-dev.txt
       - name: install optional system depencencies
         run: sudo apt install -y asciidoctor
       - name: Run tests

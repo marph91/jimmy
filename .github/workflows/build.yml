@@ -31,9 +31,7 @@ jobs:
           python-version: "3.12"
       - name: Install dependencies
         # install only the really required modules before the pyinstaller build
-        run: |
-          pip install -r requirements/requirements-build.txt
-          python -c 'from pypandoc.pandoc_download import download_pandoc; download_pandoc(version="3.5")'
+        run: pip install -r requirements/requirements-build.txt
       - name: Build executables with pyinstaller
         run: |
           # store the latest tag in static file
