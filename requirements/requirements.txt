@@ -10,4 +10,4 @@ python-frontmatter==1.1.0
 # pytodotxt==1.5.0
 pyyaml==6.0.2
 rich==13.9.2
-stage-left==0.2.2
+# stage-left==0.2.2
