@@ -11,4 +11,3 @@ python-frontmatter==1.1.0
 pyyaml==6.0.2
 rich==13.9.2
 stage-left==0.2.2
-vobject==0.9.8
