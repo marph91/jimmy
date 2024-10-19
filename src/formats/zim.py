@@ -1,4 +1,4 @@
-"""Convert TiddlyWiki notes to the intermediate format."""
+"""Convert Zim Wiki notes to the intermediate format."""
 
 import datetime as dt
 from pathlib import Path

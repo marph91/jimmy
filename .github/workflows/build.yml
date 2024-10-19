@@ -46,10 +46,18 @@ jobs:
           files: ./dist/jimmy*
       - name: Smoke test
         run: |
+          # pandoc and asciidoc converter
           ./dist/jimmy-cli* test/data/test_data/default_format/arbitrary_folder
+          # filters and frontmatter module
           ./dist/jimmy-cli* test/data/test_data/obsidian/test_1 --format obsidian
           ./dist/jimmy-cli* test/data/test_data/obsidian/test_1 --format obsidian --exclude-tags "*"
           ./dist/jimmy-cli* test/data/test_data/obsidian/test_1 --format obsidian --include-notes-with-tags "*"
           ./dist/jimmy-cli* test/data/test_data/obsidian/test_1 --format obsidian --include-notes "Second sample note" "Sample note"
+          # textbundle converter called from bear converter
           ./dist/jimmy-cli* test/data/test_data/bear/test_1/backup.bear2bk --format bear
+          # cryptography module
           ./dist/jimmy-cli* test/data/test_data/colornote/test_1/colornote-20241014.backup --format colornote --password 1234
+          # sqlite3 module
+          ./dist/jimmy-cli* test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
+          # pyyaml module
+          ./dist/jimmy-cli* test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
