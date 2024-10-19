@@ -50,7 +50,9 @@ exe = EXE(
     name=executable_name,
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    # Strip unneeded libs. Not recommended for windows.
+    # https://pyinstaller.org/en/stable/usage.html#cmdoption-s
+    strip=platform.system().lower() != "windows",
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
