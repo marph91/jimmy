@@ -32,7 +32,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Inkdrop](https://www.inkdrop.app/) |     |     |
 | [Journalify](https://www.journalify.com/) |     |     |
 | [Journey.cloud](https://journey.cloud/) |     | [demo](https://journey.cloud/app/timeline) |
-| [keynote-nf](https://github.com/dpradov/keynote-nf) |     | https://github.com/marph91/jimmy/issues/3 |
+| [keynote-nf](https://github.com/dpradov/keynote-nf) |     | <https://github.com/marph91/jimmy/issues/3> |
 | [Laverna](https://laverna.cc/) |     | dead |
 | [Lifeograph](https://sourceforge.net/projects/lifeograph/) | [doc](https://lifeograph.sourceforge.net/doku.php) |     |
 | [Linked](https://github.com/lostdesign/linked) |     |     |
@@ -68,16 +68,16 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Roam](https://roamresearch.com/) | [format doc](https://github.com/obsidianmd/obsidian-importer/blob/master/src/formats/roam-json.ts) |     |
 | [Samsung Notes](https://www.samsung.com/uk/apps/samsung-notes/) | [script](https://github.com/LucasMatuszewski/snb2md-recursive) | Samsung only |
 | [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) |     |
-| [Signal](https://signal.org/de/) |     | https://github.com/marph91/jimmy/issues/8 |
+| [Signal](https://signal.org/de/) |     | <https://github.com/marph91/jimmy/issues/8> |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
 | [Skiff Pages](https://skiff.com/pages) |     |     |
 | [Slite](https://slite.com/) | [doc](https://slite.slite.page/p/GB20MuMNuUTvwM/Backing-Up-Your-Data) (Markdown, paid only) |     |
-| [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | https://github.com/marph91/jimmy/issues/4 |
+| [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | <https://github.com/marph91/jimmy/issues/4> |
 | [Supernotes](https://supernotes.app/) | [doc](https://help.supernotes.app/en/articles/3068672-printing-exporting#h_f37e2930e4) |     |
 | [Tana](https://tana.inc/) | [thread](https://www.reddit.com/r/TanaInc/comments/13jjiwi/comment/jkgca57/) |     |
 | [Takenote](https://takenote.ai/) | Export via settings to zipped md and json | No tags/metadata? |
 | [Taskade](https://www.taskade.com/) | [doc](https://help.taskade.com/en/collections/8400888-export) |     |
-| [Telegram](https://telegram.org/) |     | https://github.com/marph91/jimmy/issues/7 |
+| [Telegram](https://telegram.org/) |     | <https://github.com/marph91/jimmy/issues/7> |
 | [TheBrain](https://www.thebrain.com/) | - [thread](https://forums.thebrain.com/post/exporting-brain-possible-9725592) <br>- [script](https://github.com/sanderdatema/thebrain2markdown) |     |
 | [Things](https://github.com/thingsapi/things-cli) |     |     |
 | Treepad | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
