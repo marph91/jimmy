@@ -12,7 +12,7 @@ import intermediate_format as imf
 import markdown_lib
 
 
-def clean_tables(soup):
+def streamline_tables(soup: BeautifulSoup):
     for table in soup.find_all("table"):
         for row in table.find_all("tr"):
             for td in row.find_all("td"):
@@ -22,9 +22,7 @@ def clean_tables(soup):
                 td.append(text_only)
 
 
-def clean_task_lists(soup):
-    # TODO: Not sure why the cleaned task lists still don't work.
-    # It works online. Maybe caused by an old pandoc version.
+def streamline_checklists(soup: BeautifulSoup):
     for task_list in soup.find_all("div", class_="checklist"):
         task_list.name = "ul"
         # remove the spans
@@ -132,8 +130,8 @@ class Converter(converter.BaseConverter):
 
         # convert the note body to Markdown
         if soup.body is not None:
-            clean_tables(soup)
-            clean_task_lists(soup)
+            streamline_tables(soup)
+            streamline_checklists(soup)
             body = markdown_lib.common.markup_to_markdown(str(soup))
 
             # resources and internal links
