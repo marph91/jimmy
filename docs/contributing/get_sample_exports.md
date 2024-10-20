@@ -4,7 +4,7 @@ Documentation how to get sample exports from "difficult" apps. Difficult means t
 
 !!! note "TODO"
 
-## FuseBase/NimbusNote
+## FuseBase/Nimbus Note
 
 > Server backups are available only with Plus or Ultimate plans.
 

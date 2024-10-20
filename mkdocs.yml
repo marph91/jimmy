@@ -61,11 +61,15 @@ nav:
     - Day One: formats/day_one.md
     - Dynalist: formats/dynalist.md
     - Facebook: formats/facebook.md
-    - FuseBase: formats/fusebase.md
+    # fusebase == nimbus note
+    - FuseBase: formats/nimbus_note.md
+    # gnote == tomboy-ng
+    - Gnote: formats/tomboy_ng.md
     - Google Docs: formats/google_docs.md
     - Google Keep: formats/google_keep.md
     - Joplin: formats/joplin.md
     - jrnl: formats/jrnl.md
+    - Nimbus Note: formats/nimbus_note.md
     - Notion: formats/notion.md
     - Obsidian: formats/obsidian.md
     - QOwnNotes: formats/qownnotes.md
