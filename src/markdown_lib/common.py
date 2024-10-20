@@ -14,7 +14,7 @@ import pypandoc
 LOGGER = logging.getLogger("jimmy")
 
 
-def split_h1_title_from_body(markdown_):
+def split_h1_title_from_body(markdown_: str) -> tuple[str, str]:
     splitted_markdown = markdown_.split("\n", 1)
     match len(splitted_markdown):
         case 1:

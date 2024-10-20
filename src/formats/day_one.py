@@ -23,7 +23,9 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
     def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
-        def find_or_create_child_notebook(title, parent_notebook):
+        def find_or_create_child_notebook(
+            title: str, parent_notebook: imf.Notebook
+        ) -> imf.Notebook:
             for child_notebook in parent_notebook.child_notebooks:
                 if child_notebook.title == title:
                     return child_notebook
@@ -35,13 +37,13 @@ class Converter(converter.BaseConverter):
             date_.strftime("%Y-%m-%d"), self.root_notebook
         )
 
-    def get_resource_maps(self, entries):
+    def get_resource_maps(self, entries: list) -> dict[str, dict[str, Path]]:
         # Create "global" maps. The resources are attached to single entries, but they
         # can be referenced. For example when copying the same photo to another note,
         # the same photo gets another id. But both IDs are referenced at the first note
         # photos...
         # Dict of the actual maps.
-        resource_id_filename_maps: dict = {
+        resource_id_filename_maps: dict[str, dict[str, Path]] = {
             "audios": {},
             "pdfAttachments": {},
             "photos": {},

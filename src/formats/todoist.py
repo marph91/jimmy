@@ -37,7 +37,7 @@ def parse_date(date_string: str | None) -> datetime | None:
     if not date_string:
         return None
 
-    def try_strptime(format_):
+    def try_strptime(format_: str) -> datetime | None:
         try:
             if "%Y" in format_:
                 parsed_date = datetime.strptime(date_string, format_)
