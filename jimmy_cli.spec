@@ -63,3 +63,14 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
+
+# only needed for size analysis
+# coll = COLLECT(
+#     exe,
+#     a.binaries,
+#     a.datas,
+#     strip=False,
+#     upx=True,
+#     upx_exclude=[],
+#     name='jimmy_cli',
+# )

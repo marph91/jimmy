@@ -94,3 +94,4 @@ nav:
   - Contributing:
     - How to Contribute?: contributing/contributing.md
     - More Note Apps: contributing/more_note_apps.md
+    - Development Considerations: contributing/development_considerations.md
