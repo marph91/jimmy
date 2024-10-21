@@ -125,6 +125,8 @@ class EndToEnd(unittest.TestCase):
             [["textbundle/test_4/Textbundle Example v1.textbundle"]],
             [["textbundle/test_5/Textbundle Example v2.textbundle"]],
             # [["tiddlywiki/test_1/tiddlers.json"]],
+            [["tiddlywiki/test_2/Deserializers.tid"]],
+            [["tiddlywiki/test_3/Plugins.tid"]],
             [["tomboy_ng/test_1/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["turtl/test_1/turtl-backup.json"]],

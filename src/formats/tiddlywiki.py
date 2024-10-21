@@ -50,21 +50,21 @@ def split_tags(tag_string: str) -> list[str]:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json"]
+    accepted_extensions = [".json", ".tid"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
-    def convert(self, file_or_folder: Path):
-        file_dict = json.loads(Path(file_or_folder).read_text(encoding="utf-8"))
-        for note_tiddlywiki in file_dict:
-            title = note_tiddlywiki["title"]
+    def convert_json(self, file_or_folder: Path):
+        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        for tiddler in file_dict:
+            title = tiddler["title"]
             self.logger.debug(f'Converting note "{title}"')
 
             resources = []
-            mime = note_tiddlywiki.get("type", "")
+            mime = tiddler.get("type", "")
             if mime == "image/svg+xml":
                 continue  # TODO
             if (
@@ -72,10 +72,10 @@ class Converter(converter.BaseConverter):
                 or mime == "application/pdf"
                 or mime == "audio/mp3"
             ):
-                if (text_base64 := note_tiddlywiki.get("text")) is not None:
+                if (text_base64 := tiddler.get("text")) is not None:
                     # Use the original filename if possible.
                     # TODO: Files with same name are replaced.
-                    resource_title = note_tiddlywiki.get("alt-text")
+                    resource_title = tiddler.get("alt-text")
                     temp_filename = self.resource_folder / (
                         common.unique_title()
                         if resource_title is None
@@ -84,33 +84,57 @@ class Converter(converter.BaseConverter):
                     temp_filename.write_bytes(base64.b64decode(text_base64))
                     body = f"![{temp_filename.name}]({temp_filename})"
                     resources.append(imf.Resource(temp_filename, body, resource_title))
-                elif (source := note_tiddlywiki.get("source")) is not None:
+                elif (source := tiddler.get("source")) is not None:
                     body = f"![{title}]({source})"
-                elif (uri := note_tiddlywiki.get("_canonical_uri")) is not None:
+                elif (uri := tiddler.get("_canonical_uri")) is not None:
                     body = f"[{title}]({uri})"
                 else:
-                    body = wikitext_to_md(note_tiddlywiki.get("text", ""))
+                    body = wikitext_to_md(tiddler.get("text", ""))
                     self.logger.warning(f"Unhandled attachment type {mime}")
             elif mime == "application/json":
-                body = "```\n" + note_tiddlywiki.get("text", "") + "\n```"
+                body = "```\n" + tiddler.get("text", "") + "\n```"
             else:
-                body = wikitext_to_md(note_tiddlywiki.get("text", ""))
+                body = wikitext_to_md(tiddler.get("text", ""))
 
             note_imf = imf.Note(
                 title,
                 body,
-                author=note_tiddlywiki.get("creator"),
+                author=tiddler.get("creator"),
                 source_application=self.format,
                 # Tags don't have a separate id. Just use the name as id.
-                tags=[
-                    imf.Tag(tag) for tag in split_tags(note_tiddlywiki.get("tags", ""))
-                ],
+                tags=[imf.Tag(tag) for tag in split_tags(tiddler.get("tags", ""))],
                 resources=resources,
             )
-            if "created" in note_tiddlywiki:
-                note_imf.created = tiddlywiki_to_datetime(note_tiddlywiki["created"])
-            if "modified" in note_tiddlywiki:
-                note_imf.updated = tiddlywiki_to_datetime(note_tiddlywiki["modified"])
+            if "created" in tiddler:
+                note_imf.created = tiddlywiki_to_datetime(tiddler["created"])
+            if "modified" in tiddler:
+                note_imf.updated = tiddlywiki_to_datetime(tiddler["modified"])
             if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
                 continue  # skip notes with special tags
             self.root_notebook.child_notes.append(note_imf)
+
+    def convert_tid(self, file_or_folder: Path):
+        tiddler = file_or_folder.read_text(encoding="utf-8")
+        metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)
+
+        metadata = {}
+        for line in metadata_raw.split("\n"):
+            key, value = line.split(": ", 1)
+            metadata[key] = value
+
+        note_imf = imf.Note(
+            metadata["title"],
+            wikitext_to_md(body_wikitext),
+            author=metadata.get("creator"),
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in split_tags(metadata.get("tags", ""))],
+            created=tiddlywiki_to_datetime(metadata["created"]),
+            updated=tiddlywiki_to_datetime(metadata["modified"]),
+        )
+        self.root_notebook.child_notes.append(note_imf)
+
+    def convert(self, file_or_folder: Path):
+        if file_or_folder.suffix == ".json":
+            self.convert_json(file_or_folder)
+        else:  # ".tid"
+            self.convert_tid(file_or_folder)
