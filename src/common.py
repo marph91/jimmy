@@ -3,6 +3,7 @@
 from collections import defaultdict
 from dataclasses import dataclass
 import datetime as dt
+import importlib
 import logging
 from pathlib import Path
 import pkgutil
@@ -27,8 +28,17 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
-def get_available_formats() -> list[str]:
-    return [module.name for module in pkgutil.iter_modules(formats.__path__)]
+def get_available_formats() -> dict:
+    formats_dict = {}
+    for module in pkgutil.iter_modules(formats.__path__):
+        module_ = importlib.import_module(f"formats.{module.name}")
+        accepted_extensions = module_.Converter.accepted_extensions
+        accept_folder = module_.Converter.accept_folder
+        formats_dict[module.name] = {
+            "accepted_extensions": accepted_extensions,
+            "accept_folder": accept_folder,
+        }
+    return formats_dict
 
 
 def guess_suffix(file_: Path) -> str:
