@@ -8,7 +8,7 @@ Open the root folder in the editor.
 
 ## Joplin
 
-[General import instructions from the Joplin website.](https://joplinapp.org/help/apps/import_export/#importing-from-markdown-files)
+Markdown files can be imported to Joplin as described [on the website](https://joplinapp.org/help/apps/import_export/#importing-from-markdown-files):
 
 1. In Joplin, go to `File -> Import` and choose:
     - `MD - Markdown (Directory)` if you converted without frontmatter. This is the default.
@@ -24,10 +24,10 @@ Since Logseq doesn't support folders, this will only work with "flat exports". I
 
 ## Obsidian
 
-[General import instructions from the Obsidian website.](https://help.obsidian.md/import/markdown)
+Markdown files can be imported to Obsidian as described [on the website](https://help.obsidian.md/import/markdown):
 
 - Copy the root folder to you vault or open it as a new vault.
-- You can add metadata in the frontmatter by using the `--frontmatter obsidian` argument.
+- Add metadata in the frontmatter by using the `--frontmatter obsidian` argument.
 
 ## QOwnNotes
 
@@ -37,13 +37,11 @@ Since Logseq doesn't support folders, this will only work with "flat exports". I
 
 ## Notion
 
-[General import instructions from the Notion website.](https://www.notion.so/help/import-data-into-notion)
-
-This will only import your Markdown notes. Importing resources seems to be not supported.
+Markdown files can be imported to Notion as described [on the website](https://www.notion.so/help/import-data-into-notion). This will only import Markdown notes, though. Importing resources seems to be not supported.
 
 ## UpNote
 
-Import from Markdown will most likely work as described [at their website](https://help.getupnote.com/import-export-share-and-print/import-content-to-upnote/import-from-markdown). The feature is behind a paywall, so I couldn't test it. Be aware that export to Markdown is behind a paywall, too!
+Import from Markdown will most likely work as described [on the website](https://help.getupnote.com/import-export-share-and-print/import-content-to-upnote/import-from-markdown). The feature is behind a paywall, so I couldn't test it. Be aware that export to Markdown is behind a paywall, too!
 
 ## VNote
 
