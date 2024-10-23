@@ -30,6 +30,7 @@ class EndToEnd(unittest.TestCase):
             frontmatter=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),
+            local_image_folder=None,
             print_tree=False,
             exclude_notes=None,
             exclude_notes_with_tags=None,
@@ -222,37 +223,48 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
-            ["global_resource_folder", Path("images")],
-            ["global_resource_folder", Path("ima:ges")],  # forbidden char
-            ["global_resource_folder", Path("../images")],  # outside root dir
-            ["local_resource_folder", Path(".")],  # default
-            ["local_resource_folder", Path("images")],
-            ["local_resource_folder", Path("ima:ges")],  # forbidden char
+            ["global", {"global_resource_folder": Path("res")}],
+            [
+                "global_forbidden",
+                {"global_resource_folder": Path("r:es")},
+            ],
+            [
+                "global_outside",
+                {"global_resource_folder": Path("../res")},
+            ],
+            ["local_default", {"local_resource_folder": Path(".")}],  # default
+            ["local", {"local_resource_folder": Path("res")}],
+            [
+                "local_forbidden",
+                {"local_resource_folder": Path("re:s")},
+            ],
+            [
+                "local_splitted",
+                {
+                    "local_resource_folder": Path("attachments"),
+                    "local_image_folder": Path("media"),
+                },
+            ],
         ]
     )
-    def test_attachment_folder(self, folder_option, value):
+    def test_attachment_folder(self, name, folder_options):
         """Test the attachment folders."""
 
-        test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
-        value_safe = str(value).replace("/", "_").replace(".", "_").replace(":", "_")
-        test_data_output = (
-            Path("tmp_output/attachment_folder") / f"{folder_option}_{value_safe}"
-        )
+        test_data = [Path("test/data/test_data/obsidian/test_1")]
+        test_data_output = Path(f"tmp_output/attachment_folder/{name}")
         shutil.rmtree(test_data_output, ignore_errors=True)
         # separate folder for each input
-        reference_data = (
-            Path("test/data/reference_data/attachment_folder")
-            / f"{folder_option}_{value_safe}"
-        )
+        reference_data = Path(f"test/data/reference_data/attachment_folder/{name}")
 
         self.config.input = test_data
-        self.config.format = "joplin"
+        self.config.format = "obsidian"
         self.config.output_folder = test_data_output
-        setattr(self.config, folder_option, value)
+        for option, value in folder_options.items():
+            setattr(self.config, option, value)
         jimmy.jimmy(self.config)
 
         self.assert_dir_trees_equal(test_data_output, reference_data)
-        if folder_option == "global_resource_folder" and str(value).startswith(".."):
+        if name == "global_outside":
             # outside root dir -> verify separately
             self.assert_dir_trees_equal(
                 test_data_output / value, reference_data / value

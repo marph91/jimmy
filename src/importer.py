@@ -140,11 +140,18 @@ class FilesystemImporter:
             if config.local_resource_folder == Path(".")
             else Path(safe_path(config.local_resource_folder))
         )
+        self.local_image_folder = (
+            None
+            if config.local_image_folder is None
+            else Path(safe_path(config.local_image_folder))
+        )
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
         self.progress_bars = progress_bars
 
     def import_resources(self, note: imf.Note):
+        # pylint: disable=too-many-branches
+        # TODO
         assert note.path is not None
         assert self.root_path is not None
         for resource in note.resources:
@@ -153,12 +160,16 @@ class FilesystemImporter:
 
             # determine new resource path
             if self.global_resource_folder is None:
+                if self.local_image_folder is not None and resource.is_image:
+                    target_folder = self.local_image_folder
+                else:
+                    target_folder = self.local_resource_folder
                 # local resources (next to the markdown files)
-                resource_folder = note.path.parent / self.local_resource_folder
+                resource_folder = note.path.parent / target_folder
                 # TODO: done for each resource in each note
-                if self.local_resource_folder != Path("."):
+                if target_folder != Path("."):
                     resource_folder.mkdir(
-                        exist_ok=True, parents=len(self.local_resource_folder.parts) > 1
+                        exist_ok=True, parents=len(target_folder.parts) > 1
                     )
                 resource.path = resource_folder / safe_path(resource.filename.name)
             else:
@@ -252,6 +263,17 @@ class FilesystemImporter:
                         normalize_obsidian_tag(tag.title) for tag in note.tags
                     ]
                     post = frontmatter.Post(note.body, **metadata)
+                    frontmatter.dump(post, note.path)
+                else:
+                    note.path.write_text(note.body, encoding="utf-8")
+            case "qownnotes":
+                # space separated tags, as supported by:
+                # - https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags
+                # - https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags
+                if note.tags:
+                    post = frontmatter.Post(
+                        note.body, tags=" ".join([tag.title for tag in note.tags])
+                    )
                     frontmatter.dump(post, note.path)
                 else:
                     note.path.write_text(note.body, encoding="utf-8")

@@ -31,9 +31,14 @@ Markdown files can be imported to Obsidian as described [on the website](https:/
 
 ## QOwnNotes
 
-1. Use the argument `--local-resource-folder media`. This is not required, but aligns with the internal structure of QOwnNotes.
-2. Copy the root folder to you note folder or open it as a new note folder.
-3. Enable subfolders by `Note -> Settings -> Use note subfolders`.
+1. Use the arguments `--local-resource-folder attachments --local-image-folder media`. This is not required, but aligns with the internal structure of QOwnNotes.
+2. Copy the root folder to your note folder or open it as a new note folder.
+3. If you have subfolders, enable `Note -> Settings -> Use note subfolders`.
+4. If you want to convert tags:
+    1. Use the argument `--frontmatter qownnotes`
+    2. Detect the front matter tags by installing the [epsilon-notes-tags](https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags) or [`yaml-nested-tags`](https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags) plugin.
+
+A complete command could look like `jimmy-cli-linux takeout.zip --format google_keep --frontmatter qownnotes --local-resource-folder attachments --local-image-folder media`.
 
 ## Notion
 

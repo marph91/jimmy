@@ -12,7 +12,7 @@ import jimmy
 LOGGER = logging.getLogger("jimmy")
 
 
-def relative_path(path: str | Path) -> Path:
+def relative_path(path: str | Path | None) -> Path | None:
     """
     Checks if a path is relative.
 
@@ -31,6 +31,8 @@ def relative_path(path: str | Path) -> Path:
     >>> str(relative_path("./a"))
     'a'
     """
+    if path is None:
+        return None
     # https://stackoverflow.com/a/37472037
     path_to_check = Path(path)
     if path_to_check.is_absolute():
@@ -59,7 +61,7 @@ def main():
     parser.add_argument(
         "--frontmatter",
         default=None,
-        choices=(None, "all", "joplin", "obsidian"),
+        choices=(None, "all", "joplin", "obsidian", "qownnotes"),
         help="Frontmatter type.",
     )
     parser.add_argument(
@@ -79,6 +81,13 @@ def main():
         help="The resource folder for images, PDF and other data. "
         "Relative to the location of the corresponding note.",
         default=Path("."),  # next to the note
+    )
+    parser.add_argument(
+        "--local-image-folder",
+        type=relative_path,
+        help="The folder for images. Works only together with "
+        "--local-resource-folder. "
+        "Relative to the location of the corresponding note.",
     )
     parser.add_argument(
         "--print-tree",
