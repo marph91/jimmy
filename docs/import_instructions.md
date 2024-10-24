@@ -36,7 +36,7 @@ Markdown files can be imported to Obsidian as described [on the website](https:/
 3. If you have subfolders, enable `Note -> Settings -> Use note subfolders`.
 4. If you want to convert tags:
     1. Use the argument `--frontmatter qownnotes`
-    2. Detect the front matter tags by installing the [epsilon-notes-tags](https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags) or [`yaml-nested-tags`](https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags) plugin.
+    2. Detect the front matter tags by installing the [epsilon-notes-tags](https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags) or [yaml-nested-tags](https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags) plugin.
 
 A complete command could look like `jimmy-cli-linux takeout.zip --format google_keep --frontmatter qownnotes --local-resource-folder attachments --local-image-folder media`.
 
