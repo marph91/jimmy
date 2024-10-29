@@ -29,7 +29,6 @@ The default import covers the following formats:
 
 1. [Install jimmy](../index.md#installation)
 2. Convert to Markdown. Examples:
-
 ```sh
 # import a single file supported by pandoc
 jimmy-cli-linux libre_office_document.odt
@@ -40,7 +39,6 @@ jimmy-cli-linux plaintext.txt markdown.md
 # import all files in a folder recursively
 jimmy-cli-linux path/to/folder
 ```
-
 3. [Import to your app](../import_instructions.md)
 
 ## Import Structure
