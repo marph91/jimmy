@@ -14,10 +14,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      - name: Set up Python 3.12
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Install pip dependencies
         run: pip install -r requirements/requirements-dev.txt
       - name: install optional system depencencies

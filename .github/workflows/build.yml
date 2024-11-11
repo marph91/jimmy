@@ -25,10 +25,10 @@ jobs:
           # fetch all tags for the "git describe" later
           fetch-depth: 0
           submodules: true
-      - name: Set up Python 3.12
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Install dependencies
         # install only the really required modules before the pyinstaller build
         run: pip install -r requirements/requirements-build.txt
