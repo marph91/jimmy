@@ -4,7 +4,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | --- | --- | --- |
 | [Affine](https://github.com/toeverything/AFFiNE) | [doc](https://docs.affine.pro/docs/settings) |     |
 | [Agenda](https://agenda.com/) | [doc](https://agenda.community/t/sharing-import-export-and-printing/56) | apple only |
-| [Anytype](https://anytype.io/) |     |     |
 | [Apple Notes](https://www.icloud.com/notes) | [script](https://github.com/mattrose/AppleNotes2Joplin) | apple only |
 | [Appflowy](https://appflowy.io/) | [seems to be not possible yet](https://github.com/AppFlowy-IO/AppFlowy/issues/4387) |     |
 | [Asana](https://asana.com/) | [doc](https://help.taskade.com/en/articles/8958607-import-from-asana) |     |

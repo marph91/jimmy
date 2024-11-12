@@ -212,3 +212,5 @@ class DefaultConverter(BaseConverter):
 
     def convert(self, file_or_folder: Path):
         self.convert_file_or_folder(file_or_folder, self.root_notebook)
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()

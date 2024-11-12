@@ -3,7 +3,8 @@ from PyInstaller.utils.hooks import collect_data_files
 
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
 datas = [(".version", ".")]
-datas += collect_data_files('pypandoc')
+datas += collect_data_files("anyblock_exporter")
+datas += collect_data_files("pypandoc")
 
 
 # Generate list of hidden imports

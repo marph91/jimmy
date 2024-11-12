@@ -53,6 +53,7 @@ nav:
   - Formats:
     - Default Import: formats/default.md
     - Anki: formats/anki.md
+    - Anytype: formats/anytype.md
     - Bear: formats/bear.md
     - Cacher: formats/cacher.md
     - CherryTree: formats/cherrytree.md

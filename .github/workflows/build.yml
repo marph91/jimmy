@@ -61,3 +61,5 @@ jobs:
           ./dist/jimmy-cli* test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
           # pyyaml module
           ./dist/jimmy-cli* test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
+          # anytype module
+          ./dist/jimmy-cli* test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype

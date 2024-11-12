@@ -23,7 +23,7 @@ LOGGER = logging.getLogger("jimmy")
 def setup_logging(log_to_file: bool, stdout_log_level: str):
     LOGGER.handlers.clear()
 
-    # setup the root logger, but don't propagate. We will log using our own
+    # setup the root logger, but don't propagate. We will log use our own
     # log handler. See: https://stackoverflow.com/a/71365918/7410886
     logging.basicConfig(level=logging.DEBUG)
     LOGGER.propagate = False
@@ -47,7 +47,10 @@ def setup_logging(log_to_file: bool, stdout_log_level: str):
 
     # handle other loggers
     # https://stackoverflow.com/a/53250066/7410886
-    other_loggers = [logging.getLogger(log) for log in ("pypandoc", "python-markdown")]
+    other_loggers = [
+        logging.getLogger(log)
+        for log in ("anyblock_exporter", "pypandoc", "python-markdown")
+    ]
     for log in other_loggers:
         log.propagate = False
         log.handlers.clear()

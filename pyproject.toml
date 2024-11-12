@@ -18,6 +18,7 @@ extra_checks = true
 disable_error_code = "attr-defined"
 [[tool.mypy.overrides]]
 module = [
+    "anyblock_exporter",
     "enlighten",
     "frontmatter",
     "puremagic",
