@@ -3,7 +3,7 @@ This page describes how to convert notes from Anytype to Markdown.
 ## General Information
 
 - [Website](https://anytype.io/)
-- Typical extension: Folder
+- Typical extension: `.zip` or folder
 
 ## Instructions
 

@@ -19,7 +19,7 @@ class Converter(converter.BaseConverter):
         intermediate_markdown_folder = common.get_temp_folder() / self.output_folder
 
         anytype_converter = AnytypeConverter(
-            file_or_folder, intermediate_markdown_folder
+            self.root_path, intermediate_markdown_folder
         )
         anytype_converter.process_all_files()
 
