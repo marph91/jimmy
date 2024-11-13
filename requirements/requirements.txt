@@ -1,4 +1,4 @@
-anyblock_exporter @ git+https://github.com/marph91/AnyBlock-To-Markdown.git@minimal-module-setup
+anyblock_exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744
 beautifulsoup4==4.12.3
 cryptography==43.0.3
 enlighten==1.12.4
