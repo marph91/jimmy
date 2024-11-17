@@ -61,6 +61,7 @@ nav:
     - ColorNote: formats/colornote.md
     - Day One: formats/day_one.md
     - Dynalist: formats/dynalist.md
+    - Evernote: formats/evernote.md
     - Facebook: formats/facebook.md
     # fusebase == nimbus note
     - FuseBase: formats/nimbus_note.md
