@@ -76,6 +76,7 @@ nav:
     - QOwnNotes: formats/qownnotes.md
     - RedNotebook: formats/rednotebook.md
     - Simplenote: formats/simplenote.md
+    - SQLite: formats/sqlite.md
     - Standard Notes: formats/standard_notes.md
     - Synology Note Station: formats/synology_note_station.md
     - Textbundle: formats/textbundle.md
