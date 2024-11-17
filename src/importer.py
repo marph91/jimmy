@@ -156,7 +156,11 @@ class FilesystemImporter:
         assert self.root_path is not None
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
-            resource_title = resource.title or resource.filename.name
+            resource_title = (
+                resource.title
+                if resource.title not in [None, ""]
+                else resource.filename.name
+            )
 
             # determine new resource path
             if self.global_resource_folder is None:
@@ -294,7 +298,8 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
             if not self.frontmatter:
                 LOGGER.warning(
-                    f'Tags of note "{note.title}" will be lost without frontmatter.'
+                    f'Tags of note "{note.title}" will be lost without frontmatter. '
+                    'You can add frontmatter by using "--frontmatter all".'
                 )
         self.write_note(note)
 
