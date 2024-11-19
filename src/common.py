@@ -28,6 +28,73 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
+def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
+    r"""
+    Return a safe version of the provided path or string.
+    Only the last part is considered if a path is provided.
+
+    >>> str(safe_path(Path("a/.")))
+    'a'
+    >>> str(safe_path(Path("ab\x00c")))
+    'ab_c'
+    >>> str(safe_path(Path("CON")))
+    'CON_'
+    >>> str(safe_path(Path("LPT7")))
+    'LPT7_'
+    >>> str(safe_path(Path("bc.")))
+    'bc_'
+    >>> safe_path("b:c")
+    'b_c'
+    >>> str(safe_path(Path("b*c")))
+    'b_c'
+    >>> safe_path("a/b/c")
+    'a_b_c'
+    >>> safe_path("")  # doctest:+ELLIPSIS
+    'unnamed_...'
+    >>> safe_path("g" * 50, max_name_length=4)
+    'gggg'
+    """
+    safe_name = path if isinstance(path, str) else path.name
+    if safe_name == "":
+        return unique_title()
+
+    # https://stackoverflow.com/a/31976060
+    # Windows restrictions
+    # fmt: off
+    forbidden_chars = [
+        "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
+    ] + [chr(value) for value in range(32)]
+    # fmt: on
+    for char in forbidden_chars:
+        safe_name = safe_name.replace(char, "_")
+
+    forbidden_names = (
+        ["CON", "PRN", "AUX", "NUL"]
+        + [f"COM{i}" for i in range(1, 10)]
+        + [f"LPT{i}" for i in range(1, 10)]
+    )
+    if safe_name in forbidden_names:
+        safe_name += "_"
+
+    forbidden_last_chars = [" ", "."]
+    if safe_name[-1] in forbidden_last_chars:
+        safe_name = safe_name[:-1] + "_"
+
+    # Linux and MacOS restrictions
+    forbidden_chars = ["/", "\x00"]
+    for char in forbidden_chars:
+        safe_name = safe_name.replace(char, "_")
+
+    forbidden_names = [".", ".."]
+    if safe_name in forbidden_names:
+        safe_name += "_"
+
+    # Limit filename length: https://serverfault.com/a/9548
+    safe_name = safe_name[:max_name_length]
+
+    return safe_name if isinstance(path, str) else path.with_name(safe_name)
+
+
 def get_available_formats() -> dict:
     formats_dict = {}
     for module in pkgutil.iter_modules(formats.__path__):

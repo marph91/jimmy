@@ -147,14 +147,10 @@ class Converter(converter.BaseConverter):
                         except ValueError:
                             self.logger.debug("couldn't parse date")
                     case "resource":
-                        note_element.find("data")
                         # Use the original filename if possible.
                         # TODO: Files with same name are replaced.
                         resource_title = note_element.find(
                             "./resource-attributes/file-name"
-                        )
-                        resource_title = (
-                            None if resource_title is None else resource_title.text
                         )
                         resource_data = note_element.find("data")
                         if resource_data is None or not resource_data.text:
@@ -164,13 +160,18 @@ class Converter(converter.BaseConverter):
                             self.logger.warning(f"Unsupported encoding: {encoding}")
                         temp_filename = self.resource_folder / (
                             common.unique_title()
-                            # TODO
-                            # if resource_title is None
-                            # else resource_title.text
+                            if resource_title is None
+                            or not isinstance(resource_title.text, str)
+                            else common.safe_path(resource_title.text)
                         )
                         resource_data_decoded = base64.b64decode(resource_data.text)
                         md5_hash = hashlib.md5(resource_data_decoded).hexdigest()
                         temp_filename.write_bytes(resource_data_decoded)
+                        resource_title = (
+                            resource_title
+                            if resource_title is None
+                            else resource_title.text
+                        )
                         if md5_hash in hashes:
                             resource_md = f"![]({md5_hash})"
                             note_imf.resources.append(

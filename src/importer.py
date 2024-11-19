@@ -16,73 +16,6 @@ import intermediate_format as imf
 LOGGER = logging.getLogger("jimmy")
 
 
-def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
-    r"""
-    Return a safe version of the provided path or string.
-    Only the last part is considered if a path is provided.
-
-    >>> str(safe_path(Path("a/.")))
-    'a'
-    >>> str(safe_path(Path("ab\x00c")))
-    'ab_c'
-    >>> str(safe_path(Path("CON")))
-    'CON_'
-    >>> str(safe_path(Path("LPT7")))
-    'LPT7_'
-    >>> str(safe_path(Path("bc.")))
-    'bc_'
-    >>> safe_path("b:c")
-    'b_c'
-    >>> str(safe_path(Path("b*c")))
-    'b_c'
-    >>> safe_path("a/b/c")
-    'a_b_c'
-    >>> safe_path("")  # doctest:+ELLIPSIS
-    'unnamed_...'
-    >>> safe_path("g" * 50, max_name_length=4)
-    'gggg'
-    """
-    safe_name = path if isinstance(path, str) else path.name
-    if safe_name == "":
-        return common.unique_title()
-
-    # https://stackoverflow.com/a/31976060
-    # Windows restrictions
-    # fmt: off
-    forbidden_chars = [
-        "<", ">", ":", "\"", "/", "\\", "|", "?", "*",
-    ] + [chr(value) for value in range(32)]
-    # fmt: on
-    for char in forbidden_chars:
-        safe_name = safe_name.replace(char, "_")
-
-    forbidden_names = (
-        ["CON", "PRN", "AUX", "NUL"]
-        + [f"COM{i}" for i in range(1, 10)]
-        + [f"LPT{i}" for i in range(1, 10)]
-    )
-    if safe_name in forbidden_names:
-        safe_name += "_"
-
-    forbidden_last_chars = [" ", "."]
-    if safe_name[-1] in forbidden_last_chars:
-        safe_name = safe_name[:-1] + "_"
-
-    # Linux and MacOS restrictions
-    forbidden_chars = ["/", "\x00"]
-    for char in forbidden_chars:
-        safe_name = safe_name.replace(char, "_")
-
-    forbidden_names = [".", ".."]
-    if safe_name in forbidden_names:
-        safe_name += "_"
-
-    # Limit filename length: https://serverfault.com/a/9548
-    safe_name = safe_name[:max_name_length]
-
-    return safe_name if isinstance(path, str) else path.with_name(safe_name)
-
-
 def get_quoted_relative_path(source: Path, target: Path) -> str:
     """
     >>> get_quoted_relative_path(Path("sample"), Path("sample"))
@@ -133,17 +66,17 @@ class FilesystemImporter:
         self.global_resource_folder = (
             None
             if config.global_resource_folder is None
-            else safe_path(config.global_resource_folder)
+            else common.safe_path(config.global_resource_folder)
         )
         self.local_resource_folder = (
             config.local_resource_folder
             if config.local_resource_folder == Path(".")
-            else Path(safe_path(config.local_resource_folder))
+            else Path(common.safe_path(config.local_resource_folder))
         )
         self.local_image_folder = (
             None
             if config.local_image_folder is None
-            else Path(safe_path(config.local_image_folder))
+            else Path(common.safe_path(config.local_image_folder))
         )
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
@@ -175,13 +108,15 @@ class FilesystemImporter:
                     resource_folder.mkdir(
                         exist_ok=True, parents=len(target_folder.parts) > 1
                     )
-                resource.path = resource_folder / safe_path(resource.filename.name)
+                resource.path = resource_folder / common.safe_path(
+                    resource.filename.name
+                )
             else:
                 # global resource folder
                 resource.path = (
                     self.root_path
                     / self.global_resource_folder
-                    / safe_path(resource.filename.name)
+                    / common.safe_path(resource.filename.name)
                 )
             # add extension if possible
             assert resource.path is not None
@@ -314,7 +249,7 @@ class FilesystemImporter:
                 )
         notebook.path.mkdir(exist_ok=True, parents=True)  # TODO
         for note in notebook.child_notes:
-            note.path = notebook.path / safe_path(note.title)
+            note.path = notebook.path / common.safe_path(note.title)
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
                 note.path = note.path.with_suffix(note.path.suffix + ".md")
@@ -324,7 +259,7 @@ class FilesystemImporter:
                 LOGGER.error(f'Failed to write note "{note.title}"')
                 LOGGER.debug(exc, exc_info=True)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.path = notebook.path / safe_path(child_notebook.title)
+            child_notebook.path = notebook.path / common.safe_path(child_notebook.title)
             self.import_notebook(child_notebook)
 
     def update_note_links(self, note: imf.Note):
