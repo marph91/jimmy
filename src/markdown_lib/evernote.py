@@ -100,10 +100,10 @@ class EnexToMarkdown:
                 self.md.append("*")
                 self.active_formatting["italic"] = self.global_level
             case "img":
-                self.md.append(
-                    f"![{attrib.get("title", attrib.get("alt", ""))}]"
-                    f"({attrib.get("src")})"
-                )
+                if (url := attrib.get("src")) is not None:
+                    self.md.append(
+                        f"![{attrib.get("title", attrib.get("alt", ""))}]({url})"
+                    )
             case "p":
                 pass  # TODO
             case "s":
