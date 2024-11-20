@@ -70,8 +70,6 @@ class EnexToMarkdown:
                 self.add_newlines(1)
             case "blockquote":
                 self.quote_level += 1
-                # TODO: prepend before each data or only once?
-                self.md.append("> " * self.quote_level)
             case "center" | "div" | "font" | "en-note" | "span":
                 pass  # only interested in attributes and data
             case "code":
@@ -398,8 +396,16 @@ class EnexToMarkdown:
         if not data.strip() and (not self.md or not self.md[-1].strip()):
             # Skip the current whitespace:
             # - if the document is empty
-            # - if the previous char is a whitespace, too
+            # - if the previous data contains only whitespace, too
             return
+
+        if (
+            self.quote_level > 0
+            and self.md
+            and self.md[-len(self.active_formatting) - 1] == "\n"
+        ):
+            # insert before any active formatting
+            self.md.insert(-len(self.active_formatting), "> " * self.quote_level)
 
         if self.active_link:
             # TODO: simplify
