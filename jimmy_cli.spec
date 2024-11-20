@@ -25,11 +25,7 @@ hiddenimports = list_python_files(Path("src/formats"))
 
 # Generate the executable name based on OS.
 import platform
-system = platform.system().lower()
-if system == "darwin":
-    # Differentiate between ARM and Intel based Macs.
-    system += "-" + platform.machine().lower()
-executable_name = f"jimmy-cli-{system}"
+executable_name = f"jimmy-cli-{platform.system().lower()}"
 
 
 a = Analysis(

@@ -18,10 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
-        # "macos-latest" is ARM based
-        # "macos-latest-large" is Intel based
-        os: ["windows-latest", "ubuntu-latest", "macos-latest", "macos-latest-large"]
+        os: ["windows-latest", "ubuntu-latest", "macos-latest"]
     steps:
       - uses: actions/checkout@v4
         with:
