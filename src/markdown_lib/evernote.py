@@ -105,7 +105,7 @@ class EnexToMarkdown:
                         f"![{attrib.get("title", attrib.get("alt", ""))}]({url})"
                     )
             case "p":
-                pass  # TODO
+                self.add_newlines(2)
             case "s":
                 if "strikethrough" in self.active_formatting:
                     return
@@ -318,7 +318,7 @@ class EnexToMarkdown:
             case "img":
                 newlines = 1
             case "p":
-                pass  # TODO
+                self.add_newlines(2)
             # table
             case "table":
                 self.md.append(self.current_table.create_md())
