@@ -115,6 +115,8 @@ class EndToEnd(unittest.TestCase):
             [["qownnotes/test_1/note_folder"]],
             [["rednotebook/test_1/data"]],
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
+            [["sqlite/test_1/sample.db"]],
+            [["sqlite/test_2/superheroes.db"]],
             [["simplenote/test_1/notes.zip"]],
             [["standard_notes/test_1/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
             [["synology_note_station/test_1/20240331_144226_11102_Lagavulin.nsx"]],
