@@ -166,8 +166,6 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
     def convert(self, file_or_folder: Path):
-        # pylint: disable=too-many-locals
-
         target_file = None
         for file_ in [
             "Standard Notes Backup and Import File.txt",
@@ -205,33 +203,30 @@ class Converter(converter.BaseConverter):
                 continue
             title = item["content"]["title"]
             self.logger.debug(f'Converting note "{title}"')
+            note_imf = imf.Note(
+                title,
+                created=dt.datetime.fromisoformat(item["created_at"]),
+                updated=dt.datetime.fromisoformat(item["updated_at"]),
+                source_application=self.format,
+                original_id=item["uuid"],
+            )
 
-            tags = note_id_tag_map.get(item["uuid"], [])
+            note_imf.tags.extend(note_id_tag_map.get(item["uuid"], []))
             if item["content"].get("starred", False):
-                tags.append(imf.Tag("standard_notes-starred"))
+                note_imf.tags.append(imf.Tag("standard_notes-starred"))
 
             match item["content"].get("noteType", "plain-text"):
                 case "plain-text":
-                    body = item["content"]["text"]
+                    note_imf.body = item["content"]["text"]
                 case "super":
                     super_converter = SuperToMarkdown()
-                    body = super_converter.convert(item["content"]["text"])
+                    note_imf.body = super_converter.convert(item["content"]["text"])
                 case _:
-                    body = item["content"]["text"]
+                    note_imf.body = item["content"]["text"]
                     self.logger.debug(
                         f"Unsupported note type \"{item["content"]["noteType"]}\""
                     )
 
-            note_imf = imf.Note(
-                title,
-                body,
-                created=dt.datetime.fromisoformat(item["created_at"]),
-                updated=dt.datetime.fromisoformat(item["updated_at"]),
-                source_application=self.format,
-                # Tags don't have a separate id. Just use the name as id.
-                tags=tags,
-                original_id=item["uuid"],
-            )
             if item["content"].get("trashed", False):
                 parent = trash_notebook
             elif item["content"]["appData"]["org.standardnotes.sn"].get(
