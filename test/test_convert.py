@@ -117,6 +117,8 @@ class EndToEnd(unittest.TestCase):
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
             [["simplenote/test_1/notes.zip"]],
             [["standard_notes/test_1/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
+            [["standard_notes/test_2/Standard.Notes.-.super_format.GMT+0100.zip"]],
+            [["standard_notes/test_3/backup.zip"]],
             [["synology_note_station/test_1/20240331_144226_11102_Lagavulin.nsx"]],
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
             [["synology_note_station/test_3/notestation-test-books.nsx"]],

@@ -58,15 +58,16 @@ class MarkdownTable:
 @dataclass
 class MarkdownLink:
     """
-    Represents a markdown:
+    Represents a markdown link:
     - link: https://www.markdownguide.org/basic-syntax/#links
     - image: https://www.markdownguide.org/basic-syntax/#images-1
     """
 
-    text: str
-    url: str
-    # TODO: ignored for now
-    # title: str = ""
+    # TODO: doctest
+
+    text: str = ""
+    url: str = ""
+    title: str = ""
     is_image: bool = False
 
     @property
@@ -80,7 +81,17 @@ class MarkdownLink:
 
     def __str__(self) -> str:
         prefix = "!" if self.is_image else ""
-        return f"{prefix}[{self.text}]({self.url})"
+        title = "" if not self.title else f' "{self.title}"'
+        return f"{prefix}[{self.text}]({self.url}{title})"
+
+    def reformat(self) -> str:
+        if not self.url:
+            return f"<{self.text}>"
+        if self.is_web_link and self.text == self.url:
+            return f"<{self.url}>"
+        prefix = "!" if self.is_image else ""
+        title = "" if not self.title else f' "{self.title}"'
+        return f"{prefix}[{self.text}]({self.url}{title})"
 
 
 class LinkExtractor(Treeprocessor):
