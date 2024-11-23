@@ -51,7 +51,7 @@ def format_text(text: str, format_: Format) -> str:
                 case Format.SUPERSCRIPT:
                     text = f"^{text}^"
                 case Format.HIGHLIGHT:
-                    text = f"^{text}^"
+                    text = f"=={text}=="
                 case _:
                     LOGGER.debug(f"Unknown format: {item}")
     return text

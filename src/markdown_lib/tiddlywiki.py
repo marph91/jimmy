@@ -227,7 +227,7 @@ def wikitext_to_md(wikitext: str) -> str:
         | quote("^^", "^")
         | quote(",,", "~")
         # | quote("~~", "~~")
-        | quote("@@", "**")  # highlight -> bold
+        | quote("@@", "==")
         | italic()
         # https://tiddlywiki.com/static/Horizontal%2520Rules%2520in%2520WikiText.html
         | horizontal_line()

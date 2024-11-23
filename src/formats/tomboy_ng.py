@@ -28,7 +28,7 @@ class Converter(converter.BaseConverter):
             ):
                 md_content.append(f"**{child.text}**")
             elif child.tag.endswith("highlight"):
-                md_content.append(child.text)  # TODO
+                md_content.append(f"=={child.text}==")
             elif child.tag.endswith("italic"):
                 md_content.append(f"*{child.text}*")
             elif child.tag.endswith("list"):
