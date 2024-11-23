@@ -92,8 +92,31 @@ class SuperToMarkdown:
             if item == "\n":
                 self.md.append("> " * quote_level)
 
+    def parse_table(self, block: dict):
+        md_before = self.md
+        table = markdown_lib.common.MarkdownTable()
+        for row in block["children"]:
+            # assert row["type"] == "tablerow"
+            row_cells = []
+            is_header_row = False
+            for cell in row["children"]:
+                # assert cell["type"] == "tablecell"
+                if cell["headerState"] == 1 and not table.header_rows:
+                    is_header_row = True
+                self.md = []
+                self.parse_block(cell)
+                # newlines aren't allowed in Markdown tables
+                row_cells.extend([md for md in self.md if md != "\n"])
+            if is_header_row:
+                table.header_rows.append(row_cells)
+            else:
+                table.data_rows.append(row_cells)
+        self.md = md_before
+        self.add_text(table.create_md(), 0)
+
     def parse_block(self, block: dict, quote_level: int = 0):
         # TODO: "indent" is ignored
+        # https://stackoverflow.com/a/6046472/7410886
         # assert block["version"] == 1
         newlines = 0
         append = []
@@ -111,8 +134,24 @@ class SuperToMarkdown:
                 self.add_text([f"```{block.get("language", "")}", "\n"], quote_level)
                 newlines = 1
                 append = ["```", "\n", "\n"]
+            case "collapsible-container":
+                # There is no collapse in Markdown.
+                # Convert it to bold (collapsible-title) + text (collapsible-content).
+                pass
+            case "collapsible-title":
+                self.add_text(f"**{block["children"][0]["text"]}**", quote_level)
+                skip_children = True
+                newlines = 2
+            case "collapsible-content":
+                pass
+                # self.add_text(block["text"], quote_level)
+                # newlines = 2
             case "heading":
                 self.add_text(f"{"#" * int(block["tag"][-1])} ", quote_level)
+                newlines = 2
+            case "horizontalrule":
+                self.add_newlines(2)
+                self.add_text("---", quote_level)
                 newlines = 2
             case "linebreak":
                 self.add_newlines(1)
@@ -140,6 +179,13 @@ class SuperToMarkdown:
                 # TODO: Is the uuid relevant for note links?
                 # print("snfile", block["version"], block["fileUuid"])
                 pass
+            case "table":
+                self.add_newlines(2)
+                self.parse_table(block)
+                newlines = 2
+                skip_children = True
+            case "tablerow" | "tablecell":
+                pass  # handled in parse_table()
             case "code-highlight" | "text":
                 self.add_text(
                     format_text(block["text"], Format(block["format"])), quote_level
