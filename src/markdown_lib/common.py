@@ -52,7 +52,7 @@ class MarkdownTable:
             rows_md.append(create_md_row(row))
 
         caption = self.caption + "\n\n" if self.caption else ""
-        return caption + "\n".join(rows_md) + "\n"
+        return caption + "\n".join(rows_md)
 
 
 @dataclass
