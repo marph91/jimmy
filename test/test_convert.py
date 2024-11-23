@@ -52,14 +52,20 @@ class EndToEnd(unittest.TestCase):
             dirs_cmp = filecmp.dircmp(dir1, dir2)
 
             if dirs_cmp.left_only:
-                differences.append(f"Only in {dir1}: {dirs_cmp.left_only}")
+                # .absolute().as_uri() needed for URI with spaces
+                differences.append(
+                    f"Only in {dir1.absolute().as_uri()}: {dirs_cmp.left_only}"
+                )
 
             if dirs_cmp.right_only:
-                differences.append(f"Only in {dir2}: {dirs_cmp.right_only}")
+                differences.append(
+                    f"Only in {dir2.absolute().as_uri()}: {dirs_cmp.right_only}"
+                )
 
             for file_ in dirs_cmp.diff_files:
                 differences.append(
-                    f"Different content: {dir1 / file_} - {dir2 / file_}"
+                    f"Different content: {(dir1 / file_).absolute().as_uri()} - "
+                    f"{(dir2 / file_).absolute().as_uri()}"
                 )
                 if file_.endswith(".md"):
                     # detailed diff for markdown files
