@@ -1,6 +1,7 @@
 """Convert cherrytree notes to the intermediate format."""
 
 import base64
+import logging
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
@@ -8,6 +9,9 @@ import common
 import converter
 import intermediate_format as imf
 import markdown_lib
+
+
+LOGGER = logging.getLogger("jimmy")
 
 
 def convert_table(node):
@@ -37,7 +41,7 @@ def fix_inline_formatting(md_content: str) -> str:
     for checked_checkbox in ("☑", "☒"):
         md_content = md_content.replace(checked_checkbox, "- [x]")
 
-    # unnumbered list
+    # numbered list
     for number in range(10):
         for bullet in (")", "-", ">"):
             md_content = md_content.replace(f"{number}{bullet}", f"{number}.")
@@ -48,95 +52,98 @@ def fix_inline_formatting(md_content: str) -> str:
     return md_content
 
 
-def convert_rich_text(rich_text, logger):
+def convert_rich_text(rich_text):
+    if rich_text.text is None:
+        return "", []
+    if not rich_text.text.strip():
+        return rich_text.text, []  # keep whitespaces but don't format them
     # TODO: is this fine with mixed text and child tags?
     note_links = []
-    md_content = ""
+    md_content = rich_text.text
     for attrib, attrib_value in rich_text.attrib.items():
         match attrib:
             case "background" | "foreground" | "justification":
-                if rich_text.text is not None:
-                    md_content += rich_text.text
-                logger.debug(
+                LOGGER.debug(
                     f"ignoring {attrib}={attrib_value} "
                     "as it's not supported in markdown"
                 )
             case "family":
                 match attrib_value:
                     case "monospace":
-                        md_content = f"`{rich_text.text}`"
+                        md_content = f"`{md_content}`"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "link":
                 url = attrib_value
                 if url.startswith("webs "):
                     # web links
                     url = url.lstrip("webs ")
                     if rich_text.text == url:
-                        md_content = f"<{url}>"
+                        md_content = f"<{md_content}>"
                     else:
-                        md_content = f"[{rich_text.text}]({url})"
+                        md_content = f"[{md_content}]({url})"
                 elif url.startswith("node "):
                     # internal node links
                     url = url.lstrip("node ")
-                    md_content = f"[{rich_text.text}]({url})"
+                    text = md_content
+                    md_content = f"[{text}]({url})"
                     # Split the note ID from the optional title. It can look like:
                     # "36 h2-3" or just "36".
                     # TODO: Anchors are not supported.
                     original_id = url.split(" ", maxsplit=1)[0]
-                    note_links.append(imf.NoteLink(md_content, original_id, rich_text.text))
+                    note_links.append(imf.NoteLink(md_content, original_id, text))
                 else:
                     # ?
-                    md_content = f"[{rich_text.text}]({url})"
+                    md_content = f"[{md_content}]({url})"
             case "scale":
                 match attrib_value:
                     case "sup":
-                        md_content = f"^{rich_text.text}^"
+                        md_content = f"^{md_content}^"
                     case "sub":
-                        md_content = f"~{rich_text.text}~"
+                        md_content = f"~{md_content}~"
                     case "h1":
-                        md_content = f"# {rich_text.text}"
+                        md_content = f"# {md_content}"
                     case "h2":
-                        md_content = f"## {rich_text.text}"
+                        md_content = f"## {md_content}"
                     case "h3":
-                        md_content = f"### {rich_text.text}"
+                        md_content = f"### {md_content}"
                     case "h4":
-                        md_content = f"#### {rich_text.text}"
+                        md_content = f"#### {md_content}"
                     case "h5":
-                        md_content = f"##### {rich_text.text}"
+                        md_content = f"##### {md_content}"
                     case "h6":
-                        md_content = f"###### {rich_text.text}"
+                        md_content = f"###### {md_content}"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":
                 match attrib_value:
                     case "true":
-                        md_content = f"~~{rich_text.text}~~"
+                        md_content = f"~~{md_content}~~"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "style":
                 match attrib_value:
                     case "italic":
-                        md_content = f"*{rich_text.text}*"
+                        md_content = f"*{md_content}*"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "underline":
                 match attrib_value:
                     case "single":
-                        md_content = f"++{rich_text.text}++"
+                        md_content = f"++{md_content}++"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "weight":
                 match attrib_value:
                     case "heavy":
-                        md_content = f"**{rich_text.text}**"
+                        md_content = f"**{md_content}**"
                     case _:
-                        logger.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case _:
-                logger.warning(f"ignoring {attrib}={attrib_value}")
+                LOGGER.warning(f"ignoring {attrib}={attrib_value}")
     if not md_content:
         # TODO: make this more robust
-        md_content += "" if rich_text.text is None else rich_text.text
+        md_content = rich_text.text
     if not rich_text.attrib:
         # TODO: make this more robust
         # Make sure to don't break links.
@@ -183,7 +190,7 @@ class Converter(converter.BaseConverter):
         for child in node:
             match child.tag:
                 case "rich_text":
-                    content_md, note_links_imf = convert_rich_text(child, self.logger)
+                    content_md, note_links_imf = convert_rich_text(child)
                     note_body += content_md
                     note_imf.note_links.extend(note_links_imf)
                 case "node":
