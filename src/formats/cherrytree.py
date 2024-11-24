@@ -3,6 +3,7 @@
 import base64
 import logging
 from pathlib import Path
+import re
 import xml.etree.ElementTree as ET  # noqa: N817
 
 import common
@@ -52,6 +53,18 @@ def fix_inline_formatting(md_content: str) -> str:
     return md_content
 
 
+WHITESPACE_RE = re.compile(r"^(\s*)(.+?)(\s*)$")
+
+
+def separate_whitespace(string: str) -> tuple[str, str, str]:
+    # TODO: doctest
+    match_ = WHITESPACE_RE.match(string)
+    if match_ is None:
+        return ("", string, "")
+    # TODO: check types
+    return match_.groups(default="")  # type: ignore[return-value]
+
+
 def convert_rich_text(rich_text):
     if rich_text.text is None:
         return "", []
@@ -59,7 +72,9 @@ def convert_rich_text(rich_text):
         return rich_text.text, []  # keep whitespaces but don't format them
     # TODO: is this fine with mixed text and child tags?
     note_links = []
-    md_content = rich_text.text
+
+    # formatting needs to be applied directly to the string without spaces
+    leading, md_content, trailing = separate_whitespace(rich_text.text)
     for attrib, attrib_value in rich_text.attrib.items():
         match attrib:
             case "background" | "foreground" | "justification":
@@ -101,18 +116,8 @@ def convert_rich_text(rich_text):
                         md_content = f"^{md_content}^"
                     case "sub":
                         md_content = f"~{md_content}~"
-                    case "h1":
-                        md_content = f"# {md_content}"
-                    case "h2":
-                        md_content = f"## {md_content}"
-                    case "h3":
-                        md_content = f"### {md_content}"
-                    case "h4":
-                        md_content = f"#### {md_content}"
-                    case "h5":
-                        md_content = f"##### {md_content}"
-                    case "h6":
-                        md_content = f"###### {md_content}"
+                    case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
+                        leading = f"{"#" * int(attrib_value[-1])} " + leading
                     case _:
                         LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":
@@ -141,6 +146,7 @@ def convert_rich_text(rich_text):
                         LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case _:
                 LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+    md_content = leading + md_content + trailing
     if not md_content:
         # TODO: make this more robust
         md_content = rich_text.text
