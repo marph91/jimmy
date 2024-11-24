@@ -171,17 +171,17 @@ class Converter(converter.BaseConverter):
         # TODO
         # pylint: disable=too-many-locals
         title = node.attrib.get("name", "")
+        self.logger.debug(f'Converting note "{title}", parent "{root_notebook.title}"')
+        note_imf = imf.Note(title, source_application=self.format)
 
         new_root_notebook = None  # only needed if there are sub notes
-        resources = []
-        note_links = []
         note_body = ""
         for child in node:
             match child.tag:
                 case "rich_text":
                     content_md, note_links_imf = convert_rich_text(child, self.logger)
                     note_body += content_md
-                    note_links.extend(note_links_imf)
+                    note_imf.note_links.extend(note_links_imf)
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
@@ -209,31 +209,22 @@ class Converter(converter.BaseConverter):
                     # but we do it later with the common function.
                     resource_md, resource_imf = convert_png(child, self.root_path)
                     note_body += resource_md
-                    resources.append(resource_imf)
+                    note_imf.resources.append(resource_imf)
                 case "table":
                     note_body += convert_table(child)
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 
-        self.logger.debug(f'Converting note "{title}", parent "{root_notebook.title}"')
+        note_imf.body = note_body
 
-        tags = []
         # cherrytree bookmark -> tag
-        unique_id = node.attrib["unique_id"]
-        if unique_id in self.bookmarked_nodes:
-            tags.append("cherrytree-bookmarked")
+        note_imf.original_id = node.attrib["unique_id"]
+        if note_imf.original_id in self.bookmarked_nodes:
+            note_imf.tags.append(imf.Tag("cherrytree-bookmarked"))
         if tags_str := node.attrib.get("tags", ""):
-            tags.extend(tags_str.strip().split(" "))
-
-        note_imf = imf.Note(
-            title,
-            note_body,
-            source_application=self.format,
-            tags=[imf.Tag(tag) for tag in tags],
-            resources=resources,
-            note_links=note_links,
-            original_id=unique_id,
-        )
+            note_imf.tags.extend(
+                imf.Tag(t) for t in tags_str.strip().split(" ") if t.strip()
+            )
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
             note_imf.created = common.timestamp_to_datetime(int(created_time))
