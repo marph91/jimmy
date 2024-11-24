@@ -80,7 +80,11 @@ def convert_rich_text(rich_text, logger):
                     # internal node links
                     url = url.lstrip("node ")
                     md_content = f"[{rich_text.text}]({url})"
-                    note_links.append(imf.NoteLink(md_content, url, rich_text.text))
+                    # Split the note ID from the optional title. It can look like:
+                    # "36 h2-3" or just "36".
+                    # TODO: Anchors are not supported.
+                    original_id = url.split(" ", maxsplit=1)[0]
+                    note_links.append(imf.NoteLink(md_content, original_id, rich_text.text))
                 else:
                     # ?
                     md_content = f"[{rich_text.text}]({url})"
