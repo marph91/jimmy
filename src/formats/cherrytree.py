@@ -48,7 +48,7 @@ def fix_inline_formatting(md_content: str) -> str:
             md_content = md_content.replace(f"{number}{bullet}", f"{number}.")
 
     # unnumbered list
-    for bullet in ("•", "◇", "▪", "→", "⇒"):
+    for bullet in ("•", "◇", "▪", "▸", "→", "⇒"):
         md_content = md_content.replace(bullet, "-")
     return md_content
 
