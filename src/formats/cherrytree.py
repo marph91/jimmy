@@ -192,9 +192,6 @@ class Converter(converter.BaseConverter):
                         f"parent: {root_notebook.title}"
                     )
                     self.convert_to_markdown(child, new_root_notebook)
-                    if new_root_notebook.is_empty():
-                        # Delete the notebook if it's empty.
-                        del root_notebook.child_notebooks[-1]
                 case "codebox":
                     language = child.attrib.get("syntax_highlighting", "")
                     note_body += f"\n```{language}\n{child.text}\n```\n"
@@ -261,3 +258,6 @@ class Converter(converter.BaseConverter):
                     self.convert_to_markdown(child, self.root_notebook)
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
+
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()
