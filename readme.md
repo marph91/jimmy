@@ -2,11 +2,11 @@
 
 Free your notes by converting them to Markdown.
 
-Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**MacOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://github.com/marph91/jimmy/releases/latest)
+:floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**MacOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://github.com/marph91/jimmy/releases/latest)
 
-For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
+:blue_book: For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
-If this app is useful for you, feel free to star it on [github](https://github.com/marph91/jimmy).
+:star: If this app is useful for you, feel free to star it on [github](https://github.com/marph91/jimmy).
 
 [![build](https://github.com/marph91/jimmy/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/build.yml)
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
