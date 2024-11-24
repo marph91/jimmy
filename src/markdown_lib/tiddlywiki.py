@@ -143,7 +143,7 @@ def table():
                 table_md.header_rows.append(cells)
             else:
                 table_md.data_rows.append(cells)
-        return table_md.create_md()
+        return table_md.create_md() + "\n"
 
     return pp.Regex(table_row_re, as_group_list=True)[1, ...].set_parse_action(to_md)
 
@@ -227,7 +227,7 @@ def wikitext_to_md(wikitext: str) -> str:
         | quote("^^", "^")
         | quote(",,", "~")
         # | quote("~~", "~~")
-        | quote("@@", "**")  # highlight -> bold
+        | quote("@@", "==")
         | italic()
         # https://tiddlywiki.com/static/Horizontal%2520Rules%2520in%2520WikiText.html
         | horizontal_line()

@@ -228,7 +228,7 @@ class Converter(converter.BaseConverter):
                     note_body += resource_md
                     note_imf.resources.append(resource_imf)
                 case "table":
-                    note_body += convert_table(child)
+                    note_body += "\n" + convert_table(child) + "\n"
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 

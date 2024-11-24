@@ -52,14 +52,20 @@ class EndToEnd(unittest.TestCase):
             dirs_cmp = filecmp.dircmp(dir1, dir2)
 
             if dirs_cmp.left_only:
-                differences.append(f"Only in {dir1}: {dirs_cmp.left_only}")
+                # .absolute().as_uri() needed for URI with spaces
+                differences.append(
+                    f"Only in {dir1.absolute().as_uri()}: {dirs_cmp.left_only}"
+                )
 
             if dirs_cmp.right_only:
-                differences.append(f"Only in {dir2}: {dirs_cmp.right_only}")
+                differences.append(
+                    f"Only in {dir2.absolute().as_uri()}: {dirs_cmp.right_only}"
+                )
 
             for file_ in dirs_cmp.diff_files:
                 differences.append(
-                    f"Different content: {dir1 / file_} - {dir2 / file_}"
+                    f"Different content: {(dir1 / file_).absolute().as_uri()} - "
+                    f"{(dir2 / file_).absolute().as_uri()}"
                 )
                 if file_.endswith(".md"):
                     # detailed diff for markdown files
@@ -117,6 +123,8 @@ class EndToEnd(unittest.TestCase):
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
             [["simplenote/test_1/notes.zip"]],
             [["standard_notes/test_1/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
+            [["standard_notes/test_2/Standard.Notes.-.super_format.GMT+0100.zip"]],
+            [["standard_notes/test_3/backup.zip"]],
             [["synology_note_station/test_1/20240331_144226_11102_Lagavulin.nsx"]],
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
             [["synology_note_station/test_3/notestation-test-books.nsx"]],
