@@ -24,9 +24,17 @@ class EndToEnd(unittest.TestCase):
 
         # mock a argparse namespace
         # https://stackoverflow.com/a/51197422/7410886
+        test_name = unittest.TestCase.id(self)
+        if "colornote" in test_name:
+            password = "1234"
+        elif "evernote" in test_name:
+            password = "password"
+        else:
+            password = None
+
         self.config = SimpleNamespace(
             format=None,
-            password="1234",  # TODO: only used at colornote for now
+            password=password,
             frontmatter=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),

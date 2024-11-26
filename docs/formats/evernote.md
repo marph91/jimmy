@@ -11,4 +11,11 @@ This page describes how to convert notes from Evernote to Markdown.
     1. Choose "enex"
 2. [Install jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux backup.enex --format evernote`
+    1. To decrypt encrypted notes, specify your password, like `jimmy-cli-linux backup.enex --format evernote --password 1234`
 4. [Import to your app](../import_instructions.md)
+
+## Import Structure
+
+- Each `.enex` file is converted to a folder.
+- Notes inside the `.enex` file are converted to Markdown files.
+- Note links are recovered by matching the note name. This might not work sometimes, if the name was changed after creating the link.

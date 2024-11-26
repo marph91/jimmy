@@ -123,7 +123,7 @@ class Converter(converter.BaseConverter):
                         if note_element.text:
                             parser = ET.XMLParser(
                                 target=markdown_lib.evernote.EnexToMarkdown(
-                                    self.password, self.logger
+                                    self.password
                                 )
                             )
                             try:

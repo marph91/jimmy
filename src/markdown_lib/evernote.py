@@ -1,6 +1,14 @@
 """Convert the enex (xml) note content to Markdown."""
 
+import base64
 import copy
+import hashlib
+import hmac
+import logging
+import xml.etree.ElementTree as ET  # noqa: N817
+
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
 
 import markdown_lib
 
@@ -9,19 +17,55 @@ import markdown_lib
 # pylint: disable=too-many-instance-attributes,too-many-branches,too-many-statements
 
 
+LOGGER = logging.getLogger("jimmy")
+
+
+def decrypt(data: bytes, password: bytes) -> str | None:
+    # pylint: disable=too-many-locals
+    if not password:
+        LOGGER.warning('Could not decrypt. Set the password by "--password"')
+        return None
+
+    # Extract the encoded data.
+    binary_data = base64.b64decode(data)
+    # assert binary_data[0:4] == b"ENC0"
+    salt = binary_data[4:20]
+    hmac_salt = binary_data[20:36]
+    iv = binary_data[36:52]
+    ciphertext = binary_data[52:-32]
+    hmac_message = binary_data[:-32]
+    hmac_reference_digest = binary_data[-32:]
+
+    # Check if the HMAC is valid.
+    hmac_key = hashlib.pbkdf2_hmac("SHA256", password, hmac_salt, 50000, 16)
+    hmac_digest = hmac.new(hmac_key, hmac_message, hashlib.sha256)
+    hmac_valid = hmac.compare_digest(hmac_digest.digest(), hmac_reference_digest)
+
+    if not hmac_valid:
+        LOGGER.warning("Could not decrypt test data. Incorrect password?")
+        return None
+
+    key = hashlib.pbkdf2_hmac("SHA256", password, salt, 50000, 16)
+    cipher = Cipher(algorithms.AES128(key), modes.CBC(iv))
+    decryptor = cipher.decryptor()
+    plaintext_padded = decryptor.update(ciphertext) + decryptor.finalize()
+    unpadder = padding.PKCS7(cipher.algorithm.block_size).unpadder()
+    plaintext = unpadder.update(plaintext_padded) + unpadder.finalize()
+    return plaintext.decode("utf-8")
+
+
 class EnexToMarkdown:
     """https://docs.python.org/3/library/xml.etree.elementtree.html#xmlparser-objects"""
 
-    def __init__(self, password, logger):
+    def __init__(self, password: str):
         self.password = password
-        self.logger = logger
 
         self.global_level = 0
         self.active_lists = []
         self.active_formatting = {}
         self.active_link = {}
         self.active_resource = {}
-        self.encrypted = False
+        self.encryption = None
         self.in_table = False
         self.table_row = []
         self.table_cell = []
@@ -48,7 +92,7 @@ class EnexToMarkdown:
             self.md.extend(["\n"] * count)
         # print(self.md)
 
-    def start(self, tag, attrib):
+    def start(self, tag: str, attrib: dict):
         self.global_level += 1
         # if tag != "div":
         #     print("="*20, tag, self.global_level)
@@ -78,9 +122,11 @@ class EnexToMarkdown:
                 self.md.append("`")
                 self.active_formatting["code"] = self.global_level
             case "en-crypt":
-                self.encrypted = True
-                # https://github.com/akosbalasko/yarle/blob/2dfa5ff9d23414d3c23245327b435a96283cb8fe/src/utils/decrypt.ts#L51
-                # TODO
+                self.encryption = {
+                    "cipher": attrib.get("cipher"),
+                    "hint": attrib.get("hint"),
+                    "length": attrib.get("length"),
+                }
             case "en-media":
                 # inline resource (base64 encoded)
                 self.active_resource = {"hash": attrib["hash"]}
@@ -149,7 +195,7 @@ class EnexToMarkdown:
                     bullet = {"ol": "1. ", "ul": "- "}[self.active_lists[-1]]
                 self.md.append(" " * 4 * (len(self.active_lists) - 1) + bullet)
             case _:
-                self.logger.warning(f"ignoring opening tag {tag}")
+                LOGGER.warning(f"ignoring opening tag {tag}")
 
         for key, value in attrib.items():
             match key:
@@ -251,14 +297,9 @@ class EnexToMarkdown:
                 ):
                     pass  # handled later or ignored
                 case _:
-                    self.logger.warning(
-                        f'tag "{tag}", ignoring attribute "{key}: {value}"'
-                    )
+                    LOGGER.warning(f'tag "{tag}", ignoring attribute "{key}: {value}"')
 
-    def end(self, tag):
-        if self.encrypted:
-            return  # TODO: implement encryption?
-
+    def end(self, tag: str):
         newlines = 0
         match tag:
             case "a":
@@ -299,7 +340,7 @@ class EnexToMarkdown:
             case "blockquote":
                 self.quote_level -= 1
             case "en-crypt":
-                self.encrypted = False
+                self.encryption = None
             case "en-media":
                 self.md.append(
                     f"![{self.active_resource.get("title", "")}]"
@@ -344,11 +385,11 @@ class EnexToMarkdown:
                 newlines = 2  # ensure empty line
                 list_type = self.active_lists.pop()
                 if list_type != tag:
-                    self.logger.debug(f"Expected list '{list_type}', actual '{tag}'")
+                    LOGGER.debug(f"Expected list '{list_type}', actual '{tag}'")
             case "li":
                 pass
             case _:
-                self.logger.warning(f"ignoring closing tag {tag}")
+                LOGGER.warning(f"ignoring closing tag {tag}")
 
         self.global_level -= 1
         # if tag != "div":
@@ -376,14 +417,14 @@ class EnexToMarkdown:
                 case "underline":
                     self.md.append("++")
                 case _:
-                    self.logger.warning(f'unhandled formatting "{formatting}"')
+                    LOGGER.warning(f'unhandled formatting "{formatting}"')
             del self.active_formatting[formatting]
 
         # Formatting needs to be on the same line to be valid.
         # Thus add newlines at the end.
         self.add_newlines(newlines)
 
-    def data(self, data):
+    def data(self, data: str):
         if data in [
             "Content not supported",
             "This block is a placeholder for Tasks, which has been officially "
@@ -397,6 +438,37 @@ class EnexToMarkdown:
             # Skip the current whitespace:
             # - if the document is empty
             # - if the previous data contains only whitespace, too
+            return
+
+        if self.encryption is not None:
+            # https://help.evernote.com/hc/en-us/articles/208314128-What-type-of-encryption-does-Evernote-use
+            # https://soundly.me/decoding-the-Evernote-en-crypt-field-payload/
+            if self.encryption["cipher"] != "AES" or self.encryption["length"] != "128":
+                self.md.extend([data, "\n"])
+                LOGGER.warning(
+                    f'Could not decrypt. Unsupported cipher: '
+                    f'"{self.encryption["cipher"]} {self.encryption["length"]}"'
+                )
+                return
+
+            plaintext = decrypt(data, self.password.encode("utf-8"))
+            if plaintext is None:
+                self.md.extend([data, "\n"])
+            else:
+                # Process the decoded data.
+                parser = ET.XMLParser(target=EnexToMarkdown(self.password))
+                try:
+                    parser.feed(plaintext)
+                except ET.ParseError as exc:
+                    self.md.extend([data, "\n"])
+                    LOGGER.warning("Failed to parse decrypted text")
+                    LOGGER.debug(exc, exc_info=True)
+                    return
+
+                # Insert decoded data to the existing data.
+                decoded_md, decoded_hashes = parser.close()
+                self.md.extend(decoded_md)
+                self.hashes.extend(decoded_hashes)
             return
 
         if (
@@ -414,7 +486,7 @@ class EnexToMarkdown:
             else:
                 self.active_link["title"] = data
         elif self.active_resource:
-            self.logger.warning(
+            LOGGER.warning(
                 f"Resource title not handled: {self.active_resource["hash"]}"
             )
         else:
