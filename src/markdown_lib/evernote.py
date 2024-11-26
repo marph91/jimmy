@@ -84,18 +84,14 @@ class EnexToMarkdown:
         index = 0
         while index < len(self.md) and index < count and self.md[-index - 1] == "\n":
             index += 1
-        # print(count, index, self.md)
         # insert missing newlines
         if index > 0:
             self.md[-index:] = ["\n"] * count
         else:
             self.md.extend(["\n"] * count)
-        # print(self.md)
 
     def start(self, tag: str, attrib: dict):
         self.global_level += 1
-        # if tag != "div":
-        #     print("="*20, tag, self.global_level)
 
         match tag:
             case "a":
@@ -131,8 +127,13 @@ class EnexToMarkdown:
                 # inline resource (base64 encoded)
                 self.active_resource = {"hash": attrib["hash"]}
             case "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7":
-                self.add_newlines(2)  # ensure empty line
-                self.md.append("#" * int(tag[-1]) + " ")
+                heading_md = "#" * int(tag[-1]) + " "
+                if self.active_link:
+                    self.active_link["prepend"] = [heading_md]
+                    self.active_link["append"] = ["\n"] * 2
+                else:
+                    self.add_newlines(2)  # ensure empty line
+                    self.md.append(heading_md)
             case "hr":
                 self.add_newlines(2)  # ensure empty line
                 self.md.append("---")
@@ -311,6 +312,8 @@ class EnexToMarkdown:
         match tag:
             case "a":
                 # internal note link
+                if (prepend := self.active_link.get("prepend")):
+                    self.md.extend(prepend)
                 title = self.active_link.get("title")
                 url = self.active_link["href"]
                 if title is None and url is None:
@@ -328,6 +331,8 @@ class EnexToMarkdown:
                 else:
                     # normal link
                     self.md.append(f"[{title}]({url})")
+                if (append := self.active_link.get("append")):
+                    self.md.extend(append)
                 self.active_link = {}
             case (
                 "b"
@@ -399,12 +404,7 @@ class EnexToMarkdown:
                 LOGGER.warning(f"ignoring closing tag {tag}")
 
         self.global_level -= 1
-        # if tag != "div":
-        #     print("-"*20, tag, self.global_level)
-        #     if self.active_link:
-        #         print(self.active_link)
-        #     if self.active_formatting:
-        #         print(self.active_formatting)
+
         active_formatting = copy.deepcopy(self.active_formatting)
         for formatting, stop_level in active_formatting.items():
             if self.global_level >= stop_level:
@@ -425,6 +425,11 @@ class EnexToMarkdown:
                     self.md.append("++")
                 case _:
                     LOGGER.warning(f'unhandled formatting "{formatting}"')
+            if self.md[-2] == self.md[-1]:
+                # Remove the formatting if there is no data between.
+                # TODO: doesn't work for multiple active formattings
+                for _ in range(2):
+                    del self.md[-1]
             del self.active_formatting[formatting]
 
         # Formatting needs to be on the same line to be valid.
