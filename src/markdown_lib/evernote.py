@@ -20,14 +20,14 @@ import markdown_lib
 LOGGER = logging.getLogger("jimmy")
 
 
-def decrypt(data: bytes, password: bytes) -> str | None:
+def decrypt(base64_data: str, password: bytes) -> str | None:
     # pylint: disable=too-many-locals
     if not password:
         LOGGER.warning('Could not decrypt. Set the password by "--password"')
         return None
 
     # Extract the encoded data.
-    binary_data = base64.b64decode(data)
+    binary_data = base64.b64decode(base64_data)
     # assert binary_data[0:4] == b"ENC0"
     salt = binary_data[4:20]
     hmac_salt = binary_data[20:36]
@@ -61,19 +61,19 @@ class EnexToMarkdown:
         self.password = password
 
         self.global_level = 0
-        self.active_lists = []
-        self.active_formatting = {}
-        self.active_link = {}
-        self.active_resource = {}
-        self.encryption = None
+        self.active_lists: list[str] = []
+        self.active_formatting: dict[str, int] = {}
+        self.active_link: dict = {}
+        self.active_resource: dict[str, str] = {}
+        self.encryption: dict | None = None
         self.in_table = False
-        self.table_row = []
-        self.table_cell = []
+        self.table_row: list[str] = []
+        self.table_cell: list[str] = []
         self.current_table = markdown_lib.common.MarkdownTable()
         self.quote_level = 0
         self.newlines_after_formatting = 0
-        self.hashes = []
-        self.md = []
+        self.hashes: list[str] = []
+        self.md: list[str] = []
 
     def add_newlines(self, count: int):
         """Add as many newlines as needed. Consider preceding newlines."""
@@ -229,6 +229,13 @@ class EnexToMarkdown:
                             # case "--en-todo":
                             #     if v == "true":
                             #         self.active_lists.append("tasklist")
+                            case "font-family":
+                                if (
+                                    v == "monospace"
+                                    and "code" not in self.active_formatting
+                                ):
+                                    self.md.append("`")
+                                    self.active_formatting["code"] = self.global_level
                             case "font-style":
                                 # https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
                                 if (
