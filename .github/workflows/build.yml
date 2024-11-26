@@ -5,6 +5,8 @@ on:
     paths-ignore:
       - "**.md"
   pull_request:
+    paths-ignore:
+      - "**.md"
   workflow_dispatch:
 
 jobs:
@@ -18,7 +20,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["windows-latest", "ubuntu-latest", "macos-latest"]
+        # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
+        # "macos-latest" is ARM based
+        # "macos-13" is Intel based
+        os: ["windows-latest", "ubuntu-latest", "macos-latest", "macos-13"]
+        # build "macos-13" executable only at release
+        # https://github.com/orgs/community/discussions/26253?sort=top#discussioncomment-3250989
+        is_release:
+          - ${{ startsWith(github.ref, 'refs/tags/v') }}
+        exclude:
+          - is_release: false
+            os: "macos-13"
     steps:
       - uses: actions/checkout@v4
         with:

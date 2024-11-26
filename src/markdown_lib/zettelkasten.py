@@ -36,9 +36,9 @@ def newline():
 
 
 def colored():
-    # colored -> bold
+    # colored -> highlight
     def to_md(_, t):  # noqa
-        return "**" + t[0][0] + "**"
+        return "==" + t[0][0] + "=="
 
     return pp.Regex(colored_re, as_group_list=True).set_parse_action(to_md)
 
