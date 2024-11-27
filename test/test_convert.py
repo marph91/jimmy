@@ -24,9 +24,17 @@ class EndToEnd(unittest.TestCase):
 
         # mock a argparse namespace
         # https://stackoverflow.com/a/51197422/7410886
+        test_name = unittest.TestCase.id(self)
+        if "colornote" in test_name:
+            password = "1234"
+        elif "evernote" in test_name:
+            password = "password"
+        else:
+            password = None
+
         self.config = SimpleNamespace(
             format=None,
-            password="1234",  # TODO: only used at colornote for now
+            password=password,
             frontmatter=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),
@@ -103,6 +111,9 @@ class EndToEnd(unittest.TestCase):
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
             [["dynalist/test_1/dynalist-backup-2024-04-12.zip"]],
+            [["evernote/test_1/obsidian-importer"]],
+            [["evernote/test_2/joplin"]],
+            [["evernote/test_3/yarle"]],
             [["google_docs/test_1/takeout-20240929T124909Z-001.zip"]],
             [["google_keep/test_1/takeout-20241002T163525Z-001.tgz"]],
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
@@ -153,7 +164,7 @@ class EndToEnd(unittest.TestCase):
 
         if len(test_input.parts) != 3:
             self.fail(
-                'Test data should in folder "<format>/test_<index>/<data>". '
+                'Test data should be in folder "<format>/test_<index>/<data>". '
                 "Look at the other tests for examples."
             )
 
