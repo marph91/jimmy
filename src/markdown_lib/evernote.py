@@ -312,7 +312,7 @@ class EnexToMarkdown:
         match tag:
             case "a":
                 # internal note link
-                if (prepend := self.active_link.get("prepend")):
+                if prepend := self.active_link.get("prepend"):
                     self.md.extend(prepend)
                 title = self.active_link.get("title")
                 url = self.active_link["href"]
@@ -331,7 +331,7 @@ class EnexToMarkdown:
                 else:
                     # normal link
                     self.md.append(f"[{title}]({url})")
-                if (append := self.active_link.get("append")):
+                if append := self.active_link.get("append"):
                     self.md.extend(append)
                 self.active_link = {}
             case (
@@ -451,6 +451,17 @@ class EnexToMarkdown:
             # - if the document is empty
             # - if the previous data contains only whitespace, too
             return
+
+        if (
+            self.active_lists
+            and self.md
+            and any(
+                self.md[-1].endswith(bullet)
+                for bullet in ["- [x] ", "- [ ] ", "- ", "1. "]
+            )
+        ):
+            # Normalize whitespaces at the start of list items.
+            data = data.lstrip()
 
         if self.encryption is not None:
             # https://help.evernote.com/hc/en-us/articles/208314128-What-type-of-encryption-does-Evernote-use
