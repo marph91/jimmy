@@ -97,10 +97,10 @@ class EnexToMarkdown:
             case "a":
                 # link
                 self.active_link["href"] = attrib.get("href")
-                if (rel := attrib.get("rel")) is not None:  # TODO: correct?
-                    self.active_link["title"] = rel
-                elif (name := attrib.get("name")) is not None:
-                    self.active_link["title"] = name
+                for title_tag in ["title", "name", "alt"]:
+                    if (title := attrib.get(title_tag)) is not None:
+                        self.active_link["alt"] = title
+                        break
             case "b" | "strong":
                 if "bold" in self.active_formatting:
                     return
@@ -312,28 +312,31 @@ class EnexToMarkdown:
         match tag:
             case "a":
                 # internal note link
-                if prepend := self.active_link.get("prepend"):
-                    self.md.extend(prepend)
-                title = self.active_link.get("title")
-                url = self.active_link["href"]
-                if title is None and url is None:
-                    pass
-                elif title is None or title == url:
-                    # normal link
-                    self.md.append(f"<{url}>")
-                elif url is None or url.strip() == "#":
-                    # no URL to link
-                    self.md.append(title)
-                # elif url.startswith("data:image/"):
-                #     # data:image/ resources seem to be duplicated
-                #     # TODO: Is this always the case?
-                #     pass
-                else:
-                    # normal link
-                    self.md.append(f"[{title}]({url})")
-                if append := self.active_link.get("append"):
-                    self.md.extend(append)
-                self.active_link = {}
+                if self.active_link:
+                    if prepend := self.active_link.get("prepend"):
+                        self.md.extend(prepend)
+                    title = self.active_link.get("title", self.active_link.get("alt"))
+                    url = self.active_link["href"]
+                    if url is None or url.strip() == "#":
+                        url = None
+                    if title is None and url is None:
+                        pass
+                    elif title == url or title is None:
+                        # normal link
+                        self.md.append(f"<{url}>")
+                    elif url is None:
+                        # no URL to link
+                        self.md.append(title)
+                    # elif url.startswith("data:image/"):
+                    #     # data:image/ resources seem to be duplicated
+                    #     # TODO: Is this always the case?
+                    #     pass
+                    else:
+                        # normal link
+                        self.md.append(f"[{title}]({url})")
+                    if append := self.active_link.get("append"):
+                        self.md.extend(append)
+                    self.active_link = {}
             case (
                 "b"
                 | "i"
@@ -354,12 +357,15 @@ class EnexToMarkdown:
             case "en-crypt":
                 self.encryption = None
             case "en-media":
-                self.md.append(
-                    f"![{self.active_resource.get("title", "")}]"
-                    f"({self.active_resource["hash"]})"
+                title = self.active_resource.get(
+                    "title", self.active_link.get("alt", "")
                 )
+                self.md.append(f"![{title}]({self.active_resource["hash"]})")
                 self.hashes.append(self.active_resource["hash"])
                 self.active_resource = {}
+
+                # clear active link (if there is any) to don't duplicate
+                self.active_link = {}
             case "en-note" | "span":
                 pass
             case "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "h7":
@@ -503,11 +509,9 @@ class EnexToMarkdown:
             self.md.insert(-len(self.active_formatting), "> " * self.quote_level)
 
         if self.active_link:
-            # TODO: simplify
-            if "title" in self.active_link:
-                self.active_link["title"] += data
-            else:
-                self.active_link["title"] = data
+            # https://stackoverflow.com/a/2052206/7410886
+            title = self.active_link.get("title", "")
+            self.active_link["title"] = title + data
         elif self.active_resource:
             LOGGER.warning(
                 f"Resource title not handled: {self.active_resource["hash"]}"

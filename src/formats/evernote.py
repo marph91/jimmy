@@ -44,7 +44,6 @@ class Converter(converter.BaseConverter):
             ):
                 continue  # keep the original links
 
-            # print(link.url)
             if link.url.startswith("evernote://") or link.url.startswith(
                 "https://www.evernote.com/shard"
             ):
@@ -230,7 +229,6 @@ class Converter(converter.BaseConverter):
                                 case _:
                                     self.logger.warning(f"ignoring attr {attr.tag}")
                     case _:
-                        # print(note_element.find("taskGroupNoteLevelID").text)
                         self.logger.warning(f"ignoring tag {note_element.tag}")
             # replace tasks
             for group_id, tasks_md in tasks.items():
