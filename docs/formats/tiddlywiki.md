@@ -3,7 +3,7 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 ## General Information
 
 - [Website](https://tiddlywiki.com/)
-- Typical extension: `.json` or `.tid`
+- Typical extension: `.json`, `.tid` of folder of `.tid` files
 
 ## Instructions
 
@@ -14,6 +14,7 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 3. Convert to Markdown. Examples:
     1. `jimmy-cli-linux tiddlers.json --format tiddlywiki`
     2. `jimmy-cli-linux tiddlers.tid --format tiddlywiki`
+    3. `jimmy-cli-linux /folder/to/tiddlers --format tiddlywiki`
 4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations

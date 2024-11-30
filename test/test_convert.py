@@ -149,6 +149,7 @@ class EndToEnd(unittest.TestCase):
             # [["tiddlywiki/test_1/tiddlers.json"]],
             [["tiddlywiki/test_2/Deserializers.tid"]],
             [["tiddlywiki/test_3/Plugins.tid"]],
+            [["tiddlywiki/test_4/html_folder"]],
             [["tomboy_ng/test_1/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["turtl/test_1/turtl-backup.json"]],
