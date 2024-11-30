@@ -221,7 +221,11 @@ PANDOC_OUTPUT_FORMAT = (
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:
     text_md = pypandoc.convert_text(
-        text, PANDOC_OUTPUT_FORMAT, format=format_, sandbox=True
+        text,
+        PANDOC_OUTPUT_FORMAT,
+        format=format_,
+        sandbox=True,
+        extra_args=["--wrap=none"],
     )
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
@@ -233,8 +237,12 @@ def file_to_markdown(file_: Path, resource_folder: Path) -> str:
         file_,
         PANDOC_OUTPUT_FORMAT,
         sandbox=True,  # offline mode
-        # somehow the temp folder is needed to create the resources properly
-        extra_args=[f"--extract-media={resource_folder}"],
+        extra_args=[
+            # somehow the temp folder is needed to create the resources properly
+            f"--extract-media={resource_folder}",
+            # don't create artificial line breaks
+            "--wrap=none",
+        ],
     )
     if "[TABLE]" in file_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
