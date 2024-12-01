@@ -9,7 +9,7 @@ import intermediate_format as imf
 import markdown_lib.common
 
 
-def guess_title(body):
+def guess_title(body: str) -> str:
     for line in body.split("\n"):
         if line.startswith("!["):
             continue

@@ -4,6 +4,7 @@ import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
@@ -51,22 +52,91 @@ class Converter(converter.BaseConverter):
                 )
         return resources, note_links
 
+    @common.catch_all_exceptions
+    def convert_zettel(self, id_: int, zettel, file_or_folder: Path, tag_id_name_map):
+        # pylint: disable=too-many-locals
+        title = item.text if (item := zettel.find("title")) is not None else ""
+        assert title is not None
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(title, original_id=str(id_))
+
+        self.parse_attributes(zettel, note_imf)
+
+        for item in zettel:
+            match item.tag:
+                case "title":
+                    pass  # handled already
+                case "content":
+                    body = bbcode_to_md(item.text if item.text else "")
+                    note_imf.body = body
+                    resources, note_links = self.handle_markdown_links(
+                        body, file_or_folder.parent
+                    )
+                    note_imf.resources.extend(resources)
+                    note_imf.note_links.extend(note_links)
+
+                    # if self.images_available:
+                    #     for image in images:
+                    #         image.filename = self.images_folder / image.filename
+                    #         # Set manually, because with invalid path it's
+                    #         # set to False.
+                    #         image.is_image = True
+                    #         note_imf.resources.extend(resources)
+                case "author":
+                    note_imf.author = item.text
+                case "keywords":
+                    if item.text is not None:
+                        for tag_id in item.text.split(","):
+                            tag_name = tag_id_name_map.get(tag_id, tag_id)
+                            assert tag_name is not None
+                            note_imf.tags.append(imf.Tag(tag_name))
+                case "links":
+                    if not self.attachments_available:
+                        continue
+                    # links = resources are always attached at the end
+                    for link in item.findall("link"):
+                        if link.text is None:
+                            continue
+                        note_imf.resources.append(
+                            imf.Resource(self.attachments_folder / link.text)
+                        )
+                case "luhmann":  # folgezettel
+                    if item.text is None:
+                        continue
+                    # TODO: Ensure that this is called always
+                    # after the initial note content is parsed.
+                    sequences = []
+                    for note_id in item.text.split(","):
+                        text = f"[{note_id}]({note_id})"
+                        sequences.append(text)
+                        note_imf.note_links.append(imf.NoteLink(text, note_id, note_id))
+                    note_imf.body += (
+                        "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
+                    )
+                case "misc" | "zettel":
+                    pass  # always None
+                case "manlinks":
+                    pass  # TODO: Should correspond to the parsed note links.
+                case _:
+                    self.logger.warning(f"ignoring item {item.tag}={item.text}")
+        self.root_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         # TODO
-        # pylint: disable=too-many-branches,too-many-locals
-        attachments_folder = file_or_folder.parent / "attachments"
-        attachments_available = attachments_folder.is_dir()
-        if not attachments_available:
+        # pylint: disable=attribute-defined-outside-init
+        self.attachments_folder = file_or_folder.parent / "attachments"
+        self.attachments_available = self.attachments_folder.is_dir()
+        if not self.attachments_available:
             self.logger.warning(
-                f"No attachments folder found at {attachments_folder}. "
+                f"No attachments folder found at {self.attachments_folder}. "
                 "Attachments are not converted."
             )
 
-        images_folder = file_or_folder.parent / "img"
-        images_available = images_folder.is_dir()
-        if not images_available:
+        self.images_folder = file_or_folder.parent / "img"
+        self.images_available = self.images_folder.is_dir()
+        if not self.images_available:
             self.logger.warning(
-                f"No images folder found at {images_folder}. "
+                f"No images folder found at {self.images_folder}. "
                 "Images are not converted."
             )
 
@@ -78,70 +148,4 @@ class Converter(converter.BaseConverter):
 
         root_node = ET.parse(self.root_path / "zknFile.xml").getroot()
         for id_, zettel in enumerate(root_node.findall("zettel"), start=1):
-            title = item.text if (item := zettel.find("title")) is not None else ""
-            assert title is not None
-            self.logger.debug(f'Converting note "{title}"')
-            note_imf = imf.Note(title, original_id=str(id_))
-
-            self.parse_attributes(zettel, note_imf)
-
-            for item in zettel:
-                match item.tag:
-                    case "title":
-                        pass  # handled already
-                    case "content":
-                        body = bbcode_to_md(item.text if item.text else "")
-                        note_imf.body = body
-                        resources, note_links = self.handle_markdown_links(
-                            body, file_or_folder.parent
-                        )
-                        note_imf.resources.extend(resources)
-                        note_imf.note_links.extend(note_links)
-
-                        # if images_available:
-                        #     for image in images:
-                        #         image.filename = images_folder / image.filename
-                        #         # Set manually, because with invalid path it's
-                        #         # set to False.
-                        #         image.is_image = True
-                        #         note_imf.resources.extend(resources)
-                    case "author":
-                        note_imf.author = item.text
-                    case "keywords":
-                        if item.text is not None:
-                            for tag_id in item.text.split(","):
-                                tag_name = tag_id_name_map.get(tag_id, tag_id)
-                                assert tag_name is not None
-                                note_imf.tags.append(imf.Tag(tag_name))
-                    case "links":
-                        if not attachments_available:
-                            continue
-                        # links = resources are always attached at the end
-                        for link in item.findall("link"):
-                            if link.text is None:
-                                continue
-                            note_imf.resources.append(
-                                imf.Resource(attachments_folder / link.text)
-                            )
-                    case "luhmann":  # folgezettel
-                        if item.text is None:
-                            continue
-                        # TODO: Ensure that this is called always
-                        # after the initial note content is parsed.
-                        sequences = []
-                        for note_id in item.text.split(","):
-                            text = f"[{note_id}]({note_id})"
-                            sequences.append(text)
-                            note_imf.note_links.append(
-                                imf.NoteLink(text, note_id, note_id)
-                            )
-                        note_imf.body += (
-                            "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
-                        )
-                    case "misc" | "zettel":
-                        pass  # always None
-                    case "manlinks":
-                        pass  # TODO: Should correspond to the parsed note links.
-                    case _:
-                        self.logger.warning(f"ignoring item {item.tag}={item.text}")
-            self.root_notebook.child_notes.append(note_imf)
+            self.convert_zettel(id_, zettel, file_or_folder, tag_id_name_map)

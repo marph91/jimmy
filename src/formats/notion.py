@@ -70,6 +70,7 @@ class Converter(converter.BaseConverter):
                 self.logger.debug(f'Unhandled link "{link}"')
         return resources, note_links
 
+    @common.catch_all_exceptions
     def convert_directory(self, parent_notebook):
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
 

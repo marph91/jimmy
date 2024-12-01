@@ -184,6 +184,7 @@ class Converter(converter.BaseConverter):
         super().__init__(*args, **kwargs)
         self.bookmarked_nodes = []
 
+    @common.catch_all_exceptions
     def convert_to_markdown(self, node, root_notebook):
         # TODO
         # pylint: disable=too-many-locals

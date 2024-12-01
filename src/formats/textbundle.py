@@ -3,6 +3,7 @@
 from pathlib import Path
 from urllib.parse import unquote
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib
@@ -26,28 +27,32 @@ class Converter(converter.BaseConverter):
             resources.append(imf.Resource(resource_path, str(link), link.text))
         return resources
 
+    @common.catch_all_exceptions
+    def convert_file(self, file_: Path):
+        if file_.suffix.lower() not in (".md", ".markdown"):
+            # take only the exports in markdown format
+            self.logger.debug(f"Ignoring folder or file {file_.name}")
+            return
+
+        # Filename from textbundle name seems to be more robust
+        # than taking the first line of the body.
+        title = file_.parent.stem
+        self.logger.debug(f'Converting note "{title}"')
+
+        note_imf = imf.Note(
+            title, file_.read_text(encoding="utf-8"), source_application=self.format
+        )
+        note_imf.tags = [
+            imf.Tag(tag)
+            for tag in markdown_lib.common.get_inline_tags(note_imf.body, ["#"])
+        ]
+        note_imf.resources = self.handle_markdown_links(note_imf.body)
+        note_imf.time_from_file(file_)
+
+        self.root_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         # TODO: Are internal links and nested folders supported by this format?
 
         for file_ in sorted(self.root_path.iterdir()):
-            if file_.suffix.lower() not in (".md", ".markdown"):
-                # take only the exports in markdown format
-                self.logger.debug(f"Ignoring folder or file {file_.name}")
-                continue
-
-            # Filename from textbundle name seems to be more robust
-            # than taking the first line of the body.
-            title = file_.parent.stem
-            self.logger.debug(f'Converting note "{title}"')
-
-            note_imf = imf.Note(
-                title, file_.read_text(encoding="utf-8"), source_application=self.format
-            )
-            note_imf.tags = [
-                imf.Tag(tag)
-                for tag in markdown_lib.common.get_inline_tags(note_imf.body, ["#"])
-            ]
-            note_imf.resources = self.handle_markdown_links(note_imf.body)
-            note_imf.time_from_file(file_)
-
-            self.root_notebook.child_notes.append(note_imf)
+            self.convert_file(file_)

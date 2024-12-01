@@ -87,6 +87,7 @@ class Converter(converter.BaseConverter):
         for notebook in root_notebook.child_notebooks:
             self.link_notes_by_title(notebook)
 
+    @common.catch_all_exceptions
     def convert_single_enex(self, file_or_folder: Path, parent_notebook: imf.Notebook):
         self.logger.debug(f'Converting file "{file_or_folder.name}"')
         try:

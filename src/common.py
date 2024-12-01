@@ -11,6 +11,7 @@ import random
 import tarfile
 import tempfile
 import time
+from typing import Any, Callable, TypeVar, cast
 import uuid
 import zipfile
 
@@ -26,6 +27,29 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 # general
 ###########################################################
+
+
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def catch_all_exceptions(func: F) -> F:
+    """
+    Decorator to catch all exceptions.
+    Useful if many individual notes are converted.
+    """
+
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as exc:  # pylint: disable=broad-except
+            LOGGER.warning(
+                "Failed to convert note. "
+                'Enable extended log by "--stdout-log-level DEBUG".'
+            )
+            # https://stackoverflow.com/a/52466005/7410886
+            LOGGER.debug(exc, exc_info=True)
+
+    return cast(F, wrapper)
 
 
 def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:

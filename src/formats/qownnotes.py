@@ -6,6 +6,7 @@ import re
 import sqlite3
 from urllib.parse import unquote
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
@@ -94,22 +95,26 @@ class Converter(converter.BaseConverter):
             conn.close()
         return note_tag_map
 
+    @common.catch_all_exceptions
+    def convert_note(self, note_qownnotes: Path, note_tag_map):
+        title = note_qownnotes.stem
+        self.logger.debug(f'Converting note "{title}"')
+        note_body = note_qownnotes.read_text(encoding="utf-8")
+
+        resources, note_links = self.handle_markdown_links(note_body)
+        note_imf = imf.Note(
+            title,
+            "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
+            source_application=self.format,
+            tags=note_tag_map.get(note_qownnotes.stem, []),
+            resources=resources,
+            note_links=note_links,
+        )
+        note_imf.time_from_file(note_qownnotes)
+        self.root_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         note_tag_map = self.parse_tags()
 
         for note_qownnotes in sorted(file_or_folder.glob("*.md")):
-            title = note_qownnotes.stem
-            self.logger.debug(f'Converting note "{title}"')
-            note_body = note_qownnotes.read_text(encoding="utf-8")
-
-            resources, note_links = self.handle_markdown_links(note_body)
-            note_imf = imf.Note(
-                title,
-                "\n".join(note_body.split("\n")[3:]),  # TODO: make robust
-                source_application=self.format,
-                tags=note_tag_map.get(note_qownnotes.stem, []),
-                resources=resources,
-                note_links=note_links,
-            )
-            note_imf.time_from_file(note_qownnotes)
-            self.root_notebook.child_notes.append(note_imf)
+            self.convert_note(note_qownnotes, note_tag_map)

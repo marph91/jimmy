@@ -4,6 +4,7 @@ import datetime as dt
 from pathlib import Path
 import re
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
@@ -73,6 +74,46 @@ class Converter(converter.BaseConverter):
             )
         return images
 
+    @common.catch_all_exceptions
+    def convert_note(self, item: Path, parent: imf.Notebook):
+        if item.name == "notebook.zim" or item.suffix.lower() != ".txt":
+            return
+
+        # note
+        title = item.stem.replace("_", " ")  # underscores seem to be replaced
+        self.logger.debug(f'Converting note "{title}"')
+
+        imf_note = imf.Note(title, source_application=self.format, original_id=title)
+
+        item_content = item.read_text(encoding="utf-8")
+        try:
+            metadata, _, body = item_content.split("\n\n", maxsplit=2)
+        except ValueError:
+            body = item_content
+            metadata = ""
+
+        for line in metadata.split("\n"):
+            key, value = line.split(": ", maxsplit=1)
+            if key == "Creation-Date":
+                imf_note.created = dt.datetime.fromisoformat(value)
+
+        imf_note.body = zim_to_md(body)
+
+        resource_path = item.parent / item.stem
+        resources, note_links = self.handle_zim_links(imf_note.body, resource_path)
+        imf_note.resources = resources
+        imf_note.note_links = note_links
+
+        imf_note.resources.extend(self.handle_zim_images(imf_note.body, resource_path))
+
+        # tags: https://zim-wiki.org/manual/Help/Tags.html
+        # TODO: exclude invalid characters
+        imf_note.tags = [
+            imf.Tag(tag) for tag in markdown_lib.common.get_inline_tags(body, ["@"])
+        ]
+
+        parent.child_notes.append(imf_note)
+
     def convert_folder(self, folder: Path, parent: imf.Notebook):
         # pylint: disable=too-many-locals
         for item in sorted(folder.iterdir()):
@@ -82,47 +123,7 @@ class Converter(converter.BaseConverter):
                 self.convert_folder(item, new_parent)
                 parent.child_notebooks.append(new_parent)
                 continue
-            if item.name == "notebook.zim" or item.suffix.lower() != ".txt":
-                continue
-
-            # note
-            title = item.stem.replace("_", " ")  # underscores seem to be replaced
-            self.logger.debug(f'Converting note "{title}"')
-
-            imf_note = imf.Note(
-                title, source_application=self.format, original_id=title
-            )
-
-            item_content = item.read_text(encoding="utf-8")
-            try:
-                metadata, _, body = item_content.split("\n\n", maxsplit=2)
-            except ValueError:
-                body = item_content
-                metadata = ""
-
-            for line in metadata.split("\n"):
-                key, value = line.split(": ", maxsplit=1)
-                if key == "Creation-Date":
-                    imf_note.created = dt.datetime.fromisoformat(value)
-
-            imf_note.body = zim_to_md(body)
-
-            resource_path = folder / item.stem
-            resources, note_links = self.handle_zim_links(imf_note.body, resource_path)
-            imf_note.resources = resources
-            imf_note.note_links = note_links
-
-            imf_note.resources.extend(
-                self.handle_zim_images(imf_note.body, resource_path)
-            )
-
-            # tags: https://zim-wiki.org/manual/Help/Tags.html
-            # TODO: exclude invalid characters
-            imf_note.tags = [
-                imf.Tag(tag) for tag in markdown_lib.common.get_inline_tags(body, ["@"])
-            ]
-
-            parent.child_notes.append(imf_note)
+            self.convert_note(item, parent)
 
     def convert(self, file_or_folder: Path):
         self.root_path = file_or_folder

@@ -201,6 +201,7 @@ class Converter(converter.BaseConverter):
                 continue  # skip notes with special tags
             self.root_notebook.child_notes.append(note_imf)
 
+    @common.catch_all_exceptions
     def convert_tid(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
         tiddler = file_or_folder.read_text(encoding="utf-8")

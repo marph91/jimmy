@@ -4,6 +4,7 @@ import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
+import common
 import converter
 import intermediate_format as imf
 
@@ -61,6 +62,7 @@ class Converter(converter.BaseConverter):
             md_content.append(node.tail)
         return "".join(md_content).strip(), note_links
 
+    @common.catch_all_exceptions
     def convert_note(self, note_file: Path):
         # Format: https://wiki.gnome.org/Apps/Tomboy/NoteXmlFormat
         root_node = ET.parse(note_file).getroot()

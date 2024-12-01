@@ -219,6 +219,7 @@ class FilesystemImporter:
             case _:
                 note.path.write_text(note.body, encoding="utf-8")
 
+    @common.catch_all_exceptions
     def import_note(self, note: imf.Note):
         assert note.path is not None
         self.progress_bars["notes"].update(1)
@@ -253,11 +254,7 @@ class FilesystemImporter:
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
                 note.path = note.path.with_suffix(note.path.suffix + ".md")
-            try:
-                self.import_note(note)
-            except Exception as exc:  # pylint: disable=broad-except
-                LOGGER.error(f'Failed to write note "{note.title}"')
-                LOGGER.debug(exc, exc_info=True)
+            self.import_note(note)
         for child_notebook in notebook.child_notebooks:
             child_notebook.path = notebook.path / common.safe_path(child_notebook.title)
             self.import_notebook(child_notebook)

@@ -145,6 +145,51 @@ class Converter(converter.BaseConverter):
                     break
         return resources
 
+    @common.catch_all_exceptions
+    def convert_note(self, note_id, note_id_title_map):
+        note = json.loads((self.root_path / note_id).read_text(encoding="utf-8"))
+
+        if note["parent_id"].rsplit("_")[-1] == "#00000000":
+            self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
+            return
+        title = note["title"]
+        self.logger.debug(f'Converting note "{title}"')
+
+        # resources / attachments
+        resources = self.map_resources_by_hash(note)
+
+        note_links: imf.NoteLinks = []
+        if (content_html := note.get("content")) is not None:
+            content_html = streamline_html(content_html)
+            content_markdown = markdown_lib.common.markup_to_markdown(content_html)
+            # note title only needed for debug message
+            resources_referenced, note_links = self.handle_markdown_links(
+                note["title"], content_markdown, note_id_title_map
+            )
+            resources.extend(resources_referenced)
+            body = content_markdown
+        else:
+            body = ""
+
+        note_imf = imf.Note(
+            title,
+            body,
+            created=common.timestamp_to_datetime(note["ctime"]),
+            updated=common.timestamp_to_datetime(note["mtime"]),
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in note.get("tag", [])],
+            resources=resources,
+            note_links=note_links,
+            original_id=note_id,
+        )
+        if (latitude := note.get("latitude")) is not None:
+            note_imf.latitude = latitude
+        if (longitude := note.get("longitude")) is not None:
+            note_imf.longitude = longitude
+
+        parent_notebook = self.find_parent_notebook(note["parent_id"])
+        parent_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
         input_json = json.loads(
@@ -175,54 +220,4 @@ class Converter(converter.BaseConverter):
             note_id_title_map[note_id] = note["title"]
 
         for note_id in input_json["note"]:
-            try:
-                note = json.loads(
-                    (self.root_path / note_id).read_text(encoding="utf-8")
-                )
-
-                if note["parent_id"].rsplit("_")[-1] == "#00000000":
-                    self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
-                    continue
-                title = note["title"]
-                self.logger.debug(f'Converting note "{title}"')
-
-                # resources / attachments
-                resources = self.map_resources_by_hash(note)
-
-                note_links: imf.NoteLinks = []
-                if (content_html := note.get("content")) is not None:
-                    content_html = streamline_html(content_html)
-                    content_markdown = markdown_lib.common.markup_to_markdown(
-                        content_html
-                    )
-                    # note title only needed for debug message
-                    resources_referenced, note_links = self.handle_markdown_links(
-                        note["title"], content_markdown, note_id_title_map
-                    )
-                    resources.extend(resources_referenced)
-                    body = content_markdown
-                else:
-                    body = ""
-
-                note_imf = imf.Note(
-                    title,
-                    body,
-                    created=common.timestamp_to_datetime(note["ctime"]),
-                    updated=common.timestamp_to_datetime(note["mtime"]),
-                    source_application=self.format,
-                    tags=[imf.Tag(tag) for tag in note.get("tag", [])],
-                    resources=resources,
-                    note_links=note_links,
-                    original_id=note_id,
-                )
-                if (latitude := note.get("latitude")) is not None:
-                    note_imf.latitude = latitude
-                if (longitude := note.get("longitude")) is not None:
-                    note_imf.longitude = longitude
-
-                parent_notebook = self.find_parent_notebook(note["parent_id"])
-                parent_notebook.child_notes.append(note_imf)
-            except Exception as exc:  # pylint: disable=broad-except
-                self.logger.warning(f"Failed to convert note \"{note['title']}\"")
-                # https://stackoverflow.com/a/52466005/7410886
-                self.logger.debug(exc, exc_info=True)
+            self.convert_note(note_id, note_id_title_map)

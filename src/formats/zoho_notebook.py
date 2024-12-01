@@ -70,6 +70,7 @@ class Converter(converter.BaseConverter):
                 )
         return resources, note_links
 
+    @common.catch_all_exceptions
     def convert_note(self, file_: Path):
         soup = BeautifulSoup(file_.read_text(encoding="utf-8"), "html.parser")
 

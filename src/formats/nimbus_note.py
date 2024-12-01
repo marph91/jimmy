@@ -93,31 +93,33 @@ class Converter(converter.BaseConverter):
                 )
         return resources
 
+    @common.catch_all_exceptions
+    def convert_file(self, file_: Path, temp_folder: Path):
+        title = file_.stem
+        self.logger.debug(f'Converting note "{title}"')
+        temp_folder_note = temp_folder / file_.stem
+        temp_folder_note.mkdir()
+        common.extract_zip(file_, temp_folder=temp_folder_note)
+
+        # HTML note seems to have the name "note.html" always
+        note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
+
+        soup = BeautifulSoup(note_body_html, "html.parser")
+        streamline_tables(soup)
+        streamline_lists(soup)
+
+        note_body_markdown = markdown_lib.common.markup_to_markdown(str(soup))
+        resources = self.handle_markdown_links(note_body_markdown, temp_folder_note)
+        note_imf = imf.Note(
+            title,
+            note_body_markdown.strip(),
+            source_application=self.format,
+            resources=resources,
+        )
+        self.root_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         temp_folder = common.get_temp_folder()
 
         for file_ in sorted(file_or_folder.rglob("*.zip")):
-            title = file_.stem
-            self.logger.debug(f'Converting note "{title}"')
-            temp_folder_note = temp_folder / file_.stem
-            temp_folder_note.mkdir()
-            common.extract_zip(file_, temp_folder=temp_folder_note)
-
-            # HTML note seems to have the name "note.html" always
-            note_body_html = (temp_folder_note / "note.html").read_text(
-                encoding="utf-8"
-            )
-
-            soup = BeautifulSoup(note_body_html, "html.parser")
-            streamline_tables(soup)
-            streamline_lists(soup)
-
-            note_body_markdown = markdown_lib.common.markup_to_markdown(str(soup))
-            resources = self.handle_markdown_links(note_body_markdown, temp_folder_note)
-            note_imf = imf.Note(
-                title,
-                note_body_markdown.strip(),
-                source_application=self.format,
-                resources=resources,
-            )
-            self.root_notebook.child_notes.append(note_imf)
+            self.convert_file(file_, temp_folder)
