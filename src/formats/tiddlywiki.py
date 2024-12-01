@@ -202,8 +202,13 @@ class Converter(converter.BaseConverter):
             self.root_notebook.child_notes.append(note_imf)
 
     def convert_tid(self, file_or_folder: Path):
+        # pylint: disable=too-many-locals
         tiddler = file_or_folder.read_text(encoding="utf-8")
-        metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)
+        try:
+            metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)
+        except ValueError:
+            metadata_raw = ""
+            body_wikitext = tiddler
 
         metadata = {}
         for line in metadata_raw.split("\n"):

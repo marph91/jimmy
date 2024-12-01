@@ -68,8 +68,11 @@ class Converter(converter.BaseConverter):
                 metadata_raw = markdown_raw
             metadata_json = {}
             for line in metadata_raw.split("\n"):
-                key, value = line.split(": ", 1)
-                metadata_json[key] = value
+                try:
+                    key, value = line.split(": ", maxsplit=1)
+                    metadata_json[key] = value
+                except ValueError:
+                    continue
 
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))

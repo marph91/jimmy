@@ -15,13 +15,12 @@ LOGGER = logging.getLogger("jimmy")
 
 
 def split_h1_title_from_body(markdown_: str) -> tuple[str, str]:
-    splitted_markdown = markdown_.split("\n", 1)
-    match len(splitted_markdown):
-        case 1:
-            title = splitted_markdown[0]
-            body = ""
-        case 2:
-            title, body = splitted_markdown
+    # TODO: doctest
+    try:
+        title, body = markdown_.split("\n", maxsplit=1)
+    except ValueError:
+        title = markdown_
+        body = ""
     return title.lstrip("# "), body.lstrip()
 
 

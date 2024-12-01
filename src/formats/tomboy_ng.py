@@ -87,7 +87,7 @@ class Converter(converter.BaseConverter):
         ) is not None and note_title.text is not None:
             title = note_title.text
         else:
-            title = body.split("\n", 1)[0]
+            title = body.split("\n", maxsplit=1)[0]
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title, body, tags=[imf.Tag(tag) for tag in tags], note_links=note_links

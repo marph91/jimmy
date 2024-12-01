@@ -202,17 +202,18 @@ class EnexToMarkdown:
             match key:
                 case "style":
                     # TODO: other styles
-                    style_splitted = [v.strip() for v in value.split(";") if v.strip()]
-                    for s in style_splitted:
+                    style_items = [v.strip() for v in value.split(";") if v.strip()]
+                    for item in style_items:
                         try:
-                            style, v = s.split(":", maxsplit=1)
+                            style, value = item.split(":", maxsplit=1)
                             style = style.strip()
-                            v = v.strip()
+                            value = value.strip()
                         except ValueError:
-                            continue  # TODO
+                            continue
+
                         match style:
                             case "-en-codeblock" | "--en-codeblock":
-                                if v == "true":
+                                if value == "true":
                                     self.add_newlines(2)  # ensure empty line
                                     self.md.append("```")
                                     self.add_newlines(1)
@@ -220,19 +221,22 @@ class EnexToMarkdown:
                                         self.global_level
                                     )
                             case "-evernote-highlight":
-                                if v == "true" and "bold" not in self.active_formatting:
+                                if (
+                                    value == "true"
+                                    and "bold" not in self.active_formatting
+                                ):
                                     # highlight is converted to bold
                                     self.md.append("**")
                                     self.active_formatting["bold"] = self.global_level
                             case "--en-id":
                                 # will be replaced with tasks later
-                                self.md.append(f"tasklist://{v}")
+                                self.md.append(f"tasklist://{value}")
                             # case "--en-todo":
-                            #     if v == "true":
+                            #     if value == "true":
                             #         self.active_lists.append("tasklist")
                             case "font-family":
                                 if (
-                                    v == "monospace"
+                                    value == "monospace"
                                     and "code" not in self.active_formatting
                                 ):
                                     self.md.append("`")
@@ -240,24 +244,24 @@ class EnexToMarkdown:
                             case "font-style":
                                 # https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
                                 if (
-                                    v == "italic"
+                                    value == "italic"
                                     and "italic" not in self.active_formatting
                                 ):
                                     self.md.append("*")
                                     self.active_formatting["italic"] = self.global_level
-                                # TODO: handle v == "normal"?
+                                # TODO: handle value == "normal"?
                             case "font-weight":
                                 if (
-                                    v in ["bold", "bolder"]
-                                    or v.isdigit()
-                                    and int(v) >= 700
+                                    value in ["bold", "bolder"]
+                                    or value.isdigit()
+                                    and int(value) >= 700
                                 ) and "bold" not in self.active_formatting:
                                     # https://www.w3schools.com/cssref/pr_font_weight.php
                                     # 700 and above is bold
                                     self.md.append("**")
                                     self.active_formatting["bold"] = self.global_level
                                 elif (
-                                    v == "italic"
+                                    value == "italic"
                                     and "italic" not in self.active_formatting
                                 ):
                                     self.md.append("*")
@@ -267,7 +271,7 @@ class EnexToMarkdown:
                             #     pass
                             # for debugging only
                             # case _:
-                            #     print(style, v)
+                            #     print(style, value)
                 case "size":
                     # https://www.geeksforgeeks.org/html-font-size-attribute/
                     # default: 3 - make everything above bold

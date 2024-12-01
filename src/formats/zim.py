@@ -74,6 +74,7 @@ class Converter(converter.BaseConverter):
         return images
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
+        # pylint: disable=too-many-locals
         for item in sorted(folder.iterdir()):
             if item.is_dir():
                 # notebook
@@ -92,9 +93,13 @@ class Converter(converter.BaseConverter):
                 title, source_application=self.format, original_id=title
             )
 
-            metadata, _, body = item.read_text(encoding="utf-8").split(
-                "\n\n", maxsplit=2
-            )
+            item_content = item.read_text(encoding="utf-8")
+            try:
+                metadata, _, body = item_content.split("\n\n", maxsplit=2)
+            except ValueError:
+                body = item_content
+                metadata = ""
+
             for line in metadata.split("\n"):
                 key, value = line.split(": ", maxsplit=1)
                 if key == "Creation-Date":
