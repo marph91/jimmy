@@ -2,14 +2,45 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import dataclasses
 import datetime as dt
 from pathlib import Path
+import re
+
+import frontmatter
 
 import common
 
 
-@dataclass
+OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
+
+
+def normalize_obsidian_tag(tag: str) -> str:
+    """
+    tag format: https://help.obsidian.md/Editing+and+formatting/Tags#Tag+format
+
+    >>> normalize_obsidian_tag("nested/tag")
+    'nested/tag'
+    >>> normalize_obsidian_tag("kebab-case")
+    'kebab-case'
+    >>> normalize_obsidian_tag("snake_case")
+    'snake_case'
+    >>> normalize_obsidian_tag("grüße-cześć-привет-你好")
+    'grüße-cześć-привет-你好'
+    >>> normalize_obsidian_tag("mul & tip...le")
+    'mul___tip___le'
+    >>> normalize_obsidian_tag("1984")
+    '1984_'
+    >>> normalize_obsidian_tag("y1984")
+    'y1984'
+    """
+    valid_char_tag = OBSIDIAN_TAG_REGEX.sub("_", tag)
+    if valid_char_tag.isdigit():
+        valid_char_tag += "_"
+    return valid_char_tag
+
+
+@dataclasses.dataclass
 class NoteLink:
     """Represents an internal link from one note to another note."""
 
@@ -21,7 +52,7 @@ class NoteLink:
     title: str
 
 
-@dataclass
+@dataclasses.dataclass
 class Resource:
     """Represents a resource."""
 
@@ -33,7 +64,7 @@ class Resource:
     title: str | None = None
 
     # internal data
-    is_image: bool = field(init=False)
+    is_image: bool = dataclasses.field(init=False)
     path: Path | None = None
 
     def __post_init__(self):
@@ -44,7 +75,7 @@ class Resource:
         self.is_image = common.is_image(self.filename)
 
 
-@dataclass
+@dataclasses.dataclass
 class Tag:
     """Represents a tag."""
 
@@ -62,7 +93,7 @@ class Tag:
         return self.original_id or self.title
 
 
-@dataclass
+@dataclasses.dataclass
 class Note:
     """Represents a note."""
 
@@ -79,10 +110,10 @@ class Note:
     source_application: str | None = None
 
     # internal data
-    tags: Tags = field(default_factory=list)
-    resources: Resources = field(default_factory=list)
+    tags: Tags = dataclasses.field(default_factory=list)
+    resources: Resources = dataclasses.field(default_factory=list)
     # list of complete links including original note ids
-    note_links: NoteLinks = field(default_factory=list)
+    note_links: NoteLinks = dataclasses.field(default_factory=list)
     original_id: str | None = None
     path: Path | None = None
 
@@ -101,8 +132,81 @@ class Note:
     def is_empty(self) -> bool:
         return not self.body.strip() and not self.tags and not self.resources
 
+    def get_finalized_body(
+        self, include_title: bool = False, frontmatter_: str | None = None
+    ) -> str:
+        """Add title and frontmatter if configured."""
+        body = self.body
 
-@dataclass
+        if include_title:
+            body = f"# {self.title}\n\n" + body
+
+        match frontmatter_:
+            case "all":
+                metadata = {}
+                for field in dataclasses.fields(Note):
+                    match field.name:
+                        case (
+                            "body"
+                            | "resources"
+                            | "note_links"
+                            | "original_id"
+                            | "path"
+                        ):
+                            continue  # included elsewhere or no metadata
+                        case "tags":
+                            metadata["tags"] = [tag.title for tag in self.tags]
+                        case _:
+                            if (value := getattr(self, field.name)) is not None:
+                                metadata[field.name] = value
+                post = frontmatter.Post(body, **metadata)
+                body = frontmatter.dumps(post)
+            case "joplin":
+                # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
+                # Arbitrary metadata will be ignored.
+                metadata = {}
+                if self.tags:
+                    # Convert the tags to lower case before the import to avoid issues
+                    # with special first characters.
+                    # See: https://github.com/laurent22/joplin/issues/11179
+                    metadata["tags"] = [tag.title.lower() for tag in self.tags]
+                supported_keys = [
+                    "title",
+                    "created",
+                    "updated",
+                    "author",
+                    "latitude",
+                    "longitude",
+                    "altitude",
+                ]
+                for key in supported_keys:
+                    if (value := getattr(self, key)) is not None:
+                        metadata[key] = value
+                post = frontmatter.Post(body, **metadata)
+                body = frontmatter.dumps(post)
+            case "obsidian":
+                # frontmatter format:
+                # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
+                metadata = {}
+                if self.tags:
+                    metadata["tags"] = [
+                        normalize_obsidian_tag(tag.title) for tag in self.tags
+                    ]
+                    post = frontmatter.Post(body, **metadata)
+                    body = frontmatter.dumps(post)
+            case "qownnotes":
+                # space separated tags, as supported by:
+                # - https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags
+                # - https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags
+                if self.tags:
+                    post = frontmatter.Post(
+                        body, tags=" ".join([tag.title for tag in self.tags])
+                    )
+                    body = frontmatter.dumps(post)
+        return body
+
+
+@dataclasses.dataclass
 class Notebook:
     """Represents a notebook and its children."""
 
@@ -111,8 +215,8 @@ class Notebook:
     updated: dt.datetime | None = None
 
     # internal data
-    child_notebooks: Notebooks = field(default_factory=list)
-    child_notes: Notes = field(default_factory=list)
+    child_notebooks: Notebooks = dataclasses.field(default_factory=list)
+    child_notes: Notes = dataclasses.field(default_factory=list)
     original_id: str | None = None
     path: Path | None = None
 

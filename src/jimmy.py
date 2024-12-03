@@ -136,11 +136,16 @@ def jimmy(config) -> common.Stats:
     LOGGER.info("Start writing to file system")
     progress_bars = stats.create_progress_bars(config.no_progress_bars)
     for note_tree in root_notebooks:
-        file_system_importer = importer.FilesystemImporter(progress_bars, config)
+        # first pass
+        pd = importer.PathDeterminer(config)
+        pd.determine_paths(note_tree)
+
+        # second pass
+        file_system_importer = importer.FilesystemImporter(
+            progress_bars, config, stats, pd.note_id_map
+        )
         file_system_importer.import_notebook(note_tree)
-        # We need another pass, since at the first pass
-        # target note IDs are unknown.
-        file_system_importer.link_notes(note_tree)
+
     LOGGER.info(
         "Converted notes successfully to Markdown: "
         f"[link={config.output_folder.resolve().as_uri()}]"
