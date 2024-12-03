@@ -35,6 +35,7 @@ class EndToEnd(unittest.TestCase):
         self.config = SimpleNamespace(
             format=None,
             password=password,
+            title_as_header=False,
             frontmatter=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),
@@ -225,7 +226,7 @@ class EndToEnd(unittest.TestCase):
                 reference = reference_data.parent / (reference_data.name + f" {index}")
                 self.assert_dir_trees_equal(actual_data, reference)
 
-    @parameterized.expand(["all", "joplin", "obsidian"])
+    @parameterized.expand(["all", "joplin", "obsidian"])  # TODO: qownnotes
     def test_frontmatter(self, frontmatter):
         """Test the frontmatter generation."""
 
