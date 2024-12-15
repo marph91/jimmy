@@ -1,5 +1,6 @@
 """Convert textbundle or textpack notes to the intermediate format."""
 
+import itertools
 from pathlib import Path
 from urllib.parse import unquote
 
@@ -11,6 +12,7 @@ import markdown_lib
 
 class Converter(converter.BaseConverter):
     accepted_extensions = [".textbundle", ".textpack"]
+    accept_folder = True
 
     def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
@@ -28,7 +30,7 @@ class Converter(converter.BaseConverter):
         return resources
 
     @common.catch_all_exceptions
-    def convert_file(self, file_: Path):
+    def convert_file(self, file_: Path, parent_notebook: imf.Notebook):
         if file_.suffix.lower() not in (".md", ".markdown"):
             # take only the exports in markdown format
             self.logger.debug(f"Ignoring folder or file {file_.name}")
@@ -49,10 +51,24 @@ class Converter(converter.BaseConverter):
         note_imf.resources = self.handle_markdown_links(note_imf.body)
         note_imf.time_from_file(file_)
 
-        self.root_notebook.child_notes.append(note_imf)
+        parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         # TODO: Are internal links and nested folders supported by this format?
 
-        for file_ in sorted(self.root_path.iterdir()):
-            self.convert_file(file_)
+        # We can't check for "is_file()", since ".textbundle" is a folder.
+        if file_or_folder.suffix in self.accepted_extensions:
+            for file_ in sorted(self.root_path.iterdir()):
+                self.convert_file(file_, self.root_notebook)
+        else:
+            for file_ in sorted(
+                itertools.chain(
+                    file_or_folder.glob("*.textbundle"),
+                    file_or_folder.glob("*.textpack"),
+                )
+            ):
+                self.root_path = self.prepare_input(file_)
+                parent_notebook = imf.Notebook(file_.stem)
+                self.root_notebook.child_notebooks.append(parent_notebook)
+                for file_ in sorted(self.root_path.iterdir()):
+                    self.convert_file(file_, parent_notebook)

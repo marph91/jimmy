@@ -147,6 +147,7 @@ class EndToEnd(unittest.TestCase):
             [["textbundle/test_3/Python CHP NOTES.textbundle"]],
             [["textbundle/test_4/Textbundle Example v1.textbundle"]],
             [["textbundle/test_5/Textbundle Example v2.textbundle"]],
+            [["textbundle/test_6/multiple_files"]],
             # [["tiddlywiki/test_1/tiddlers.json"]],
             [["tiddlywiki/test_2/Deserializers.tid"]],
             [["tiddlywiki/test_3/Plugins.tid"]],
