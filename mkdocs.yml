@@ -87,6 +87,7 @@ nav:
     - Tomboy-ng: formats/tomboy_ng.md
     # - Toodledo: formats/toodledo.md
     - Turtl: formats/turtl.md
+    - Wordpress: formats/wordpress.md
     # - xit: formats/xit.md
     - Zettelkasten: formats/zettelkasten.md
     - Zim: formats/zim.md
