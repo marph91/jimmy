@@ -37,6 +37,13 @@ def streamline_html(content_html: str) -> str:
         for div in table.find_all("div"):
             div.unwrap()
 
+        # another hack: Replace any newlines (<p>, <br>) with a temporary string
+        # and with <br> after conversion to markdown.
+        for item in table.find_all("br") + table.find_all("p"):
+            text_before = "" if item.string is None else item.string
+            item.string = text_before + "{TEMPORARY_NEWLINE}"
+            item.unwrap()
+
         for row_index, row in enumerate(table.find_all("tr")):
             for td in row.find_all("td"):
                 # tables seem to be headerless always
@@ -169,6 +176,7 @@ class Converter(converter.BaseConverter):
         if (content_html := note.get("content")) is not None:
             content_html = streamline_html(content_html)
             content_markdown = markdown_lib.common.markup_to_markdown(content_html)
+            content_markdown = content_markdown.replace("{TEMPORARY_NEWLINE}", "<br>")
             # note title only needed for debug message
             resources_referenced, note_links = self.handle_markdown_links(
                 note["title"], content_markdown, note_id_title_map
