@@ -48,6 +48,13 @@ def streamline_html(content_html: str) -> str:
         if (body := table.find("tbody")) is not None:
             body.unwrap()
 
+    # another hack: convert iframes to simple links
+    for iframe in soup.find_all("iframe"):
+        iframe.name = "a"
+        if not iframe.string.strip():  # link without text
+            iframe.string = iframe.attrs["src"]
+        iframe.attrs = {"href": iframe.attrs["src"]}
+
     return str(soup)
 
 
@@ -153,7 +160,7 @@ class Converter(converter.BaseConverter):
             self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
             return
         title = note["title"]
-        self.logger.debug(f'Converting note "{title}"')
+        self.logger.debug(f'Converting note "{title}" (ID: {note_id})')
 
         # resources / attachments
         resources = self.map_resources_by_hash(note)
