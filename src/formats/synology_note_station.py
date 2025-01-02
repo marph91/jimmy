@@ -1,10 +1,12 @@
 """Convert Synology Note Station notes to the intermediate format."""
 
+import copy
 from dataclasses import dataclass, field
 import difflib
 import json
 from pathlib import Path
 import re
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
@@ -90,13 +92,16 @@ class Converter(converter.BaseConverter):
         return self.root_notebook
 
     def handle_markdown_links(
-        self, title: str, body: str, note_id_title_map: dict
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+        self, title: str, body: str, note_id_title_map: dict, source_url: str | None
+    ) -> tuple[str, imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in markdown_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
+
+            if link.url.startswith("#"):
+                continue  # internal link
 
             if link.url.startswith("notestation://"):
                 # internal link
@@ -114,6 +119,16 @@ class Converter(converter.BaseConverter):
 
                 best_match_id = max(note_id_title_map, key=get_match_ratio)
                 note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
+            elif source_url is not None and ("/" in link.url or "?" in link.url):
+                # TODO: detect relative path of a clipped website properly
+                # Replace directly, since it's neither a resource nor a note link.
+                new_url = urlparse(source_url)
+                new_url = new_url._replace(path=link.url)
+
+                new_link = copy.deepcopy(link)  # don't modify the original link
+                new_link.url = new_url.geturl()
+
+                body = body.replace(str(link), str(new_link))
             else:
                 # resource
                 # Find resource file by "ref".
@@ -134,7 +149,7 @@ class Converter(converter.BaseConverter):
                             resource.filename, str(link), link.text or resource_title
                         )
                     )
-        return resources, note_links
+        return body, resources, note_links
 
     def convert_notebooks(self, input_json: dict):
         for notebook_id in input_json["notebook"]:
@@ -188,11 +203,13 @@ class Converter(converter.BaseConverter):
             content_markdown = markdown_lib.common.markup_to_markdown(content_html)
             content_markdown = content_markdown.replace("{TEMPORARYNEWLINE}", "<br>")
             # note title only needed for debug message
-            resources_referenced, note_links = self.handle_markdown_links(
-                note["title"], content_markdown, note_id_title_map
+            body, resources_referenced, note_links = self.handle_markdown_links(
+                note["title"],
+                content_markdown,
+                note_id_title_map,
+                source_url=note.get("source_url"),
             )
             resources.extend(resources_referenced)
-            body = content_markdown
         else:
             body = ""
 
