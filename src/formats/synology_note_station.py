@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 import difflib
 import json
 from pathlib import Path
-import re
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
@@ -27,10 +26,8 @@ class Attachment:
 
 
 def streamline_html(content_html: str) -> str:
-    # hack: In the original data, the attachment_id is stored in the
-    # "ref" attribute. Mitigate by storing it in the "src" attribute.
-    content_html = re.sub("<img.*?ref=", "<img src=", content_html)
-
+    # TODO
+    # pylint: disable=too-many-branches
     # another hack: make the first row of a table to the header
     soup = BeautifulSoup(content_html, "html.parser")
     for table in soup.find_all("table"):
@@ -73,6 +70,12 @@ def streamline_html(content_html: str) -> str:
         if not iframe.string.strip():  # link without text
             iframe.string = iframe.attrs["src"]
         iframe.attrs = {"href": iframe.attrs["src"]}
+
+    # hack: In the original data, the attachment_id is stored in the
+    # "ref" attribute. Mitigate by storing it in the "src" attribute.
+    for img in soup.find_all("img"):
+        if (new_src := img.attrs.get("ref")) is not None:
+            img.attrs["src"] = new_src
 
     return str(soup)
 
