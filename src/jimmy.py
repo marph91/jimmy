@@ -2,8 +2,6 @@
 
 import importlib
 import logging
-from pathlib import Path
-import sys
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
@@ -97,10 +95,7 @@ def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
 
 
 def get_jimmy_version():
-    # Pyinstaller has different path than module.
-    # https://stackoverflow.com/a/44352931/7410886
-    base_path = getattr(sys, "_MEIPASS", Path(__file__).parent)
-    version_file = Path(base_path) / ".version"
+    version_file = common.ROOT_PATH / ".version"
     return (
         version_file.read_text().lstrip("v").rstrip()
         if version_file.is_file()

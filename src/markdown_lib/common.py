@@ -10,6 +10,7 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 import pypandoc
 
+import common
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -218,20 +219,29 @@ PANDOC_OUTPUT_FORMAT = (
 # fmt:on
 
 
-def markup_to_markdown(text: str, format_: str = "html") -> str:
+def markup_to_markdown(
+    text: str, format_: str = "html", filters: list[str] | None = None
+) -> str:
+    if filters is None:
+        filters = []
     text_md = pypandoc.convert_text(
         text,
         PANDOC_OUTPUT_FORMAT,
         format=format_,
         sandbox=True,
         extra_args=["--wrap=none"],
+        filters=[str(common.PANDOC_FILTER_PATH / f) for f in filters],
     )
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
     return text_md.strip()
 
 
-def file_to_markdown(file_: Path, resource_folder: Path) -> str:
+def file_to_markdown(
+    file_: Path, resource_folder: Path, filters: list[str] | None = None
+) -> str:
+    if filters is None:
+        filters = []
     file_md = pypandoc.convert_file(
         file_,
         PANDOC_OUTPUT_FORMAT,
@@ -242,6 +252,7 @@ def file_to_markdown(file_: Path, resource_folder: Path) -> str:
             # don't create artificial line breaks
             "--wrap=none",
         ],
+        filters=[str(common.PANDOC_FILTER_PATH / f) for f in filters],
     )
     if "[TABLE]" in file_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")

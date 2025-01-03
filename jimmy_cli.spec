@@ -1,9 +1,10 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_data_files
 
-# pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
-datas = [(".version", ".")]
+# https://pyinstaller.org/en/stable/spec-files.html#adding-data-files
+datas = [(".version", "."), ("src/pandoc_filter/*.lua", "src/pandoc_filter")]
 datas += collect_data_files("anyblock_exporter")
+# pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
 datas += collect_data_files("pypandoc")
 
 

@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 import pkgutil
 import random
+import sys
 import tarfile
 import tempfile
 import time
@@ -50,6 +51,12 @@ def catch_all_exceptions(func: F) -> F:
             LOGGER.debug(exc, exc_info=True)
 
     return cast(F, wrapper)
+
+
+# Pyinstaller has different root path than module.
+# https://stackoverflow.com/a/44352931/7410886
+ROOT_PATH = Path(getattr(sys, "_MEIPASS", Path(__file__).parent.parent))
+PANDOC_FILTER_PATH = ROOT_PATH / "src/pandoc_filter"
 
 
 def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:

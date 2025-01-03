@@ -71,12 +71,6 @@ def streamline_html(content_html: str) -> str:
             iframe.string = iframe.attrs["src"]
         iframe.attrs = {"href": iframe.attrs["src"]}
 
-    # hack: In the original data, the attachment_id is stored in the
-    # "ref" attribute. Mitigate by storing it in the "src" attribute.
-    for img in soup.find_all("img"):
-        if (new_src := img.attrs.get("ref")) is not None:
-            img.attrs["src"] = new_src
-
     return str(soup)
 
 
@@ -203,7 +197,9 @@ class Converter(converter.BaseConverter):
         note_links: imf.NoteLinks = []
         if (content_html := note.get("content")) is not None:
             content_html = streamline_html(content_html)
-            content_markdown = markdown_lib.common.markup_to_markdown(content_html)
+            content_markdown = markdown_lib.common.markup_to_markdown(
+                content_html, filters=["synology_note_station.lua"]
+            )
             content_markdown = content_markdown.replace("{TEMPORARYNEWLINE}", "<br>")
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(
