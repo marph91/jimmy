@@ -13,6 +13,7 @@
 - ✅ Open Source
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or NodeJS installation required)
+- ❎ No AI
 
 ## Installation
 

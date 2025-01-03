@@ -23,6 +23,7 @@ Free your notes by converting them to Markdown.
 - ✅ Open Source
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or NodeJS installation required)
+- ❎ No AI
 
 ## Supported Apps
 
