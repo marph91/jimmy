@@ -12,28 +12,7 @@ import intermediate_format as imf
 import markdown_lib
 
 
-def streamline_tables(soup: BeautifulSoup):
-    for table in soup.find_all("table"):
-        for row in table.find_all("tr"):
-            for td in row.find_all("td"):
-                # remove all tags from table data
-                text_only = td.text
-                td.clear()
-                td.append(text_only)
 
-
-def streamline_checklists(soup: BeautifulSoup):
-    for task_list in soup.find_all("div", class_="checklist"):
-        task_list.name = "ul"
-        # remove the spans
-        for span in task_list.find_all("span"):
-            span.unwrap()
-        # remove the first divs
-        for child in task_list.children:
-            child.unwrap()
-        # convert the second divs to list items
-        for child in task_list.children:
-            child.name = "li"
 
 
 class Converter(converter.BaseConverter):
@@ -131,13 +110,12 @@ class Converter(converter.BaseConverter):
 
         # convert the note body to Markdown
         if soup.body is not None:
-            streamline_tables(soup)
-            streamline_checklists(soup)
             body = markdown_lib.common.markup_to_markdown(str(soup))
 
             # resources and internal links
             resources, note_links = self.handle_markdown_links(body)
         else:
+            body = ""
             resources, note_links = [], []
 
         # create note

@@ -9,53 +9,7 @@ import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
-
-
-def streamline_tables(soup: BeautifulSoup):
-    for table in soup.find_all("table"):
-        tags_to_remove = ["div", "span"]
-        for tag in tags_to_remove:
-            for element in table.find_all(tag):
-                element.unwrap()
-
-
-def streamline_lists(soup: BeautifulSoup):
-    # - all lists are unnumbered lists (ul)
-    #   - type is in the class attr (list-item-number, -bullet, -checkbox)
-    # - indentation is in the class attr (indent-0)
-    for list_ in soup.find_all("ul"):
-        current_indent = 0
-        current_list = list_
-        for item in list_.find_all("li"):
-            item_type = [
-                i[len("list-item-") :]
-                for i in item["class"]
-                if i.startswith("list-item-")
-            ][0]
-            list_type = {"checkbox": "ul", "bullet": "ul", "number": "ol"}[item_type]
-            if item_type == "checkbox":
-                item.insert(0, soup.new_tag("input", type="checkbox"))
-
-            indent = [i for i in item["class"] if i.startswith("indent-")][0]
-            indent_int = int(indent[len("indent-") :])  # 1 digit number always
-            if indent_int == 0:
-                # would be sufficient to do only one time
-                current_list.name = list_type
-                if item_type == "checkbox" and "checklist" not in current_list["class"]:
-                    current_list["class"] = ["checklist"]  # drop the other classes
-            if indent_int > current_indent:
-                # new child list
-                new_list = soup.new_tag(list_type)
-                current_list.append(new_list)
-                current_list = new_list
-                current_indent = indent_int
-            elif indent_int < current_indent:
-                # find parent list at the corresponding level
-                for _ in range(current_indent - indent_int):
-                    current_list = current_list.parent
-
-            item.attrs = {}  # remove all attributes
-            current_list.append(item)
+import markdown_lib.html_preprocessing
 
 
 class Converter(converter.BaseConverter):
@@ -105,8 +59,7 @@ class Converter(converter.BaseConverter):
         note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
 
         soup = BeautifulSoup(note_body_html, "html.parser")
-        streamline_tables(soup)
-        streamline_lists(soup)
+        markdown_lib.html_preprocessing.nimbus_note_streamline_lists(soup)
 
         note_body_markdown = markdown_lib.common.markup_to_markdown(str(soup))
         resources = self.handle_markdown_links(note_body_markdown, temp_folder_note)

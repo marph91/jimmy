@@ -5,10 +5,13 @@ import logging
 from pathlib import Path
 import re
 
+from bs4 import BeautifulSoup
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 import pypandoc
+
+import markdown_lib.html_preprocessing
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -219,6 +222,13 @@ PANDOC_OUTPUT_FORMAT = (
 
 
 def markup_to_markdown(text: str, format_: str = "html") -> str:
+    if format_ == "html":
+        # some needed preprocessing
+        soup = BeautifulSoup(text, "html.parser")
+        markdown_lib.html_preprocessing.div_checklists(soup)
+        markdown_lib.html_preprocessing.iframes_to_links(soup)
+        markdown_lib.html_preprocessing.streamline_tables(soup)
+        text = str(soup)
     text_md = pypandoc.convert_text(
         text,
         PANDOC_OUTPUT_FORMAT,
@@ -228,10 +238,17 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
     )
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
+
+    text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
     return text_md.strip()
 
 
 def file_to_markdown(file_: Path, resource_folder: Path) -> str:
+    # TODO: apply HTML preprocessing here, too
+    # if file_.suffix == ".html":
+    #     return markup_to_markdown(
+    #         file_.read_text(encoding="utf-8"), format_=file_.suffix.lstrip(".")
+    #     )
     file_md = pypandoc.convert_file(
         file_,
         PANDOC_OUTPUT_FORMAT,

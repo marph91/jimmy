@@ -13,6 +13,7 @@ import common
 import converter
 import intermediate_format as imf
 import markdown_lib
+import markdown_lib.html_preprocessing
 
 
 @dataclass
@@ -26,50 +27,7 @@ class Attachment:
 
 
 def streamline_html(content_html: str) -> str:
-    # TODO
-    # pylint: disable=too-many-branches
-    # another hack: make the first row of a table to the header
     soup = BeautifulSoup(content_html, "html.parser")
-    for table in soup.find_all("table"):
-        # Remove all divs, since they cause pandoc to fail converting the table.
-        # https://stackoverflow.com/a/32064299/7410886
-        for div in table.find_all("div"):
-            div.unwrap()
-
-        # another hack: Replace any newlines (<p>, <br>) with a temporary string
-        # and with <br> after conversion to markdown.
-        for item in table.find_all("br") + table.find_all("p"):
-            text_before = "" if item.string is None else item.string
-            item.string = text_before + "{TEMPORARYNEWLINE}"
-            item.unwrap()
-
-        # another hack: handle lists, i. e. replace items with "<br>- ..."
-        for item in table.find_all("ul") + table.find_all("ol"):
-            item.unwrap()
-        for item in table.find_all("li"):
-            if item.string is None:
-                item.decompose()
-                continue
-            item.string = "{TEMPORARYNEWLINE}- " + item.string
-            item.unwrap()
-
-        for row_index, row in enumerate(table.find_all("tr")):
-            for td in row.find_all("td"):
-                # tables seem to be headerless always
-                # make first row to header
-                if row_index == 0:
-                    td.name = "th"
-
-        # remove "tbody"
-        if (body := table.find("tbody")) is not None:
-            body.unwrap()
-
-    # another hack: convert iframes to simple links
-    for iframe in soup.find_all("iframe"):
-        iframe.name = "a"
-        if not iframe.string.strip():  # link without text
-            iframe.string = iframe.attrs["src"]
-        iframe.attrs = {"href": iframe.attrs["src"]}
 
     # hack: In the original data, the attachment_id is stored in the
     # "ref" attribute. Mitigate by storing it in the "src" attribute.
@@ -204,7 +162,6 @@ class Converter(converter.BaseConverter):
         if (content_html := note.get("content")) is not None:
             content_html = streamline_html(content_html)
             content_markdown = markdown_lib.common.markup_to_markdown(content_html)
-            content_markdown = content_markdown.replace("{TEMPORARYNEWLINE}", "<br>")
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(
                 note["title"],
