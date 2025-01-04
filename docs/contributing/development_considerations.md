@@ -43,27 +43,20 @@ coll = COLLECT(
 The resulting files can be listed and ordered by size by:
 
 ```bash
-> du -lh dist/jimmy_cli | sort -h
-8,0K    dist/jimmy_cli/_internal/setuptools/_vendor/jaraco/text
-12K     dist/jimmy_cli/_internal/setuptools/_vendor/jaraco
-24K     dist/jimmy_cli/_internal/cryptography-43.0.3.dist-info/license_files
+$ du -lh --max-depth=2 dist/jimmy_cli | sort -h
+12K     dist/jimmy_cli/_internal/src
 24K     dist/jimmy_cli/_internal/wheel-0.44.0.dist-info
 40K     dist/jimmy_cli/_internal/Markdown-3.7.dist-info
-40K     dist/jimmy_cli/_internal/setuptools/_vendor/importlib_metadata-8.0.0.dist-info
-56K     dist/jimmy_cli/_internal/setuptools/_vendor
+44K     dist/jimmy_cli/_internal/anyblock_exporter
 60K     dist/jimmy_cli/_internal/cryptography-43.0.3.dist-info
-60K     dist/jimmy_cli/_internal/markupsafe
 60K     dist/jimmy_cli/_internal/setuptools
 108K    dist/jimmy_cli/_internal/ossl-modules
 164K    dist/jimmy_cli/_internal/puremagic
-288K    dist/jimmy_cli/_internal/charset_normalizer
+296K    dist/jimmy_cli/_internal/charset_normalizer
 2,4M    dist/jimmy_cli/_internal/yaml
 11M     dist/jimmy_cli/_internal/cryptography
-11M     dist/jimmy_cli/_internal/cryptography/hazmat
-11M     dist/jimmy_cli/_internal/cryptography/hazmat/bindings
 15M     dist/jimmy_cli/_internal/lib-dynload
 144M    dist/jimmy_cli/_internal/pypandoc
-144M    dist/jimmy_cli/_internal/pypandoc/files
 213M    dist/jimmy_cli/_internal
 262M    dist/jimmy_cli
 ```
