@@ -10,7 +10,7 @@ from pathlib import Path
 import converter
 import intermediate_format as imf
 import markdown_lib
-
+import common
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -237,7 +237,8 @@ class Converter(converter.BaseConverter):
                 original_id=item["uuid"],
             )
             for reference in item["content"]["references"]:
-                note_id_tag_map[reference["uuid"]].append(tag)
+                if uuid := reference.get("uuid"):
+                    note_id_tag_map[uuid].append(tag)
 
         archive_notebook = imf.Notebook("Archive")
         trash_notebook = imf.Notebook("Trash")
@@ -247,7 +248,7 @@ class Converter(converter.BaseConverter):
         for item in input_json["items"]:
             if item["content_type"] != "Note" or item.get("deleted", False):
                 continue
-            title = item["content"]["title"]
+            title = item["content"].get("title",  common.unique_title())
             self.logger.debug(f'Converting note "{title}"')
             note_imf = imf.Note(
                 title,
@@ -265,8 +266,20 @@ class Converter(converter.BaseConverter):
                 case "plain-text":
                     note_imf.body = item["content"]["text"]
                 case "super":
-                    super_converter = SuperToMarkdown()
-                    note_imf.body = super_converter.convert(item["content"]["text"])
+                    body = item["content"]["text"]
+
+                    if body:
+                        super_converter = SuperToMarkdown()
+                        try:
+                            note_imf.body = super_converter.convert(item["content"]["text"])
+                        except json.JSONDecodeError as e:
+                            self.logger.warning(
+                                f"Skipping Super Note '{title}' due to JSON parse error: {e}"
+                            )
+                            continue
+                    else:
+                        note_imf.body = ""
+
                 case _:
                     note_imf.body = item["content"]["text"]
                     self.logger.debug(
