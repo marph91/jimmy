@@ -171,6 +171,8 @@ class FilesystemImporter:
         if "tags" in self.progress_bars:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
+        if note.path.is_file():
+            LOGGER.warning(f'Overwriting note "{note.title}"')
         note.path.write_text(
             note.get_finalized_body(self.include_title, self.frontmatter),
             encoding="utf-8",
