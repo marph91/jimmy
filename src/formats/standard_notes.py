@@ -237,7 +237,8 @@ class Converter(converter.BaseConverter):
                 original_id=item["uuid"],
             )
             for reference in item["content"]["references"]:
-                note_id_tag_map[reference["uuid"]].append(tag)
+                if uuid := reference.get("uuid"):
+                    note_id_tag_map[uuid].append(tag)
 
         archive_notebook = imf.Notebook("Archive")
         trash_notebook = imf.Notebook("Trash")
