@@ -211,6 +211,52 @@ class SuperToMarkdown:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.note_id_tag_map = defaultdict(list)
+        self.archive_notebook = imf.Notebook("Archive")
+        self.trash_notebook = imf.Notebook("Trash")
+
+    @common.catch_all_exceptions
+    def convert_note(self, item: dict):
+        title = item["content"].get("title", common.unique_title())
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(
+            title,
+            created=dt.datetime.fromisoformat(item["created_at"]),
+            updated=dt.datetime.fromisoformat(item["updated_at"]),
+            source_application=self.format,
+            original_id=item["uuid"],
+        )
+
+        note_imf.tags.extend(self.note_id_tag_map.get(item["uuid"], []))
+        if item["content"].get("starred", False):
+            note_imf.tags.append(imf.Tag("standard_notes-starred"))
+
+        match item["content"].get("noteType", "plain-text"):
+            case "plain-text":
+                note_imf.body = item["content"]["text"]
+            case "super":
+                if body := item["content"]["text"]:
+                    super_converter = SuperToMarkdown()
+                    note_imf.body = super_converter.convert(body)
+                else:
+                    note_imf.body = ""
+
+            case _:
+                note_imf.body = item["content"]["text"]
+                self.logger.debug(
+                    f'Unsupported note type "{item["content"]["noteType"]}"'
+                )
+
+        if item["content"].get("trashed", False):
+            parent = self.trash_notebook
+        elif item["content"]["appData"]["org.standardnotes.sn"].get("archived", False):
+            parent = self.archive_notebook
+        else:
+            parent = self.root_notebook
+        parent.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         target_file = None
         for file_ in [
@@ -228,7 +274,6 @@ class Converter(converter.BaseConverter):
 
         # first pass: get all tags
         # In the export, notes are assigned to tags. We need tags assigned to notes.
-        note_id_tag_map = defaultdict(list)
         for item in input_json["items"]:
             if item["content_type"] != "Tag" or item.get("deleted", False):
                 continue
@@ -238,55 +283,17 @@ class Converter(converter.BaseConverter):
             )
             for reference in item["content"]["references"]:
                 if uuid := reference.get("uuid"):
-                    note_id_tag_map[uuid].append(tag)
+                    self.note_id_tag_map[uuid].append(tag)
 
-        archive_notebook = imf.Notebook("Archive")
-        trash_notebook = imf.Notebook("Trash")
-        self.root_notebook.child_notebooks.extend([archive_notebook, trash_notebook])
+        self.root_notebook.child_notebooks.extend(
+            [self.archive_notebook, self.trash_notebook]
+        )
 
         # second pass: get all notes and assign tags to notes
         for item in input_json["items"]:
             if item["content_type"] != "Note" or item.get("deleted", False):
                 continue
-            title = item["content"].get("title", common.unique_title())
-            self.logger.debug(f'Converting note "{title}"')
-            note_imf = imf.Note(
-                title,
-                created=dt.datetime.fromisoformat(item["created_at"]),
-                updated=dt.datetime.fromisoformat(item["updated_at"]),
-                source_application=self.format,
-                original_id=item["uuid"],
-            )
-
-            note_imf.tags.extend(note_id_tag_map.get(item["uuid"], []))
-            if item["content"].get("starred", False):
-                note_imf.tags.append(imf.Tag("standard_notes-starred"))
-
-            match item["content"].get("noteType", "plain-text"):
-                case "plain-text":
-                    note_imf.body = item["content"]["text"]
-                case "super":
-                    if body := item["content"]["text"]:
-                        super_converter = SuperToMarkdown()
-                        note_imf.body = super_converter.convert(body)
-                    else:
-                        note_imf.body = ""
-
-                case _:
-                    note_imf.body = item["content"]["text"]
-                    self.logger.debug(
-                        f"Unsupported note type \"{item["content"]["noteType"]}\""
-                    )
-
-            if item["content"].get("trashed", False):
-                parent = trash_notebook
-            elif item["content"]["appData"]["org.standardnotes.sn"].get(
-                "archived", False
-            ):
-                parent = archive_notebook
-            else:
-                parent = self.root_notebook
-            parent.child_notes.append(note_imf)
+            self.convert_note(item)
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()
