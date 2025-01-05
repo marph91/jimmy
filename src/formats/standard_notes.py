@@ -248,7 +248,7 @@ class Converter(converter.BaseConverter):
         for item in input_json["items"]:
             if item["content_type"] != "Note" or item.get("deleted", False):
                 continue
-            title = item["content"].get("title",  common.unique_title())
+            title = item["content"].get("title", common.unique_title())
             self.logger.debug(f'Converting note "{title}"')
             note_imf = imf.Note(
                 title,
@@ -266,17 +266,9 @@ class Converter(converter.BaseConverter):
                 case "plain-text":
                     note_imf.body = item["content"]["text"]
                 case "super":
-                    body = item["content"]["text"]
-
-                    if body:
+                    if body := item["content"]["text"]:
                         super_converter = SuperToMarkdown()
-                        try:
-                            note_imf.body = super_converter.convert(item["content"]["text"])
-                        except json.JSONDecodeError as e:
-                            self.logger.warning(
-                                f"Skipping Super Note '{title}' due to JSON parse error: {e}"
-                            )
-                            continue
+                        note_imf.body = super_converter.convert(body)
                     else:
                         note_imf.body = ""
 
