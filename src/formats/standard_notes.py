@@ -266,8 +266,20 @@ class Converter(converter.BaseConverter):
                 case "plain-text":
                     note_imf.body = item["content"]["text"]
                 case "super":
-                    super_converter = SuperToMarkdown()
-                    note_imf.body = super_converter.convert(item["content"]["text"])
+                    body = item["content"]["text"]
+
+                    if body:
+                        super_converter = SuperToMarkdown()
+                        try:
+                            note_imf.body = super_converter.convert(item["content"]["text"])
+                        except json.JSONDecodeError as e:
+                            self.logger.warning(
+                                f"Skipping Super Note '{title}' due to JSON parse error: {e}"
+                            )
+                            continue
+                    else:
+                        note_imf.body = ""
+
                 case _:
                     note_imf.body = item["content"]["text"]
                     self.logger.debug(
