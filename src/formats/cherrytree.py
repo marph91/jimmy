@@ -252,7 +252,13 @@ class Converter(converter.BaseConverter):
         # If the cherrytree node is only used to contain children (i. e. a folder),
         # don't create a superfluous empty note.
         if not note_imf.is_empty():
-            root_notebook.child_notes.append(note_imf)
+            # Create the note below the notebook with the same name,
+            # to stay compatible with the obsidian folder note plugins.
+            # See: https://github.com/marph91/jimmy/issues/29
+            parent_notebook = (
+                root_notebook if new_root_notebook is None else new_root_notebook
+            )
+            parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         self.root_path = common.get_temp_folder()

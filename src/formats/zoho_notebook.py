@@ -12,9 +12,6 @@ import intermediate_format as imf
 import markdown_lib
 
 
-
-
-
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
