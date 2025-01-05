@@ -10,7 +10,7 @@ from pathlib import Path
 import converter
 import intermediate_format as imf
 import markdown_lib
-
+import common
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -248,7 +248,7 @@ class Converter(converter.BaseConverter):
         for item in input_json["items"]:
             if item["content_type"] != "Note" or item.get("deleted", False):
                 continue
-            title = item["content"]["title"]
+            title = item["content"].get("title",  common.unique_title())
             self.logger.debug(f'Converting note "{title}"')
             note_imf = imf.Note(
                 title,
