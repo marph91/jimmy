@@ -66,6 +66,18 @@ def nimbus_note_streamline_lists(soup: BeautifulSoup):
             current_list.append(item)
 
 
+def synology_note_station_fix_img_src(soup: BeautifulSoup):
+    # In the original nsx data, the "src" is stored in the
+    # "ref" attribute. Move it where it belongs.
+    for img in soup.find_all(
+        "img",
+        class_="syno-notestation-image-object",
+        src="webman/3rdparty/NoteStation/images/transparent.gif",
+    ):
+        if (new_src := img.attrs.get("ref")) is not None:
+            img.attrs["src"] = new_src
+
+
 def streamline_tables(soup: BeautifulSoup):
     # all pipe tables need to be "simple" according to:
     # https://github.com/jgm/pandoc/blob/5766443bc89bababaa8bba956db5f798f8b60675/src/Text/Pandoc/Writers/Markdown.hs#L619

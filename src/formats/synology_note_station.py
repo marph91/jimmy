@@ -7,13 +7,10 @@ import json
 from pathlib import Path
 from urllib.parse import urlparse
 
-from bs4 import BeautifulSoup
-
 import common
 import converter
 import intermediate_format as imf
 import markdown_lib
-import markdown_lib.html_preprocessing
 
 
 @dataclass
@@ -24,18 +21,6 @@ class Attachment:
     md5: str
     refs: list[str] = field(default_factory=list)
     titles: list[str] = field(default_factory=list)
-
-
-def streamline_html(content_html: str) -> str:
-    soup = BeautifulSoup(content_html, "html.parser")
-
-    # hack: In the original data, the attachment_id is stored in the
-    # "ref" attribute. Mitigate by storing it in the "src" attribute.
-    for img in soup.find_all("img"):
-        if (new_src := img.attrs.get("ref")) is not None:
-            img.attrs["src"] = new_src
-
-    return str(soup)
 
 
 class Converter(converter.BaseConverter):
@@ -160,7 +145,6 @@ class Converter(converter.BaseConverter):
 
         note_links: imf.NoteLinks = []
         if (content_html := note.get("content")) is not None:
-            content_html = streamline_html(content_html)
             content_markdown = markdown_lib.common.markup_to_markdown(content_html)
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(

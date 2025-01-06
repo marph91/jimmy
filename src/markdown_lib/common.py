@@ -228,6 +228,7 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
         markdown_lib.html_preprocessing.div_checklists(soup)
         markdown_lib.html_preprocessing.iframes_to_links(soup)
         markdown_lib.html_preprocessing.streamline_tables(soup)
+        markdown_lib.html_preprocessing.synology_note_station_fix_img_src(soup)
         text = str(soup)
     text_md = pypandoc.convert_text(
         text,
