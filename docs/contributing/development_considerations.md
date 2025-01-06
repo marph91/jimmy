@@ -64,3 +64,21 @@ $ du -lh --max-depth=2 dist/jimmy_cli | sort -h
 ## Why cryptography and not pycryptodome?
 
 They worked both at the first implementation. `cryptography` made a slightly better impression, so it was chosen.
+
+## Format Conversion Paths
+
+```mermaid
+graph TD;
+    File -- Plain Formats (plaintext,markdown) --> Markdown;
+
+    File -- Pandoc Unsupported Formats (anytype,colornote,tid,zim,zkn3 bbcode) --> pandoc_unsupported[Pyparsing / External Lib];
+    pandoc_unsupported --> Markdown;
+
+    %% pandoc paths
+    File -- HTML --> Beautifulsoup;
+    Beautifulsoup -- Preprocessed HTML String --> Pandoc;
+    File -- Pandoc Supported Formats --> Pandoc;
+    File -- Encapsulated Pandoc Supported Formats (eml,enex,notion,zoho) --> note_extraction[Extract Note];
+    note_extraction -- Pandoc Supported Formats --> Pandoc;
+    Pandoc --> Markdown;
+```
