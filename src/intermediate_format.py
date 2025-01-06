@@ -48,7 +48,7 @@ class NoteLink:
     original_text: str
     # For convenience. Should be included in "original_text", too.
     original_id: str
-    # [title](:/resource_id)
+    # [title_or_original_id](:/original_id)
     title: str
 
 

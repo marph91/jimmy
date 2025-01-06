@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+import re
 import shutil
 import urllib.parse
 
@@ -101,6 +102,33 @@ class PathDeterminer:
             self.determine_paths(child_notebook)
 
 
+VOID_LINK_REGEX = re.compile(r"(?<!!)\[\s*\]\(.*?\)")
+
+
+def remove_void_links(body: str) -> str:
+    """
+    Remove void links from Markdown, since they wouldn't be displayed anyway.
+
+    >>> remove_void_links("![](image.png)")
+    '![](image.png)'
+    >>> remove_void_links("[abc](def)")
+    '[abc](def)'
+    >>> remove_void_links("[]()")
+    ''
+    >>> remove_void_links("[](abc)")
+    ''
+    >>> remove_void_links("[ 	 ](abc)")
+    ''
+    """
+
+    # sub could be used, but find all is used for logging
+    def replace_with_logging(match: re.Match):
+        LOGGER.debug(f'Removing void link "{match.group()}"')
+        return ""
+
+    return VOID_LINK_REGEX.sub(replace_with_logging, body)
+
+
 class FilesystemImporter:
     """Import notebooks, notes and related data to the filesystem."""
 
@@ -151,6 +179,12 @@ class FilesystemImporter:
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
         assert note.path is not None
+        link_title = (
+            note_link.title
+            if note_link.title not in [None, ""]
+            else note_link.original_id
+        )
+
         new_path = self.note_id_map.get(note_link.original_id)
         if new_path is None:
             LOGGER.debug(
@@ -163,7 +197,7 @@ class FilesystemImporter:
 
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
         note.body = note.body.replace(
-            note_link.original_text, f"[{note_link.title}]({relative_path})"
+            note_link.original_text, f"[{link_title}]({relative_path})"
         )
 
     def write_note(self, note: imf.Note):
@@ -188,6 +222,10 @@ class FilesystemImporter:
         for note_link in note.note_links:
             self.progress_bars["note_links"].update(1)
             self.update_note_links(note, note_link)
+        # Remove any void links. For example "[](abc)" or "[ ](abc)".
+        # This can only be done now to avoid removing any note links or
+        # resources unintentionally.
+        note.body = remove_void_links(note.body)
         # Finally write the note to the filesystem.
         self.write_note(note)
 
