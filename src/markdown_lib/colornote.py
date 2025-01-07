@@ -24,7 +24,7 @@ def colornote_to_md(body: str) -> str:
     >>> colornote_to_md("[V] A\n[V] B")
     '- [x] A\n- [x] B'
     >>> colornote_to_md("[ ] Item 1\n[ ] Item 2\n[ ] Item 3")
-    '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3a'
+    '- [ ] Item 1\n- [ ] Item 2\n- [ ] Item 3'
     """
     markup = list_()
     return markup.transform_string(body)

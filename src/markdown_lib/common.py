@@ -139,24 +139,26 @@ MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
 
 
 def get_markdown_links(text: str) -> list[MarkdownLink]:
-    """
+    # ruff: noqa: E501
+    # doctest has too long lines
+    r"""
     >>> get_markdown_links("![](image.png)")
-    [MarkdownLink(text='', url='image.png', is_image=True)]
+    [MarkdownLink(text='', url='image.png', title='', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")
-    [MarkdownLink(text='abc', url='image (1).png', is_image=True)]
+    [MarkdownLink(text='abc', url='image (1).png', title='', is_image=True)]
     >>> get_markdown_links("[mul](tiple) [links](...)") # doctest: +NORMALIZE_WHITESPACE
-    [MarkdownLink(text='mul', url='tiple', is_image=False),
-     MarkdownLink(text='links', url='...', is_image=False)]
+    [MarkdownLink(text='mul', url='tiple', title='', is_image=False),
+     MarkdownLink(text='links', url='...', title='', is_image=False)]
     >>> get_markdown_links("![desc \\[reference\\]](Image.png){#fig:leanCycle}")
-    [MarkdownLink(text='desc \\\\[reference\\\\]', url='Image.png', is_image=True)]
+    [MarkdownLink(text='desc \\[reference\\]', url='Image.png', title='', is_image=True)]
     >>> get_markdown_links('[link](internal "Example Title")')
-    [MarkdownLink(text='link', url='internal "Example Title"', is_image=False)]
+    [MarkdownLink(text='link', url='internal "Example Title"', title='', is_image=False)]
     >>> get_markdown_links('[link](#internal)')
-    [MarkdownLink(text='link', url='#internal', is_image=False)]
+    [MarkdownLink(text='link', url='#internal', title='', is_image=False)]
     >>> get_markdown_links('[link](:/custom)')
-    [MarkdownLink(text='link', url=':/custom', is_image=False)]
+    [MarkdownLink(text='link', url=':/custom', title='', is_image=False)]
     >>> get_markdown_links('[weblink](https://duckduckgo.com)')
-    [MarkdownLink(text='weblink', url='https://duckduckgo.com', is_image=False)]
+    [MarkdownLink(text='weblink', url='https://duckduckgo.com', title='', is_image=False)]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member

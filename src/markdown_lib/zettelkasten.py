@@ -111,7 +111,7 @@ def bbcode_to_md(wikitext: str) -> str:
     >>> bbcode_to_md("das ist [d]durchgestrichener[/d] text")
     'das ist ~~durchgestrichener~~ text'
     >>> bbcode_to_md("[h #ffff00]colored[/h] text")
-    '**colored** text'
+    '==colored== text'
     >>> bbcode_to_md("[h3]heading 3[/h3]")
     '### heading 3'
     >>> bbcode_to_md("some[br]li nes[br]he re")
@@ -129,9 +129,9 @@ def bbcode_to_md(wikitext: str) -> str:
     >>> bbcode_to_md("link [z 3]zu Zettel 3[/z]")
     'link [zu Zettel 3](note://3)'
     >>> bbcode_to_md("[table][tc]Test Table[/tc][br]h 1^h 2^h3[br]d1 |d 2 |d3[/table]")
-    'Test Table\n\n| h 1 | h 2 | h3 |\n| --- | --- | --- |\n| d1  | d 2  | d3 |\n'
+    'Test Table\n\n| h 1 | h 2 | h3 |\n| --- | --- | --- |\n| d1  | d 2  | d3 |'
     >>> bbcode_to_md("[table]h 1^h 2^h3[br]d1 |d 2 |d3[/table]")
-    '| h 1 | h 2 | h3 |\n| --- | --- | --- |\n| d1  | d 2  | d3 |\n'
+    '| h 1 | h 2 | h3 |\n| --- | --- | --- |\n| d1  | d 2  | d3 |'
     >>> bbcode_to_md("[l][*]Here an item[/*][*]Other item![/*][/l]")
     '* Here an item\n* Other item!\n'
     >>> bbcode_to_md("[n][*]Numbered item[/*][*]Other numbered item![/*][/n]")

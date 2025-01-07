@@ -25,4 +25,6 @@ jobs:
       - name: install optional system depencencies
         run: sudo apt install -y asciidoctor
       - name: Run tests
-        run: ./test.sh
+        env:
+          PYTHONPATH: src
+        run: pytest --capture=no
