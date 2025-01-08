@@ -68,6 +68,18 @@ class BaseConverter(abc.ABC):
         return notebooks
 
     @abc.abstractmethod
+    def convert_note(self, *args, **kwargs):
+        """
+        Convert a single note.
+
+        Some implementation remarks:
+        - Should be decorated with @common.catch_all_exceptions to avoid the complete
+          conversion to crash.
+        - Should log the note title to see some progress.
+        """
+        # TODO: https://stackoverflow.com/q/19335436/7410886
+
+    @abc.abstractmethod
     def convert(self, file_or_folder: Path):
         """Conversion function for a single input."""
         # example implementation:
@@ -126,7 +138,8 @@ class DefaultConverter(BaseConverter):
                     )
         return resources, note_links
 
-    def convert_file(self, file_: Path, parent: imf.Notebook):
+    @common.catch_all_exceptions
+    def convert_note(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
         match file_.suffix.lower():
             case ".adoc" | ".asciidoc":
@@ -183,16 +196,10 @@ class DefaultConverter(BaseConverter):
         """Default conversion function for folders."""
         if file_or_folder.is_file():
             if not file_or_folder.suffix.lower():
-                # We can't guess the extansion, so we can ignore it.
+                # We can't guess the extension, so we can ignore it.
                 self.logger.debug(f"ignored {file_or_folder.name}: No extension.")
                 return
-            try:
-                self.convert_file(file_or_folder, parent)
-                self.logger.debug(f"ok   {file_or_folder.name}")
-            except Exception as exc:  # pylint: disable=broad-except
-                self.logger.debug(
-                    f"fail {file_or_folder.name}: {str(exc).strip()[:120]}"
-                )
+            self.convert_note(file_or_folder, parent)
         else:
             self.logger.debug(f"entering folder {file_or_folder.name}")
             new_parent = imf.Notebook(file_or_folder.stem)

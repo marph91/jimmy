@@ -62,6 +62,34 @@ class Converter(converter.BaseConverter):
             note_links.append(imf.NoteLink(f"[[{url}]]", url, description or url))
         return note_links
 
+    @common.catch_all_exceptions
+    def convert_note(self, note_json: dict):
+        # actual conversion
+        # TODO: reminder, tags, ...
+        title = note_json["title"]
+        if title == "syncable_settings":
+            # TODO: needed?
+            # syncable_settings = json.loads(note_json["note"])
+            # print(syncable_settings)
+            return
+
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(
+            title,
+            markdown_lib.colornote.colornote_to_md(note_json["note"]),
+            created=common.timestamp_to_datetime(note_json["created_date"] / 1000),
+            updated=common.timestamp_to_datetime(note_json["modified_date"] / 1000),
+            source_application=self.format,
+            original_id=title,  # not "uuid", because the title is linked
+            latitude=note_json["latitude"],
+            longitude=note_json["longitude"],
+        )
+        if note_json["space"] == 16:
+            note_imf.tags.append(imf.Tag("colornote-archived"))
+        note_imf.note_links = self.handle_wikilink_links(note_imf.body)
+
+        self.root_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         ciphertext = file_or_folder.read_bytes()
 
@@ -83,27 +111,4 @@ class Converter(converter.BaseConverter):
             chunk_bytes = plaintext_stream.read(chunk_length)
             note_json = json.loads(chunk_bytes.decode("utf-8"))
 
-            # actual conversion
-            # TODO: reminder, tags, ...
-            title = note_json["title"]
-            if title == "syncable_settings":
-                # TODO: needed?
-                # syncable_settings = json.loads(note_json["note"])
-                # print(syncable_settings)
-                continue
-            self.logger.debug(f'Converting note "{title}"')
-            note_imf = imf.Note(
-                title,
-                markdown_lib.colornote.colornote_to_md(note_json["note"]),
-                created=common.timestamp_to_datetime(note_json["created_date"] / 1000),
-                updated=common.timestamp_to_datetime(note_json["modified_date"] / 1000),
-                source_application=self.format,
-                original_id=title,  # not "uuid", because the title is linked
-                latitude=note_json["latitude"],
-                longitude=note_json["longitude"],
-            )
-            if note_json["space"] == 16:
-                note_imf.tags.append(imf.Tag("colornote-archived"))
-            note_imf.note_links = self.handle_wikilink_links(note_imf.body)
-
-            self.root_notebook.child_notes.append(note_imf)
+            self.convert_note(note_json)

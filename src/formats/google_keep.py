@@ -12,7 +12,7 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".tgz", ".zip"]
 
     @common.catch_all_exceptions
-    def convert_file(self, file_: Path):
+    def convert_note(self, file_: Path):
         note_keep = json.loads(file_.read_text(encoding="utf-8"))
 
         title = note_keep.get("title", "")
@@ -56,4 +56,4 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         # take only the exports in json format
         for file_ in sorted(self.root_path.rglob("*.json")):
-            self.convert_file(file_)
+            self.convert_note(file_)

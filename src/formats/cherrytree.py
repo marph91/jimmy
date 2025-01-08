@@ -185,7 +185,7 @@ class Converter(converter.BaseConverter):
         self.bookmarked_nodes = []
 
     @common.catch_all_exceptions
-    def convert_to_markdown(self, node, root_notebook):
+    def convert_note(self, node, root_notebook: imf.Notebook):
         # TODO
         # pylint: disable=too-many-locals
         title = node.attrib.get("name", "")
@@ -209,7 +209,7 @@ class Converter(converter.BaseConverter):
                         f"new notebook: {new_root_notebook.title}, "
                         f"parent: {root_notebook.title}"
                     )
-                    self.convert_to_markdown(child, new_root_notebook)
+                    self.convert_note(child, new_root_notebook)
                 case "codebox":
                     language = child.attrib.get("syntax_highlighting", "")
                     note_body += f"\n```{language}\n{child.text}\n```\n"
@@ -270,7 +270,7 @@ class Converter(converter.BaseConverter):
                     # We assume that bookmarks are defined before any nodes.
                     self.bookmarked_nodes = child.attrib.get("list", "").split(",")
                 case "node":
-                    self.convert_to_markdown(child, self.root_notebook)
+                    self.convert_note(child, self.root_notebook)
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
 

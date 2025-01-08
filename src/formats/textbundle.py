@@ -30,7 +30,7 @@ class Converter(converter.BaseConverter):
         return resources
 
     @common.catch_all_exceptions
-    def convert_file(self, file_: Path, parent_notebook: imf.Notebook):
+    def convert_note(self, file_: Path, parent_notebook: imf.Notebook):
         if file_.suffix.lower() not in (".md", ".markdown"):
             # take only the exports in markdown format
             self.logger.debug(f"Ignoring folder or file {file_.name}")
@@ -59,7 +59,7 @@ class Converter(converter.BaseConverter):
         # We can't check for "is_file()", since ".textbundle" is a folder.
         if file_or_folder.suffix in self.accepted_extensions:
             for file_ in sorted(self.root_path.iterdir()):
-                self.convert_file(file_, self.root_notebook)
+                self.convert_note(file_, self.root_notebook)
         else:
             for file_ in sorted(
                 itertools.chain(
@@ -71,4 +71,4 @@ class Converter(converter.BaseConverter):
                 parent_notebook = imf.Notebook(file_.stem)
                 self.root_notebook.child_notebooks.append(parent_notebook)
                 for file_ in sorted(self.root_path.iterdir()):
-                    self.convert_file(file_, parent_notebook)
+                    self.convert_note(file_, parent_notebook)

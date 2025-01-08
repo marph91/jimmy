@@ -88,8 +88,8 @@ class Converter(converter.BaseConverter):
             self.link_notes_by_title(notebook)
 
     @common.catch_all_exceptions
-    def convert_single_enex(self, file_or_folder: Path, parent_notebook: imf.Notebook):
-        self.logger.debug(f'Converting file "{file_or_folder.name}"')
+    def convert_note(self, file_or_folder: Path, parent_notebook: imf.Notebook):
+        self.logger.debug(f'Converting note "{file_or_folder.name}"')
         try:
             root_node = ET.parse(file_or_folder).getroot()
         except ET.ParseError as exc:
@@ -244,12 +244,12 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_file():
-            self.convert_single_enex(file_or_folder, self.root_notebook)
+            self.convert_note(file_or_folder, self.root_notebook)
         else:
             for file_ in sorted(file_or_folder.glob("*.enex")):
                 parent_notebook = imf.Notebook(file_.stem)
                 self.root_notebook.child_notebooks.append(parent_notebook)
-                self.convert_single_enex(file_, parent_notebook)
+                self.convert_note(file_, parent_notebook)
 
         # second pass: match note links by name
         self.link_notes_by_title()

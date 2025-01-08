@@ -25,6 +25,9 @@ def timestamp_to_date_str(timestamp_s: float | int) -> str:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
+    def convert_note(self):
+        pass  # TODO
+
     def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):

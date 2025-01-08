@@ -31,7 +31,7 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
     @common.catch_all_exceptions
-    def convert_file(self, item: Path, parent: imf.Notebook):
+    def convert_note(self, item: Path, parent: imf.Notebook):
         # We get a zip with opml and txt. Only advantage of opml over txt is
         # the owner attribute. So just use txt, because it's simpler.
         # opml is supported by pandoc, but the import is not working properly.
@@ -55,7 +55,7 @@ class Converter(converter.BaseConverter):
     def convert_folder(self, folder: Path, parent: imf.Notebook):
         for item in sorted(folder.iterdir()):
             if item.is_file():
-                self.convert_file(item, parent)
+                self.convert_note(item, parent)
             else:
                 new_parent = imf.Notebook(item.name)
                 self.convert_folder(item, new_parent)

@@ -5,6 +5,7 @@ from urllib.parse import urlparse
 
 import yaml
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib
@@ -44,6 +45,21 @@ class Converter(converter.BaseConverter):
                 )
         return body, resources
 
+    @common.catch_all_exceptions
+    def convert_note(self, data: dict, day, parent_notebook: imf.Notebook):
+        self.logger.debug(f'Converting note "{day}"')
+        # TODO: Could be done with https://pypi.org/project/txt2tags/
+        # TODO: links are converted, but not correctly
+        body = markdown_lib.common.markup_to_markdown(data["text"], format_="t2t")
+        body, resources = self.handle_markdown_links(body)
+        note_imf = imf.Note(
+            str(day),
+            body,
+            source_application=self.format,
+            resources=resources,
+        )
+        parent_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         for file_ in sorted(self.root_path.glob("*.txt")):
             # TODO: Split year into separate notebook?
@@ -54,17 +70,4 @@ class Converter(converter.BaseConverter):
             # see: https://rednotebook.app/help.html#toc38
             note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
             for day, data in note_dict.items():
-                self.logger.debug(f'Converting note "{day}"')
-                # TODO: Could be done with https://pypi.org/project/txt2tags/
-                # TODO: links are converted, but not correctly
-                body = markdown_lib.common.markup_to_markdown(
-                    data["text"], format_="t2t"
-                )
-                body, resources = self.handle_markdown_links(body)
-                note_imf = imf.Note(
-                    str(day),
-                    body,
-                    source_application=self.format,
-                    resources=resources,
-                )
-                parent_notebook.child_notes.append(note_imf)
+                self.convert_note(data, day, parent_notebook)

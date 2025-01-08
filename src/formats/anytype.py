@@ -14,6 +14,9 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
     accept_folder = True
 
+    def convert_note(self):
+        pass
+
     def convert(self, file_or_folder: Path):
         # TODO: fix duplicated nested output folder
         intermediate_markdown_folder = common.get_temp_folder() / self.output_folder

@@ -202,7 +202,7 @@ class Converter(converter.BaseConverter):
             self.root_notebook.child_notes.append(note_imf)
 
     @common.catch_all_exceptions
-    def convert_tid(self, file_or_folder: Path):
+    def convert_note(self, file_or_folder: Path):
         # pylint: disable=too-many-locals
         tiddler = file_or_folder.read_text(encoding="utf-8")
         try:
@@ -234,7 +234,7 @@ class Converter(converter.BaseConverter):
         if file_or_folder.suffix == ".json":
             self.convert_json(file_or_folder)
         elif file_or_folder.suffix == ".tid":
-            self.convert_tid(file_or_folder)
+            self.convert_note(file_or_folder)
         else:  # folder of .tid
             for tid_file in sorted(file_or_folder.glob("*.tid")):
-                self.convert_tid(tid_file)
+                self.convert_note(tid_file)

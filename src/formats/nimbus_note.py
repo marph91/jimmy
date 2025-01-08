@@ -48,7 +48,7 @@ class Converter(converter.BaseConverter):
         return resources
 
     @common.catch_all_exceptions
-    def convert_file(self, file_: Path, temp_folder: Path):
+    def convert_note(self, file_: Path, temp_folder: Path):
         title = file_.stem
         self.logger.debug(f'Converting note "{title}"')
         temp_folder_note = temp_folder / file_.stem
@@ -75,4 +75,4 @@ class Converter(converter.BaseConverter):
         temp_folder = common.get_temp_folder()
 
         for file_ in sorted(file_or_folder.rglob("*.zip")):
-            self.convert_file(file_, temp_folder)
+            self.convert_note(file_, temp_folder)

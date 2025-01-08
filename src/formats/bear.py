@@ -9,6 +9,9 @@ from formats.textbundle import Converter as TextbundleConverter
 class Converter(converter.BaseConverter):
     accepted_extensions = [".bear2bk"]
 
+    def convert_note(self):
+        pass
+
     def convert(self, file_or_folder: Path):
         # TODO: handle "tags.json"
         # file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))

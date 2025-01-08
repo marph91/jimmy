@@ -65,7 +65,7 @@ class Converter(converter.BaseConverter):
         )
 
     @common.catch_all_exceptions
-    def convert_file(self, item: Path, parent: imf.Notebook):
+    def convert_note(self, item: Path, parent: imf.Notebook):
         if item.suffix.lower() != ".md":
             return
         title = item.stem
@@ -101,7 +101,7 @@ class Converter(converter.BaseConverter):
             if item.is_dir() and item.name == ".obsidian":
                 continue  # ignore the internal obsidian folder
             if item.is_file():
-                self.convert_file(item, parent)
+                self.convert_note(item, parent)
             else:
                 new_parent = imf.Notebook(item.name)
                 self.convert_folder(item, new_parent)

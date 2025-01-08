@@ -4,6 +4,7 @@ import datetime as dt
 from pathlib import Path
 import json
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
@@ -117,6 +118,47 @@ class Converter(converter.BaseConverter):
                 self.logger.warning(f"Unknown URL protocol {link.url}")
         return resources, note_links
 
+    @common.catch_all_exceptions
+    def convert_note(self, entry, resource_id_filename_map):
+        note_body = entry.get("text", "")
+        # Backslashes are added often. Removing them like this might cause issues.
+        note_body = note_body.replace("\\", "")
+        # https://stackoverflow.com/a/55400921/7410886
+        note_body = note_body.replace("\u200b", "")
+
+        title = guess_title(note_body)
+        self.logger.debug(f'Converting note "{title}"')
+
+        tags = entry.get("tags", [])
+        if entry.get("starred"):
+            tags.append("day-one-starred")
+        if entry.get("pinned"):
+            tags.append("day-one-pinned")
+
+        resources, note_links = self.handle_markdown_links(
+            note_body, resource_id_filename_map
+        )
+
+        note_imf = imf.Note(
+            title,
+            note_body,  # TODO: Is there any advantage of rich text?
+            created=dt.datetime.fromisoformat(entry["creationDate"]),
+            updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
+            source_application=self.format,
+            resources=resources,
+            tags=[imf.Tag(tag) for tag in tags],
+            note_links=note_links,
+            original_id=entry["uuid"],
+        )
+
+        if (location := entry.get("location")) is not None:
+            note_imf.latitude = location["latitude"]
+            note_imf.longitude = location["longitude"]
+
+        creation_date = dt.datetime.fromisoformat(entry["creationDate"])
+        parent_notebook = self.create_notebook_hierarchy(creation_date)
+        parent_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         potential_sources = list(self.root_path.glob("*.json"))
         if len(potential_sources) != 1:
@@ -132,41 +174,4 @@ class Converter(converter.BaseConverter):
         for entry in file_dict["entries"]:
             # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
 
-            note_body = entry.get("text", "")
-            # Backslashes are added often. Removing them like this might cause issues.
-            note_body = note_body.replace("\\", "")
-            # https://stackoverflow.com/a/55400921/7410886
-            note_body = note_body.replace("\u200b", "")
-
-            title = guess_title(note_body)
-            self.logger.debug(f'Converting note "{title}"')
-
-            tags = entry.get("tags", [])
-            if entry.get("starred"):
-                tags.append("day-one-starred")
-            if entry.get("pinned"):
-                tags.append("day-one-pinned")
-
-            resources, note_links = self.handle_markdown_links(
-                note_body, resource_id_filename_map
-            )
-
-            note_imf = imf.Note(
-                title,
-                note_body,  # TODO: Is there any advantage of rich text?
-                created=dt.datetime.fromisoformat(entry["creationDate"]),
-                updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
-                source_application=self.format,
-                resources=resources,
-                tags=[imf.Tag(tag) for tag in tags],
-                note_links=note_links,
-                original_id=entry["uuid"],
-            )
-
-            if (location := entry.get("location")) is not None:
-                note_imf.latitude = location["latitude"]
-                note_imf.longitude = location["longitude"]
-
-            creation_date = dt.datetime.fromisoformat(entry["creationDate"])
-            parent_notebook = self.create_notebook_hierarchy(creation_date)
-            parent_notebook.child_notes.append(note_imf)
+            self.convert_note(entry, resource_id_filename_map)

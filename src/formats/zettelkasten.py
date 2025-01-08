@@ -53,7 +53,7 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_zettel(self, id_: int, zettel, file_or_folder: Path, tag_id_name_map):
+    def convert_note(self, id_: int, zettel, file_or_folder: Path, tag_id_name_map):
         # pylint: disable=too-many-locals
         title = item.text if (item := zettel.find("title")) is not None else ""
         assert title is not None
@@ -148,4 +148,4 @@ class Converter(converter.BaseConverter):
 
         root_node = ET.parse(self.root_path / "zknFile.xml").getroot()
         for id_, zettel in enumerate(root_node.findall("zettel"), start=1):
-            self.convert_zettel(id_, zettel, file_or_folder, tag_id_name_map)
+            self.convert_note(id_, zettel, file_or_folder, tag_id_name_map)

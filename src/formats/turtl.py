@@ -61,6 +61,54 @@ class Converter(converter.BaseConverter):
                     )
         return resources, note_links
 
+    @common.catch_all_exceptions
+    def convert_note(self, note: dict, file_map: dict):
+        title = note["title"]
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(
+            title,
+            tags=[imf.Tag(t) for t in note["tags"]],
+            original_id=note["id"],
+            created=note["mod"],
+        )
+        match note["type"]:
+            case "file" | "image" | "link" | "text":
+                note_imf.body = note["text"]
+            case "password":
+                note_imf.body = "\n".join(
+                    [
+                        f"- Username: `{note["user_id"]}`",
+                        f"- Password: `{note["password"]}`",
+                        "",
+                        note["text"],
+                    ]
+                )
+            case _:
+                self.logger.debug(f"Unhandled type \"{note["type"]}\"")
+        if note.get("url"):
+            note_imf.body += f"\n\n<{note["url"]}>"
+
+        # note["has_file"] seems to be sometimes wrong...
+        # I. e. if the type is "file". Check always.
+        # It seems like a note can have maximum one file attached.
+        if (file_data := file_map.get(note["id"])) is not None:
+            # TODO: files may be overwritten. use id?
+            filename = self.resource_folder / note["file"]["name"]
+            filename.write_bytes(base64.b64decode(file_data))
+            file_md = f"[{note["file"]["name"]}]({filename})"
+            note_imf.body += f"\n\n{file_md}"
+        # else:
+        #     self.logger.debug(f"Couldn't find file with id {note["id"]}")
+
+        resources, note_links = self.handle_markdown_links(
+            note_imf.body, self.resource_folder
+        )
+        note_imf.resources = resources
+        note_imf.note_links = note_links
+
+        parent_notebook = self.find_parent_notebook(note["space_id"], note["board_id"])
+        parent_notebook.child_notes.append(note_imf)
+
     def convert(self, file_or_folder: Path):
         file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
 
@@ -84,51 +132,7 @@ class Converter(converter.BaseConverter):
             file_map[file_["id"]] = file_["data"]
 
         for note in file_dict["notes"]:
-            note_imf = imf.Note(
-                note["title"],
-                tags=[imf.Tag(t) for t in note["tags"]],
-                original_id=note["id"],
-                created=note["mod"],
-            )
-            match note["type"]:
-                case "file" | "image" | "link" | "text":
-                    note_imf.body = note["text"]
-                case "password":
-                    note_imf.body = "\n".join(
-                        [
-                            f"- Username: `{note["user_id"]}`",
-                            f"- Password: `{note["password"]}`",
-                            "",
-                            note["text"],
-                        ]
-                    )
-                case _:
-                    self.logger.debug(f"Unhandled type \"{note["type"]}\"")
-            if note.get("url"):
-                note_imf.body += f"\n\n<{note["url"]}>"
-
-            # note["has_file"] seems to be sometimes wrong...
-            # I. e. if the type is "file". Check always.
-            # It seems like a note can have maximum one file attached.
-            if (file_data := file_map.get(note["id"])) is not None:
-                # TODO: files may be overwritten. use id?
-                filename = self.resource_folder / note["file"]["name"]
-                filename.write_bytes(base64.b64decode(file_data))
-                file_md = f"[{note["file"]["name"]}]({filename})"
-                note_imf.body += f"\n\n{file_md}"
-            # else:
-            #     self.logger.debug(f"Couldn't find file with id {note["id"]}")
-
-            resources, note_links = self.handle_markdown_links(
-                note_imf.body, self.resource_folder
-            )
-            note_imf.resources = resources
-            note_imf.note_links = note_links
-
-            parent_notebook = self.find_parent_notebook(
-                note["space_id"], note["board_id"]
-            )
-            parent_notebook.child_notes.append(note_imf)
+            self.convert_note(note, file_map)
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()

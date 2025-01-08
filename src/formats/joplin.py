@@ -6,6 +6,7 @@ import enum
 import math
 from pathlib import Path
 
+import common
 import converter
 import intermediate_format as imf
 import markdown_lib
@@ -52,9 +53,36 @@ def handle_markdown_links(
 class Converter(converter.BaseConverter):
     accepted_extensions = [".jex"]
 
+    @common.catch_all_exceptions
+    def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
+        title, body = markdown_lib.common.split_h1_title_from_body(markdown)
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(
+            title.strip(),
+            body.strip(),
+            created=dt.datetime.fromisoformat(metadata_json["created_time"]),
+            updated=dt.datetime.fromisoformat(metadata_json["updated_time"]),
+            # TODO: How to handle todos?
+            # is_todo=bool(int(metadata_json.get("is_todo", 0))),
+            # completed=bool(
+            #     int(metadata_json.get("todo_completed", False))
+            # ),
+            # due=int(metadata_json.get("todo_due", 0)),
+            author=metadata_json.get("author") or None,
+            source_application=self.format,
+            original_id=metadata_json["id"],
+        )
+        # not set is exported as 0.0
+        for key in ("latitude", "longitude", "altitude"):
+            if (val := metadata_json.get(key)) is not None and not math.isclose(
+                val_float := float(val), 0.0
+            ):
+                setattr(note_imf, key, val_float)
+        parent_id_note_map.append((metadata_json["parent_id"], note_imf))
+
     def parse_data(self):
         # pylint: disable=too-many-locals
-        parent_id_note_map = []
+        parent_id_note_map: list = []
         parent_id_notebook_map = []
         resource_id_filename_map = {}
         available_tags = []
@@ -77,30 +105,7 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                title, body = markdown_lib.common.split_h1_title_from_body(markdown)
-                self.logger.debug(f'Converting note "{title}"')
-                note_imf = imf.Note(
-                    title.strip(),
-                    body.strip(),
-                    created=dt.datetime.fromisoformat(metadata_json["created_time"]),
-                    updated=dt.datetime.fromisoformat(metadata_json["updated_time"]),
-                    # TODO: How to handle todos?
-                    # is_todo=bool(int(metadata_json.get("is_todo", 0))),
-                    # completed=bool(
-                    #     int(metadata_json.get("todo_completed", False))
-                    # ),
-                    # due=int(metadata_json.get("todo_due", 0)),
-                    author=metadata_json.get("author") or None,
-                    source_application=self.format,
-                    original_id=metadata_json["id"],
-                )
-                # not set is exported as 0.0
-                for key in ("latitude", "longitude", "altitude"):
-                    if (val := metadata_json.get(key)) is not None and not math.isclose(
-                        val_float := float(val), 0.0
-                    ):
-                        setattr(note_imf, key, val_float)
-                parent_id_note_map.append((metadata_json["parent_id"], note_imf))
+                self.convert_note(markdown, metadata_json, parent_id_note_map)
             elif type_ == ItemType.FOLDER:
                 parent_id_notebook_map.append(
                     (

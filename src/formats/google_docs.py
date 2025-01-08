@@ -9,6 +9,9 @@ from converter import DefaultConverter
 class Converter(converter.BaseConverter):
     accepted_extensions = [".tgz", ".zip"]
 
+    def convert_note(self):
+        pass
+
     def convert(self, file_or_folder: Path):
         # see BaseConverter.convert_multiple()
         docs_converter = DefaultConverter(self._config)

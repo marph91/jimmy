@@ -71,58 +71,63 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
+    def convert_note(
+        self, item: Path, relative_parent_path: str, parent_notebook: imf.Notebook
+    ):
+        if (
+            item.is_file()
+            and item.suffix.lower() not in (".md", ".html")
+            or item.name == "index.html"
+        ):
+            return
+        # id is appended to filename
+        title, _ = item.name.rsplit(" ", 1)
+
+        # propagate the path through all parents
+        # separator is always "/"
+        _, id_ = item.stem.rsplit(" ", 1)
+        if parent_notebook.original_id != ".":
+            self.id_path_map[id_] = relative_parent_path + "/" + item.name
+        else:
+            # TODO: check if "./" works on windows
+            self.id_path_map[id_] = item.name
+
+        if item.is_dir():
+            child_notebook = imf.Notebook(title, original_id=id_)
+            self.convert_directory(child_notebook)
+            # It can happen that the folder only contains resources.
+            # They are added to the note one level higher with the same name.
+            # In this case, the notebook is no longer of use.
+            if not child_notebook.is_empty():
+                parent_notebook.child_notebooks.append(child_notebook)
+            return
+
+        self.logger.debug(f'Converting note "{title}"')
+        body = item.read_text(encoding="utf-8")
+        if item.suffix.lower() == ".md":
+            # first line is title, second is whitespace
+            body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
+        else:  # html
+            body = markdown_lib.common.markup_to_markdown(body)
+
+        # find links
+        resources, note_links = self.handle_markdown_links(body, item)
+
+        note_imf = imf.Note(
+            title,
+            body,
+            source_application=self.format,
+            original_id=id_,
+            resources=resources,
+            note_links=note_links,
+        )
+        parent_notebook.child_notes.append(note_imf)
+
     def convert_directory(self, parent_notebook):
         relative_parent_path = self.id_path_map[parent_notebook.original_id]
 
         for item in sorted((self.root_path / relative_parent_path).iterdir()):
-            if (
-                item.is_file()
-                and item.suffix.lower() not in (".md", ".html")
-                or item.name == "index.html"
-            ):
-                continue
-            # id is appended to filename
-            title, _ = item.name.rsplit(" ", 1)
-
-            # propagate the path through all parents
-            # separator is always "/"
-            _, id_ = item.stem.rsplit(" ", 1)
-            if parent_notebook.original_id != ".":
-                self.id_path_map[id_] = relative_parent_path + "/" + item.name
-            else:
-                # TODO: check if "./" works on windows
-                self.id_path_map[id_] = item.name
-
-            if item.is_dir():
-                child_notebook = imf.Notebook(title, original_id=id_)
-                self.convert_directory(child_notebook)
-                # It can happen that the folder only contains resources.
-                # They are added to the note one level higher with the same name.
-                # In this case, the notebook is no longer of use.
-                if not child_notebook.is_empty():
-                    parent_notebook.child_notebooks.append(child_notebook)
-                continue
-
-            self.logger.debug(f'Converting note "{title}"')
-            body = item.read_text(encoding="utf-8")
-            if item.suffix.lower() == ".md":
-                # first line is title, second is whitespace
-                body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
-            else:  # html
-                body = markdown_lib.common.markup_to_markdown(body)
-
-            # find links
-            resources, note_links = self.handle_markdown_links(body, item)
-
-            note_imf = imf.Note(
-                title,
-                body,
-                source_application=self.format,
-                original_id=id_,
-                resources=resources,
-                note_links=note_links,
-            )
-            parent_notebook.child_notes.append(note_imf)
+            self.convert_note(item, relative_parent_path, parent_notebook)
 
     def convert(self, file_or_folder: Path):
         self.root_notebook.original_id = "."

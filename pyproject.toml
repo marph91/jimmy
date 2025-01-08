@@ -30,11 +30,13 @@ module = [
 ignore_missing_imports = true
 
 [tool.pylint]
-# f-strings are convenient. Don't care about the performance (yet).
 disable = [
+    # f-strings are convenient. Don't care about the performance (yet).
     "logging-fstring-interpolation",
     "missing-function-docstring",
-    "missing-class-docstring"
+    "missing-class-docstring",
+    # needed for flexible base class
+    "arguments-differ"
 ]
 min-similarity-lines = 10
 notes = []  # don't show todos
