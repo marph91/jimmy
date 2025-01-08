@@ -77,7 +77,10 @@ def parse_message(message, attachment_folder: Path) -> tuple[list[str], imf.Reso
 def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
     # decode the header by using the default policy
     # https://stackoverflow.com/a/55210089/7410886
-    message = email.message_from_bytes(file_.read_bytes(), policy=email.policy.default)
+    message = email.message_from_bytes(
+        file_.read_bytes(),
+        policy=email.policy.default,  # type: ignore[arg-type]
+    )
 
     # time_struct -> unix timestamp -> datetime
     if (
