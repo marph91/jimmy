@@ -129,6 +129,7 @@ class EndToEnd(unittest.TestCase):
             [["notion/test_4/cb177660-18fe-45a8-b1dd-b07f44a8af5e_Export.zip"]],
             # same as test 1, but HTML
             [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
+            [["notion/test_6/notion-testspace.zip"]],
             [["obsidian/test_1/vault"]],
             [["qownnotes/test_1/note_folder"]],
             [["rednotebook/test_1/data"]],
