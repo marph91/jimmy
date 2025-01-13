@@ -218,6 +218,10 @@ PANDOC_OUTPUT_FORMAT = (
     "+pipe_tables"
     "+backtick_code_blocks"
     "+task_lists"
+    # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-strikeout
+    "+strikeout"
+    # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-superscript-subscript
+    "+superscript+subscript"
     "-raw_html"
 )
 # fmt:on
