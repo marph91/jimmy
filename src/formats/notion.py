@@ -6,6 +6,8 @@ import shutil
 from urllib.parse import unquote
 import zipfile
 
+from bs4 import BeautifulSoup
+
 import common
 import converter
 import intermediate_format as imf
@@ -108,7 +110,9 @@ class Converter(converter.BaseConverter):
             # first line is title, second is whitespace
             body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
         else:  # html
-            body = markdown_lib.common.markup_to_markdown(body)
+            soup = BeautifulSoup(body, "html.parser")
+            markdown_lib.html_preprocessing.notion_streamline_lists(soup)
+            body = markdown_lib.common.markup_to_markdown(str(soup))
 
         # find links
         resources, note_links = self.handle_markdown_links(body, item)

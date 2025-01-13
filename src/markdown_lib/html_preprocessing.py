@@ -66,6 +66,26 @@ def nimbus_note_streamline_lists(soup: BeautifulSoup):
             current_list.append(item)
 
 
+def notion_streamline_lists(soup: BeautifulSoup):
+    # Checklists are unnumbered lists with special classes.
+    for list_ in soup.find_all("ul", class_="to-do-list"):
+        for item in list_.find_all("li"):
+            checked_item = item.findChild("div")
+            checked_item.name = "input"
+            checked_item.attrs["type"] = "checkbox"
+            if "checkbox-on" in checked_item.get("class", []):
+                checked_item.attrs["checked"] = ""  # remove this key for unchecking
+
+    # Notion lists seem to contain always only one item.
+    # Append the current item to the list if possible.
+    for list_ in soup.find_all(["ul", "ol"]):
+        if (
+            previous_sibling := list_.previous_sibling
+        ) is not None and previous_sibling.name == list_.name:
+            previous_sibling.append(list_)
+            list_.unwrap()
+
+
 def synology_note_station_fix_img_src(soup: BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
     # "ref" attribute. Move it where it belongs.
