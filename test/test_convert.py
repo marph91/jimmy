@@ -217,7 +217,9 @@ class EndToEnd(unittest.TestCase):
         test_data = [Path("test/data/test_data") / i for i in test_input]
 
         test_data_output = Path("tmp_output/default_format") / test_name
-        shutil.rmtree(test_data_output, ignore_errors=True)
+        # Can be multiple output folders. Delete all.
+        for folder in test_data_output.parent.glob(f"{test_data_output.name}*"):
+            shutil.rmtree(folder, ignore_errors=True)
         # separate folder for each input
         reference_data = Path("test/data/reference_data/default_format") / test_name
 
