@@ -209,19 +209,24 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
     return list(tags)
 
 
-# markdown output formats:
-# https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
-# Don't use "commonmark_x". There would be too many noise.
 # fmt: off
 PANDOC_OUTPUT_FORMAT = (
+    # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+    # Don't use "commonmark_x". There is too much noise.
     "markdown_strict"
-    "+pipe_tables"
+    # https://pandoc.org/chunkedhtml-demo/8.5-verbatim-code-blocks.html#extension-backtick_code_blocks
     "+backtick_code_blocks"
-    "+task_lists"
+    # https://pandoc.org/chunkedhtml-demo/8.9-tables.html#extension-pipe_tables
+    "+pipe_tables"
     # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-strikeout
     "+strikeout"
     # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-superscript-subscript
     "+superscript+subscript"
+    # https://pandoc.org/chunkedhtml-demo/8.7-lists.html#extension-task_lists
+    "+task_lists"
+    # https://pandoc.org/chunkedhtml-demo/8.13-math.html#extension-tex_math_dollars
+    "+tex_math_dollars"
+    # https://pandoc.org/chunkedhtml-demo/8.14-raw-html.html#extension-raw_html
     "-raw_html"
 )
 # fmt:on
