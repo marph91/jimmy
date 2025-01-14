@@ -206,7 +206,13 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
         if note.path.is_file():
-            LOGGER.warning(f'Overwriting note "{note.title}"')
+            # TODO: Fixing this properly is complicated.
+            original_path = note.path
+            note.path = note.path.with_stem(note.path.stem + "_1")
+            LOGGER.warning(
+                f'Note "{original_path}" exists already. '
+                f'Trying to rename: "{note.path.name}"'
+            )
         note.path.write_text(
             note.get_finalized_body(self.include_title, self.frontmatter),
             encoding="utf-8",
