@@ -216,6 +216,8 @@ PANDOC_OUTPUT_FORMAT = (
     "markdown_strict"
     # https://pandoc.org/chunkedhtml-demo/8.5-verbatim-code-blocks.html#extension-backtick_code_blocks
     "+backtick_code_blocks"
+    # https://pandoc.org/chunkedhtml-demo/8.21-non-default-extensions.html#extension-mark
+    "+mark"
     # https://pandoc.org/chunkedhtml-demo/8.9-tables.html#extension-pipe_tables
     "+pipe_tables"
     # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-strikeout
@@ -237,10 +239,11 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
         # some needed preprocessing
         soup = BeautifulSoup(text, "html.parser")
         markdown_lib.html_preprocessing.div_checklists(soup)
-        markdown_lib.html_preprocessing.handle_newlines_in_math(soup)
+        markdown_lib.html_preprocessing.highlighting(soup)
         markdown_lib.html_preprocessing.iframes_to_links(soup)
         markdown_lib.html_preprocessing.streamline_tables(soup)
         markdown_lib.html_preprocessing.synology_note_station_fix_img_src(soup)
+        markdown_lib.html_preprocessing.whitespace_in_math(soup)
         text = str(soup)
     text_md = pypandoc.convert_text(
         text,
