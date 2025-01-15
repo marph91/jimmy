@@ -1,6 +1,11 @@
 """HTML preprocessing functions to prepare for Pandoc conversion."""
 
+import logging
+import string
+
 from bs4 import BeautifulSoup
+
+LOGGER = logging.getLogger("jimmy")
 
 
 def div_checklists(soup: BeautifulSoup):
@@ -16,6 +21,20 @@ def div_checklists(soup: BeautifulSoup):
         # convert the second divs to list items
         for child in task_list.children:
             child.name = "li"
+
+
+def handle_newlines_in_math(soup: BeautifulSoup):
+    """
+    - Escape unescaped newlines inside tex math blocks.
+    - Strip trailing (escaped) whitespace.
+    """
+    for annotation in soup.find_all("annotation"):
+        if (encoding := annotation.attrs.get("encoding")) != "application/x-tex":
+            LOGGER.debug(f'Unsupported annotation encoding "{encoding}"')
+            continue
+        annotation.string = annotation.string.rstrip("\\" + string.whitespace).replace(
+            "\n\n", "\n\\\\\n"
+        )
 
 
 def iframes_to_links(soup: BeautifulSoup):
