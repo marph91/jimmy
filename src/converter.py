@@ -149,7 +149,7 @@ class DefaultConverter(BaseConverter):
 
         format_ = file_.suffix.lower()[1:]
         match format_:
-            case "adoc" | "asciidoc":
+            case "adoc" | "asciidoc" | "asciidoctor":
                 # asciidoc -> html -> markdown
                 # Technically, the first line is the document title and gets
                 # stripped from the note body:
@@ -157,7 +157,7 @@ class DefaultConverter(BaseConverter):
                 # However, we want everything in the note body. Thus, we need
                 # to use HTML (instead of docbook) as intermediate format.
                 # fmt: off
-                note_body_html = subprocess.check_output(
+                proc = subprocess.run(
                     [
                         "asciidoctor",
                         # Don't generate the "last updated" footer.
@@ -166,11 +166,20 @@ class DefaultConverter(BaseConverter):
                         "--backend", "html",
                         "--out-file", "-",
                         str(file_.resolve()),
-                    ]
+                    ],
+                    encoding="utf8",
+                    check=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                 )
                 # fmt: on
+                if proc.stderr:
+                    self.logger.debug(proc.stderr.strip())
+                elif proc.returncode != 0:
+                    self.logger.warning(f"Asciidoctor error code: {proc.returncode}")
+                    return
                 note_body = markdown_lib.common.markup_to_markdown(
-                    note_body_html.decode("utf8"), resource_folder=self.resource_folder
+                    proc.stdout, resource_folder=self.resource_folder
                 )
             case "eml":
                 note_imf = markdown_lib.eml.eml_to_note(file_, self.resource_folder)
