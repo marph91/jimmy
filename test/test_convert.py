@@ -208,6 +208,11 @@ class EndToEnd(unittest.TestCase):
             ["multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2],
             ["markdown_file", ["default_format/arbitrary_folder/sample.md"]],
             ["eml", ["default_format/eml"]],
+            ["html", ["default_format/html"]],
+            ["latex", ["default_format/latex"]],
+            ["mediawiki", ["default_format/mediawiki"]],
+            ["txt2tags", ["default_format/txt2tags-2"]],
+            ["vimwiki", ["default_format/vimwiki"]],
         ]
     )
     def test_default_format(self, test_name, test_input):

@@ -209,6 +209,35 @@ def get_inline_tags(text: str, start_characters: list[str]) -> list[str]:
     return list(tags)
 
 
+# TODO:
+# - "csljson" https://github.com/citation-style-language/schema
+# - "dokuwiki" https://de.wikipedia.org/wiki/DokuWiki
+# - Emacs Muse, Emacs org
+# - "fb2" https://en.wikipedia.org/wiki/FictionBook
+# - "jats" https://en.wikipedia.org/wiki/Journal_Article_Tag_Suite
+#   - "bits" https://jats.nlm.nih.gov/extensions/bits/
+# - json
+
+# supported by pandoc, but with a different extension
+PANDOC_INPUT_FORMAT_MAP = {
+    "dbk": "docbook",
+    "doku": "dokuwiki",
+    "dj": "djot",
+    "htm": "html",
+    "html5": "html",
+    "htmls": "html",
+    "xhtml": "html",
+    "xhtmls": "html",
+    "rest": "rst",
+    "tex": "latex",
+    "texs": "latex",
+    "t2tags": "t2t",
+    "txt2t": "t2t",
+    "txt2tags": "t2t",
+    "typ": "typst",
+    "wiki": "vimwiki",  # Are there other wikis using .wiki extension?
+}
+
 # fmt: off
 PANDOC_OUTPUT_FORMAT = (
     # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
@@ -234,7 +263,10 @@ PANDOC_OUTPUT_FORMAT = (
 # fmt:on
 
 
-def markup_to_markdown(text: str, format_: str = "html") -> str:
+def markup_to_markdown(
+    text: bytes | str, format_: str = "html", resource_folder: Path = Path("tmp_media")
+) -> str:
+    # Route everything through this function to get a single path of truth.
     if format_ == "html":
         # some needed preprocessing
         soup = BeautifulSoup(text, "html.parser")
@@ -250,25 +282,6 @@ def markup_to_markdown(text: str, format_: str = "html") -> str:
         PANDOC_OUTPUT_FORMAT,
         format=format_,
         sandbox=True,
-        extra_args=["--wrap=none"],
-    )
-    if "[TABLE]" in text_md:
-        LOGGER.warning("Table is too complex and can't be converted to markdown.")
-
-    text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
-    return text_md.strip()
-
-
-def file_to_markdown(file_: Path, resource_folder: Path) -> str:
-    # TODO: apply HTML preprocessing here, too
-    # if file_.suffix == ".html":
-    #     return markup_to_markdown(
-    #         file_.read_text(encoding="utf-8"), format_=file_.suffix.lstrip(".")
-    #     )
-    file_md = pypandoc.convert_file(
-        file_,
-        PANDOC_OUTPUT_FORMAT,
-        sandbox=True,  # offline mode
         extra_args=[
             # somehow the temp folder is needed to create the resources properly
             f"--extract-media={resource_folder}",
@@ -276,9 +289,11 @@ def file_to_markdown(file_: Path, resource_folder: Path) -> str:
             "--wrap=none",
         ],
     )
-    if "[TABLE]" in file_md:
+    if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
-    return file_md.strip()
+
+    text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
+    return text_md.strip()
 
 
 # Problem: "//" is part of many URI (between scheme and host).

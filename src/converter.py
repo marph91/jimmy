@@ -4,6 +4,7 @@ import abc
 import logging
 from pathlib import Path
 import subprocess
+from xml.etree import ElementTree as ET
 
 import common
 import intermediate_format as imf
@@ -141,8 +142,14 @@ class DefaultConverter(BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent: imf.Notebook):
         """Default conversion function for files. Uses pandoc directly."""
-        match file_.suffix.lower():
-            case ".adoc" | ".asciidoc":
+        self.logger.debug(f'Converting note "{file_.name}"')
+        if common.is_image(file_):
+            self.logger.debug("Skipping image")
+            return
+
+        format_ = file_.suffix.lower()[1:]
+        match format_:
+            case "adoc" | "asciidoc":
                 # asciidoc -> html -> markdown
                 # Technically, the first line is the document title and gets
                 # stripped from the note body:
@@ -163,22 +170,57 @@ class DefaultConverter(BaseConverter):
                 )
                 # fmt: on
                 note_body = markdown_lib.common.markup_to_markdown(
-                    note_body_html.decode("utf8")
+                    note_body_html.decode("utf8"), resource_folder=self.resource_folder
                 )
-            case ".eml":
+            case "eml":
                 note_imf = markdown_lib.eml.eml_to_note(file_, self.resource_folder)
                 parent.child_notes.append(note_imf)
                 return  # don't use the common conversion
-            case ".fountain":
+            case "fountain":
                 # Simply wrap in a code block. This is supported in
                 # Joplin and Obsidian via plugins.
                 note_body_fountain = file_.read_text(encoding="utf-8")
                 note_body = f"```fountain\n{note_body_fountain}\n```\n"
-            case ".md" | ".markdown" | ".txt" | ".text":
+            case "md" | "markdown" | "txt" | "text":
                 note_body = file_.read_text(encoding="utf-8")
-            case _:
-                note_body = markdown_lib.common.file_to_markdown(
-                    file_, self.resource_folder
+            case "docx" | "odt":
+                # binary format, supported by pandoc
+                note_body = markdown_lib.common.markup_to_markdown(
+                    file_.read_bytes(),
+                    format_=format_,
+                    resource_folder=self.resource_folder,
+                )
+            case "xml":
+                root = ET.parse(file_).getroot()
+                root_tag = root.tag.rpartition("}")[-1]  # strip namespace
+                match root_tag:
+                    case (
+                        "endnote"
+                        | "mediawiki"
+                        | "opml"
+                    ):  # TODO: endnotexml and opml example
+                        note_body = markdown_lib.common.markup_to_markdown(
+                            file_.read_text(encoding="utf-8"),
+                            format_=root_tag,
+                            resource_folder=self.resource_folder,
+                        )
+                    # TODO: docbook
+                    # case "book":
+                    #     note_body = markdown_lib.common.markup_to_markdown(
+                    #         file_.read_text(encoding="utf-8"),
+                    #         format_="docbook",
+                    #         resource_folder=self.resource_folder,
+                    #     )
+                    case _:
+                        note_body = file_.read_text(encoding="utf-8")
+            case _:  # last resort
+                pandoc_format = markdown_lib.common.PANDOC_INPUT_FORMAT_MAP.get(
+                    format_, format_
+                )
+                note_body = markdown_lib.common.markup_to_markdown(
+                    file_.read_text(encoding="utf-8"),
+                    format_=pandoc_format,
+                    resource_folder=self.resource_folder,
                 )
 
         resources, note_links = self.handle_markdown_links(note_body, file_.parent)

@@ -31,3 +31,7 @@ Server backups contain the whole workspace. At least single page exports are pos
 
 - Linux app crashes always
 - Android app still works
+
+## Wikimedia
+
+Export at https://de.wikipedia.org/wiki/Spezial:Exportieren.
