@@ -10,17 +10,21 @@ LOGGER = logging.getLogger("jimmy")
 
 def div_checklists(soup: BeautifulSoup):
     """Convert div checklists to plain HTML checklists."""
-    for task_list in soup.find_all("div", class_="checklist"):
+    # reverse to handle nested lists first
+    for task_list in reversed(soup.find_all("div", class_="checklist")):
         task_list.name = "ul"
         # remove the spans
         for span in task_list.find_all("span"):
             span.unwrap()
         # remove the first divs
         for child in task_list.children:
-            child.unwrap()
+            # print(child)
+            if child.name == "div":
+                child.unwrap()
         # convert the second divs to list items
         for child in task_list.children:
-            child.name = "li"
+            if child.name == "div":
+                child.name = "li"
 
 
 def highlighting(soup: BeautifulSoup):
@@ -190,5 +194,5 @@ def whitespace_in_math(soup: BeautifulSoup):
             LOGGER.debug(f'Unsupported annotation encoding "{encoding}"')
             continue
         annotation.string = annotation.string.rstrip("\\" + string.whitespace).replace(
-            "\n\n", "\n\\\\\n"
+            "\n\n", "\n"
         )

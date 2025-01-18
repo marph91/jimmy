@@ -165,7 +165,7 @@ class EndToEnd(unittest.TestCase):
             [["wordpress/test_4/adversarial-example.xml"]],
             [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
             [["zim/test_1/notebook"]],
-            [["zoho_notebook/test_1/Notebook_14Apr2024_1300_html.zip"]],
+            [["zoho_notebook/test_1/Notebook_18Jan2025_1756_html.zip"]],
         ],
         name_func=name_func,
     )
