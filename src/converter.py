@@ -167,10 +167,9 @@ class DefaultConverter(BaseConverter):
                         "--out-file", "-",
                         str(file_.resolve()),
                     ],
-                    encoding="utf8",
+                    capture_output=True,
                     check=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
+                    encoding="utf8",
                 )
                 # fmt: on
                 if proc.stderr:

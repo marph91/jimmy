@@ -179,7 +179,11 @@ def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, s
 
 def unique_title() -> str:
     """Create a pseudorandom unique title."""
-    return f"unnamed_{uuid.UUID(int=random.getrandbits(128), version=4).hex}"
+    return "unnamed_" + uuid_title()
+
+
+def uuid_title() -> str:
+    return uuid.UUID(int=random.getrandbits(128), version=4).hex
 
 
 ###########################################################

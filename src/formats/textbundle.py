@@ -33,7 +33,7 @@ class Converter(converter.BaseConverter):
     def convert_note(self, file_: Path, parent_notebook: imf.Notebook):
         if file_.suffix.lower() not in (".md", ".markdown"):
             # take only the exports in markdown format
-            self.logger.debug(f"Ignoring folder or file {file_.name}")
+            self.logger.debug(f'Ignoring folder or file "{file_.name}"')
             return
 
         # Filename from textbundle name seems to be more robust

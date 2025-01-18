@@ -169,6 +169,7 @@ class FilesystemImporter:
         if resource.filename.is_file():
             # Don't create multiple resources for the same file.
             # Cache the original file paths and their corresponding ID.
+            # TODO: Check if it's really the same resource or only the same name.
             if resource.path is not None and not resource.path.is_file():
                 # TODO: done for each resource in each note
                 resource.path.parent.mkdir(exist_ok=True, parents=True)
@@ -205,14 +206,32 @@ class FilesystemImporter:
         if "tags" in self.progress_bars:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
+
         if note.path.is_file():
-            # TODO: Fixing this properly is complicated.
+            # Try to find new name.
+            found_new_name = False
             original_path = note.path
-            note.path = note.path.with_stem(note.path.stem + "_1")
-            LOGGER.warning(
-                f'Note "{original_path}" exists already. '
-                f'Trying to rename: "{note.path.name}"'
+            similar_notes = list(
+                note.path.parent.glob(f"{note.path.stem}*{note.path.suffix}")
             )
+            for new_index in range(1, 10000):
+                new_path = (
+                    note.path.parent
+                    / f"{note.path.stem}_{new_index:04}{note.path.suffix}"
+                )
+                if new_path not in similar_notes:
+                    note.path = new_path
+                    found_new_name = True
+                    break
+            if not found_new_name:
+                note.path = (
+                    note.path.parent
+                    / f"{note.path.stem}_{common.uuid_title()}{note.path.suffix}"
+                )
+            LOGGER.warning(
+                f'Note "{original_path}" exists already. New name: "{note.path.name}"'
+            )
+
         note.path.write_text(
             note.get_finalized_body(self.include_title, self.frontmatter),
             encoding="utf-8",
