@@ -65,6 +65,7 @@ class Resource:
 
     # internal data
     is_image: bool = dataclasses.field(init=False)
+    md5: str | None = None
     path: Path | None = None
 
     def __post_init__(self):
@@ -73,6 +74,18 @@ class Resource:
         # We can't simply match by extension, because sometimes the files/images
         # are stored as binary blob without extension.
         self.is_image = common.is_image(self.filename)
+        # md5 checksum for detecting duplicated resources
+        self.md5 = common.md5_hash(self.filename)
+
+    def __eq__(self, other: object) -> bool:
+        """Equality based on the md5 hash."""
+        # Don't match by type(): https://stackoverflow.com/a/72295907/7410886
+        match other:
+            case Path() | str():
+                return self.md5 == common.md5_hash(other)
+            case Resource():
+                return self.md5 == other.md5
+        raise NotImplementedError(f"Can't compare {type(self)} with {type(other)}.")
 
 
 @dataclasses.dataclass

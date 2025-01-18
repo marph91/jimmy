@@ -166,16 +166,28 @@ class FilesystemImporter:
             note.body = note.body.replace(resource.original_text, resource_markdown)
 
     def write_resource(self, resource: imf.Resource):
-        if resource.filename.is_file():
-            # Don't create multiple resources for the same file.
-            # Cache the original file paths and their corresponding ID.
-            # TODO: Check if it's really the same resource or only the same name.
-            if resource.path is not None and not resource.path.is_file():
-                # TODO: done for each resource in each note
-                resource.path.parent.mkdir(exist_ok=True, parents=True)
-                shutil.copy(resource.filename, resource.path)
-        else:
+        if not resource.filename.is_file():
             LOGGER.warning(f'Resource "{resource.filename}" does not exist.')
+            return
+        if resource.path is None:
+            LOGGER.warning(
+                f'Could not determine path for resource "{resource.filename}".'
+            )
+            return
+
+        if resource.path.is_file():
+            if resource == resource.path:
+                return  # Don't create multiple files for the same resource.
+            # Different resource, but same name. # Try to find new name.
+            original_path = resource.path
+            resource.path = common.find_new_name(resource.path)
+            LOGGER.debug(
+                f'Resource "{original_path}" exists already with different content. '
+                f'New name: "{resource.path.name}".'
+            )
+        # TODO: done for each resource in each note
+        resource.path.parent.mkdir(exist_ok=True, parents=True)
+        shutil.copy(resource.filename, resource.path)
 
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
@@ -209,27 +221,11 @@ class FilesystemImporter:
 
         if note.path.is_file():
             # Try to find new name.
-            found_new_name = False
             original_path = note.path
-            similar_notes = list(
-                note.path.parent.glob(f"{note.path.stem}*{note.path.suffix}")
-            )
-            for new_index in range(1, 10000):
-                new_path = (
-                    note.path.parent
-                    / f"{note.path.stem}_{new_index:04}{note.path.suffix}"
-                )
-                if new_path not in similar_notes:
-                    note.path = new_path
-                    found_new_name = True
-                    break
-            if not found_new_name:
-                note.path = (
-                    note.path.parent
-                    / f"{note.path.stem}_{common.uuid_title()}{note.path.suffix}"
-                )
+            note.path = common.find_new_name(note.path)
             LOGGER.warning(
-                f'Note "{original_path}" exists already. New name: "{note.path.name}"'
+                f'Note "{original_path}" exists already. New name: "{note.path.name}".'
+                " Links may point to the wrong note."
             )
 
         note.path.write_text(
@@ -242,8 +238,10 @@ class FilesystemImporter:
         # Handle resources and note links first, since the note body changes.
         for resource in note.resources:
             self.progress_bars["resources"].update(1)
-            self.update_resource_links(note, resource)
+            # Write resources first before updateing the links, since the path
+            # can change in case of duplication.
             self.write_resource(resource)
+            self.update_resource_links(note, resource)
         for note_link in note.note_links:
             self.progress_bars["note_links"].update(1)
             self.update_note_links(note, note_link)

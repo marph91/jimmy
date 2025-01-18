@@ -3,6 +3,7 @@
 from collections import defaultdict
 from dataclasses import dataclass
 import datetime as dt
+import hashlib
 import importlib
 import logging
 from pathlib import Path
@@ -119,6 +120,20 @@ def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
 
+def find_new_name(path: Path) -> Path:
+    """Find a new unique name for a duplicated file."""
+    found_new_name = False
+    similar_notes = list(path.parent.glob(f"{path.stem}*{path.suffix}"))
+    for new_index in range(1, 10000):
+        new_path = path.parent / f"{path.stem}_{new_index:04}{path.suffix}"
+        if new_path not in similar_notes:
+            found_new_name = True
+            break
+    if found_new_name:
+        return new_path
+    return path.parent / f"{path.stem}_{uuid_title()}{path.suffix}"
+
+
 def get_available_formats() -> dict:
     formats_dict = {}
     for module in pkgutil.iter_modules(formats.__path__):
@@ -164,6 +179,13 @@ def is_image(file_: Path) -> bool:
         return puremagic.from_file(file_, mime=True).startswith("image/")
     except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
         return False
+
+
+def md5_hash(file_: Path | str) -> str | None:
+    try:
+        return hashlib.md5(Path(file_).read_bytes()).hexdigest()
+    except FileNotFoundError:
+        return None
 
 
 def try_transfer_dicts(source: dict, target: dict, keys: list[str | tuple[str, str]]):
