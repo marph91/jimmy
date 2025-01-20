@@ -120,6 +120,8 @@ def synology_note_station_fix_img_src(soup: BeautifulSoup):
 
 
 def streamline_tables(soup: BeautifulSoup):
+    # pylint: disable=too-many-branches
+
     # all pipe tables need to be "simple" according to:
     # https://github.com/jgm/pandoc/blob/5766443bc89bababaa8bba956db5f798f8b60675/src/Text/Pandoc/Writers/Markdown.hs#L619
     # - no custom widths
