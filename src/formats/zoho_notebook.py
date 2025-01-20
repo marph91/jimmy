@@ -57,7 +57,7 @@ class Converter(converter.BaseConverter):
                 metadata[key] = json.loads(value)
 
         title = metadata["data-notecard"]["name"]
-        self.logger.debug(f'Converting note "{title}"')
+        self.logger.debug(f'Converting note "{title}" (ID: "{file_.stem}")')
 
         # get or find parent notebook
         # Assume that notebooks can't be nested.

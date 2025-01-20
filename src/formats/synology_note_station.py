@@ -138,7 +138,7 @@ class Converter(converter.BaseConverter):
             self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
             return
         title = note["title"]
-        self.logger.debug(f'Converting note "{title}" (ID: {note_id})')
+        self.logger.debug(f'Converting note "{title}" (ID: "{note_id}")')
 
         # resources / attachments
         resources = self.map_resources_by_hash(note)

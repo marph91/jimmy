@@ -263,28 +263,23 @@ PANDOC_OUTPUT_FORMAT = (
 # fmt:on
 
 
-def markup_to_markdown(
-    text: bytes | str, format_: str = "html", resource_folder: Path = Path("tmp_media")
-) -> str:
-    # Route everything through this function to get a single path of truth.
-    if format_ == "html":
-        # some needed preprocessing
-        soup = BeautifulSoup(text, "html.parser")
-        markdown_lib.html_preprocessing.div_checklists(soup)
-        markdown_lib.html_preprocessing.highlighting(soup)
-        markdown_lib.html_preprocessing.iframes_to_links(soup)
-        markdown_lib.html_preprocessing.streamline_tables(soup)
-        markdown_lib.html_preprocessing.synology_note_station_fix_img_src(soup)
-        markdown_lib.html_preprocessing.whitespace_in_math(soup)
-        text = str(soup)
+def html_to_markdown(text_html: bytes | str):
+    # some needed preprocessing
+    soup = BeautifulSoup(text_html, "html.parser")
+    markdown_lib.html_preprocessing.div_checklists(soup)
+    markdown_lib.html_preprocessing.highlighting(soup)
+    markdown_lib.html_preprocessing.iframes_to_links(soup)
+    markdown_lib.html_preprocessing.streamline_tables(soup)
+    markdown_lib.html_preprocessing.synology_note_station_fix_img_src(soup)
+    markdown_lib.html_preprocessing.whitespace_in_math(soup)
+    text_html_filtered = str(soup)
+
+    # writer: json ast -> markdown
     text_md = pypandoc.convert_text(
-        text,
+        text_html_filtered,
         PANDOC_OUTPUT_FORMAT,
-        format=format_,
-        sandbox=True,
+        format="html",
         extra_args=[
-            # somehow the temp folder is needed to create the resources properly
-            f"--extract-media={resource_folder}",
             # don't create artificial line breaks
             "--wrap=none",
         ],
@@ -294,6 +289,31 @@ def markup_to_markdown(
 
     text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
     return text_md.strip()
+
+def markup_to_markdown(
+    text: bytes | str, format_: str = "html", resource_folder: Path = Path("tmp_media")
+) -> str:
+    # Route everything through this function to get a single path of truth.
+    if format_.startswith("html"):
+        text_html = text
+    else:
+        # reader: x -> HTML
+        text_html = pypandoc.convert_text(
+            text,
+            "html",
+            format=format_,
+            sandbox=True,
+            extra_args=[
+                # somehow the temp folder is needed to create the resources properly
+                f"--extract-media={resource_folder}",
+                # don't create artificial line breaks
+                "--wrap=none",
+            ],
+        )
+
+    # HTML filter: HTML -> filter -> HTML
+    # writer: HTML -> Markdown
+    return html_to_markdown(text_html)
 
 
 # Problem: "//" is part of many URI (between scheme and host).

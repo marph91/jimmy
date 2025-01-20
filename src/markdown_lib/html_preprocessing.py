@@ -1,4 +1,10 @@
-"""HTML preprocessing functions to prepare for Pandoc conversion."""
+"""
+HTML preprocessing functions to prepare for Pandoc conversion.
+
+Should be used:
+- For format specific conversions.
+- If they can't be expressed in another way.
+"""
 
 import logging
 import string
@@ -145,6 +151,10 @@ def streamline_tables(soup: BeautifulSoup):
         #     for c in table.contents
         #     if not isinstance(c, str) or c.strip()
         # ]
+
+        # Remove nested tables.
+        for nested_table in table.find_all("table"):
+            nested_table.unwrap()  # TODO: revisit
 
         # Remove all divs, since they cause pandoc to fail converting the table.
         # https://stackoverflow.com/a/32064299/7410886

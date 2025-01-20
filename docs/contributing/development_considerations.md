@@ -82,3 +82,14 @@ graph TD;
     note_extraction -- Pandoc Supported Formats --> Pandoc;
     Pandoc --> Markdown;
 ```
+
+## Intermediate Format
+
+- **HTML**:
+  - Easily modifyable by beautifulsoup and others.
+  - Supports wide range of elements that can be "reduced" to Markdown.
+  - No additional dependency (beautifulsoup is used already).
+- Pandoc AST:
+  - Python: Panflute and pandocfilters aren't up-to-date (problems with tables especially).
+  - Lua: Learning curve, second scripting language in this repo.
+  - General: Some filters need some preprocessing (in HTML), like iframes.
