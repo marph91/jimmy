@@ -7,6 +7,7 @@ Should be used:
 """
 
 import logging
+import re
 import string
 
 from bs4 import BeautifulSoup
@@ -119,6 +120,9 @@ def synology_note_station_fix_img_src(soup: BeautifulSoup):
             img.attrs["src"] = new_src
 
 
+HTML_HEADER_RE = re.compile(r"^h[1-6]$")
+
+
 def streamline_tables(soup: BeautifulSoup):
     # pylint: disable=too-many-branches
 
@@ -129,31 +133,6 @@ def streamline_tables(soup: BeautifulSoup):
     # However, in practice it seems to be a bit more complicated.
 
     for table in soup.find_all("table"):
-        # TODO: remove the commented draft code
-        # for width_elements in soup.find_all(attrs={"width":"yellowbar.png"}):
-        # for item in table.find_all():
-        #     if item.string is not None:
-        #         print(item.string)
-        #         item.string = item.string.replace("\n", " ")
-        #         print(item.string)
-        #         print()
-        #     item.attrs.pop("width", None)
-        #    item.attrs = {}
-        #     if item.name in ("br", "p"):
-        #         item.unwrap()
-        # for width_element in soup.select('[width]'):
-        #     # print(width_element)
-        #     del width_element.attrs["width"]
-        #     # print(width_element)
-        #     # exit()
-        # print(table)
-        # table.contents = c for c in table.contents
-        # table.contents = [
-        #     c.replace("\n", " ")
-        #     for c in table.contents
-        #     if not isinstance(c, str) or c.strip()
-        # ]
-
         # Remove nested tables.
         for nested_table in table.find_all("table"):
             nested_table.unwrap()  # TODO: revisit
@@ -201,6 +180,14 @@ def streamline_tables(soup: BeautifulSoup):
                 # make first row to header
                 if row_index == 0:
                     td.name = "th"
+
+        # headers are not supported - convert to bold
+        for header in table.find_all(HTML_HEADER_RE):
+            header.name = "strong"
+
+        # blockquotes are not supported - convert to inline quote
+        for quote in table.find_all("blockquote"):
+            quote.name = "q"
 
         # remove "tbody"
         if (body := table.find("tbody")) is not None:
