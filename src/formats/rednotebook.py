@@ -21,12 +21,12 @@ class Converter(converter.BaseConverter):
             # Links are usually enclosed with double quotation marks.
             # They get removed in some cases when parsing. Add them again
             # to get the original string.
-            if not link.url.startswith('%22%22'):
-                link.url = f'%22%22{link.url}%22%22'
+            if not link.url.startswith("%22%22"):
+                link.url = f"%22%22{link.url}%22%22"
             original_link_text = str(link)
 
             # remove double quotation marks
-            link.url = link.url.replace('%22%22', "")
+            link.url = link.url.replace("%22%22", "")
             # remove the "file://" protocol if needed
             parsed_link = urlparse(link.url)
             if parsed_link.scheme == "file":
@@ -35,7 +35,7 @@ class Converter(converter.BaseConverter):
             if link.is_web_link or link.is_mail_link:
                 # Resource links get replaced later,
                 # but these links need to be replaced here.
-                body = body.replace(f'%22%22{link.url}%22%22', link.url)
+                body = body.replace(f"%22%22{link.url}%22%22", link.url)
             else:
                 # resource
                 if link.url is None:

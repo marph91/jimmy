@@ -290,6 +290,7 @@ def html_to_markdown(text_html: bytes | str):
     text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
     return text_md.strip()
 
+
 def markup_to_markdown(
     text: bytes | str, format_: str = "html", resource_folder: Path = Path("tmp_media")
 ) -> str:

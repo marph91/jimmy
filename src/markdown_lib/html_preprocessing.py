@@ -167,8 +167,21 @@ def streamline_tables(soup: BeautifulSoup):
 
         # another hack: Replace any newlines (<p>, <br>) with a temporary string
         # and with <br> after conversion to markdown.
+        def is_leading_or_trailing_whitespace(item) -> bool:
+            if None in (item.previous_sibling, item.next_sibling):
+                return True
+            if item.previous_sibling.name in ("br", "p") or item.next_sibling.name in (
+                "br",
+                "p",
+            ):
+                return True
+            return (
+                not item.previous_sibling.text.strip()
+                or not item.next_sibling.text.strip()
+            )
+
         for item in table.find_all("br") + table.find_all("p"):
-            if item.next_sibling is not None:
+            if not is_leading_or_trailing_whitespace(item):
                 item.append(soup.new_string("{TEMPORARYNEWLINE}"))
             item.unwrap()
 
