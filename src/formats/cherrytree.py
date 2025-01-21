@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET  # noqa: N817
 import common
 import converter
 import intermediate_format as imf
-import markdown_lib
+import markdown_lib.common
 
 
 LOGGER = logging.getLogger("jimmy")

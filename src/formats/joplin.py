@@ -9,7 +9,7 @@ from pathlib import Path
 import common
 import converter
 import intermediate_format as imf
-import markdown_lib
+import markdown_lib.common
 
 
 class ItemType(enum.IntEnum):

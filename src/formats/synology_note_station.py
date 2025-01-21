@@ -10,7 +10,8 @@ from urllib.parse import urlparse
 import common
 import converter
 import intermediate_format as imf
-import markdown_lib
+import markdown_lib.common
+import markdown_lib.html_filter
 
 
 @dataclass
@@ -145,7 +146,12 @@ class Converter(converter.BaseConverter):
 
         note_links: imf.NoteLinks = []
         if (content_html := note.get("content")) is not None:
-            content_markdown = markdown_lib.common.markup_to_markdown(content_html)
+            content_markdown = markdown_lib.common.markup_to_markdown(
+                content_html,
+                custom_filter=[
+                    markdown_lib.html_filter.synology_note_station_fix_img_src
+                ],
+            )
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(
                 note["title"],

@@ -5,7 +5,7 @@ from pathlib import Path
 import common
 import converter
 import intermediate_format as imf
-import markdown_lib
+import markdown_lib.common
 
 
 def handle_markdown_links(body: str, root_folder: Path) -> imf.NoteLinks:

@@ -11,7 +11,7 @@ from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 import pypandoc
 
-import markdown_lib.html_preprocessing
+import markdown_lib.html_filter
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -263,15 +263,17 @@ PANDOC_OUTPUT_FORMAT = (
 # fmt:on
 
 
-def html_to_markdown(text_html: bytes | str):
+def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     # some needed preprocessing
     soup = BeautifulSoup(text_html, "html.parser")
-    markdown_lib.html_preprocessing.div_checklists(soup)
-    markdown_lib.html_preprocessing.highlighting(soup)
-    markdown_lib.html_preprocessing.iframes_to_links(soup)
-    markdown_lib.html_preprocessing.streamline_tables(soup)
-    markdown_lib.html_preprocessing.synology_note_station_fix_img_src(soup)
-    markdown_lib.html_preprocessing.whitespace_in_math(soup)
+    markdown_lib.html_filter.div_checklists(soup)
+    markdown_lib.html_filter.highlighting(soup)
+    markdown_lib.html_filter.iframes_to_links(soup)
+    markdown_lib.html_filter.streamline_tables(soup)
+    markdown_lib.html_filter.whitespace_in_math(soup)
+    if custom_filter is not None:
+        for filter_ in custom_filter:
+            filter_(soup)
     text_html_filtered = str(soup)
 
     # writer: json ast -> markdown
@@ -292,7 +294,10 @@ def html_to_markdown(text_html: bytes | str):
 
 
 def markup_to_markdown(
-    text: bytes | str, format_: str = "html", resource_folder: Path = Path("tmp_media")
+    text: bytes | str,
+    format_: str = "html",
+    resource_folder: Path = Path("tmp_media"),
+    custom_filter: list | None = None,
 ) -> str:
     # Route everything through this function to get a single path of truth.
     if format_.startswith("html"):
@@ -314,7 +319,7 @@ def markup_to_markdown(
 
     # HTML filter: HTML -> filter -> HTML
     # writer: HTML -> Markdown
-    return html_to_markdown(text_html)
+    return html_to_markdown(text_html, custom_filter)
 
 
 # Problem: "//" is part of many URI (between scheme and host).

@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET  # noqa: N817
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 
-import markdown_lib
+import markdown_lib.common
 
 
 # TODO: simplify

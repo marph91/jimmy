@@ -3,13 +3,11 @@
 import base64
 from pathlib import Path
 
-from bs4 import BeautifulSoup
-
 import common
 import converter
 import intermediate_format as imf
 import markdown_lib.common
-import markdown_lib.html_preprocessing
+import markdown_lib.html_filter
 
 
 class Converter(converter.BaseConverter):
@@ -57,11 +55,10 @@ class Converter(converter.BaseConverter):
 
         # HTML note seems to have the name "note.html" always
         note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
-
-        soup = BeautifulSoup(note_body_html, "html.parser")
-        markdown_lib.html_preprocessing.nimbus_note_streamline_lists(soup)
-
-        note_body_markdown = markdown_lib.common.markup_to_markdown(str(soup))
+        note_body_markdown = markdown_lib.common.markup_to_markdown(
+            note_body_html,
+            custom_filter=[markdown_lib.html_filter.nimbus_note_streamline_lists],
+        )
         resources = self.handle_markdown_links(note_body_markdown, temp_folder_note)
         note_imf = imf.Note(
             title,

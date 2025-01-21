@@ -9,7 +9,7 @@ from pathlib import Path
 
 import converter
 import intermediate_format as imf
-import markdown_lib
+import markdown_lib.common
 import common
 
 LOGGER = logging.getLogger("jimmy")
