@@ -44,7 +44,7 @@ def iframes_to_links(soup: BeautifulSoup):
     """Convert iframes to simple links."""
     for iframe in soup.find_all("iframe"):
         iframe.name = "a"
-        if iframe.string is None or not iframe.string.strip():  # link without text
+        if iframe.text is None or not iframe.text.strip():  # link without text
             iframe.string = iframe.attrs.get("title", iframe.attrs["src"])
         iframe.attrs = {"href": iframe.attrs["src"]}
 
@@ -205,6 +205,6 @@ def whitespace_in_math(soup: BeautifulSoup):
         if (encoding := annotation.attrs.get("encoding")) != "application/x-tex":
             LOGGER.debug(f'Unsupported annotation encoding "{encoding}"')
             continue
-        annotation.string = annotation.string.rstrip("\\" + string.whitespace).replace(
+        annotation.string = annotation.text.rstrip("\\" + string.whitespace).replace(
             "\n\n", "\n"
         )
