@@ -115,18 +115,19 @@ class LinkExtractor(Treeprocessor):
         for image in root.findall(".//img"):
             self.md.images.append(
                 MarkdownLink(
-                    self.unescape(image.get("alt")), image.get("src"), is_image=True
+                    self.unescape(image.get("alt", "")),
+                    image.get("src", ""),
+                    image.get("title", ""),
+                    is_image=True,
                 )
             )
         for link in root.findall(".//a"):
-            url = link.get("href")
-            if (title := link.get("title")) is not None:
-                # TODO: This is not robust against titles with quotation marks.
-                if url:
-                    url += f' "{title}"'
-                else:
-                    url = title  # don't add a title if there is no url
-            self.md.links.append(MarkdownLink(link.text, url))
+            url = link.get("href", "")
+            # TODO: This is not robust against titles with quotation marks.
+            if (title := link.get("title", "")) and not url:
+                url = title  # don't add a title if there is no url
+                title = ""
+            self.md.links.append(MarkdownLink(link.text, url, title))
 
 
 class LinkExtractorExtension(Extension):
@@ -152,7 +153,7 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     >>> get_markdown_links("![desc \\[reference\\]](Image.png){#fig:leanCycle}")
     [MarkdownLink(text='desc \\[reference\\]', url='Image.png', title='', is_image=True)]
     >>> get_markdown_links('[link](internal "Example Title")')
-    [MarkdownLink(text='link', url='internal "Example Title"', title='', is_image=False)]
+    [MarkdownLink(text='link', url='internal', title='Example Title', is_image=False)]
     >>> get_markdown_links('[link](#internal)')
     [MarkdownLink(text='link', url='#internal', title='', is_image=False)]
     >>> get_markdown_links('[link](:/custom)')

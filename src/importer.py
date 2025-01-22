@@ -163,6 +163,12 @@ class FilesystemImporter:
             note.body = f"{note.body}\n\n{resource_markdown}"
         else:
             # replace existing link
+            # Don't use re.subn(), because the link text may contein invalid characters.
+            if (replacement_count := note.body.count(resource.original_text)) == 0:
+                LOGGER.warning(
+                    f"Made {replacement_count} replacements. "
+                    f'Resource link may be corrupted: "{resource.original_text}".'
+                )
             note.body = note.body.replace(resource.original_text, resource_markdown)
 
     def write_resource(self, resource: imf.Resource):

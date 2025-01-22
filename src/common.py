@@ -175,6 +175,9 @@ def is_image(file_: Path) -> bool:
     >>> is_image(Path("non/existing.txt"))
     False
     """
+    if file_.suffix == ".svm":
+        # TODO: Convert ".svm" (StarView Metafile) to a more common format?
+        return True
     try:
         return puremagic.from_file(file_, mime=True).startswith("image/")
     except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):

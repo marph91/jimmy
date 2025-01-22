@@ -124,7 +124,7 @@ class SuperToMarkdown:
         match block["type"]:
             case "autolink" | "link":
                 link = markdown_lib.common.MarkdownLink(
-                    block["children"][0]["text"],
+                    block["children"][0].get("text"),
                     block.get("url", ""),
                     block.get("title", ""),
                 )

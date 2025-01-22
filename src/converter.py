@@ -128,11 +128,11 @@ class DefaultConverter(BaseConverter):
                 continue  # keep the original links
             resource_path = path / link.url
             if resource_path.is_file():
-                if common.is_image(resource_path):
+                # TODO: How to distinguish notes from resources properly?
+                if resource_path.suffix != ".md":
                     # resource
                     resources.append(imf.Resource(resource_path, str(link), link.text))
                 else:
-                    # TODO: this could be a resource, too. How to distinguish?
                     # internal link
                     note_links.append(
                         imf.NoteLink(str(link), Path(link.url).stem, link.text)
