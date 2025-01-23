@@ -11,7 +11,7 @@ import intermediate_format as imf
 
 
 IMAGE_RE = re.compile(r"(<img src=\"(.*?)\"(?:>| >| \/>))")
-SOUND_RE = re.compile(r"(\[.*?:(.*?)\])")
+SOUND_RE = re.compile(r"(\[sound:(.*?)\])")
 
 
 def get_images(body: str) -> list[tuple[str, str]]:
@@ -28,6 +28,8 @@ def get_sounds(body: str) -> list[tuple[str, str]]:
     """
     >>> get_sounds("[sound:rec1430907056.mp3]")
     [('[sound:rec1430907056.mp3]', 'rec1430907056.mp3')]
+    >>> get_sounds("[ k ]<br />[sound:8c6e1b3ba2f.mp3]")
+    [('[sound:8c6e1b3ba2f.mp3]', '8c6e1b3ba2f.mp3')]
     """
     return SOUND_RE.findall(body)
 
