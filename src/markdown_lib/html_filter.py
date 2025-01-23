@@ -49,6 +49,25 @@ def iframes_to_links(soup: BeautifulSoup):
         iframe.attrs = {"href": iframe.attrs["src"]}
 
 
+def merge_single_element_lists(soup: BeautifulSoup):
+    """
+    Notion lists and odt lists sometimes contain only one item.
+    Append the current item to the previous list if possible.
+    """
+    # TODO: doctest
+    for list_ in soup.find_all(["ul", "ol"]):
+        if len(list_.find_all("li")) == 1:
+            for potential_list in list_.previous_siblings:
+                if potential_list is None:
+                    continue
+                if potential_list.name == list_.name:
+                    potential_list.append(list_)
+                    list_.unwrap()
+                elif not potential_list.text.strip():
+                    continue
+                break  # either it's the first matching sibling or we break
+
+
 def nimbus_note_streamline_lists(soup: BeautifulSoup):
     # - all lists are unnumbered lists (ul)
     #   - type is in the class attr (list-item-number, -bullet, -checkbox)
@@ -98,15 +117,6 @@ def notion_streamline_lists(soup: BeautifulSoup):
             if "checkbox-on" in checked_item.get("class", []):
                 checked_item.attrs["checked"] = ""  # remove this key for unchecking
 
-    # Notion lists seem to contain always only one item.
-    # Append the current item to the list if possible.
-    for list_ in soup.find_all(["ul", "ol"]):
-        if (
-            previous_sibling := list_.previous_sibling
-        ) is not None and previous_sibling.name == list_.name:
-            previous_sibling.append(list_)
-            list_.unwrap()
-
 
 def synology_note_station_fix_img_src(soup: BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
@@ -124,13 +134,30 @@ HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
 def streamline_tables(soup: BeautifulSoup):
-    # pylint: disable=too-many-branches
+    # pylint: disable=too-many-branches,too-many-locals
 
     # all pipe tables need to be "simple" according to:
     # https://github.com/jgm/pandoc/blob/5766443bc89bababaa8bba956db5f798f8b60675/src/Text/Pandoc/Writers/Markdown.hs#L619
     # - no custom widths
     # - no linebreaks
     # However, in practice it seems to be a bit more complicated.
+
+    def simplify_list(list_, level: int = 0):
+        for index, list_item in enumerate(
+            list_.find_all("li", recursive=False), start=1
+        ):
+            # handle nested lists
+            for nested_list in list_item.find_all(["ul", "ol"], recursive=False):
+                simplify_list(nested_list, level=level + 1)
+
+            if list_item.text is None:
+                continue
+            bullet = "- " if list_.name == "ul" else f"{index}. "
+            list_item.string = (
+                "{TEMPORARYNEWLINE}" + "&nbsp;" * level * 4 + bullet + list_item.text
+            )
+            list_item.unwrap()
+        list_.unwrap()
 
     for table in soup.find_all("table"):
         # Remove nested tables.
@@ -165,14 +192,11 @@ def streamline_tables(soup: BeautifulSoup):
             item.unwrap()
 
         # another hack: handle lists, i. e. replace items with "<br>- ..."
-        for item in table.find_all("ul") + table.find_all("ol"):
-            item.unwrap()
-        for item in table.find_all("li"):
-            if item.string is None:
-                item.decompose()
-                continue
-            item.string = "{TEMPORARYNEWLINE}- " + item.string
-            item.unwrap()
+        # find only root lists (exclude nested lists)
+        for list_ in table.find_all(
+            lambda e: e.name in ("ul", "ol") and e.parent.name != "li"
+        ):
+            simplify_list(list_)
 
         for row_index, row in enumerate(table.find_all("tr")):
             for td in row.find_all("td"):
