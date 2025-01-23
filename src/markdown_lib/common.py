@@ -240,6 +240,7 @@ PANDOC_INPUT_FORMAT_MAP = {
 }
 
 # fmt: off
+INTERMEDIATE_FORMAT = "html"
 PANDOC_OUTPUT_FORMAT = (
     # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
     # Don't use "commonmark_x". There is too much noise.
@@ -267,21 +268,22 @@ PANDOC_OUTPUT_FORMAT = (
 def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     # some needed preprocessing
     soup = BeautifulSoup(text_html, "html.parser")
-    markdown_lib.html_filter.div_checklists(soup)
-    markdown_lib.html_filter.highlighting(soup)
-    markdown_lib.html_filter.iframes_to_links(soup)
-    markdown_lib.html_filter.streamline_tables(soup)
-    markdown_lib.html_filter.whitespace_in_math(soup)
     if custom_filter is not None:
         for filter_ in custom_filter:
             filter_(soup)
+    markdown_lib.html_filter.div_checklists(soup)
+    markdown_lib.html_filter.highlighting(soup)
+    markdown_lib.html_filter.iframes_to_links(soup)
+    markdown_lib.html_filter.merge_single_element_lists(soup)
+    markdown_lib.html_filter.streamline_tables(soup)
+    markdown_lib.html_filter.whitespace_in_math(soup)
     text_html_filtered = str(soup)
 
     # writer: json ast -> markdown
     text_md = pypandoc.convert_text(
         text_html_filtered,
         PANDOC_OUTPUT_FORMAT,
-        format="html",
+        format=INTERMEDIATE_FORMAT,
         extra_args=[
             # don't create artificial line breaks
             "--wrap=none",
@@ -307,7 +309,7 @@ def markup_to_markdown(
         # reader: x -> HTML
         text_html = pypandoc.convert_text(
             text,
-            "html",
+            INTERMEDIATE_FORMAT,
             format=format_,
             sandbox=True,
             extra_args=[
