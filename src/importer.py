@@ -165,9 +165,11 @@ class FilesystemImporter:
             # replace existing link
             # Don't use re.subn(), because the link text may contein invalid characters.
             if (replacement_count := note.body.count(resource.original_text)) == 0:
+                # escape first bracket to avoid rich formatting
+                resource_text = resource.original_text.replace("[", "\\[")
                 LOGGER.warning(
                     f"Made {replacement_count} replacements. "
-                    f'Resource link may be corrupted: "{resource.original_text}".'
+                    f'Resource link may be corrupted: "{resource_text}".',
                 )
             note.body = note.body.replace(resource.original_text, resource_markdown)
 
@@ -242,7 +244,8 @@ class FilesystemImporter:
     @common.catch_all_exceptions
     def import_note(self, note: imf.Note):
         # Handle resources and note links first, since the note body changes.
-        for resource in note.resources:
+        # "dict.fromkeys()" to remove duplicated resources while retaining order.
+        for resource in dict.fromkeys(note.resources):
             self.progress_bars["resources"].update(1)
             # Write resources first before updateing the links, since the path
             # can change in case of duplication.

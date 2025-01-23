@@ -87,6 +87,9 @@ class Resource:
                 return self.md5 == other.md5
         raise NotImplementedError(f"Can't compare {type(self)} with {type(other)}.")
 
+    def __hash__(self):
+        return hash(self.original_text)
+
 
 @dataclasses.dataclass
 class Tag:
