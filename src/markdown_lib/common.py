@@ -275,6 +275,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     markdown_lib.html_filter.highlighting(soup)
     markdown_lib.html_filter.iframes_to_links(soup)
     markdown_lib.html_filter.merge_single_element_lists(soup)
+    markdown_lib.html_filter.remove_bold_header(soup)
     markdown_lib.html_filter.streamline_tables(soup)
     markdown_lib.html_filter.whitespace_in_math(soup)
     text_html_filtered = str(soup)

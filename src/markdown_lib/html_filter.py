@@ -13,6 +13,7 @@ import string
 from bs4 import BeautifulSoup
 
 LOGGER = logging.getLogger("jimmy")
+HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
 def div_checklists(soup: BeautifulSoup):
@@ -118,6 +119,22 @@ def notion_streamline_lists(soup: BeautifulSoup):
                 checked_item.attrs["checked"] = ""  # remove this key for unchecking
 
 
+def remove_bold_header(soup: BeautifulSoup):
+    # Remove overlap of bold and header. Keep the outer element.
+    def find_all_bold(parent):
+        return parent.find_all(["b", "strong"]) + parent.find_all(
+            style=lambda value: value is not None and "font-weight: bold" in value
+        )
+
+    for header in soup.find_all(HTML_HEADER_RE):
+        for bold in find_all_bold(header):
+            bold.unwrap()
+
+    for bold in find_all_bold(soup):
+        for header in bold.find_all(HTML_HEADER_RE):
+            header.unwrap()
+
+
 def synology_note_station_fix_img_src(soup: BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
     # "ref" attribute. Move it where it belongs.
@@ -128,9 +145,6 @@ def synology_note_station_fix_img_src(soup: BeautifulSoup):
     ):
         if (new_src := img.attrs.get("ref")) is not None:
             img.attrs["src"] = new_src
-
-
-HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
 def streamline_tables(soup: BeautifulSoup):
