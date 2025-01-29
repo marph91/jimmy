@@ -271,6 +271,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     if custom_filter is not None:
         for filter_ in custom_filter:
             filter_(soup)
+    markdown_lib.html_filter.replace_special_characters(soup)
     markdown_lib.html_filter.div_checklists(soup)
     markdown_lib.html_filter.highlighting(soup)
     markdown_lib.html_filter.iframes_to_links(soup)

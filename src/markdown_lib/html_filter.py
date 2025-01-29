@@ -135,6 +135,19 @@ def remove_bold_header(soup: BeautifulSoup):
             header.unwrap()
 
 
+def replace_special_characters(soup: BeautifulSoup):
+    # https://www.w3.org/TR/html4/intro/sgmltut.html#h-3.2.3
+    # TODO: These characters shouldn't be present in the first case.
+    ignore_tags = ("annotation", "code", "kbd", "samp", "pre", "var")
+    for element in soup.find_all(
+        string=lambda value: value is not None and ("<" in value or ">" in value)
+    ):
+        if element.name in ignore_tags or element.find_parents(ignore_tags):
+            continue
+        nested_soup = BeautifulSoup(element.text, "html.parser")
+        element.replace_with(nested_soup)
+
+
 def synology_note_station_fix_img_src(soup: BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
     # "ref" attribute. Move it where it belongs.
