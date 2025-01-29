@@ -135,6 +135,31 @@ def remove_bold_header(soup: BeautifulSoup):
             header.unwrap()
 
 
+def remove_empty_elements(soup: BeautifulSoup):
+    # Remove empty elements.
+    # TODO: not activated - too many false positives
+    def is_empty(element):
+        # print(element)
+        return (
+            len(element.get_text(strip=True)) == 0
+            and not element.contents
+            and not element.is_empty_element
+            # exclude:
+            # - usually self-closing tags, but sometimes not
+            # - images and links
+            and element.name not in ("a", "br", "img", "input", "svg")
+        )
+
+    def remove_if_empty(element):
+        if is_empty(element):
+            parent = element.parent
+            element.unwrap()  # unwrap to preserve spaces
+            remove_if_empty(parent)
+
+    for element in soup.find_all():
+        remove_if_empty(element)
+
+
 def replace_special_characters(soup: BeautifulSoup):
     # https://www.w3.org/TR/html4/intro/sgmltut.html#h-3.2.3
     # TODO: These characters shouldn't be present in the first case.

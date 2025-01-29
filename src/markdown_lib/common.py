@@ -271,7 +271,9 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     if custom_filter is not None:
         for filter_ in custom_filter:
             filter_(soup)
+    # pre-filter
     markdown_lib.html_filter.replace_special_characters(soup)
+    # main filter
     markdown_lib.html_filter.div_checklists(soup)
     markdown_lib.html_filter.highlighting(soup)
     markdown_lib.html_filter.iframes_to_links(soup)
@@ -279,6 +281,8 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     markdown_lib.html_filter.remove_bold_header(soup)
     markdown_lib.html_filter.streamline_tables(soup)
     markdown_lib.html_filter.whitespace_in_math(soup)
+    # final cleanup
+    # markdown_lib.html_filter.remove_empty_elements(soup)
     text_html_filtered = str(soup)
 
     # writer: json ast -> markdown
