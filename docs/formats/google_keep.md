@@ -19,3 +19,7 @@ This page describes how to convert notes from Google Keep to Markdown.
 - Each note is converted to a Markdown file.
 - Links, attachments and tags are preserved. 
 - Annotations are appended at the end of a note.
+
+## Known Limitations
+
+- The indentation level of task lists is not exported from Google Keep.

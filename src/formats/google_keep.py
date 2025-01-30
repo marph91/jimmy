@@ -6,6 +6,7 @@ import json
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 class Converter(converter.BaseConverter):
@@ -16,7 +17,9 @@ class Converter(converter.BaseConverter):
         note_keep = json.loads(file_.read_text(encoding="utf-8"))
 
         title = note_keep.get("title", "")
-        self.logger.debug(f'Converting note "{title}"')
+        if not title.strip():
+            title = common.unique_title()
+        self.logger.debug(f'Converting note "{title.replace("\n", "")}"')
 
         tags_keep = [
             label["name"] for label in note_keep.get("labels", []) if "name" in label
@@ -31,7 +34,20 @@ class Converter(converter.BaseConverter):
             )
 
         # fall back to HTML if there is no plain text
-        body = note_keep.get("textContent", note_keep.get("textContentHtml", ""))
+        if "textContent" in note_keep:
+            body = note_keep["textContent"]
+        elif (body_html := note_keep.get("textContentHtml")) is not None:
+            body = markdown_lib.common.markup_to_markdown(body_html)
+        elif (body_list := note_keep.get("listContent")) is not None:
+            # task list
+            list_items_md = []
+            for item in body_list:
+                bullet = "- [x] " if item["isChecked"] else "- [ ] "
+                list_items_md.append(f"{bullet}{item["text"]}")
+            body = "\n".join(list_items_md)
+        else:
+            body = ""
+            self.logger.debug("Couldn't obtain note body.")
         if (annotations := note_keep.get("annotations")) is not None:
             annotations_md = ["", "", "## Annotations", ""]
             for annotation in annotations:
