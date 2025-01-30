@@ -6,6 +6,7 @@ Should be used:
 - If they can't be expressed in another way.
 """
 
+import itertools
 import logging
 import re
 import string
@@ -67,6 +68,34 @@ def merge_single_element_lists(soup: BeautifulSoup):
                 elif not potential_list.text.strip():
                     continue
                 break  # either it's the first matching sibling or we break
+
+
+def multiline_markup(soup: BeautifulSoup):
+    for linebreak in soup.find_all(["br", "p"]):
+        # https://www.w3schools.com/html/html_formatting.asp
+        match linebreak.parent.name:
+            case (
+                "b"
+                | "code"
+                | "del"
+                | "em"
+                | "i"
+                | "ins"
+                | "s"
+                | "strike"
+                | "strong"
+                | "sub"
+                | "sup"
+            ):
+                # wrap all siblings
+                for linebreak_sibling in itertools.chain(
+                    linebreak.previous_siblings, linebreak.next_siblings
+                ):
+                    if linebreak_sibling.name not in ("br", "p"):
+                        linebreak_sibling.wrap(soup.new_tag(linebreak.parent.name))
+                linebreak.parent.unwrap()
+            case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
+                linebreak.decompose()
 
 
 def nimbus_note_streamline_lists(soup: BeautifulSoup):

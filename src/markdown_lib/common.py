@@ -282,6 +282,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     markdown_lib.html_filter.streamline_tables(soup)
     markdown_lib.html_filter.whitespace_in_math(soup)
     # final cleanup
+    markdown_lib.html_filter.multiline_markup(soup)
     # markdown_lib.html_filter.remove_empty_elements(soup)
     text_html_filtered = str(soup)
 
