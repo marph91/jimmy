@@ -80,7 +80,7 @@ class Converter(converter.BaseConverter):
 
         def handle_resource(original_id: str, type_: str):
             if original_id not in resource_id_filename_map[type_]:
-                self.logger.warning(f"Couldn't find audio with id {original_id}")
+                self.logger.debug(f"Couldn't find audio with id {original_id}")
                 return
             source_path = (
                 self.root_path / type_ / resource_id_filename_map[type_][original_id]
@@ -115,7 +115,7 @@ class Converter(converter.BaseConverter):
                 original_id = link.url.replace("dayone-moment:/video/", "")
                 handle_resource(original_id, "videos")
             else:
-                self.logger.warning(f"Unknown URL protocol {link.url}")
+                self.logger.debug(f"Unknown URL protocol {link.url}")
         return resources, note_links
 
     @common.catch_all_exceptions
