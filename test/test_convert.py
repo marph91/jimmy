@@ -1,6 +1,8 @@
 import difflib
 import filecmp
+import os
 from pathlib import Path
+import py7zr
 from types import SimpleNamespace
 import random
 import shutil
@@ -92,6 +94,34 @@ class EndToEnd(unittest.TestCase):
         if differences:
             self.fail("\n".join(differences))
 
+    def format_test(self, test_input: Path):
+        if len(test_input.parts) != 3:
+            self.fail(
+                'Test data should be in folder "<format>/test_<index>/<data>". '
+                "Look at the other tests for examples."
+            )
+
+        # can be multiple
+        test_data = [Path("test/data/test_data") / test_input]
+        for datum in test_data:
+            if not datum.exists():
+                self.skipTest(f"No test data available at {datum}")
+
+        test_data_output = Path("tmp_output") / test_input.parent
+        shutil.rmtree(test_data_output, ignore_errors=True)
+        reference_data = Path("test/data/reference_data") / test_input.parent
+
+        self.config.input = test_data
+        self.config.format = test_input.parts[0]
+        self.config.output_folder = test_data_output
+        jimmy.jimmy(self.config)
+
+        # Skip only here to catch potential errors during conversion.
+        if not reference_data.exists():
+            self.skipTest(f"No reference data available at {reference_data}")
+
+        self.assert_dir_trees_equal(test_data_output, reference_data)
+
     @parameterized.expand(
         [
             [["anki/test_1/MEILLEUR_DECK_ANGLAIS_3000.apkg"]],
@@ -169,36 +199,46 @@ class EndToEnd(unittest.TestCase):
         ],
         name_func=name_func,
     )
-    def test_formats(self, test_input):
+    def test_formats(self, test_input: str):
         """Test the conversion of custom formats to Markdown."""
-        test_input = Path(test_input[0])
+        self.format_test(Path(test_input[0]))
 
-        if len(test_input.parts) != 3:
-            self.fail(
-                'Test data should be in folder "<format>/test_<index>/<data>". '
-                "Look at the other tests for examples."
+    @parameterized.expand(
+        [
+            [["google_keep/test_3_encrypted/takeout-20250123T101543Z-001.zip"]],
+            [["synology_note_station/test_6_encrypted/test8.nsx"]],
+            [["synology_note_station/test_7_encrypted/test10.nsx"]],
+        ],
+        name_func=name_func,
+    )
+    def test_formats_encrypted(self, test_input: str):
+        """Test the conversion of custom formats to Markdown."""
+        password = os.getenv("JIMMY_TEST_PASSWORD")
+        if password is None:
+            self.skipTest(
+                'Need password for encrypted test data at "JIMMY_TEST_PASSWORD"'
             )
 
-        # can be multiple
-        test_data = [Path("test/data/test_data") / test_input]
-        for datum in test_data:
-            if not datum.exists():
-                self.skipTest(f"No test data available at {datum}")
+        # Pythons zipfile doesn't support AES256 encryption. Use "py7zr" instead.
+        test_input = Path(test_input[0])
+        test_input_path = Path("test/data/test_data") / test_input.parent
+        if not test_input_path.exists():
+            with py7zr.SevenZipFile(
+                test_input_path.with_suffix(".7z"), password=password
+            ) as encrypted_7z:
+                encrypted_7z.extractall(path=test_input_path.parent)
 
-        test_data_output = Path("tmp_output") / test_input.parent
-        shutil.rmtree(test_data_output, ignore_errors=True)
-        reference_data = Path("test/data/reference_data") / test_input.parent
+        reference_data_path = Path("test/data/reference_data") / test_input.parent
+        if (
+            not reference_data_path.exists()
+            and reference_data_path.with_suffix(".7z").exists()
+        ):
+            with py7zr.SevenZipFile(
+                reference_data_path.with_suffix(".7z"), password=password
+            ) as encrypted_7z:
+                encrypted_7z.extractall(path=reference_data_path.parent)
 
-        self.config.input = test_data
-        self.config.format = test_input.parts[0]
-        self.config.output_folder = test_data_output
-        jimmy.jimmy(self.config)
-
-        # Skip only here to catch potential errors during conversion.
-        if not reference_data.exists():
-            self.skipTest(f"No reference data available at {reference_data}")
-
-        self.assert_dir_trees_equal(test_data_output, reference_data)
+        self.format_test(test_input)
 
     @parameterized.expand(
         [

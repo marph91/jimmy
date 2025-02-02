@@ -1,6 +1,7 @@
 -r requirements.txt
 mypy==1.14.1
 parameterized==0.9.0
+py7zr==0.22.0
 pylint==3.3.3
 pytest==8.3.4
 requests==2.32.3

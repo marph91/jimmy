@@ -26,5 +26,6 @@ jobs:
         run: sudo apt install -y asciidoctor
       - name: Run tests
         env:
+          JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
           PYTHONPATH: src
         run: pytest --capture=no

@@ -72,7 +72,6 @@ class MarkdownHtmlSeparator(HTMLParser):
 
     def handle_remaining_html(self):
         if self.html:
-            # TODO: minimize calls, as pandoc is slow
             self.md.append(markdown_lib.common.markup_to_markdown("".join(self.html)))
             self.html = []
 
@@ -86,6 +85,7 @@ class MarkdownHtmlSeparator(HTMLParser):
 
 def wikitext_html_to_md(wikitext_html: str) -> str:
     # convert wikitext + HTML to markdown + HTML
+    # TODO: slow
     md_html = markdown_lib.tiddlywiki.wikitext_to_md(wikitext_html)
 
     # convert remaining HTML to markdown
