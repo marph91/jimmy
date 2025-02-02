@@ -16,8 +16,8 @@ class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, note_simplenote):
         # title is the first line
-        title, body = markdown_lib.common.split_h1_title_from_body(
-            note_simplenote["content"]
+        title, body = markdown_lib.common.split_title_from_body(
+            note_simplenote["content"], h1=False
         )
         self.logger.debug(f'Converting note "{title}"')
 

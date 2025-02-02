@@ -17,14 +17,29 @@ import markdown_lib.html_filter
 LOGGER = logging.getLogger("jimmy")
 
 
-def split_h1_title_from_body(markdown_: str) -> tuple[str, str]:
-    # TODO: doctest
-    try:
-        title, body = markdown_.split("\n", maxsplit=1)
-    except ValueError:
-        title = markdown_
-        body = ""
-    return title.lstrip("# "), body.lstrip()
+def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
+    r"""
+    >>> split_title_from_body("# heading\n\n b")
+    ('heading', 'b')
+    >>> split_title_from_body("heading\n\n b")
+    ('', 'heading\n\n b')
+    >>> split_title_from_body("heading\n\n b", h1=False)
+    ('heading', 'b')
+    >>> split_title_from_body("😄\n\n# heading")
+    ('', '😄\n\n# heading')
+    """
+    if markdown_.startswith("# ") or not h1:
+        try:
+            title, body = markdown_.split("\n", maxsplit=1)
+            title = title.lstrip("# ")
+            body = body.lstrip()
+        except ValueError:
+            title = markdown_
+            body = ""
+    else:
+        title = ""
+        body = markdown_
+    return title, body
 
 
 @dataclass

@@ -8,6 +8,7 @@ import json
 import common
 import converter
 import intermediate_format as imf
+import markdown_lib.common
 
 
 class Converter(converter.BaseConverter):
@@ -23,9 +24,11 @@ class Converter(converter.BaseConverter):
             return
         title = Path(file_["filename"]).stem
         self.logger.debug(f'Converting note "{title}"')
+
+        _, body = markdown_lib.common.split_title_from_body(file_["content"])
         note_imf = imf.Note(
             title,
-            file_["content"],
+            body,
             created=dt.datetime.fromisoformat(file_["createdAt"]),
             updated=dt.datetime.fromisoformat(file_["updatedAt"]),
             source_application=self.format,

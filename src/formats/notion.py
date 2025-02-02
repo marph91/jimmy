@@ -104,13 +104,12 @@ class Converter(converter.BaseConverter):
 
         self.logger.debug(f'Converting note "{title}"')
         body = item.read_text(encoding="utf-8")
-        if item.suffix.lower() == ".md":
-            # first line is title, second is whitespace
-            body = "\n".join(item.read_text(encoding="utf-8").split("\n")[2:])
-        else:  # html
+        if item.suffix.lower() == ".html":
+            # html, else markdown
             body = markdown_lib.common.markup_to_markdown(
                 body, custom_filter=[markdown_lib.html_filter.notion_streamline_lists]
             )
+        _, body = markdown_lib.common.split_title_from_body(body)
 
         # find links
         resources, note_links = self.handle_markdown_links(body, item)

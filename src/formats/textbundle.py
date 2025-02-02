@@ -41,9 +41,11 @@ class Converter(converter.BaseConverter):
         title = file_.parent.stem
         self.logger.debug(f'Converting note "{title}"')
 
-        note_imf = imf.Note(
-            title, file_.read_text(encoding="utf-8"), source_application=self.format
+        # title = first line header
+        _, body = markdown_lib.common.split_title_from_body(
+            file_.read_text(encoding="utf-8")
         )
+        note_imf = imf.Note(title, body, source_application=self.format)
         note_imf.tags = [
             imf.Tag(tag)
             for tag in markdown_lib.common.get_inline_tags(note_imf.body, ["#"])

@@ -55,7 +55,7 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
-        title, body = markdown_lib.common.split_h1_title_from_body(markdown)
+        title, body = markdown_lib.common.split_title_from_body(markdown, h1=False)
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title.strip(),
