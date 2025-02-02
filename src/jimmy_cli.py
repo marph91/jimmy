@@ -64,11 +64,11 @@ def main():
         choices=(None, "all", "joplin", "obsidian", "qownnotes"),
         help="Frontmatter type.",
     )
-    # TODO: test and document
+    # TODO: document
     parser.add_argument(
         "--title-as-header",
         action="store_true",
-        help="Add the title as header in the first row.",
+        help="Insert the title as header in the first line.",
     )
     parser.add_argument(
         "--output-folder",

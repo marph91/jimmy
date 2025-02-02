@@ -347,3 +347,19 @@ class EndToEnd(unittest.TestCase):
             self.assert_dir_trees_equal(
                 test_data_output / value, reference_data / value
             )
+
+    def test_title_as_header(self):
+        """Test including the title in the note body."""
+
+        test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
+        test_data_output = Path("tmp_output/title_as_header")
+        shutil.rmtree(test_data_output, ignore_errors=True)
+        reference_data = Path("test/data/reference_data/title_as_header")
+
+        self.config.input = test_data
+        self.config.format = "joplin"
+        self.config.output_folder = test_data_output
+        self.config.title_as_header = True
+        jimmy.jimmy(self.config)
+
+        self.assert_dir_trees_equal(test_data_output, reference_data)

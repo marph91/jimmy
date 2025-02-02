@@ -155,7 +155,7 @@ class Note:
         body = self.body
 
         if include_title:
-            body = f"# {self.title}\n\n" + body
+            body = f"# {self.title}\n\n{body}"
 
         match frontmatter_:
             case "all":
