@@ -167,7 +167,8 @@ class Note:
                         ):
                             continue  # included elsewhere or no metadata
                         case "tags":
-                            metadata["tags"] = [tag.title for tag in self.tags]
+                            if self.tags:
+                                metadata["tags"] = [tag.title for tag in self.tags]
                         case _:
                             if (value := getattr(self, field.name)) is not None:
                                 metadata[field.name] = value
