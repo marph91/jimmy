@@ -18,8 +18,7 @@ class Converter(converter.BaseConverter):
     def convert_note(self, file_: dict, notebook: imf.Notebook, tags: imf.Tags):
         if file_["filetype"] != "markdown":
             self.logger.warning(
-                f"Ignoring file {file_['filename']}. "
-                "Only markdown supported for now."
+                f"Ignoring file {file_['filename']}. Only markdown supported for now."
             )
             return
         title = Path(file_["filename"]).stem

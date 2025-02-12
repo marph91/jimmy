@@ -147,7 +147,7 @@ class EnexToMarkdown:
             case "img":
                 if (url := attrib.get("src")) is not None:
                     self.md.append(
-                        f"![{attrib.get("title", attrib.get("alt", ""))}]({url})"
+                        f"![{attrib.get('title', attrib.get('alt', ''))}]({url})"
                     )
             case "p":
                 self.add_newlines(2)
@@ -364,7 +364,7 @@ class EnexToMarkdown:
                 title = self.active_resource.get(
                     "title", self.active_link.get("alt", "")
                 )
-                self.md.append(f"![{title}]({self.active_resource["hash"]})")
+                self.md.append(f"![{title}]({self.active_resource['hash']})")
                 self.hashes.append(self.active_resource["hash"])
                 self.active_resource = {}
 
@@ -479,7 +479,7 @@ class EnexToMarkdown:
             if self.encryption["cipher"] != "AES" or self.encryption["length"] != "128":
                 self.md.extend([data, "\n"])
                 LOGGER.warning(
-                    f'Could not decrypt. Unsupported cipher: '
+                    f"Could not decrypt. Unsupported cipher: "
                     f'"{self.encryption["cipher"]} {self.encryption["length"]}"'
                 )
                 return
@@ -518,7 +518,7 @@ class EnexToMarkdown:
             self.active_link["title"] = title + data
         elif self.active_resource:
             LOGGER.warning(
-                f"Resource title not handled: {self.active_resource["hash"]}"
+                f"Resource title not handled: {self.active_resource['hash']}"
             )
         else:
             target = self.table_cell if self.in_table else self.md

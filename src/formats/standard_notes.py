@@ -131,7 +131,7 @@ class SuperToMarkdown:
                 self.add_text(link.reformat(), quote_level)
                 skip_children = True
             case "code":
-                self.add_text([f"```{block.get("language", "")}", "\n"], quote_level)
+                self.add_text([f"```{block.get('language', '')}", "\n"], quote_level)
                 newlines = 1
                 append = ["```", "\n", "\n"]
             case "collapsible-container":
@@ -139,7 +139,7 @@ class SuperToMarkdown:
                 # Convert it to bold (collapsible-title) + text (collapsible-content).
                 pass
             case "collapsible-title":
-                self.add_text(f"**{block["children"][0]["text"]}**", quote_level)
+                self.add_text(f"**{block['children'][0]['text']}**", quote_level)
                 skip_children = True
                 newlines = 2
             case "collapsible-content":
@@ -147,7 +147,7 @@ class SuperToMarkdown:
                 # self.add_text(block["text"], quote_level)
                 # newlines = 2
             case "heading":
-                self.add_text(f"{"#" * int(block["tag"][-1])} ", quote_level)
+                self.add_text(f"{'#' * int(block['tag'][-1])} ", quote_level)
                 newlines = 2
             case "horizontalrule":
                 self.add_newlines(2)
@@ -194,7 +194,7 @@ class SuperToMarkdown:
                 quote_level += 1
                 newlines = 2
             case _:
-                LOGGER.debug(f"Unknown block type: {block["type"]}")
+                LOGGER.debug(f"Unknown block type: {block['type']}")
         if not skip_children:
             for child in block.get("children", []):
                 self.parse_block(child, quote_level)

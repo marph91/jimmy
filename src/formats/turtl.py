@@ -77,16 +77,16 @@ class Converter(converter.BaseConverter):
             case "password":
                 note_imf.body = "\n".join(
                     [
-                        f"- Username: `{note["user_id"]}`",
-                        f"- Password: `{note["password"]}`",
+                        f"- Username: `{note['user_id']}`",
+                        f"- Password: `{note['password']}`",
                         "",
                         note["text"],
                     ]
                 )
             case _:
-                self.logger.debug(f"Unhandled type \"{note["type"]}\"")
+                self.logger.debug(f'Unhandled type "{note["type"]}"')
         if note.get("url"):
-            note_imf.body += f"\n\n<{note["url"]}>"
+            note_imf.body += f"\n\n<{note['url']}>"
 
         # note["has_file"] seems to be sometimes wrong...
         # I. e. if the type is "file". Check always.
@@ -95,7 +95,7 @@ class Converter(converter.BaseConverter):
             # TODO: files may be overwritten. use id?
             filename = self.resource_folder / note["file"]["name"]
             filename.write_bytes(base64.b64decode(file_data))
-            file_md = f"[{note["file"]["name"]}]({filename})"
+            file_md = f"[{note['file']['name']}]({filename})"
             note_imf.body += f"\n\n{file_md}"
         # else:
         #     self.logger.debug(f"Couldn't find file with id {note["id"]}")

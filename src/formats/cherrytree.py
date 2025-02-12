@@ -117,7 +117,7 @@ def convert_rich_text(rich_text):
                     case "sub":
                         md_content = f"~{md_content}~"
                     case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
-                        leading = f"{"#" * int(attrib_value[-1])} " + leading
+                        leading = f"{'#' * int(attrib_value[-1])} " + leading
                     case _:
                         LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":

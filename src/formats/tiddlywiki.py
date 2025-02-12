@@ -77,7 +77,7 @@ class MarkdownHtmlSeparator(HTMLParser):
 
     def get_md(self) -> str:
         if self.active_html_tags:
-            LOGGER.debug(f'Unexpected open tags: {" ".join(self.active_html_tags)}')
+            LOGGER.debug(f"Unexpected open tags: {' '.join(self.active_html_tags)}")
             raise ValueError()
         self.handle_remaining_html()
         return "".join(self.md)

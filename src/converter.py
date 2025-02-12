@@ -203,9 +203,7 @@ class DefaultConverter(BaseConverter):
                 root_tag = root.tag.rpartition("}")[-1]  # strip namespace
                 match root_tag:
                     case (
-                        "endnote"
-                        | "mediawiki"
-                        | "opml"
+                        "endnote" | "mediawiki" | "opml"
                     ):  # TODO: endnotexml and opml example
                         note_body = markdown_lib.common.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),

@@ -136,7 +136,7 @@ class Converter(converter.BaseConverter):
         note = json.loads((self.root_path / note_id).read_text(encoding="utf-8"))
 
         if note["parent_id"].rsplit("_")[-1] == "#00000000":
-            self.logger.debug(f"Ignoring note in trash \"{note['title']}\"")
+            self.logger.debug(f'Ignoring note in trash "{note["title"]}"')
             return
         title = note["title"]
         self.logger.debug(f'Converting note "{title}" (ID: "{note_id}")')

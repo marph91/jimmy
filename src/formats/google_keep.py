@@ -46,7 +46,7 @@ class Converter(converter.BaseConverter):
             list_items_md = []
             for item in body_list:
                 bullet = "- [x] " if item["isChecked"] else "- [ ] "
-                list_items_md.append(f"{bullet}{item["text"]}")
+                list_items_md.append(f"{bullet}{item['text']}")
             note_imf.body = "\n".join(list_items_md)
         else:
             note_imf.body = ""
@@ -54,7 +54,7 @@ class Converter(converter.BaseConverter):
         if (annotations := note_keep.get("annotations")) is not None:
             annotations_md = ["", "", "## Annotations", ""]
             for annotation in annotations:
-                annotations_md.append(f"- <{annotation["url"]}>: {annotation["title"]}")
+                annotations_md.append(f"- <{annotation['url']}>: {annotation['title']}")
             annotations_md.append("")  # newline at the end
             note_imf.body += "\n".join(annotations_md)
 
