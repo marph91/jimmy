@@ -33,6 +33,8 @@ jobs:
         exclude:
           - is_release: false
             os: "macos-13"
+          - is_release: false
+            os: "ubuntu-20.04"
     steps:
       - uses: actions/checkout@v4
         with:
