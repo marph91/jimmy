@@ -141,7 +141,7 @@ def notion_streamline_lists(soup: BeautifulSoup):
     # Checklists are unnumbered lists with special classes.
     for list_ in soup.find_all("ul", class_="to-do-list"):
         for item in list_.find_all("li"):
-            checked_item = item.findChild("div")
+            checked_item = item.find("div")
             checked_item.name = "input"
             checked_item.attrs["type"] = "checkbox"
             if "checkbox-on" in checked_item.get("class", []):
