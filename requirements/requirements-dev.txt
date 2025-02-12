@@ -1,12 +1,12 @@
 -r requirements.txt
-mypy==1.14.1
+mypy==1.15.0
 parameterized==0.9.0
 py7zr==0.22.0
-pylint==3.3.3
+pylint==3.3.4
 pytest==8.3.4
 requests==2.32.3
-ruff==0.8.6
-types-beautifulsoup4==4.12.0.20241020
+ruff==0.9.6
+types-beautifulsoup4==4.12.0.20250204
 types-Markdown==3.7.0.20241204
 types-pyyaml==6.0.12.20241230
 types-vobject==0.9.9.20241219
