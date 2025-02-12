@@ -36,7 +36,7 @@ match system:
         # Differentiate between latest glibc (no postfix)
         # and older glibc (version as postfix).
         if os.getenv("RUNNER_MACHINE", "") != "ubuntu-latest":
-            system += "-" + "".join(platform.libc_ver())
+            system += "-glibc-compat"
 executable_name = f"jimmy-cli-{system}"
 
 
