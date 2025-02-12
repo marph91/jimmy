@@ -16,14 +16,16 @@ jobs:
     permissions:
       contents: write
     env:
+      RUNNER_MACHINE: ${{ matrix.os }}  # TODO: Is there a built-in env variable?
       PYTHONPATH: src
     strategy:
       fail-fast: false
       matrix:
         # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
-        # "macos-latest" is ARM based
-        # "macos-13" is Intel based
-        os: ["windows-latest", "ubuntu-latest", "macos-latest", "macos-13"]
+        # "macos-latest" to support ARM based MACs
+        # "macos-13" to support Intel based MACs
+        # "ubuntu-20.04" to get the lowest possible glibc version for compatibility
+        os: ["windows-latest", "ubuntu-latest", "ubuntu-20.04", "macos-latest", "macos-13"]
         # build "macos-13" executable only at release
         # https://github.com/orgs/community/discussions/26253?sort=top#discussioncomment-3250989
         is_release:

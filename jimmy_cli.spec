@@ -24,11 +24,19 @@ hiddenimports = list_python_files(Path("src/formats"))
 
 
 # Generate the executable name based on OS.
+import os
 import platform
 system = platform.system().lower()
-if system == "darwin":
-    # Differentiate between ARM and Intel based Macs.
-    system += "-" + platform.machine().lower()
+match system:
+    case "darwin":
+        # Differentiate between ARM and Intel based Macs.
+        system += "-" + platform.machine().lower()
+    case "linux":
+        print("libc:", platform.libc_ver())
+        # Differentiate between latest glibc (no postfix)
+        # and older glibc (version as postfix).
+        if os.getenv("RUNNER_MACHINE", "") != "ubuntu-latest":
+            system += "-" + "".join(platform.libc_ver())
 executable_name = f"jimmy-cli-{system}"
 
 
