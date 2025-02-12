@@ -101,11 +101,11 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
     note_imf = imf.Note(
         # TODO: f"{0 if date is None else date.isoformat()}_{message["Subject"]}",
         file_.stem,
-        "\n".join([f"# {message["Subject"]}", ""] + body),
+        "\n".join([f"# {message['Subject']}", ""] + body),
         source_application="jimmy",
         resources=resources,
         created=date,
         updated=date,
-        author=message["From"],
+        author=str(message["From"]),
     )
     return note_imf

@@ -163,11 +163,7 @@ class Note:
                 for field in dataclasses.fields(Note):
                     match field.name:
                         case (
-                            "body"
-                            | "resources"
-                            | "note_links"
-                            | "original_id"
-                            | "path"
+                            "body" | "resources" | "note_links" | "original_id" | "path"
                         ):
                             continue  # included elsewhere or no metadata
                         case "tags":
@@ -181,23 +177,21 @@ class Note:
                 # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
                 # Arbitrary metadata will be ignored.
                 metadata = {}
-                if self.tags:
-                    # Convert the tags to lower case before the import to avoid issues
-                    # with special first characters.
-                    # See: https://github.com/laurent22/joplin/issues/11179
-                    metadata["tags"] = [tag.title.lower() for tag in self.tags]
-                supported_keys = [
-                    "title",
-                    "created",
-                    "updated",
-                    "author",
-                    "latitude",
-                    "longitude",
-                    "altitude",
-                ]
-                for key in supported_keys:
-                    if (value := getattr(self, key)) is not None:
-                        metadata[key] = value
+                for field in dataclasses.fields(Note):
+                    match field.name:
+                        case "title" | "author" | "latitude" | "longitude" | "altitude":
+                            if (value := getattr(self, field.name)) is not None:
+                                metadata[field.name] = value
+                        case "created" | "updated":
+                            if (value := getattr(self, field.name)) is not None:
+                                metadata[field.name] = value.isoformat()
+                        case "tags":
+                            if not self.tags:
+                                continue
+                            # Convert the tags to lower case before the import to
+                            # avoid issues with special first characters.
+                            # See: https://github.com/laurent22/joplin/issues/11179
+                            metadata["tags"] = [tag.title.lower() for tag in self.tags]
                 post = frontmatter.Post(body, **metadata)
                 body = frontmatter.dumps(post)
             case "obsidian":
