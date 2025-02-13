@@ -1,4 +1,10 @@
-# -*- mode: python ; coding: utf-8 -*-
+# There are some pyinstaller internal classes.
+# ruff: noqa: F821
+
+import os
+from pathlib import Path
+import platform
+
 from PyInstaller.utils.hooks import collect_data_files
 
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
@@ -12,9 +18,6 @@ datas += collect_data_files("pypandoc")
 # - https://stackoverflow.com/a/77395744/7410886
 # - https://stackoverflow.com/a/35805418/7410886
 # - https://pyinstaller.org/en/stable/when-things-go-wrong.html#listing-hidden-imports
-from pathlib import Path
-
-
 def list_python_files(folder):
     file_list = []
     for file_ in folder.iterdir():
@@ -27,9 +30,6 @@ hiddenimports = list_python_files(Path("src/formats"))
 
 
 # Generate the executable name based on OS.
-import os
-import platform
-
 system = platform.system().lower()
 print("libc:", platform.libc_ver())
 
