@@ -124,9 +124,9 @@ class SuperToMarkdown:
         match block["type"]:
             case "autolink" | "link":
                 link = markdown_lib.common.MarkdownLink(
-                    block["children"][0].get("text"),
+                    block["children"][0].get("text", ""),
                     block.get("url", ""),
-                    block.get("title", ""),
+                    "" if (title := block.get("title")) is None else title,
                 )
                 self.add_text(link.reformat(), quote_level)
                 skip_children = True

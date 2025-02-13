@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 
 import frontmatter
+import pydantic
 
 import common
 
@@ -40,7 +41,7 @@ def normalize_obsidian_tag(tag: str) -> str:
     return valid_char_tag
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class NoteLink:
     """Represents an internal link from one note to another note."""
 
@@ -52,7 +53,7 @@ class NoteLink:
     title: str
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class Resource:
     """Represents a resource."""
 
@@ -91,7 +92,7 @@ class Resource:
         return hash(self.original_text)
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class Tag:
     """Represents a tag."""
 
@@ -109,7 +110,7 @@ class Tag:
         return self.original_id or self.title
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class Note:
     """Represents a note."""
 
@@ -217,7 +218,7 @@ class Note:
         return body
 
 
-@dataclasses.dataclass
+@pydantic.dataclasses.dataclass
 class Notebook:
     """Represents a notebook and its children."""
 

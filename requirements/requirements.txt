@@ -5,6 +5,7 @@ enlighten==1.13.0
 markdown==3.7
 platformdirs==4.3.6
 puremagic==1.28
+pydantic==2.10.6
 pypandoc_binary==1.15
 pyparsing==3.2.1
 python-frontmatter==1.1.0

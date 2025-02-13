@@ -1,6 +1,6 @@
 """Common Markdown functions."""
 
-from dataclasses import dataclass, field
+import dataclasses
 import logging
 from pathlib import Path
 import re
@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
+import pydantic
 import pypandoc
 
 import markdown_lib.html_filter
@@ -42,12 +43,12 @@ def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
     return title, body
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class MarkdownTable:
     """Construct a Markdown table from lists."""
 
-    header_rows: list[list[str]] = field(default_factory=list)
-    data_rows: list[list[str]] = field(default_factory=list)
+    header_rows: list[list[str]] = dataclasses.field(default_factory=list)
+    data_rows: list[list[str]] = dataclasses.field(default_factory=list)
     caption: str = ""
 
     def create_md(self) -> str:
@@ -72,7 +73,7 @@ class MarkdownTable:
         return caption + "\n".join(rows_md)
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class MarkdownLink:
     """
     Represents a markdown link:
@@ -142,7 +143,8 @@ class LinkExtractor(Treeprocessor):
             if (title := link.get("title", "")) and not url:
                 url = title  # don't add a title if there is no url
                 title = ""
-            self.md.links.append(MarkdownLink(link.text, url, title))
+            text = "" if link.text is None else link.text
+            self.md.links.append(MarkdownLink(text, url, title))
 
 
 class LinkExtractorExtension(Extension):

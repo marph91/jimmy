@@ -2,7 +2,6 @@
 
 import base64
 from collections import defaultdict
-from dataclasses import dataclass
 import datetime as dt
 import hashlib
 import importlib
@@ -19,6 +18,7 @@ import zipfile
 
 import enlighten
 import puremagic
+import pydantic
 
 import formats
 
@@ -251,7 +251,7 @@ class CounterMock:  # pylint: disable=too-few-public-methods
         pass
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class Stats:
     notebooks: int = 0
     notes: int = 0

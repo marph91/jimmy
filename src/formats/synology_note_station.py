@@ -1,11 +1,13 @@
 """Convert Synology Note Station notes to the intermediate format."""
 
 import copy
-from dataclasses import dataclass, field
+import dataclasses
 import difflib
 import json
 from pathlib import Path
 from urllib.parse import urlparse
+
+import pydantic
 
 import common
 import converter
@@ -14,14 +16,14 @@ import markdown_lib.common
 import markdown_lib.html_filter
 
 
-@dataclass
+@pydantic.dataclasses.dataclass
 class Attachment:
     """Represents a Note Station attachment."""
 
     filename: Path
     md5: str
-    refs: list[str] = field(default_factory=list)
-    titles: list[str] = field(default_factory=list)
+    refs: list[str] = dataclasses.field(default_factory=list)
+    titles: list[str] = dataclasses.field(default_factory=list)
 
 
 class Converter(converter.BaseConverter):
