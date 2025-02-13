@@ -35,8 +35,6 @@ jobs:
             os: "macos-13"
           - is_release: false
             os: "ubuntu-20.04"
-          # - is_release: false
-          #   os: "ubuntu-22.04-arm"
     steps:
       - uses: actions/checkout@v4
         with:
