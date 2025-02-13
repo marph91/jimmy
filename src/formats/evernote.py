@@ -63,8 +63,7 @@ class Converter(converter.BaseConverter):
                 temp_filename = self.resource_folder / (
                     common.unique_title() if link.text in [None, ""] else link.text
                 )
-                resource_data_decoded = base64.b64decode(base64_data)
-                temp_filename.write_bytes(resource_data_decoded)
+                temp_filename = common.write_base64(temp_filename, base64_data)
                 resources.append(imf.Resource(temp_filename, str(link), link.text))
             elif link.url.startswith("data:image/svg+xml,"):
                 svg_data = unquote(link.url[len("data:image/svg+xml,") :])
@@ -73,6 +72,7 @@ class Converter(converter.BaseConverter):
                     if link.text in [None, ""]
                     else link.text
                 )
+                temp_filename = common.get_unique_path(temp_filename, svg_data)
                 temp_filename.write_text(svg_data)
                 resources.append(imf.Resource(temp_filename, str(link), link.text))
         return resources, note_links
@@ -148,7 +148,6 @@ class Converter(converter.BaseConverter):
                             self.logger.debug("couldn't parse date")
                     case "resource":
                         # Use the original filename if possible.
-                        # TODO: Files with same name are replaced.
                         resource_title = note_element.find(
                             "./resource-attributes/file-name"
                         )
@@ -166,7 +165,9 @@ class Converter(converter.BaseConverter):
                         )
                         resource_data_decoded = base64.b64decode(resource_data.text)
                         md5_hash = hashlib.md5(resource_data_decoded).hexdigest()
-                        temp_filename.write_bytes(resource_data_decoded)
+                        temp_filename = common.write_base64(
+                            temp_filename, resource_data.text
+                        )
                         resource_title = (
                             resource_title
                             if resource_title is None

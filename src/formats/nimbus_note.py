@@ -1,6 +1,5 @@
 """Convert nimbus notes to the intermediate format."""
 
-import base64
 from pathlib import Path
 
 import common
@@ -35,7 +34,7 @@ class Converter(converter.BaseConverter):
                 base64_data = link.url[len("data:image/svg+xml;base64,") :]
                 original_name = link.text
                 temp_filename = root_folder / (original_name or common.unique_title())
-                temp_filename.write_bytes(base64.b64decode(base64_data))
+                temp_filename = common.write_base64(temp_filename, base64_data)
                 resources.append(
                     imf.Resource(
                         temp_filename,

@@ -1,6 +1,5 @@
 """Convert TiddlyWiki notes to the intermediate format."""
 
-import base64
 import datetime as dt
 from html.parser import HTMLParser
 import logging
@@ -162,14 +161,13 @@ class Converter(converter.BaseConverter):
             ):
                 if (text_base64 := tiddler.get("text")) is not None:
                     # Use the original filename if possible.
-                    # TODO: Files with same name are replaced.
                     resource_title = tiddler.get("alt-text")
                     temp_filename = self.resource_folder / (
                         common.unique_title()
                         if resource_title is None
                         else resource_title
                     )
-                    temp_filename.write_bytes(base64.b64decode(text_base64))
+                    temp_filename = common.write_base64(temp_filename, text_base64)
                     body = f"![{temp_filename.name}]({temp_filename})"
                     resources.append(imf.Resource(temp_filename, body, resource_title))
                 elif (source := tiddler.get("source")) is not None:

@@ -1,5 +1,6 @@
 """Common functions."""
 
+import base64
 from collections import defaultdict
 from dataclasses import dataclass
 import datetime as dt
@@ -120,8 +121,23 @@ def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
 
-def find_new_name(path: Path) -> Path:
-    """Find a new unique name for a duplicated file."""
+def get_unique_path(path: Path, new_content: str | bytes | Path | None = None) -> Path:
+    """Get a unique path for a file."""
+    if (  # pylint: disable=too-many-boolean-expressions
+        # filename is "free"
+        not path.exists()
+        # byte content is identical
+        or isinstance(new_content, bytes)
+        and new_content == path.read_bytes()
+        or isinstance(new_content, Path)
+        and new_content.read_bytes() == path.read_bytes()
+        # text content is identical
+        or isinstance(new_content, str)
+        and new_content == path.read_text()
+    ):
+        return path
+
+    # Find a new unique name for a duplicated file.
     found_new_name = False
     similar_notes = list(path.parent.glob(f"{path.stem}*{path.suffix}"))
     for new_index in range(1, 10000):
@@ -129,9 +145,23 @@ def find_new_name(path: Path) -> Path:
         if new_path not in similar_notes:
             found_new_name = True
             break
-    if found_new_name:
-        return new_path
-    return path.parent / f"{path.stem}_{uuid_title()}{path.suffix}"
+    if not found_new_name:
+        # last resort
+        new_path = path.parent / f"{path.stem}_{uuid_title()}{path.suffix}"
+
+    LOGGER.debug(
+        f'File "{path.name}" exists already with different content. '
+        f'New name: "{new_path.name}".'
+    )
+    return new_path
+
+
+def write_base64(path: Path, base64_str: str) -> Path:
+    """Write a base64 encoded string to a file."""
+    content = base64.b64decode(base64_str)
+    path = get_unique_path(path, content)
+    path.write_bytes(content)
+    return path
 
 
 def get_available_formats() -> dict:

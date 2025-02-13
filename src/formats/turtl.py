@@ -1,6 +1,5 @@
 """Convert Turtl notes to the intermediate format."""
 
-import base64
 from pathlib import Path
 import json
 
@@ -92,9 +91,8 @@ class Converter(converter.BaseConverter):
         # I. e. if the type is "file". Check always.
         # It seems like a note can have maximum one file attached.
         if (file_data := file_map.get(note["id"])) is not None:
-            # TODO: files may be overwritten. use id?
             filename = self.resource_folder / note["file"]["name"]
-            filename.write_bytes(base64.b64decode(file_data))
+            filename = common.write_base64(filename, file_data)
             file_md = f"[{note['file']['name']}]({filename})"
             note_imf.body += f"\n\n{file_md}"
         # else:

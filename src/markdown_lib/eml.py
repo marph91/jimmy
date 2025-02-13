@@ -34,10 +34,11 @@ def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources
             # id seems to be enclosed by <> here, but by [] in the body
             id_ = f"[cid:{id_[1:-1]}]"
         # Use the original filename if possible.
-        # TODO: Files with same name are replaced.
         resource_name = part.get_filename(common.unique_title())
         unique_resource_path = attachment_folder / resource_name
-        unique_resource_path.write_bytes(part.get_payload(decode=True))
+        content = part.get_payload(decode=True)
+        unique_resource_path = common.get_unique_path(unique_resource_path, content)
+        unique_resource_path.write_bytes(content)
         resource = imf.Resource(
             unique_resource_path, original_text=id_, title=resource_name
         )

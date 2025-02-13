@@ -1,6 +1,5 @@
 """Convert cherrytree notes to the intermediate format."""
 
-import base64
 import logging
 from pathlib import Path
 import re
@@ -165,11 +164,10 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     original_name = node.attrib.get("filename")
 
     # Use the original filename if possible.
-    # TODO: Files with same name are replaced.
     temp_filename = resource_folder / (
         common.unique_title() if original_name is None else original_name
     )
-    temp_filename.write_bytes(base64.b64decode(node.text))
+    temp_filename = common.write_base64(temp_filename, node.text)
 
     # assemble the markdown
     resource_md = f"![{temp_filename.name}]({temp_filename})"

@@ -183,16 +183,7 @@ class FilesystemImporter:
             )
             return
 
-        if resource.path.is_file():
-            if resource == resource.path:
-                return  # Don't create multiple files for the same resource.
-            # Different resource, but same name. # Try to find new name.
-            original_path = resource.path
-            resource.path = common.find_new_name(resource.path)
-            LOGGER.debug(
-                f'Resource "{original_path}" exists already with different content. '
-                f'New name: "{resource.path.name}".'
-            )
+        resource.path = common.get_unique_path(resource.path, resource.filename)
         # TODO: done for each resource in each note
         resource.path.parent.mkdir(exist_ok=True, parents=True)
         shutil.copy(resource.filename, resource.path)
@@ -227,19 +218,9 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
 
-        if note.path.is_file():
-            # Try to find new name.
-            original_path = note.path
-            note.path = common.find_new_name(note.path)
-            LOGGER.warning(
-                f'Note "{original_path}" exists already. New name: "{note.path.name}".'
-                " Links may point to the wrong note."
-            )
-
-        note.path.write_text(
-            note.get_finalized_body(self.include_title, self.frontmatter),
-            encoding="utf-8",
-        )
+        content = note.get_finalized_body(self.include_title, self.frontmatter)
+        note.path = common.get_unique_path(note.path, content)
+        note.path.write_text(content, encoding="utf-8")
 
     @common.catch_all_exceptions
     def import_note(self, note: imf.Note):
@@ -247,7 +228,7 @@ class FilesystemImporter:
         # "dict.fromkeys()" to remove duplicated resources while retaining order.
         for resource in dict.fromkeys(note.resources):
             self.progress_bars["resources"].update(1)
-            # Write resources first before updateing the links, since the path
+            # Write resources first before updating the links, since the path
             # can change in case of duplication.
             self.write_resource(resource)
             self.update_resource_links(note, resource)
