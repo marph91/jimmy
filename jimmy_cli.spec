@@ -13,6 +13,8 @@ datas += collect_data_files("pypandoc")
 # - https://stackoverflow.com/a/35805418/7410886
 # - https://pyinstaller.org/en/stable/when-things-go-wrong.html#listing-hidden-imports
 from pathlib import Path
+
+
 def list_python_files(folder):
     file_list = []
     for file_ in folder.iterdir():
@@ -20,28 +22,35 @@ def list_python_files(folder):
             file_list.append(f"{folder.stem}.{file_.stem}")
     return file_list
 
+
 hiddenimports = list_python_files(Path("src/formats"))
 
 
 # Generate the executable name based on OS.
 import os
 import platform
+
 system = platform.system().lower()
-match system:
-    case "darwin":
-        # Differentiate between ARM and Intel based Macs.
-        system += "-" + platform.machine().lower()
-    case "linux":
-        print("libc:", platform.libc_ver())
+print("libc:", platform.libc_ver())
+
+# need to correspond to ".github/workflows/build.yml"
+match os.getenv("RUNNER_MACHINE"):
+    case "windows-latest" | "ubuntu-latest":
+        pass  # default - nothing to do
+    case "ubuntu-20.04":
         # Differentiate between latest glibc (no postfix)
         # and older glibc (version as postfix).
-        if os.getenv("RUNNER_MACHINE", "") != "ubuntu-latest":
-            system += "-glibc-compat"
+        system += "-glibc-compat"
+    case "ubuntu-22.04-arm":
+        system += "-" + platform.machine().lower()
+    case "macos-latest", "macos-13":
+        # Differentiate between ARM and Intel based Macs.
+        system += "-" + platform.machine().lower()
 executable_name = f"jimmy-cli-{system}"
 
 
 a = Analysis(
-    ['src/jimmy_cli.py'],
+    ["src/jimmy_cli.py"],
     pathex=[],
     binaries=[],
     datas=datas,

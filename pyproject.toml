@@ -44,6 +44,8 @@ notes = []  # don't show todos
 [tool.ruff]
 # Set the maximum line length to 88.
 line-length = 88
+# Include pyinstaller spec files.
+extend-include = ["*.spec"]
 [tool.ruff.lint]
 # all rules: https://docs.astral.sh/ruff/rules/
 select = [
