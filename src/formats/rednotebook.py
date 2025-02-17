@@ -1,5 +1,6 @@
 """Convert RedNotebook notes to the intermediate format."""
 
+import datetime
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -46,28 +47,26 @@ class Converter(converter.BaseConverter):
         return body, resources
 
     @common.catch_all_exceptions
-    def convert_note(self, data: dict, day, parent_notebook: imf.Notebook):
-        self.logger.debug(f'Converting note "{day}"')
+    def convert_note(self, data: dict, date: datetime.date):
+        title = date.strftime("%Y-%m-%d")
+        self.logger.debug(f'Converting note "{title}"')
         # TODO: Could be done with https://pypi.org/project/txt2tags/
         # TODO: links are converted, but not correctly
         body = markdown_lib.common.markup_to_markdown(data["text"], format_="t2t")
         body, resources = self.handle_markdown_links(body)
         note_imf = imf.Note(
-            str(day),
+            title,
             body,
             source_application=self.format,
             resources=resources,
         )
-        parent_notebook.child_notes.append(note_imf)
+        self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         for file_ in sorted(self.root_path.glob("*.txt")):
-            # TODO: Split year into separate notebook?
-            parent_notebook = imf.Notebook(file_.stem)
-            self.root_notebook.child_notebooks.append(parent_notebook)
-
+            year, month = file_.stem.split("-", 1)
             # data is encapsulated in yaml, notes are in txt2tags markup
             # see: https://rednotebook.app/help.html#toc38
             note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
             for day, data in note_dict.items():
-                self.convert_note(data, day, parent_notebook)
+                self.convert_note(data, datetime.date(int(year), int(month), int(day)))
