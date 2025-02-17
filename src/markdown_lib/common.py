@@ -310,7 +310,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
         format=INTERMEDIATE_FORMAT,
         extra_args=[
             # don't create artificial line breaks
-            "--wrap=none",
+            "--wrap=preserve",
         ],
     )
     if "[TABLE]" in text_md:
@@ -340,7 +340,7 @@ def markup_to_markdown(
                 # somehow the temp folder is needed to create the resources properly
                 f"--extract-media={resource_folder}",
                 # don't create artificial line breaks
-                "--wrap=none",
+                "--wrap=preserve",
             ],
         )
 
