@@ -24,7 +24,7 @@ If the executable doesn't work, you might try one of the options below.
 | OS | Error Message | Alternative | Comment |
 | --- | --- | --- | --- |
 | Linux | `version 'GLIBC_2.38' not found` | [Download](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux-glibc-compat) | supports systems with `glibc >=2.31` |
-| MacOS | `bad CPU type in executable` | [Download](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64) | supports the x86_64 architecture |
+| MacOS | `zsh: bad CPU type in executable` | [Download](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64) | supports the x86_64 architecture |
 
 ## Supported Apps
 
