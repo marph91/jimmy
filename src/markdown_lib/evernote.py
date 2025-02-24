@@ -13,15 +13,10 @@ from cryptography.hazmat.primitives import padding
 import markdown_lib.common
 
 
-# TODO: simplify
-# pylint: disable=too-many-instance-attributes,too-many-branches,too-many-statements
-
-
 LOGGER = logging.getLogger("jimmy")
 
 
 def decrypt(base64_data: str, password: bytes) -> str | None:
-    # pylint: disable=too-many-locals
     if not password:
         LOGGER.warning('Could not decrypt. Set the password by "--password"')
         return None

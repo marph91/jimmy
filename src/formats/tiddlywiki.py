@@ -201,7 +201,6 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, file_or_folder: Path):
-        # pylint: disable=too-many-locals
         tiddler = file_or_folder.read_text(encoding="utf-8")
         try:
             metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)

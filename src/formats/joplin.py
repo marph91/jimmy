@@ -81,7 +81,6 @@ class Converter(converter.BaseConverter):
         parent_id_note_map.append((metadata_json["parent_id"], note_imf))
 
     def parse_data(self):
-        # pylint: disable=too-many-locals
         parent_id_note_map: list = []
         parent_id_notebook_map = []
         resource_id_filename_map = {}

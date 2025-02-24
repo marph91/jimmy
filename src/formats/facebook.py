@@ -185,8 +185,6 @@ class Converter(converter.BaseConverter):
         return message_content
 
     def convert_messages(self):
-        # TODO
-        # pylint: disable=too-many-locals
         messages_notebook = imf.Notebook("Messages")
         self.root_notebook.child_notebooks.append(messages_notebook)
 

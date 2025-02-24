@@ -115,7 +115,6 @@ class Converter(converter.BaseConverter):
         parent.child_notes.append(imf_note)
 
     def convert_folder(self, folder: Path, parent: imf.Notebook):
-        # pylint: disable=too-many-locals
         for item in sorted(folder.iterdir()):
             if item.is_dir():
                 # notebook

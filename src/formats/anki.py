@@ -35,7 +35,7 @@ def get_sounds(body: str) -> list[tuple[str, str]]:
 
 
 # TODO
-# pylint: disable=too-many-locals,too-many-arguments,too-many-positional-arguments
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 class Converter(converter.BaseConverter):
     accepted_extensions = [".apkg"]
 

@@ -184,8 +184,6 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, node, root_notebook: imf.Notebook):
-        # TODO
-        # pylint: disable=too-many-locals
         title = node.attrib.get("name", "")
         self.logger.debug(f'Converting note "{title}", parent "{root_notebook.title}"')
         note_imf = imf.Note(title, source_application=self.format)

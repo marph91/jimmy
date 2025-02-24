@@ -19,10 +19,6 @@ import intermediate_format as imf
 import markdown_lib.evernote
 
 
-# TODO: simplify
-# pylint: disable=too-many-locals,too-many-branches,too-many-statements
-
-
 class Converter(converter.BaseConverter):
     accepted_extensions = [".enex"]
     accept_folder = True

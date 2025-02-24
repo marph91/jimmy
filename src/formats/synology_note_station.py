@@ -185,7 +185,6 @@ class Converter(converter.BaseConverter):
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        # pylint: disable=too-many-locals
         input_json = json.loads(
             (self.root_path / "config.json").read_text(encoding="utf-8")
         )

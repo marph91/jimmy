@@ -36,7 +36,12 @@ disable = [
     "missing-function-docstring",
     "missing-class-docstring",
     # needed for flexible base class
-    "arguments-differ"
+    "arguments-differ",
+    # too many
+    "too-many-branches",
+    "too-many-instance-attributes",
+    "too-many-locals",
+    "too-many-statements",
 ]
 min-similarity-lines = 10
 notes = []  # don't show todos

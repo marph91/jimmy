@@ -14,8 +14,6 @@ class Converter(converter.BaseConverter):
     accept_folder = True
 
     def parse_content(self, node):
-        # TODO
-        # pylint: disable=too-many-branches
         note_links = []
 
         # https://stackoverflow.com/a/26870728
