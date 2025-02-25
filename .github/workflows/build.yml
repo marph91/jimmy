@@ -24,6 +24,7 @@ jobs:
         # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
         # "macos-latest" to support ARM based MACs
         # "macos-13" to support Intel based MACs
+        # "ubuntu-latest" just for testing if there is an issue with newer glibc
         # "ubuntu-20.04" to get the lowest possible glibc version for compatibility
         os: ["windows-latest", "ubuntu-latest", "ubuntu-20.04", "ubuntu-22.04-arm", "macos-latest", "macos-13"]
         # build "macos-13" executable only at release
@@ -34,7 +35,7 @@ jobs:
           - is_release: false
             os: "macos-13"
           - is_release: false
-            os: "ubuntu-20.04"
+            os: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
         with:
