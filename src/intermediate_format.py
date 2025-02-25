@@ -162,7 +162,6 @@ class Note:
                     available_variables[field.name] = value
                 else:
                     available_variables[field.name] = "null"  # yaml format
-        print(available_variables)
         self.body = template.format(**available_variables)
 
     def apply_frontmatter(self, frontmatter_: str):

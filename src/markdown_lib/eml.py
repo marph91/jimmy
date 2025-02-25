@@ -1,10 +1,10 @@
 """Convert an Email (.eml) to the intermediate format."""
 
+import datetime
 import email
 import email.policy
 import logging
 from pathlib import Path
-import time
 
 import common
 import intermediate_format as imf
@@ -83,16 +83,18 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
         policy=email.policy.default,  # type: ignore[arg-type]
     )
 
-    # time_struct -> unix timestamp -> datetime
-    if (
-        message["Date"] is not None
-        and (parsed_date := email.utils.parsedate(message["Date"])) is not None
-    ) or (
+    # parse date
+    def parsedate(date_str: str | None) -> datetime.datetime | None:
+        try:
+            return email.utils.parsedate_to_datetime(date_str)
+        except ValueError:
+            return None
+
+    if ((parsed_date := parsedate(message["Date"])) is not None) or (
         message["Received"] is not None
-        and (parsed_date := email.utils.parsedate(message["Received"].split("; ")[-1]))
-        is not None
+        and (parsed_date := parsedate(message["Received"].split("; ")[-1])) is not None
     ):
-        date = common.timestamp_to_datetime(int(time.mktime(parsed_date)))
+        date = parsed_date
     else:
         LOGGER.debug("failed to obtain date")
         date = None
