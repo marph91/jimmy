@@ -122,6 +122,11 @@ def jimmy(config) -> common.Stats:
     LOGGER.info("Start parsing")
     root_notebooks = convert_all_inputs(config)
     stats = common.get_import_stats(root_notebooks)
+    if stats.tags > 0 and not (config.frontmatter or config.template_file):
+        LOGGER.warning(
+            "Tags will be lost without frontmatter. "
+            'Frontmatter can be added by "--frontmatter all".'
+        )
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:
         print(get_tree(root_notebooks, Tree("Note Tree")))
@@ -142,7 +147,7 @@ def jimmy(config) -> common.Stats:
 
         # second pass
         file_system_importer = importer.FilesystemImporter(
-            progress_bars, config, stats, pd.note_id_map
+            progress_bars, pd.note_id_map
         )
         file_system_importer.import_notebook(note_tree)
 

@@ -37,8 +37,8 @@ class EndToEnd(unittest.TestCase):
         self.config = SimpleNamespace(
             format=None,
             password=password,
-            title_as_header=False,
             frontmatter=None,
+            template_file=None,
             global_resource_folder=None,
             local_resource_folder=Path("."),
             local_image_folder=None,
@@ -281,23 +281,39 @@ class EndToEnd(unittest.TestCase):
                 reference = reference_data.parent / (reference_data.name + f" {index}")
                 self.assert_dir_trees_equal(actual_data, reference)
 
-    @parameterized.expand(["all", "joplin", "obsidian"])  # TODO: qownnotes
-    def test_frontmatter(self, frontmatter):
-        """Test the frontmatter generation."""
+    @parameterized.expand(
+        [
+            "joplin",
+            "obsidian",
+            "custom_frontmatter.txt",
+            "table.txt",
+            "title_heading.txt",
+        ]
+    )  # qownnotes == obsidian (tags only)
+    def test_template(self, template):
+        """Test note body templates and frontmatter."""
 
-        test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
-        test_data_output = Path("tmp_output/frontmatter") / frontmatter
+        test_data = [Path("test/data/test_data/template") / Path(template).stem]
+        test_data_output = Path("tmp_output/template")
         shutil.rmtree(test_data_output, ignore_errors=True)
         # separate folder for each input
-        reference_data = Path("test/data/reference_data/frontmatter") / frontmatter
+        reference_data = Path("test/data/reference_data/template") / Path(template).stem
 
         self.config.input = test_data
-        self.config.format = "joplin"
         self.config.output_folder = test_data_output
-        self.config.frontmatter = frontmatter
+        if template in ("joplin", "obsidian"):
+            self.config.frontmatter = template
+            self.config.template_file = None
+        else:
+            self.config.frontmatter = None
+            self.config.template_file = (
+                Path("test/data/test_data/template") / template
+            ).resolve()
         jimmy.jimmy(self.config)
 
-        self.assert_dir_trees_equal(test_data_output, reference_data)
+        self.assert_dir_trees_equal(
+            test_data_output / Path(template).stem, reference_data
+        )
 
     @parameterized.expand(
         [
@@ -347,19 +363,3 @@ class EndToEnd(unittest.TestCase):
             self.assert_dir_trees_equal(
                 test_data_output / value, reference_data / value
             )
-
-    def test_title_as_header(self):
-        """Test including the title in the note body."""
-
-        test_data = [Path("test/data/test_data/joplin/test_1/29_04_2024.jex")]
-        test_data_output = Path("tmp_output/title_as_header")
-        shutil.rmtree(test_data_output, ignore_errors=True)
-        reference_data = Path("test/data/reference_data/title_as_header")
-
-        self.config.input = test_data
-        self.config.format = "joplin"
-        self.config.output_folder = test_data_output
-        self.config.title_as_header = True
-        jimmy.jimmy(self.config)
-
-        self.assert_dir_trees_equal(test_data_output, reference_data)

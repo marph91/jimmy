@@ -132,17 +132,9 @@ def remove_void_links(body: str) -> str:
 class FilesystemImporter:
     """Import notebooks, notes and related data to the filesystem."""
 
-    def __init__(self, progress_bars, config, stats, note_id_map):
-        self.include_title = config.title_as_header
-        self.frontmatter = config.frontmatter
+    def __init__(self, progress_bars, note_id_map):
         self.progress_bars = progress_bars
         self.note_id_map: dict[str, Path] = note_id_map
-
-        if stats.tags > 0 and not self.frontmatter:
-            LOGGER.warning(
-                "Tags will be lost without frontmatter. "
-                'Frontmatter can be added by "--frontmatter all".'
-            )
 
     def update_resource_links(self, note: imf.Note, resource: imf.Resource):
         """Replace the original ID of resources with their path in the filesystem."""
@@ -217,10 +209,8 @@ class FilesystemImporter:
         if "tags" in self.progress_bars:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
-
-        content = note.get_finalized_body(self.include_title, self.frontmatter)
-        note.path = common.get_unique_path(note.path, content)
-        note.path.write_text(content, encoding="utf-8")
+        note.path = common.get_unique_path(note.path, note.body)
+        note.path.write_text(note.body, encoding="utf-8")
 
     @common.catch_all_exceptions
     def import_note(self, note: imf.Note):

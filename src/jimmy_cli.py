@@ -61,14 +61,14 @@ def main():
     parser.add_argument(
         "--frontmatter",
         default=None,
-        choices=(None, "all", "joplin", "obsidian", "qownnotes"),
+        choices=(None, "joplin", "obsidian", "qownnotes"),
         help="Frontmatter type.",
     )
     # TODO: document
     parser.add_argument(
-        "--title-as-header",
-        action="store_true",
-        help="Insert the title as header in the first line.",
+        "--template-file",
+        type=Path,
+        help="Path to a template file, applied to the note body.",
     )
     parser.add_argument(
         "--output-folder",

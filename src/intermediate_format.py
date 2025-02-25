@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import datetime as dt
+import logging
 from pathlib import Path
 import re
 
@@ -13,6 +14,7 @@ import pydantic
 import common
 
 
+LOGGER = logging.getLogger("jimmy")
 OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
 
 
@@ -114,7 +116,6 @@ class Tag:
 class Note:
     """Represents a note."""
 
-    # pylint: disable=too-many-instance-attributes
     title: str
     body: str = ""
     created: dt.datetime | None = None
@@ -149,36 +150,27 @@ class Note:
     def is_empty(self) -> bool:
         return not self.body.strip() and not self.tags and not self.resources
 
-    def get_finalized_body(
-        self, include_title: bool = False, frontmatter_: str | None = None
-    ) -> str:
-        """Add title and frontmatter if configured."""
-        body = self.body
+    def apply_template(self, template: str):
+        available_variables: dict = {}
+        for field in dataclasses.fields(Note):
+            if field.name in ("note_links", "resources", "tags"):
+                available_variables[field.name] = [
+                    tag.title for tag in getattr(self, field.name) if tag.title.strip()
+                ]
+            else:
+                if (value := getattr(self, field.name)) is not None:
+                    available_variables[field.name] = value
+                else:
+                    available_variables[field.name] = "null"  # yaml format
+        print(available_variables)
+        self.body = template.format(**available_variables)
 
-        if include_title:
-            body = f"# {self.title}\n\n{body}"
-
+    def apply_frontmatter(self, frontmatter_: str):
         match frontmatter_:
-            case "all":
-                metadata = {}
-                for field in dataclasses.fields(Note):
-                    match field.name:
-                        case (
-                            "body" | "resources" | "note_links" | "original_id" | "path"
-                        ):
-                            continue  # included elsewhere or no metadata
-                        case "tags":
-                            if self.tags:
-                                metadata["tags"] = [tag.title for tag in self.tags]
-                        case _:
-                            if (value := getattr(self, field.name)) is not None:
-                                metadata[field.name] = value
-                post = frontmatter.Post(body, **metadata)
-                body = frontmatter.dumps(post)
             case "joplin":
                 # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
                 # Arbitrary metadata will be ignored.
-                metadata = {}
+                metadata: dict = {}
                 for field in dataclasses.fields(Note):
                     match field.name:
                         case "title" | "author" | "latitude" | "longitude" | "altitude":
@@ -194,8 +186,8 @@ class Note:
                             # avoid issues with special first characters.
                             # See: https://github.com/laurent22/joplin/issues/11179
                             metadata["tags"] = [tag.title.lower() for tag in self.tags]
-                post = frontmatter.Post(body, **metadata)
-                body = frontmatter.dumps(post)
+                post = frontmatter.Post(self.body, **metadata)
+                self.body = frontmatter.dumps(post)
             case "obsidian":
                 # frontmatter format:
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
@@ -204,18 +196,19 @@ class Note:
                     metadata["tags"] = [
                         normalize_obsidian_tag(tag.title) for tag in self.tags
                     ]
-                    post = frontmatter.Post(body, **metadata)
-                    body = frontmatter.dumps(post)
+                    post = frontmatter.Post(self.body, **metadata)
+                    self.body = frontmatter.dumps(post)
             case "qownnotes":
                 # space separated tags, as supported by:
                 # - https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags
                 # - https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags
                 if self.tags:
                     post = frontmatter.Post(
-                        body, tags=" ".join([tag.title for tag in self.tags])
+                        self.body, tags=" ".join([tag.title for tag in self.tags])
                     )
-                    body = frontmatter.dumps(post)
-        return body
+                    self.body = frontmatter.dumps(post)
+            case _:
+                LOGGER.debug(f'Ignoring unknown frontmatter "{frontmatter_}"')
 
 
 @pydantic.dataclasses.dataclass

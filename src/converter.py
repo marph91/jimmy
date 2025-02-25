@@ -6,6 +6,8 @@ from pathlib import Path
 import subprocess
 from xml.etree import ElementTree as ET
 
+import frontmatter
+
 import common
 import intermediate_format as imf
 import markdown_lib.common
@@ -20,6 +22,17 @@ class BaseConverter(abc.ABC):
         self._config = config
         self.logger = logging.getLogger("jimmy")
         self.format = "Jimmy" if config.format is None else config.format
+        self.frontmatter = config.frontmatter
+        if config.template_file is None:
+            self.template = None
+        elif not config.template_file.is_file():
+            self.logger.warning(
+                f'Template file "{config.template_file}" does not exist. '
+                "Ignoring template."
+            )
+            self.template = None
+        else:
+            self.template = config.template_file.read_text(encoding="utf-8")
         self.root_notebook: imf.Notebook
         self.root_path: Path
         self.output_folder = config.output_folder
@@ -65,6 +78,7 @@ class BaseConverter(abc.ABC):
                 self.logger.warning(f"{file_or_folder} has invalid format.")
                 continue
             self.convert(file_or_folder)
+            self.apply_postprocessing(self.root_notebook)
             notebooks.append(self.root_notebook)
         return notebooks
 
@@ -94,6 +108,22 @@ class BaseConverter(abc.ABC):
         #     - extract tags
         #     - extract note links
         #     - append note to the notebook
+
+    def apply_postprocessing(self, root_notebook: imf.Notebook):
+        # apply frontmatter/template to all note bodies
+        if self.template is not None:
+            if self.frontmatter is not None:
+                self.logger.warning(
+                    "Ignoring frontmatter, since a template was specified."
+                )
+            for note in root_notebook.child_notes:
+                note.apply_template(self.template)
+        elif self.frontmatter is not None:
+            for note in root_notebook.child_notes:
+                note.apply_frontmatter(self.frontmatter)
+
+        for notebook in root_notebook.child_notebooks:
+            self.apply_postprocessing(notebook)
 
     def remove_empty_notebooks(self, root_notebook: imf.Notebook | None = None):
         """Remove empty notebooks before exporting."""
@@ -147,6 +177,9 @@ class DefaultConverter(BaseConverter):
             self.logger.debug("Skipping image")
             return
 
+        note_imf = imf.Note(file_.stem, source_application="jimmy")
+        note_imf.time_from_file(file_)
+
         format_ = file_.suffix.lower()[1:]
         match format_:
             case "adoc" | "asciidoc" | "asciidoctor":
@@ -177,7 +210,7 @@ class DefaultConverter(BaseConverter):
                 elif proc.returncode != 0:
                     self.logger.warning(f"Asciidoctor error code: {proc.returncode}")
                     return
-                note_body = markdown_lib.common.markup_to_markdown(
+                note_imf.body = markdown_lib.common.markup_to_markdown(
                     proc.stdout, resource_folder=self.resource_folder
                 )
             case "eml":
@@ -188,12 +221,33 @@ class DefaultConverter(BaseConverter):
                 # Simply wrap in a code block. This is supported in
                 # Joplin and Obsidian via plugins.
                 note_body_fountain = file_.read_text(encoding="utf-8")
-                note_body = f"```fountain\n{note_body_fountain}\n```\n"
-            case "md" | "markdown" | "txt" | "text":
-                note_body = file_.read_text(encoding="utf-8")
+                note_imf.body = f"```fountain\n{note_body_fountain}\n```\n"
+            case "md" | "markdown":
+                metadata, body = frontmatter.parse(file_.read_text(encoding="utf-8"))
+                note_imf.body = body
+                # metadata
+                for key, value in metadata.items():
+                    match key:
+                        case (
+                            "title"
+                            | "author"
+                            | "latitude"
+                            | "longitude"
+                            | "altitude"
+                            | "created"
+                            | "updated"
+                        ):
+                            if value is not None:
+                                setattr(note_imf, key, value)
+                        case "tags":
+                            note_imf.tags.extend([imf.Tag(tag) for tag in value])
+                        case _:
+                            self.logger.debug(f'Ignoring frontmatter key "{key}"')
+            case "txt" | "text":
+                note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":
                 # binary format, supported by pandoc
-                note_body = markdown_lib.common.markup_to_markdown(
+                note_imf.body = markdown_lib.common.markup_to_markdown(
                     file_.read_bytes(),
                     format_=format_,
                     resource_folder=self.resource_folder,
@@ -205,39 +259,33 @@ class DefaultConverter(BaseConverter):
                     case (
                         "endnote" | "mediawiki" | "opml"
                     ):  # TODO: endnotexml and opml example
-                        note_body = markdown_lib.common.markup_to_markdown(
+                        note_imf.body = markdown_lib.common.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
                             format_=root_tag,
                             resource_folder=self.resource_folder,
                         )
                     # TODO: docbook
                     # case "book":
-                    #     note_body = markdown_lib.common.markup_to_markdown(
+                    #     note_imf.body = markdown_lib.common.markup_to_markdown(
                     #         file_.read_text(encoding="utf-8"),
                     #         format_="docbook",
                     #         resource_folder=self.resource_folder,
                     #     )
                     case _:
-                        note_body = file_.read_text(encoding="utf-8")
+                        note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
                 pandoc_format = markdown_lib.common.PANDOC_INPUT_FORMAT_MAP.get(
                     format_, format_
                 )
-                note_body = markdown_lib.common.markup_to_markdown(
+                note_imf.body = markdown_lib.common.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     format_=pandoc_format,
                     resource_folder=self.resource_folder,
                 )
 
-        resources, note_links = self.handle_markdown_links(note_body, file_.parent)
-        note_imf = imf.Note(
-            file_.stem,
-            note_body,
-            source_application="jimmy",
-            resources=resources,
-            note_links=note_links,
-        )
-        note_imf.time_from_file(file_)
+        resources, note_links = self.handle_markdown_links(note_imf.body, file_.parent)
+        note_imf.resources = resources
+        note_imf.note_links = note_links
         parent.child_notes.append(note_imf)
 
     def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):
