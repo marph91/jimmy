@@ -22,11 +22,19 @@ class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, item, parent_notebook: imf.Notebook, namespaces):
         title = get_text(item.find("title"), default=common.unique_title())
+        if (post_type := get_text(item.find("wp:post_type", namespaces))) in (
+            "nav_menu_item",
+            "wp_global_styles",
+            "wp_navigation",
+        ):
+            self.logger.debug(f'Skipping {post_type} "{title}"')
+            return
         self.logger.debug(f'Converting note "{title}"')
         assert title is not None
         note_imf = imf.Note(title)
 
         # TODO: note links
+        # TODO: hierarchy: post_id - post_parent
         note_imf.original_id = get_text(item.find("guid"))
 
         if bool(int(get_text(item.find("wp:is_sticky", namespaces)))):  # type:ignore[arg-type]
@@ -53,6 +61,17 @@ class Converter(converter.BaseConverter):
         content = get_text(item.find("content:encoded", namespaces))
         if content is not None:
             note_imf.body = markdown_lib.common.markup_to_markdown(content)
+        for attachment in item.findall("wp:attachment_url", namespaces):
+            attachment_text = get_text(attachment)
+            if attachment_text is None:
+                continue
+            if attachment_text.lower().endswith(
+                (".gif", ".png", ".jpg", ".jpeg", ".webp")
+            ):
+                attchment_md = f"![]({attachment_text})\n"
+            else:
+                attchment_md = f"<{attachment_text}>\n"
+            note_imf.body += attchment_md
 
         if comments := item.findall("wp:comment", namespaces):
             comments_md = ["", "", "## Comments"]
