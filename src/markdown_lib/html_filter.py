@@ -76,9 +76,11 @@ def multiline_markup(soup: BeautifulSoup):
         match linebreak.parent.name:
             case (
                 "b"
+                | "cite"
                 | "code"
                 | "del"
                 | "em"
+                # TODO: "font"
                 | "i"
                 | "ins"
                 | "s"
@@ -86,6 +88,8 @@ def multiline_markup(soup: BeautifulSoup):
                 | "strong"
                 | "sub"
                 | "sup"
+                | "tt"
+                | "u"
             ):
                 # wrap all siblings
                 for linebreak_sibling in itertools.chain(
