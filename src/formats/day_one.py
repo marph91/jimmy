@@ -23,7 +23,10 @@ def guess_title(body: str) -> str:
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    def create_notebook_hierarchy(self, date_: dt.datetime) -> imf.Notebook:
+    @staticmethod
+    def create_notebook_hierarchy(
+        date_: dt.datetime, root_notebook: imf.Notebook
+    ) -> imf.Notebook:
         def find_or_create_child_notebook(
             title: str, parent_notebook: imf.Notebook
         ) -> imf.Notebook:
@@ -34,9 +37,7 @@ class Converter(converter.BaseConverter):
             parent_notebook.child_notebooks.append(new_notebook)
             return new_notebook
 
-        return find_or_create_child_notebook(
-            date_.strftime("%Y-%m-%d"), self.root_notebook
-        )
+        return find_or_create_child_notebook(date_.strftime("%Y-%m-%d"), root_notebook)
 
     def get_resource_maps(self, entries: list) -> dict[str, dict[str, Path]]:
         # Create "global" maps. The resources are attached to single entries, but they
@@ -119,7 +120,9 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_note(self, entry, resource_id_filename_map):
+    def convert_note(
+        self, entry, resource_id_filename_map, root_notebook: imf.Notebook
+    ):
         note_body = entry.get("text", "")
         # Backslashes are added often. Removing them like this might cause issues.
         note_body = note_body.replace("\\", "")
@@ -156,22 +159,23 @@ class Converter(converter.BaseConverter):
             note_imf.longitude = location["longitude"]
 
         creation_date = dt.datetime.fromisoformat(entry["creationDate"])
-        parent_notebook = self.create_notebook_hierarchy(creation_date)
+        parent_notebook = self.create_notebook_hierarchy(creation_date, root_notebook)
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        potential_sources = list(self.root_path.glob("*.json"))
-        if len(potential_sources) != 1:
+        journals = list(self.root_path.glob("*.json"))
+        if len(journals) == 0:
             self.logger.warning(
-                f"Found to many or less json files {len(potential_sources)}"
+                "Couldn't find json file in the zip. Is this a Day One export?"
             )
             return
 
-        file_dict = json.loads(potential_sources[0].read_text(encoding="utf-8"))
+        for journal in journals:
+            root_notebook = imf.Notebook(journal.stem)
+            self.root_notebook.child_notebooks.append(root_notebook)
 
-        resource_id_filename_map = self.get_resource_maps(file_dict["entries"])
-
-        for entry in file_dict["entries"]:
-            # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
-
-            self.convert_note(entry, resource_id_filename_map)
+            file_dict = json.loads(journal.read_text(encoding="utf-8"))
+            resource_id_filename_map = self.get_resource_maps(file_dict["entries"])
+            for entry in file_dict["entries"]:
+                # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
+                self.convert_note(entry, resource_id_filename_map, root_notebook)
