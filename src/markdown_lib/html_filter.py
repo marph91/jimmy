@@ -27,7 +27,6 @@ def div_checklists(soup: BeautifulSoup):
             span.unwrap()
         # remove the first divs
         for child in task_list.children:
-            # print(child)
             if child.name == "div":
                 child.unwrap()
         # convert the second divs to list items
@@ -172,7 +171,6 @@ def remove_empty_elements(soup: BeautifulSoup):
     # Remove empty elements.
     # TODO: not activated - too many false positives
     def is_empty(element):
-        # print(element)
         return (
             len(element.get_text(strip=True)) == 0
             and not element.contents

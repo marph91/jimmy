@@ -1,10 +1,13 @@
 """Convert TiddlyWiki wikitext to Markdown."""
 
+import logging
 import re
 
 import pyparsing as pp
 
 import markdown_lib.common
+
+LOGGER = logging.getLogger("jimmy")
 
 
 ###########################################################
@@ -71,7 +74,7 @@ def link():
             case "ext" | None:
                 prefix = ""
             case _:
-                print(f"Unknown link type: {type_}")
+                LOGGER.debug(f"Unknown link type: {type_}")
                 return content
         try:
             title, url = content.split("|", maxsplit=1)
@@ -131,7 +134,7 @@ def table():
                 case "h":
                     is_header = True
                 case _:
-                    print(f"Unknown control: {control}")
+                    LOGGER.debug(f"Unknown control: {control}")
 
             cells = [clean_cell(c) for c in content.split("|")]
             if all(c.startswith("!") for c in cells):

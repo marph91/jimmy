@@ -13,7 +13,7 @@ If the executable doesn't work, you might try one of the options below.
 
 :blue_book: For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
-:star: If this app is useful for you, feel free to star it on [Github](https://github.com/marph91/jimmy).
+:star: If Jimmy is useful for you, feel free to star it on [Github](https://github.com/marph91/jimmy).
 
 [![build](https://github.com/marph91/jimmy/actions/workflows/build.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/build.yml)
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
