@@ -10,34 +10,12 @@ import intermediate_format as imf
 import markdown_lib.common
 
 
-def guess_title(body: str) -> str:
-    for line in body.split("\n"):
-        if line.startswith("!["):
-            continue
-        if not line.strip():
-            continue
-        return line.lstrip("#").strip()
-    return ""
-
-
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
-    @staticmethod
-    def create_notebook_hierarchy(
-        date_: dt.datetime, root_notebook: imf.Notebook
-    ) -> imf.Notebook:
-        def find_or_create_child_notebook(
-            title: str, parent_notebook: imf.Notebook
-        ) -> imf.Notebook:
-            for child_notebook in parent_notebook.child_notebooks:
-                if child_notebook.title == title:
-                    return child_notebook
-            new_notebook = imf.Notebook(title)
-            parent_notebook.child_notebooks.append(new_notebook)
-            return new_notebook
-
-        return find_or_create_child_notebook(date_.strftime("%Y-%m-%d"), root_notebook)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.note_names_per_journal = []
 
     def get_resource_maps(self, entries: list) -> dict[str, dict[str, Path]]:
         # Create "global" maps. The resources are attached to single entries, but they
@@ -119,6 +97,26 @@ class Converter(converter.BaseConverter):
                 self.logger.debug(f"Unknown URL protocol {link.url}")
         return resources, note_links
 
+    def get_unique_name(self, name: str) -> str:
+        """Find a unique name for a note."""
+        # Prevent linking issues if the note is renamed later.
+        # TODO: similar to common.get_unique_name
+        if name not in self.note_names_per_journal:
+            return name
+
+        found_new_name = False
+        for new_index in range(1, 10000):
+            new_name = f"{name}-{new_index:04}"
+            if new_name not in self.note_names_per_journal:
+                found_new_name = True
+                break
+        if not found_new_name:
+            # last resort
+            new_name = f"{name}-{common.uuid_title()}"
+
+        self.logger.debug(f'Note "{name}" exists already. New name: "{new_name}".')
+        return new_name
+
     @common.catch_all_exceptions
     def convert_note(
         self, entry, resource_id_filename_map, root_notebook: imf.Notebook
@@ -129,7 +127,9 @@ class Converter(converter.BaseConverter):
         # https://stackoverflow.com/a/55400921/7410886
         note_body = note_body.replace("\u200b", "")
 
-        title = guess_title(note_body)
+        created = dt.datetime.fromisoformat(entry["creationDate"])
+        title = self.get_unique_name(created.strftime("%Y-%m-%d"))
+        self.note_names_per_journal.append(title)
         self.logger.debug(f'Converting note "{title}"')
 
         tags = entry.get("tags", [])
@@ -145,7 +145,7 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title,
             note_body,  # TODO: Is there any advantage of rich text?
-            created=dt.datetime.fromisoformat(entry["creationDate"]),
+            created=created,
             updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
             source_application=self.format,
             resources=resources,
@@ -158,9 +158,7 @@ class Converter(converter.BaseConverter):
             note_imf.latitude = location["latitude"]
             note_imf.longitude = location["longitude"]
 
-        creation_date = dt.datetime.fromisoformat(entry["creationDate"])
-        parent_notebook = self.create_notebook_hierarchy(creation_date, root_notebook)
-        parent_notebook.child_notes.append(note_imf)
+        root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         journals = list(self.root_path.glob("*.json"))
@@ -174,6 +172,7 @@ class Converter(converter.BaseConverter):
             root_notebook = imf.Notebook(journal.stem)
             self.root_notebook.child_notebooks.append(root_notebook)
 
+            self.note_names_per_journal = []
             file_dict = json.loads(journal.read_text(encoding="utf-8"))
             resource_id_filename_map = self.get_resource_maps(file_dict["entries"])
             for entry in file_dict["entries"]:
