@@ -121,37 +121,35 @@ class Converter(converter.BaseConverter):
     def convert_note(
         self, entry, resource_id_filename_map, root_notebook: imf.Notebook
     ):
-        note_body = entry.get("text", "")
-        # Backslashes are added often. Removing them like this might cause issues.
-        note_body = note_body.replace("\\", "")
-        # https://stackoverflow.com/a/55400921/7410886
-        note_body = note_body.replace("\u200b", "")
-
         created = dt.datetime.fromisoformat(entry["creationDate"])
         title = self.get_unique_name(created.strftime("%Y-%m-%d"))
         self.note_names_per_journal.append(title)
         self.logger.debug(f'Converting note "{title}"')
 
-        tags = entry.get("tags", [])
-        if entry.get("starred"):
-            tags.append("day-one-starred")
-        if entry.get("pinned"):
-            tags.append("day-one-pinned")
-
-        resources, note_links = self.handle_markdown_links(
-            note_body, resource_id_filename_map
-        )
-
         note_imf = imf.Note(
             title,
-            note_body,  # TODO: Is there any advantage of rich text?
             created=created,
             updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
             source_application=self.format,
-            resources=resources,
-            tags=[imf.Tag(tag) for tag in tags],
-            note_links=note_links,
             original_id=entry["uuid"],
+        )
+
+        note_imf.body = entry.get(
+            "text", ""
+        )  # TODO: Is there any advantage of rich text?
+        # Backslashes are added often. Removing them like this might cause issues.
+        note_imf.body = note_imf.body.replace("\\", "")
+        # https://stackoverflow.com/a/55400921/7410886
+        note_imf.body = note_imf.body.replace("\u200b", "")
+
+        note_imf.tags.extend([imf.Tag(tag) for tag in entry.get("tags", [])])
+        if entry.get("starred"):
+            note_imf.tags.append(imf.Tag("day-one-starred"))
+        if entry.get("pinned"):
+            note_imf.tags.append(imf.Tag("day-one-pinned"))
+
+        note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+            note_imf.body, resource_id_filename_map
         )
 
         if (location := entry.get("location")) is not None:
