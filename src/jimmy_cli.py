@@ -100,10 +100,9 @@ def main():
         action="store_true",
         help="Print the parsed note tree in intermediate format.",
     )
+    parser.add_argument("--log-file", type=Path, help="Path for the log file.")
     parser.add_argument(
-        "--log-file",
-        action="store_true",
-        help="Create a log file next to the executable.",
+        "--no-stdout-log", action="store_true", help="Don't log to stdout."
     )
     parser.add_argument(
         "--stdout-log-level",
@@ -131,12 +130,19 @@ def main():
 
     config = parser.parse_args()
 
+    if config.no_stdout_log:
+        config.no_progress_bars = True  # TODO: find an explicit way
+
     if config.output_folder is None:
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         format_ = "filesystem" if config.format is None else config.format
         config.output_folder = Path(f"{now} - Jimmy Import from {format_}")
 
-    jimmy.setup_logging(config.log_file, config.stdout_log_level)
+    jimmy.setup_logging(
+        no_stdout_log=config.no_stdout_log,
+        stdout_log_level=config.stdout_log_level,
+        log_file=config.log_file,
+    )
 
     jimmy.jimmy(config)
 
