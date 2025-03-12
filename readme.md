@@ -4,12 +4,7 @@ Free your notes by converting them to Markdown.
 
 :floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**MacOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)  [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://hanadigital.github.io/grev/?user=marph91&repo=jimmy)
 
-If the executable doesn't work, you might try one of the options below.
-
-| OS | Error Message | Alternative | Comment |
-| --- | --- | --- | --- |
-| MacOS | `zsh: bad CPU type in executable` | [Download](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64) | supports the x86_64 architecture |
-| Windows | Flagged by antivirus | - | - Please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). <br>- Workaround: Try an older version. |
+If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
 :blue_book: For detailed information, take a look at the [Documentation](https://marph91.github.io/jimmy/).
 
@@ -93,12 +88,36 @@ flowchart LR
 2. Run `jimmy`, which converts your notes to Markdown
 3. Import the result to Joplin/Obsidian or use any editor to view the notes
 
-For detailed instructions, see the page of the [specific format](https://marph91.github.io/jimmy/formats/default/).
+After conversion, the notes should be available in a folder named like `YYYY-MM-DD HH:MM:SS - Import`. Make sure your data is converted properly :exclamation:
 
-## Quickstart
+What is converted (in most cases)?
 
-1. Download jimmy here: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**MacOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)
-2. Examples for the Linux CLI app:
+- Note content
+- Tags / Labels
+- Images / Resources / Attachments
+- External links and internal note links
+
+## Step-by-step Instructions
+
+| Step | Linux / MacOS Example | Windows Example |
+| --- | --- | --- |
+| Export your notes to your download folder | `/home/user/Downloads/Export.zip` | `C:\Users\user\Downloads\Export.zip` |
+| Download Jimmy to your download folder [1] | `/home/user/Downloads/jimmy-cli-linux` | `C:\Users\user\Downloads\jimmy-cli-windows.exe` |
+| Open a terminal | [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) / [MacOS](https://www.wikihow.com/Open-a-Terminal-Window-in-Mac) instructions | [Windows instructions](https://www.wikihow.com/Open-Terminal-in-Windows) |
+| Change to the download folder | `cd /home/user/Downloads/` | `cd C:\Users\user\Downloads\` |
+| Make Jimmy executable | `chmod +x jimmy-cli-linux` | \-  |
+| Do the conversion [2] [3] | `./jimmy-cli-linux Export.zip --format notion` | `jimmy-cli-windows.exe Export.zip --format notion` |
+| Check the output folder | `/home/user/Downloads/20250226T200101Z - Jimmy Import from notion` | `C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion` |
+
+[1] On Windows: If jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround you can try an older version of jimmy.
+
+[2] On MacOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64). It is supported by Intel chips.
+
+[3] On MacOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize jimmy at `System Settings > Privacy & Security > Security > Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
+
+## Demo
+
+Example commands for the Linux CLI app:
 
 ```bash
 # import a single file supported by pandoc
@@ -110,19 +129,6 @@ jimmy-cli-linux path/to/folder
 # import a Google Keep export
 jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
 ```
-
-After conversion, the notes should be available in a folder named like `YYYY-MM-DD HH:MM:SS - Import`. Make sure your data is converted properly :exclamation:
-
-What is converted (in most cases)?
-
-- Note content
-- Tags / Labels
-- Images / Resources / Attachments
-- External links and internal note links
-
-If something is not working, please check the issues first. If you can't find anything, feel free to create a new issue. It might be just not implemented yet or a regression. On the other side, the exported data can be sparse. In that case it's not possible to transfer the data with jimmy.
-
-## Demo
 
 This is an example of a successful conversion:
 
