@@ -250,6 +250,7 @@ class EndToEnd(unittest.TestCase):
             ["latex", ["default_format/latex"]],
             ["mediawiki", ["default_format/mediawiki"]],
             ["odt", ["default_format/odt"]],
+            ["samsung_notes", ["default_format/samsung_notes"]],
             ["txt2tags", ["default_format/txt2tags-2"]],
             ["vimwiki", ["default_format/vimwiki"]],
         ]

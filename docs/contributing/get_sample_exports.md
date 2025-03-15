@@ -12,14 +12,14 @@ Server backups contain the whole workspace. At least single page exports are pos
 
 ## Samsung Notes
 
-!!! note "Doesn't work yet"
+Inside a Windows VM:
 
-1. Install Genymotion
-2. Disable all running adb servers if necessary (https://support.genymotion.com/hc/en-us/articles/360002734657-The-Virtual-device-is-stuck-on-booting-status)
-3. Install and startphone (for example Samsung Galaxy S10)
-4. Install "Open Gapps" (button on the right)
-5. Install a browser
-6. https://m.apkpure.com/samsung-notes/com.samsung.android.app.notes
+1. Install Samsung Notes
+2. Launch Samsung Notes by executing [this script](https://github.com/kellwinr/galaxybook_mask/blob/c72333f22dc3be130887b5d0fe9666f3b524902a/samsungnotes-directlaunch.bat). The script does the following steps:
+    1. Set `HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS\SystemProductName` to `NP960XFG-KC4UK`
+    2. Set `HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\BIOS\SystemManufacturer` to `Samsung`
+    3. Start Samsung Notes
+    4. Restore the original registry values
 
 ## Synology Note Station
 
