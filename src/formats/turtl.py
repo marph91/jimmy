@@ -108,14 +108,17 @@ class Converter(converter.BaseConverter):
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        if "notes" not in input_json:
+            self.logger.error('"notes" not found. Is this really a Turtl export?')
+            return
 
-        for space in file_dict["spaces"]:
+        for space in input_json["spaces"]:
             self.root_notebook.child_notebooks.append(
                 imf.Notebook(space["title"], original_id=space["id"])
             )
 
-        for board in file_dict["boards"]:
+        for board in input_json["boards"]:
             for space in self.root_notebook.child_notebooks:
                 # TODO: Handle the error case when no space matches.
                 if space.original_id == board["space_id"]:
@@ -125,11 +128,11 @@ class Converter(converter.BaseConverter):
                     break
 
         file_map = {}
-        for file_ in file_dict["files"]:
+        for file_ in input_json["files"]:
             # body seems to be empty always
             file_map[file_["id"]] = file_["data"]
 
-        for note in file_dict["notes"]:
+        for note in input_json["notes"]:
             self.convert_note(note, file_map)
 
         # Don't export empty notebooks

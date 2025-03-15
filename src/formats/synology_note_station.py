@@ -188,6 +188,11 @@ class Converter(converter.BaseConverter):
         input_json = json.loads(
             (self.root_path / "config.json").read_text(encoding="utf-8")
         )
+        if "note" not in input_json:
+            self.logger.error(
+                '"note" not found. Is this really a Synology Note Station export?'
+            )
+            return
 
         # TODO: What is input_json["shortcut"]?
         # TODO: Are nested notebooks possible?

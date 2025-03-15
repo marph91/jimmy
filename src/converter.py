@@ -75,7 +75,7 @@ class BaseConverter(abc.ABC):
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
                 continue
             if not self.has_valid_format(file_or_folder):
-                self.logger.warning(f"{file_or_folder} has invalid format.")
+                self.logger.error("Input file has invalid format.")
                 continue
             self.convert(file_or_folder)
             self.apply_postprocessing(self.root_notebook)

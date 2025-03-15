@@ -267,7 +267,10 @@ class Converter(converter.BaseConverter):
                 target_file = self.root_path / file_
                 break
         if target_file is None:
-            self.logger.error("Couldn't find text file in zip.")
+            self.logger.error(
+                "Couldn't find text file in zip. "
+                "Is this really a Standard Notes export?"
+            )
             return
 
         input_json = json.loads(target_file.read_text(encoding="utf-8"))

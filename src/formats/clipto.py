@@ -27,11 +27,15 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        if "notes" not in input_json:
+            self.logger.error('"notes" not found. Is this really a clipto export?')
+            return
+
         tags = []
         # tags are contained in filters
-        for filter_ in file_dict.get("filters"):
+        for filter_ in input_json.get("filters"):
             tags.append(imf.Tag(filter_["name"], filter_["uid"]))
 
-        for note_clipto in file_dict.get("notes", []):
+        for note_clipto in input_json.get("notes", []):
             self.convert_note(note_clipto, tags)

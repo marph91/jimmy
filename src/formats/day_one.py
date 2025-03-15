@@ -162,7 +162,7 @@ class Converter(converter.BaseConverter):
         journals = list(self.root_path.glob("*.json"))
         if len(journals) == 0:
             self.logger.warning(
-                "Couldn't find json file in the zip. Is this a Day One export?"
+                "Couldn't find json file in the zip. Is this really a Day One export?"
             )
             return
 
@@ -171,8 +171,8 @@ class Converter(converter.BaseConverter):
             self.root_notebook.child_notebooks.append(root_notebook)
 
             self.note_names_per_journal = []
-            file_dict = json.loads(journal.read_text(encoding="utf-8"))
-            resource_id_filename_map = self.get_resource_maps(file_dict["entries"])
-            for entry in file_dict["entries"]:
+            input_json = json.loads(journal.read_text(encoding="utf-8"))
+            resource_id_filename_map = self.get_resource_maps(input_json["entries"])
+            for entry in input_json["entries"]:
                 # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
                 self.convert_note(entry, resource_id_filename_map, root_notebook)

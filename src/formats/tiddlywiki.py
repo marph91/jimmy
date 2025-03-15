@@ -145,8 +145,8 @@ class Converter(converter.BaseConverter):
         self.resource_folder = common.get_temp_folder()
 
     def convert_json(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
-        for tiddler in file_dict:
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        for tiddler in input_json:
             title = tiddler["title"]
             self.logger.debug(f'Converting note "{title}"')
 

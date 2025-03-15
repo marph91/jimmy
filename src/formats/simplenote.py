@@ -51,6 +51,11 @@ class Converter(converter.BaseConverter):
         input_json = json.loads(
             (self.root_path / "source/notes.json").read_text(encoding="utf-8")
         )
+        if "activeNotes" not in input_json:
+            self.logger.error(
+                '"activeNotes" not found. Is this really a Simplenote export?'
+            )
+            return
 
         for note_simplenote in input_json["activeNotes"]:
             self.convert_note(note_simplenote)

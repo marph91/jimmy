@@ -14,7 +14,7 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         # TODO: handle "tags.json"
-        # file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        # input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
 
         # see BaseConverter.convert_multiple()
         textbundle_converter = TextbundleConverter(self._config)

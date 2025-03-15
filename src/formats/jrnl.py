@@ -36,6 +36,9 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
-        for note_jrnl in file_dict.get("entries", []):
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        if "entries" not in input_json:
+            self.logger.error('"entries" not found. Is this really a jrnl export?')
+            return
+        for note_jrnl in input_json.get("entries", []):
             self.convert_note(note_jrnl)

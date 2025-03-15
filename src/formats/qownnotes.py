@@ -116,7 +116,14 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
+        notes = list(file_or_folder.glob("*.md"))
+        if len(notes) == 0:
+            self.logger.warning(
+                "Couldn't find a Markdown file. Is this really a QOwnNotes export?"
+            )
+            return
+
         note_tag_map = self.parse_tags()
 
-        for note_qownnotes in sorted(file_or_folder.glob("*.md")):
+        for note_qownnotes in sorted(notes):
             self.convert_note(note_qownnotes, note_tag_map)

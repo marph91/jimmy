@@ -63,7 +63,14 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        for file_ in sorted(self.root_path.glob("*.txt")):
+        notes = list(self.root_path.glob("*.txt"))
+        if len(notes) == 0:
+            self.logger.warning(
+                "Couldn't find a Markdown file. Is this really a Rednotebook export?"
+            )
+            return
+
+        for file_ in sorted(notes):
             year, month = file_.stem.split("-", 1)
             # data is encapsulated in yaml, notes are in txt2tags markup
             # see: https://rednotebook.app/help.html#toc38

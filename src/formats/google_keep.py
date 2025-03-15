@@ -65,6 +65,12 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
+        notes = list(self.root_path.rglob("*.json"))
+        if len(notes) == 0:
+            self.logger.warning(
+                "Couldn't find a json file. Is this really a Google Keep export?"
+            )
+            return
         # take only the exports in json format
-        for file_ in sorted(self.root_path.rglob("*.json")):
-            self.convert_note(file_)
+        for note in sorted(notes):
+            self.convert_note(note)

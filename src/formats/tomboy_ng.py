@@ -100,7 +100,13 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_dir():
-            for note in sorted(file_or_folder.glob("*.note")):
+            notes = list(file_or_folder.glob("*.note"))
+            if len(notes) == 0:
+                self.logger.warning(
+                    "Couldn't find a note file. Is this really a tomboy ng export?"
+                )
+                return
+            for note in sorted(notes):
                 self.convert_note(note)
         else:
             self.convert_note(file_or_folder)

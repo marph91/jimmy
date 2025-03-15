@@ -37,12 +37,17 @@ class Converter(converter.BaseConverter):
         notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        file_dict = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        if "personalLibrary" not in input_json:
+            self.logger.error(
+                '"personalLibrary" not found. Is this really a cacher export?'
+            )
+            return
 
         # Get the tags/labels for each snippet.
         # cacher labels == tags
         tags_per_snippet = defaultdict(list)
-        for label in file_dict["personalLibrary"]["labels"]:
+        for label in input_json["personalLibrary"]["labels"]:
             for assigned_snippets in label["snippets"]:
                 # We can duplicate tags here. They get deduplicated at import.
                 tags_per_snippet[assigned_snippets["guid"]].append(
@@ -51,7 +56,7 @@ class Converter(converter.BaseConverter):
 
         # cacher snippets == notebooks
         # cacher files == notes
-        for snippet in file_dict["personalLibrary"]["snippets"]:
+        for snippet in input_json["personalLibrary"]["snippets"]:
             notebook = imf.Notebook(
                 snippet["title"],
                 original_id=snippet["guid"],

@@ -72,7 +72,7 @@ def convert_all_inputs(config):
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
     try:
-        LOGGER.debug(f"Try converting with converter {config.format}")
+        LOGGER.debug(f'Try converting with converter "{config.format}"')
         module = importlib.import_module(f"formats.{config.format}")
         converter_ = module.Converter(config)
     except ModuleNotFoundError as exc:
