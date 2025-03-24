@@ -139,6 +139,16 @@ class BaseConverter(abc.ABC):
         root_notebook.child_notebooks = non_empty_child_notebooks
 
 
+def decode_strange_ascii(ascii_: str) -> str:
+    new_str = []
+    for char_ascii in ascii_.split(";"):
+        # there are hidden chars, so lstrip() can't be used
+        code_ascii = char_ascii.lstrip("\x02amp\x03#")
+        if code_ascii:
+            new_str.append(chr(int(code_ascii)))
+    return "".join(new_str)
+
+
 class DefaultConverter(BaseConverter):
     accepted_extensions = ["*"]
     accept_folder = True
@@ -154,6 +164,13 @@ class DefaultConverter(BaseConverter):
         note_links = []
         resources = []
         for link in markdown_lib.common.get_markdown_links(body):
+            # TODO: fix properly
+            if "\x02amp\x03" in str(link):
+                self.logger.warning(f'Trying to repair corrupted link "{link}".')
+                link.text = decode_strange_ascii(link.text)
+                link.url = decode_strange_ascii(link.url)
+                link.title = decode_strange_ascii(link.title)
+
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = path / link.url
