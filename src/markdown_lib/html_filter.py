@@ -11,13 +11,13 @@ import logging
 import re
 import string
 
-from bs4 import BeautifulSoup
+import bs4
 
 LOGGER = logging.getLogger("jimmy")
 HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
-def div_checklists(soup: BeautifulSoup):
+def div_checklists(soup: bs4.BeautifulSoup):
     """Convert div checklists to plain HTML checklists."""
     # reverse to handle nested lists first
     for task_list in reversed(soup.find_all("div", class_="checklist")):
@@ -35,13 +35,13 @@ def div_checklists(soup: BeautifulSoup):
                 child.name = "li"
 
 
-def highlighting(soup: BeautifulSoup):
+def highlighting(soup: bs4.BeautifulSoup):
     """Remove all attributes and enable the "mark" extension to get highlighting."""
     for mark in soup.find_all("mark"):
         mark.attrs = {}
 
 
-def iframes_to_links(soup: BeautifulSoup):
+def iframes_to_links(soup: bs4.BeautifulSoup):
     """Convert iframes to simple links."""
     for iframe in soup.find_all("iframe"):
         iframe.name = "a"
@@ -50,7 +50,7 @@ def iframes_to_links(soup: BeautifulSoup):
         iframe.attrs = {"href": iframe.attrs["src"]}
 
 
-def merge_single_element_lists(soup: BeautifulSoup):
+def merge_single_element_lists(soup: bs4.BeautifulSoup):
     """
     Notion lists and odt lists sometimes contain only one item.
     Append the current item to the previous list if possible.
@@ -69,7 +69,7 @@ def merge_single_element_lists(soup: BeautifulSoup):
                 break  # either it's the first matching sibling or we break
 
 
-def multiline_markup(soup: BeautifulSoup):
+def multiline_markup(soup: bs4.BeautifulSoup):
     for linebreak in soup.find_all(["br", "p"]):
         # https://www.w3schools.com/html/html_formatting.asp
         match linebreak.parent.name:
@@ -101,7 +101,7 @@ def multiline_markup(soup: BeautifulSoup):
                 linebreak.decompose()
 
 
-def nimbus_note_streamline_lists(soup: BeautifulSoup):
+def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
     #   - type is in the class attr (list-item-number, -bullet, -checkbox)
     # - indentation is in the class attr (indent-0)
@@ -140,7 +140,7 @@ def nimbus_note_streamline_lists(soup: BeautifulSoup):
             current_list.append(item)
 
 
-def notion_streamline_lists(soup: BeautifulSoup):
+def notion_streamline_lists(soup: bs4.BeautifulSoup):
     # Checklists are unnumbered lists with special classes.
     for list_ in soup.find_all("ul", class_="to-do-list"):
         for item in list_.find_all("li"):
@@ -151,7 +151,7 @@ def notion_streamline_lists(soup: BeautifulSoup):
                 checked_item.attrs["checked"] = ""  # remove this key for unchecking
 
 
-def remove_bold_header(soup: BeautifulSoup):
+def remove_bold_header(soup: bs4.BeautifulSoup):
     # Remove overlap of bold and header. Keep the outer element.
     def find_all_bold(parent):
         return parent.find_all(["b", "strong"]) + parent.find_all(
@@ -167,7 +167,7 @@ def remove_bold_header(soup: BeautifulSoup):
             header.unwrap()
 
 
-def remove_empty_elements(soup: BeautifulSoup):
+def remove_empty_elements(soup: bs4.BeautifulSoup):
     # Remove empty elements.
     # TODO: not activated - too many false positives
     def is_empty(element):
@@ -191,7 +191,7 @@ def remove_empty_elements(soup: BeautifulSoup):
         remove_if_empty(element)
 
 
-def replace_special_characters(soup: BeautifulSoup):
+def replace_special_characters(soup: bs4.BeautifulSoup):
     # https://www.w3.org/TR/html4/intro/sgmltut.html#h-3.2.3
     # TODO: These characters shouldn't be present in the first case.
     ignore_tags = ("annotation", "code", "kbd", "samp", "pre", "var")
@@ -200,11 +200,11 @@ def replace_special_characters(soup: BeautifulSoup):
     ):
         if element.name in ignore_tags or element.find_parents(ignore_tags):
             continue
-        nested_soup = BeautifulSoup(element.text, "html.parser")
+        nested_soup = bs4.BeautifulSoup(element.text, "html.parser")
         element.replace_with(nested_soup)
 
 
-def synology_note_station_fix_img_src(soup: BeautifulSoup):
+def synology_note_station_fix_img_src(soup: bs4.BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
     # "ref" attribute. Move it where it belongs.
     for img in soup.find_all(
@@ -216,7 +216,10 @@ def synology_note_station_fix_img_src(soup: BeautifulSoup):
             img.attrs["src"] = new_src
 
 
-def streamline_tables(soup: BeautifulSoup):
+NEWLINE_RE = re.compile(".*\n.*")
+
+
+def streamline_tables(soup: bs4.BeautifulSoup):
     # all pipe tables need to be "simple" according to:
     # https://github.com/jgm/pandoc/blob/5766443bc89bababaa8bba956db5f798f8b60675/src/Text/Pandoc/Writers/Markdown.hs#L619
     # - no custom widths
@@ -247,30 +250,49 @@ def streamline_tables(soup: BeautifulSoup):
 
         # Remove all divs, since they cause pandoc to fail converting the table.
         # https://stackoverflow.com/a/32064299/7410886
-        tags_to_remove = ["div", "span"]
+        # Convert code blocks to inline code by removing the "pre" tag.
+        # TODO: This could be problematic with multiline code.
+        tags_to_remove = ["div", "pre", "span"]
         for tag in tags_to_remove:
             for element in table.find_all(tag):
                 element.unwrap()
 
         # another hack: Replace any newlines (<p>, <br>) with a temporary string
         # and with <br> after conversion to markdown.
-        def is_leading_or_trailing_whitespace(item) -> bool:
-            if None in (item.previous_sibling, item.next_sibling):
+        def is_leading_whitespace(item) -> bool:
+            if item.previous_sibling is None:
                 return True
-            if item.previous_sibling.name in ("br", "p") or item.next_sibling.name in (
-                "br",
-                "p",
-            ):
+            if item.previous_sibling.name in ("br", "p"):
                 return True
-            return (
-                not item.previous_sibling.text.strip()
-                or not item.next_sibling.text.strip()
-            )
+            return not item.previous_sibling.text.strip()
+
+        def is_trailing_whitespace(item) -> bool:
+            if item.next_sibling is None:
+                return True
+            if item.next_sibling.name in ("br", "p"):
+                return True
+            return not item.next_sibling.text.strip()
 
         for item in table.find_all("br") + table.find_all("p"):
-            if not is_leading_or_trailing_whitespace(item):
+            if not is_leading_whitespace(item) and not is_trailing_whitespace(item):
                 item.append(soup.new_string("{TEMPORARYNEWLINE}"))
             item.unwrap()
+
+        # another hack: Replace any newlines inside NavigableStrings ("\n")
+        # like above.
+        for table_cell in table.find_all(["th", "td"]):
+            for item in table_cell.find_all(string=NEWLINE_RE):
+                new_string = item
+                # remove whitespaces if they are leading or trailing
+                if is_leading_whitespace(item):
+                    while new_string.startswith("\n"):
+                        new_string = new_string[1:]
+                if is_trailing_whitespace(item):
+                    while new_string.endswith("\n"):
+                        new_string = new_string[:-1]
+                # keep all other whitespaces (in the intermediate form)
+                new_string = new_string.replace("\n", "{TEMPORARYNEWLINE}")
+                item.replace_with(new_string)
 
         # another hack: handle lists, i. e. replace items with "<br>- ..."
         # find only root lists (exclude nested lists)
@@ -301,7 +323,7 @@ def streamline_tables(soup: BeautifulSoup):
         table.attrs = {}
 
 
-def whitespace_in_math(soup: BeautifulSoup):
+def whitespace_in_math(soup: bs4.BeautifulSoup):
     """
     - Escape unescaped newlines inside tex math blocks.
     - Strip trailing (escaped) whitespace.
