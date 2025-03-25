@@ -209,6 +209,7 @@ class EndToEnd(unittest.TestCase):
             [["google_keep/test_3_encrypted/takeout-20250123T101543Z-001.zip"]],
             [["synology_note_station/test_6_encrypted/test8.nsx"]],
             [["synology_note_station/test_7_encrypted/test10.nsx"]],
+            [["telegram/test_1_encrypted/DataExport_2025-03-24"]],
         ],
         name_func=name_func,
     )

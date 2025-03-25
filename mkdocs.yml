@@ -81,6 +81,7 @@ nav:
     - Standard Notes: formats/standard_notes.md
     - Synology Note Station: formats/synology_note_station.md
     - Textbundle: formats/textbundle.md
+    - Telegram: formats/telegram.md
     - Tiddlywiki: formats/tiddlywiki.md
     # TODO
     # - Todo.txt: formats/todo.txt.md

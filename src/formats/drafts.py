@@ -10,7 +10,6 @@ import intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    accept_folder = True
     accepted_extensions = [".draftsexport"]
 
     @common.catch_all_exceptions
@@ -23,7 +22,7 @@ class Converter(converter.BaseConverter):
         if draft["languageGrammar"] not in ("Markdown", "Plain Text"):
             self.logger.warning(
                 f'"languageGrammar={draft["languageGrammar"]}" not supported. '
-                'Handling it as plain text.'
+                "Handling it as plain text."
             )
 
         note_imf = imf.Note(
