@@ -118,7 +118,9 @@ class EndToEnd(unittest.TestCase):
 
         # Skip only here to catch potential errors during conversion.
         if not reference_data.exists():
-            self.skipTest(f"No reference data available at {reference_data}")
+            self.skipTest(
+                f'No reference data available at "{reference_data.resolve()}"'
+            )
 
         self.assert_dir_trees_equal(test_data_output, reference_data)
 
@@ -141,6 +143,7 @@ class EndToEnd(unittest.TestCase):
             [["day_one/test_1/Day.One.zip"]],
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
+            [["drafts/test_1/DraftsExport.draftsExport"]],
             [["dynalist/test_1/dynalist-backup-2024-04-12.zip"]],
             [["evernote/test_1/obsidian-importer"]],
             [["evernote/test_2/joplin"]],
