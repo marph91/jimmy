@@ -14,9 +14,9 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, draft):
-        title = dt.datetime.fromisoformat(draft["created_at"]).strftime(
-            "%Y-%m-%d %H:%M"
-        )
+        # There is no title in drafts.
+        # Simply take the first 80 characters of the first line.
+        title = draft["content"].partition("\n")[0][:80].strip()
         self.logger.debug(f'Converting draft "{title}"')
 
         if draft["languageGrammar"] not in ("Markdown", "Plain Text"):

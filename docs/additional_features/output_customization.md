@@ -2,7 +2,7 @@ The output can be customized in the following ways.
 
 ## Frontmatter
 
-Include Markdown frontmatter by `--frontmatter`. Currently, Joplin and Obsidian compatible frontmatter (`--frontmatter joplin` respectively `--frontmatter obsidian`) can be generated. Alternatively, all available metadata can be included (`--frontmatter all`).
+Include Markdown frontmatter by `--frontmatter`. Currently, Joplin and Obsidian compatible frontmatter (`--frontmatter joplin` respectively `--frontmatter obsidian`) can be generated.
 
 ## Output Folder
 
