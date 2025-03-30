@@ -2,7 +2,7 @@ This page describes how to convert notes from single files or folders (recursive
 
 ## Supported Formats
 
-The default import covers the following formats:
+The default conversion covers the following formats:
 
 - Every format that is supported by [pandoc](https://pandoc.org/). Some formats may need some tweaking, though. A few examples:
     - [Comma-separated values (CSV)](https://en.wikipedia.org/wiki/Comma-separated_values)

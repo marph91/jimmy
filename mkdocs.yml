@@ -51,7 +51,7 @@ markdown_extensions:
 nav:
   - index.md
   - Formats:
-    - Default Import: formats/default.md
+    - Default Conversion: formats/default.md
     - Anki: formats/anki.md
     - Anytype: formats/anytype.md
     - Bear: formats/bear.md
