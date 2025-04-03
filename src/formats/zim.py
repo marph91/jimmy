@@ -2,7 +2,6 @@
 
 import datetime as dt
 from pathlib import Path
-import re
 
 import common
 import converter
@@ -11,68 +10,30 @@ import markdown_lib.common
 from markdown_lib.zim import zim_to_md
 
 
-ZIM_IMAGE_REGEX = re.compile(r"(\{\{(.*?)\}\})")
-
-
 class Converter(converter.BaseConverter):
     accept_folder = True
 
-    @staticmethod
-    def resolve_resource(resource_path: Path, url: Path) -> Path:
-        # relative resources are stored in a folder named like the note
-        # example:
-        # - note.md
-        # - note/image.png
-        return url if Path(url).is_absolute() else resource_path / url
-
-    def handle_zim_links(
-        self, body: str, resource_path: Path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # https://zim-wiki.org/manual/Help/Links.html
-        # https://zim-wiki.org/manual/Help/Wiki_Syntax.html
         note_links = []
         resources = []
-        for _, url, description in markdown_lib.common.get_wikilink_links(body):
-            original_text = f"[[{url}]]"
-            if "/" in url:
-                # resource
-                # Links containing a '/' are considered links to external files
-                resources.append(
-                    imf.Resource(
-                        self.resolve_resource(resource_path, url),
-                        original_text,
-                        description or url,
-                    )
-                )
-            elif "?" in url:
-                # Links that contain a '?' are interwiki links
-                pass  # interwiki links can't be resolved
-            elif url.startswith("#"):
-                # Links that start with a '#' are resolved as links
-                # within the page to a heading or an object
-                pass  # they don't need to be resolved
+        for link in markdown_lib.common.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            if link.url.startswith("#"):
+                # Links that start with a '#' are resolved as links within
+                # the page to a heading or an object
+                continue
+            if link.url.startswith("file://"):
+                continue  # external file, keep it as-is
+            if "/" in link.url:
+                # internal file
+                resources.append(imf.Resource(Path(link.url), str(link), link.text))
             else:
-                # Ignore other directives for now.
-                # TODO: Find a way to map them. Right now we only map by
-                # matching the original_id.
-                original_id = url.split(":")[-1].lstrip("+")
-                note_links.append(
-                    imf.NoteLink(original_text, original_id, description or original_id)
-                )
+                # internal link
+                linked_note_id = Path(link.url.split(":")[-1]).stem
+                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
         return resources, note_links
-
-    def handle_zim_images(self, body: str, resource_path: Path) -> imf.Resources:
-        images = []
-        for original_text, image_link in ZIM_IMAGE_REGEX.findall(body):
-            image_link = Path(image_link)
-            images.append(
-                imf.Resource(
-                    self.resolve_resource(resource_path, image_link),
-                    original_text,
-                    image_link.name,
-                )
-            )
-        return images
 
     @common.catch_all_exceptions
     def convert_note(self, item: Path, parent: imf.Notebook):
@@ -97,14 +58,12 @@ class Converter(converter.BaseConverter):
             if key == "Creation-Date":
                 imf_note.created = dt.datetime.fromisoformat(value)
 
-        imf_note.body = zim_to_md(body)
-
         resource_path = item.parent / item.stem
-        resources, note_links = self.handle_zim_links(imf_note.body, resource_path)
+        imf_note.body = zim_to_md(body, resource_path)
+
+        resources, note_links = self.handle_markdown_links(imf_note.body)
         imf_note.resources = resources
         imf_note.note_links = note_links
-
-        imf_note.resources.extend(self.handle_zim_images(imf_note.body, resource_path))
 
         # tags: https://zim-wiki.org/manual/Help/Tags.html
         # TODO: exclude invalid characters
@@ -127,3 +86,5 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         self.root_path = file_or_folder
         self.convert_folder(file_or_folder, self.root_notebook)
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()

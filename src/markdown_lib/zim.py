@@ -1,5 +1,6 @@
 """Convert Zim Wiki to Markdown."""
 
+from pathlib import Path
 import re
 
 import pyparsing as pp
@@ -68,7 +69,49 @@ def checklist():
     return pp.Regex(checklist_re, as_group_list=True).set_parse_action(to_md)
 
 
-def zim_to_md(zim_text: str) -> str:
+def image(resource_path: Path):
+    def to_md(_, t):  # noqa
+        image_path = Path(t[0].split("?")[0])  # strip queries like "?width=600px"
+        image_path_resolved = resolve_resource(resource_path, image_path)
+        return f"![{image_path.name}]({image_path_resolved})"
+
+    return pp.QuotedString("{{", endQuoteChar="}}").set_parse_action(to_md)
+
+
+def link(resource_path: Path):
+    # https://zim-wiki.org/manual/Help/Links.html
+    def to_md(_, t):  # noqa
+        t_splitted = t[0].rsplit("|", maxsplit=1)
+        url = t_splitted[0]
+
+        # Links that start with a '+' are resolved as sub-pages below the current page
+        url = url.lstrip("+")
+        title = url if len(t_splitted) < 2 else t_splitted[1]
+
+        if any(url.startswith(scheme) for scheme in markdown_lib.common.schemes):
+            # URLs are recognized because they start with e.g. "https://" or "mailto:".
+            pass
+        elif "/" in url:
+            # Links containing a '/' are considered links to external files
+            url = resolve_resource(resource_path, Path(url))
+        return f"[{title}]({url})"
+
+    return pp.QuotedString("[[", endQuoteChar="]]").set_parse_action(to_md)
+
+
+def resolve_resource(resource_path: Path, url: Path) -> str:
+    # relative resources are stored in a folder named like the note
+    # example:
+    # - note.md
+    # - note/image.png
+    if Path.home() in Path(url).expanduser().parents:
+        # add "file://" protocol to external files
+        # https://stackoverflow.com/a/72117102/7410886
+        return Path(url).expanduser().as_uri()
+    return str(url if Path(url).is_absolute() else resource_path / url)
+
+
+def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
     r"""
     Main Zim Wiki to Markdown conversion function.
 
@@ -88,6 +131,16 @@ def zim_to_md(zim_text: str) -> str:
     '- [ ] u\n    - [ ] np\n    - [x] nd\n- [x] nd'
     >>> zim_to_md("* lvl1\n\t* lvl2\n\t* lvl2\n* lvl1")
     '* lvl1\n    * lvl2\n    * lvl2\n* lvl1'
+    >>> zim_to_md("{{./image.png}}")
+    '![image.png](image.png)'
+    >>> zim_to_md("{{./image.png?width=600}}")
+    '![image.png](image.png)'
+    >>> zim_to_md("[[#heading3|heading3]]")
+    '[heading3](#heading3)'
+    >>> zim_to_md("[[https://www.bvb.de/|TITLE]]")
+    '[TITLE](https://www.bvb.de/)'
+    >>> zim_to_md("[[./0.mp3]]")
+    '[./0.mp3](0.mp3)'
     """
     zim_markup = (
         pp.Literal("'''").set_parse_action(lambda: "```")
@@ -97,6 +150,8 @@ def zim_to_md(zim_text: str) -> str:
         | subscript()
         | superscript()
         #
+        | link(resource_path)
+        | image(resource_path)
         | horizontal_line()
         | heading()
         | checklist()

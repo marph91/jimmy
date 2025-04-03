@@ -19,7 +19,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Diaro](https://diaroapp.com/) | - [doc](https://diaroapp.com/faq/how-do-i-backup-my-data-2/) <br>- [script](https://forum.obsidian.md/t/meta-migration-workflows/15252/46) |     |
 | [Didthis](https://didthis.app/) |     |     |
 | [DokuWiki](https://www.dokuwiki.org/) | [doc](https://www.dokuwiki.org/faq:backup) |     |
-| [Drafts](https://getdrafts.com/) |     | apple only |
 | [Dropbox Paper](https://paper.dropbox.com/) | [doc](https://help.dropbox.com/de-de/view-edit/paper-export-docs) (Markdown) |     |
 | [Endnote](https://web.endnote.com/) |     |     |
 | [Fellow](https://fellow.app/) | [doc](https://help.fellow.app/en/articles/5451749-how-to-export-personal-data) (json) |     |
@@ -75,7 +74,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Tana](https://tana.inc/) | [thread](https://www.reddit.com/r/TanaInc/comments/13jjiwi/comment/jkgca57/) |     |
 | [Takenote](https://takenote.ai/) | Export via settings to zipped md and json | No tags/metadata? |
 | [Taskade](https://www.taskade.com/) | [doc](https://help.taskade.com/en/collections/8400888-export) |     |
-| [Telegram](https://telegram.org/) |     | <https://github.com/marph91/jimmy/issues/7> |
 | [TheBrain](https://www.thebrain.com/) | - [thread](https://forums.thebrain.com/post/exporting-brain-possible-9725592) <br>- [script](https://github.com/sanderdatema/thebrain2markdown) |     |
 | [Things](https://github.com/thingsapi/things-cli) |     |     |
 | Treepad | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
