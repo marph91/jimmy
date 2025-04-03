@@ -22,6 +22,10 @@ def relative_path(path: str | Path | None) -> Path | None:
     Traceback (most recent call last):
     ...
     argparse.ArgumentTypeError: Please specify a relative path.
+    >>> str(relative_path("~"))
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Please specify a relative path.
     >>> relative_path("a/b")
     Traceback (most recent call last):
     ...
@@ -34,7 +38,7 @@ def relative_path(path: str | Path | None) -> Path | None:
     if path is None:
         return None
     # https://stackoverflow.com/a/37472037
-    path_to_check = Path(path)
+    path_to_check = Path(path).expanduser()
     if path_to_check.is_absolute():
         raise argparse.ArgumentTypeError("Please specify a relative path.")
     if len(path_to_check.parts) > 1:
