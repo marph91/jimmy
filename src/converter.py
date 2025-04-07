@@ -259,7 +259,7 @@ class DefaultConverter(BaseConverter):
                         case "tags":
                             note_imf.tags.extend([imf.Tag(tag) for tag in value])
                         case _:
-                            self.logger.debug(f'Ignoring frontmatter key "{key}"')
+                            note_imf.custom_metadata[key] = value
             case "txt" | "text":
                 note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":

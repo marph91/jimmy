@@ -135,6 +135,8 @@ class Note:
     original_id: str | None = None
     path: Path | None = None
 
+    custom_metadata: dict = dataclasses.field(default_factory=dict)
+
     @property
     def reference_id(self) -> str:
         """
@@ -151,7 +153,7 @@ class Note:
         return not self.body.strip() and not self.tags and not self.resources
 
     def apply_template(self, template: str):
-        available_variables: dict = {}
+        available_variables = self.custom_metadata
         for field in dataclasses.fields(Note):
             if field.name in ("note_links", "resources", "tags"):
                 available_variables[field.name] = [
@@ -162,7 +164,10 @@ class Note:
                     available_variables[field.name] = value
                 else:
                     available_variables[field.name] = "null"  # yaml format
-        self.body = template.format(**available_variables)
+        try:
+            self.body = template.format(**available_variables)
+        except KeyError as exc:
+            LOGGER.warning(f"Metadata is not available ({exc}). Ignoring template.")
 
     def apply_frontmatter(self, frontmatter_: str):
         match frontmatter_:

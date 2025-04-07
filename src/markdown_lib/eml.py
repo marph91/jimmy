@@ -110,5 +110,6 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
         created=date,
         updated=date,
         author=str(message["From"]),
+        custom_metadata={k.lower(): v for k, v in message.items()},
     )
     return note_imf
