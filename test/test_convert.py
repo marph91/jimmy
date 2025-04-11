@@ -84,7 +84,12 @@ class EndToEnd(unittest.TestCase):
                         (dir1 / file_).read_text(encoding="utf-8").split("\n"),
                         (dir2 / file_).read_text(encoding="utf-8").split("\n"),
                     )
-                    differences.append("\n".join(list(diff)[2:]))
+                    if list(diff):
+                        differences.append("\n".join(list(diff)[2:]))
+                    else:
+                        differences.append(
+                            'No difference detected. Check line endings with "cat -e"'
+                        )
 
             for common_dir in dirs_cmp.common_dirs:
                 compare_dirs(dir1 / common_dir, dir2 / common_dir)

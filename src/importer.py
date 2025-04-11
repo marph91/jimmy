@@ -210,7 +210,9 @@ class FilesystemImporter:
             self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
         note.path = common.get_unique_path(note.path, note.body)
-        note.path.write_text(note.body, encoding="utf-8")
+        # We need to unify line endings explicitly. Pathlib converts them later to
+        # the OS specific line endings, but only if they are not mixed.
+        note.path.write_text(note.body.replace("\r\n", "\n"), encoding="utf-8")
 
     @common.catch_all_exceptions
     def import_note(self, note: imf.Note):
