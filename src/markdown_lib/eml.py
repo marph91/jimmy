@@ -83,6 +83,13 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
         policy=email.policy.default,  # type: ignore[arg-type]
     )
 
+    note_imf = imf.Note(
+        file_.stem,
+        source_application="jimmy",
+        author=str(message["From"]),
+        custom_metadata={k.lower(): v for k, v in message.items()},
+    )
+
     # parse date
     def parsedate(date_str: str | None) -> datetime.datetime | None:
         try:
@@ -98,18 +105,11 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
     else:
         LOGGER.debug("failed to obtain date")
         date = None
+    note_imf.created = date
+    note_imf.updated = date
 
     body, resources = parse_message(message, attachment_folder)
+    note_imf.body = "\n".join(body)
+    note_imf.resources = resources
 
-    note_imf = imf.Note(
-        # TODO: f"{0 if date is None else date.isoformat()}_{message["Subject"]}",
-        file_.stem,
-        "\n".join([f"# {message['Subject']}", ""] + body),
-        source_application="jimmy",
-        resources=resources,
-        created=date,
-        updated=date,
-        author=str(message["From"]),
-        custom_metadata={k.lower(): v for k, v in message.items()},
-    )
     return note_imf
