@@ -25,7 +25,7 @@ Inside a Windows VM:
 ## Synology Note Station
 
 1. Go to the [demo page](https://demo.synology.com/de-de/dsm) and press the "Test" button
-2. Open Note Station by Apps -> Note Station on the top left
+2. Open Note Station by Apps → Note Station on the top left
 3. Files can be transferred through the file system
 
 ## Turtl

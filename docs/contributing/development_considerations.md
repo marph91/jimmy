@@ -6,7 +6,7 @@ To provide a flexible base for migrating your notes to the app of your choice.
 
 ## Why enlighten and not tqdm for progress bars?
 
-enlighten did integrate easier with pythons logging.
+Enlighten did integrate easier with pythons logging.
 
 ## Sort all iterators with arbitrary order
 
@@ -22,7 +22,7 @@ for item in file_or_folder.iterdir():
 
 ## Why pyinstaller and not nuitka?
 
-I did have a bit experience in setting up pyinstaller. The size of the final executable seems to be [much smaller with pyinstaller](https://github.com/Nuitka/Nuitka/issues/926), too.
+I did have a bit of experience in setting up pyinstaller. The size of the final executable seems to be [much smaller with pyinstaller](https://github.com/Nuitka/Nuitka/issues/926), too.
 
 ## Why is the executable so large?
 
@@ -78,7 +78,7 @@ graph TD;
     File -- HTML --> Beautifulsoup;
     Beautifulsoup -- Preprocessed HTML String --> Pandoc;
     File -- Pandoc Supported Formats --> Pandoc;
-    File -- Encapsulated Pandoc Supported Formats (eml,enex,notion,zoho) --> note_extraction[Extract Note];
+    File -- Encapsulated Pandoc Supported Formats (EML,ENEX,Notion,Zoho) --> note_extraction[Extract Note];
     note_extraction -- Pandoc Supported Formats --> Pandoc;
     Pandoc --> Markdown;
 ```
@@ -86,7 +86,7 @@ graph TD;
 ## Intermediate Format
 
 - **HTML**:
-  - Easily modifyable by beautifulsoup and others.
+  - Easily modifiable by beautifulsoup and others.
   - Supports wide range of elements that can be "reduced" to Markdown.
   - No additional dependency (beautifulsoup is used already).
 - Pandoc AST:

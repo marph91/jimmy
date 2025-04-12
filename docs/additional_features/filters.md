@@ -6,7 +6,7 @@ All filters can be used with wildcard. The filters are case-sensitive.
 
 - Exclude or include specific notes (`--exclude-notes`, `--include-notes`)
 - Exclude or include notes with specific tags (`--exclude-notes-with-tags`, `--include-notes-with-tags`)
-- Exclude or include the tags themself (`--exclude-tags`, `--include-tags`)
+- Exclude or include the tags themselves (`--exclude-tags`, `--include-tags`)
 
 To check the exact command, visit the help page (`--help`).
 

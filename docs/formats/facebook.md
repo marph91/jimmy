@@ -7,7 +7,7 @@ This page describes how to convert posts and messages from Facebook to Markdown.
 
 ## Instructions
 
-1. Export as described at [at the website](https://www.facebook.com/help/212802592074644/)
+1. Export as described [at the website](https://www.facebook.com/help/212802592074644/)
     1. Choose JSON
     2. The export may take some time. For a 450 MB file it took two days.
 2. [Install Jimmy](../index.md#installation)
@@ -18,7 +18,7 @@ This page describes how to convert posts and messages from Facebook to Markdown.
 
 - Posts and messages are stored in separate notebooks.
 - Each post is converted to a separate note, starting with the creation date (`YYYY-MM-DD`).
-- Each conversation is a note. Messages are concatenated inside the note and separated by the day. Conversations may be splitted to prevent too big notes.
+- Each conversation is a note. Messages are concatenated inside the note and separated by the day. Conversations may be split to prevent too big notes.
 - Referenced resources (audio, gif, photos, videos and other files) are converted.
 
 ## Known Limitations
@@ -27,4 +27,4 @@ The import was tested with many messages (450 MB, >50000 messages) and only a fe
 
 - Shared posts are not converted.
 - Profile images, stories and shorts are not converted.
-- Group chats are not converted, since Facebook creates a new file everytime a person joins or leaves. It's not possible to merge them by ID.
+- Group chats are not converted, since Facebook creates a new file every time a person joins or leaves. It's not possible to merge them by ID.

@@ -7,14 +7,14 @@
 ## Features
 
 - ✅ Several supported input formats
-- ✅ Markdown + Frontmatter output
+- ✅ Markdown + Front matter output
     - Compatible with any text editor
     - Can be imported to Joplin/Obsidian/...
     - Preserves resources, tags and note links when possible
 - ✅ Offline
 - ✅ Open Source
 - ✅ Cross-platform
-- ✅ Standalone (no Docker, Python or NodeJS installation required)
+- ✅ Standalone (no Docker, Python or Node.js installation required)
 - ❎ No AI
 
 ## Use Cases
@@ -25,7 +25,7 @@
 
 ## Installation
 
-**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
+**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [macOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
 
 If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
@@ -54,14 +54,14 @@ Export data from your app and convert it to Markdown. For details, click on the 
 
 ## Supported Formats
 
-Import a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example you can import a folder with two Asciidoc files and one docx file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
+Import a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can import a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
 
 ||||
 | :--- | :---: | :---: |
 | **A** | <img src="https://avatars.githubusercontent.com/u/3137042?s=100&v=4" style="height:100px;max-width:100px;"><br>[Asciidoc](https://marph91.github.io/jimmy/formats/default/) |
 | **C** | <img src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" style="height:100px;max-width:100px;"><br>[CSV](https://marph91.github.io/jimmy/formats/default/) |
-| **D** | [DocBook](https://marph91.github.io/jimmy/formats/default/) | <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg" style="height:100px;max-width:100px;"><br>[docx](https://marph91.github.io/jimmy/formats/default/) |
-| **E** | [eml](https://en.wikipedia.org/wiki/Email#Filename_extensions) | <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Epub_logo.svg" style="height:100px;max-width:100px;"><br>[EPUB](https://marph91.github.io/jimmy/formats/default/) |
+| **D** | [DocBook](https://marph91.github.io/jimmy/formats/default/) | <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg" style="height:100px;max-width:100px;"><br>[DOCX](https://marph91.github.io/jimmy/formats/default/) |
+| **E** | [EML](https://en.wikipedia.org/wiki/Email#Filename_extensions) | <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Epub_logo.svg" style="height:100px;max-width:100px;"><br>[EPUB](https://marph91.github.io/jimmy/formats/default/) |
 | **F** | <img src="https://fountain.io/wp-content/uploads/2023/05/fountain-sign-164-150x150.png" style="height:100px;max-width:100px;"><br>[Fountain](https://marph91.github.io/jimmy/formats/default/) |
 | **H** | <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" style="height:100px;max-width:100px;"><br>[HTML](https://marph91.github.io/jimmy/formats/default/) |
 | **J** | <img src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" style="height:100px;max-width:100px;"><br>[Jupyter Notebook](https://marph91.github.io/jimmy/formats/default/) |
@@ -92,18 +92,18 @@ flowchart LR
 
 ## Step-by-step Instructions
 
-| Step | Linux / MacOS Example | Windows Example |
+| Step | Linux / macOS Example | Windows Example |
 | --- | --- | --- |
 | Export your notes to your download folder | `/home/user/Downloads/Export.zip` | `C:\Users\user\Downloads\Export.zip` |
 | Download Jimmy to your download folder [1] | `/home/user/Downloads/jimmy-cli-linux` | `C:\Users\user\Downloads\jimmy-cli-windows.exe` |
-| Open a terminal | [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) / [MacOS](https://www.wikihow.com/Open-a-Terminal-Window-in-Mac) instructions | [Windows instructions](https://www.wikihow.com/Open-Terminal-in-Windows) |
+| Open a terminal | [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) / [macOS](https://www.wikihow.com/Open-a-Terminal-Window-in-Mac) instructions | [Windows instructions](https://www.wikihow.com/Open-Terminal-in-Windows) |
 | Change to the download folder | `cd /home/user/Downloads/` | `cd C:\Users\user\Downloads\` |
 | Make Jimmy executable | `chmod +x jimmy-cli-linux` | \-  |
 | Do the conversion [2] [3] | `./jimmy-cli-linux Export.zip --format notion` | `jimmy-cli-windows.exe Export.zip --format notion` |
 | Check the output folder | `/home/user/Downloads/20250226T200101Z - Jimmy Import from notion` | `C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion` |
 
-[1] On Windows: If Jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround you can try an older version of Jimmy.
+[1] On Windows: If Jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround, you can try an older version of Jimmy.
 
-[2] On MacOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64). It is supported by Intel chips.
+[2] On macOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64). It is supported by Intel chips.
 
-[3] On MacOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings > Privacy & Security > Security > Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
+[3] On macOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings > Privacy & Security > Security > Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).

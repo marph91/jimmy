@@ -11,8 +11,8 @@ Open the root folder in the editor.
 Markdown files can be imported to Joplin as described [on the website](https://joplinapp.org/help/apps/import_export/#importing-from-markdown-files):
 
 1. In Joplin, go to `File -> Import` and choose:
-    - `MD - Markdown (Directory)` if you converted without frontmatter. This is the default.
-    - `MD - Markdown + Front Matter (Directory)` if you converted with frontmatter. You can add frontmatter by using the `--frontmatter joplin` argument.
+    - `MD - Markdown (Directory)` if you converted without front matter. This is the default.
+    - `MD - Markdown + Front Matter (Directory)` if you converted with front matter. You can add front matter by using the `--frontmatter joplin` argument.
 2. Select the root folder.
 
 ## Logseq
@@ -27,7 +27,7 @@ Since Logseq doesn't support folders, this will only work with "flat exports". I
 Markdown files can be imported to Obsidian as described [on the website](https://help.obsidian.md/import/markdown):
 
 - Copy the root folder to you vault or open it as a new vault.
-- Add metadata in the frontmatter by using the `--frontmatter obsidian` argument.
+- Add metadata in the front matter by using the `--frontmatter obsidian` argument.
 
 ## QOwnNotes
 

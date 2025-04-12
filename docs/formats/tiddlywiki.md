@@ -19,4 +19,4 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 
 ## Known Limitations
 
-Note content is in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText). It is converted, but Markdown supports only a subset. For example Javascript functions won't work in the converted Markdown anymore.
+Note content is in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText). It is converted, but Markdown supports only a subset. For example JavaScript functions won't work in the converted Markdown anymore.

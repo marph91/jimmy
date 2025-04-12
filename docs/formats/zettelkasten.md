@@ -13,7 +13,7 @@ This page describes how to convert notes from Zettelkasten (zkn3) to Markdown.
 
 ## Import Structure
 
-Zettelkasten supports Markdown export. However, it doesn't convert everything and the note links and attachments get lost. Most data can be preserved, when using the original `.zkn3` location in the filesystem without any export.
+Zettelkasten supports Markdown export. However, it doesn't convert everything and the note links and attachments get lost. Most data can be preserved, when using the original `.zkn3` location in the file system without any export.
 
 - Each zettel is converted to a separate note.
 - The note body of Zettelkasten is converted from [BBCode](https://en.wikipedia.org/wiki/BBCode) to Markdown.

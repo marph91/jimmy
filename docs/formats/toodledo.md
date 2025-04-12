@@ -18,4 +18,4 @@ This page describes how to convert notes from Toodledo to Markdown.
 
 ## Known Limitations
 
-[subtasks](https://www.toodledo.com/info/subtasks.php) and [files](https://www.toodledo.com/organize/files.php) are not implemented, since they require a subscription.
+[Subtasks](https://www.toodledo.com/info/subtasks.php) and [files](https://www.toodledo.com/organize/files.php) are not implemented, since they require a subscription.

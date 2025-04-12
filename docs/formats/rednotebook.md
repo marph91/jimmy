@@ -16,4 +16,4 @@ This page describes how to convert notes from RedNotebook to Markdown.
 
 ## Known Limitations
 
-Images and files are not part of the backup. They will only be included, if the files exist in your filesystem.
+Images and files are not part of the backup. They will only be included, if the files exist in your file system.

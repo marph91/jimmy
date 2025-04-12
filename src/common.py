@@ -106,7 +106,7 @@ def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     if safe_name[-1] in forbidden_last_chars:
         safe_name = safe_name[:-1] + "_"
 
-    # Linux and MacOS restrictions
+    # Linux and macOS restrictions
     forbidden_chars = ["/", "\x00"]
     for char in forbidden_chars:
         safe_name = safe_name.replace(char, "_")

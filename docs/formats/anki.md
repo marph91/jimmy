@@ -26,4 +26,4 @@ A converted page looks like:
 ## Known Limitations
 
 - Nested decks are not tested and most likely not working.
-- HTML formatting is lost. It's too complext to cover all HTML templates properly.
+- HTML formatting is lost. It's too complex to cover all HTML templates properly.

@@ -43,7 +43,7 @@ class Converter(converter.BaseConverter):
                 self.logger.error("Unexpected file formats inside zip.")
                 return temp_folder
 
-        # remove MacOS trash? folder
+        # remove macOS trash? folder
         shutil.rmtree(temp_folder / "__MACOSX", ignore_errors=True)
 
         return temp_folder

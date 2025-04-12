@@ -1,4 +1,4 @@
-This page describes how to convert notes from Wordpress to Markdown.
+This page describes how to convert notes from WordPress to Markdown.
 
 ## General Information
 

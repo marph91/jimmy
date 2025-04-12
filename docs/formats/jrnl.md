@@ -8,7 +8,7 @@ This page describes how to convert notes from jrnl to Markdown.
 ## Instructions
 
 1. Export as described [at the website](https://jrnl.sh/en/stable/formats/#exporting-with-file)
-    1. Export as json to preserve metadata.
+    1. Export as JSON to preserve metadata.
     2. Example: `jrnl --format json --file myjournal.json`
 2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux myjournal.json --format jrnl`

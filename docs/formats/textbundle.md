@@ -12,7 +12,7 @@ Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
 - Bear
 - Craft
 - Ulysses
-- Wordpress
+- WordPress
 - Zettlr
 
 ## Instructions
