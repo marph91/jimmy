@@ -9,7 +9,7 @@ This page describes how to convert notes from Todoist to Markdown.
 
 1. Export as described [at the website](https://todoist.com/de/help/articles/introduction-to-backups-ywaJeQbN)
     1. Uncheck "Use relative data" when exporting.
-2. [Install jimmy](../index.md#installation)
+2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux Privates.csv --format todoist`
 4. [Import to your app](../import_instructions.md)
 

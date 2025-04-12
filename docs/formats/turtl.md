@@ -8,7 +8,7 @@ This page describes how to convert notes from Turtl to Markdown.
 ## Instructions
 
 1. Export as shown [at the website](https://turtlapp.com/features/)
-2. [Install jimmy](../index.md#installation)
+2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux turtl-backup.json --format turtl`
 4. [Import to your app](../import_instructions.md)
 

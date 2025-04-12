@@ -9,7 +9,7 @@ This page describes how to convert notes from Toodledo to Markdown.
 
 1. Export as described [at the website](https://www.toodledo.com/tools/import_export.php)
     1. Uncheck "Use relative data" when exporting.
-2. [Install jimmy](../index.md#installation)
+2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Examples:
     1. `jimmy-cli-linux toodledo_completed_240427.csv --format toodledo`
     2. `jimmy-cli-linux toodledo_current_240427.csv --format toodledo`

@@ -8,7 +8,7 @@ This page describes how to convert notes from Tomboy-ng and Gnote to Markdown.
 
 ## Instructions
 
-1. [Install jimmy](../index.md#installation)
+1. [Install Jimmy](../index.md#installation)
 2. Convert to Markdown. Examples:
     1. `jimmy-cli-linux ~/.local/share/tomboy-ng/ --format tomboy_ng`
     2. `jimmy-cli-linux ~/.local/share/gnote --format tomboy_ng`

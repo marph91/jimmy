@@ -15,7 +15,7 @@ The default conversion covers the following formats:
     - [OpenDocument-Text (ODT)](https://en.wikipedia.org/wiki/OpenDocument)
     - [Outline Processor Markup Language (OPML)](http://opml.org/)
     - [reStructuredText (RST)](https://docutils.sourceforge.io/rst.html)
-    - [Rich Text Format (RTF))](https://en.wikipedia.org/wiki/Rich_Text_Format)
+    - [Rich Text Format (RTF)](https://en.wikipedia.org/wiki/Rich_Text_Format)
     - [txt2tags](https://txt2tags.org/)
 - [asciidoc](https://docs.asciidoctor.org/asciidoc/latest/) (requires [asciidoctor](https://asciidoctor.org/) installed and in path)
 - [Email (eml)](https://en.wikipedia.org/wiki/Email#Filename_extensions)
@@ -27,7 +27,7 @@ The default conversion covers the following formats:
 
 ## Instructions
 
-1. [Install jimmy](../index.md#installation)
+1. [Install Jimmy](../index.md#installation)
 2. Convert to Markdown. Examples:
 ```sh
 # import a single file supported by pandoc

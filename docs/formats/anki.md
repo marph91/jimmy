@@ -9,7 +9,7 @@ This page describes how to convert Anki cards to Markdown.
 
 1. Export as described [at the website](https://docs.ankiweb.net/exporting.html)
     1. Choose "Deck (.apkg)"
-2. [Install jimmy](../index.md#installation)
+2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Example: `jimmy-cli-linux MEILLEUR_DECK_ANGLAIS_3000.apkg --format anki`
 4. [Import to your app](../import_instructions.md)
 

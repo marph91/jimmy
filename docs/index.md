@@ -1,6 +1,8 @@
-# Welcome to jimmy's documentation!
+# Welcome to Jimmy's documentation!
 
-**jimmy** is a tool to import your notes from different formats to Markdown.
+![Jimmy logo](../docs/images/logo2.png)
+
+**Jimmy** is a tool to import your notes from different formats to Markdown.
 
 ## Features
 
@@ -15,9 +17,15 @@
 - ✅ Standalone (no Docker, Python or NodeJS installation required)
 - ❎ No AI
 
+## Use Cases
+
+- Migrate between note apps
+- Save your notes in a future-proof, human-readable format
+- Prepare your notes for processing in a LLM
+
 ## Installation
 
-**Download jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
+**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [MacOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
 
 If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
@@ -71,7 +79,7 @@ flowchart LR
     C[...] --> M
     D[Filesystem] --> M
     M(ZIP archive/JSON/Folder) --> N
-    N{jimmy} --> O(Markdown + Frontmatter)
+    N{Jimmy} --> O(Markdown + Frontmatter)
     O -->|Import| P[Joplin]
     O -->|Import| Q[Obsidian]
     O --> R[...]
@@ -94,8 +102,8 @@ flowchart LR
 | Do the conversion [2] [3] | `./jimmy-cli-linux Export.zip --format notion` | `jimmy-cli-windows.exe Export.zip --format notion` |
 | Check the output folder | `/home/user/Downloads/20250226T200101Z - Jimmy Import from notion` | `C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion` |
 
-[1] On Windows: If jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround you can try an older version of jimmy.
+[1] On Windows: If Jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround you can try an older version of Jimmy.
 
 [2] On MacOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64). It is supported by Intel chips.
 
-[3] On MacOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize jimmy at `System Settings > Privacy & Security > Security > Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
+[3] On MacOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings > Privacy & Security > Security > Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
