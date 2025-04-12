@@ -132,8 +132,8 @@ def remove_void_links(body: str) -> str:
 class FilesystemImporter:
     """Import notebooks, notes and related data to the filesystem."""
 
-    def __init__(self, progress_bars, note_id_map):
-        self.progress_bars = progress_bars
+    def __init__(self, note_id_map, stats: common.Stats):
+        self.stats = stats
         self.note_id_map: dict[str, Path] = note_id_map
 
     def update_resource_links(self, note: imf.Note, resource: imf.Resource):
@@ -205,28 +205,27 @@ class FilesystemImporter:
         )
 
     def write_note(self, note: imf.Note):
-        self.progress_bars["notes"].update(1)
-        if "tags" in self.progress_bars:
-            self.progress_bars["tags"].update(len(note.tags))
         assert note.path is not None
         note.path = common.get_unique_path(note.path, note.body)
         # We need to unify line endings explicitly. Pathlib converts them later to
         # the OS specific line endings, but only if they are not mixed.
         note.path.write_text(note.body.replace("\r\n", "\n"), encoding="utf-8")
+        self.stats.notes += 1  # update stats only after successful write
+        self.stats.tags += len(note.tags)
 
     @common.catch_all_exceptions
     def import_note(self, note: imf.Note):
         # Handle resources and note links first, since the note body changes.
         # "dict.fromkeys()" to remove duplicated resources while retaining order.
         for resource in dict.fromkeys(note.resources):
-            self.progress_bars["resources"].update(1)
             # Write resources first before updating the links, since the path
             # can change in case of duplication.
             self.write_resource(resource)
             self.update_resource_links(note, resource)
+            self.stats.resources += 1
         for note_link in note.note_links:
-            self.progress_bars["note_links"].update(1)
             self.update_note_links(note, note_link)
+            self.stats.note_links += 1
         # Remove any void links. For example "[](abc)" or "[ ](abc)".
         # This can only be done now to avoid removing any note links or
         # resources unintentionally.
@@ -237,9 +236,10 @@ class FilesystemImporter:
     @common.catch_all_exceptions
     def import_notebook(self, notebook: imf.Notebook):
         assert notebook.path is not None
-        self.progress_bars["notebooks"].update(1)
         notebook.path.mkdir(exist_ok=True, parents=True)
+        self.stats.notebooks += 1
         for note in notebook.child_notes:
             self.import_note(note)
         for child_notebook in notebook.child_notebooks:
             self.import_notebook(child_notebook)
+        return self.stats

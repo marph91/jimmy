@@ -49,7 +49,6 @@ class EndToEnd(unittest.TestCase):
             include_notes=None,
             include_notes_with_tags=None,
             include_tags=None,
-            no_progress_bars=True,
         )
 
     def assert_dir_trees_equal(self, dir1: Path, dir2: Path):

@@ -125,7 +125,10 @@ def jimmy(config) -> common.Stats:
     LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Importing notes from "{inputs_str}"')
-    LOGGER.info("Start parsing")
+    LOGGER.info(
+        "Start parsing. This may take some time. "
+        'The extended log can be enabled by "--stdout-log-level DEBUG".'
+    )
     root_notebooks = convert_all_inputs(config)
     stats = common.get_import_stats(root_notebooks)
     LOGGER.info(f"Finished parsing: {stats}")
@@ -135,7 +138,7 @@ def jimmy(config) -> common.Stats:
     LOGGER.info("Start filtering")
     filters.apply_filters(root_notebooks, config)
     stats_filtered = common.get_import_stats(root_notebooks)
-    LOGGER.info(f"Finished filtering: {stats}")
+    LOGGER.info(f"Finished filtering: {stats_filtered}")
     if config.print_tree and stats != stats_filtered:
         print(get_tree(root_notebooks, Tree("Note Tree Filtered")))
 
@@ -145,7 +148,7 @@ def jimmy(config) -> common.Stats:
             "Parsed tags will be lost without frontmatter. "
             'Frontmatter can be added by "--frontmatter joplin".'
         )
-    progress_bars = stats.create_progress_bars(config.no_progress_bars)
+    stats_written = common.Stats()
     for note_tree in root_notebooks:
         # first pass
         pd = importer.PathDeterminer(config)
@@ -153,16 +156,31 @@ def jimmy(config) -> common.Stats:
 
         # second pass
         file_system_importer = importer.FilesystemImporter(
-            progress_bars, pd.note_id_map
+            pd.note_id_map, stats_written
         )
         file_system_importer.import_notebook(note_tree)
-
+    LOGGER.info(f"Finished writing to file system: {stats_written}")
     LOGGER.info(
-        "Converted notes successfully to Markdown: "
+        "Converted files were written to: "
         f"[link={config.output_folder.resolve().as_uri()}]"
         f'"{config.output_folder.name}"[/link]. '
-        "Please verify that everything was converted correctly."
     )
+
+    # Resources might be skipped if duplicated.
+    if (
+        stats_filtered.notebooks == stats_written.notebooks
+        and stats_filtered.notes == stats_written.notes
+    ):
+        LOGGER.info(
+            "Converted notes successfully to Markdown. "
+            "Please verify that everything was converted correctly."
+        )
+    else:
+        LOGGER.warning(
+            "Not all notes could be imported. "
+            'Enable the extended log by "--stdout-log-level DEBUG".'
+        )
+
     LOGGER.info(
         "[bold]Feel free to open an issue on "
         "[link=https://github.com/marph91/jimmy/issues]Github[/link], "

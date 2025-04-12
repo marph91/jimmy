@@ -4,10 +4,6 @@
 
 To provide a flexible base for migrating your notes to the app of your choice.
 
-## Why enlighten and not tqdm for progress bars?
-
-Enlighten did integrate easier with pythons logging.
-
 ## Sort all iterators with arbitrary order
 
 Reproducibility is more important than memory usage and speed.

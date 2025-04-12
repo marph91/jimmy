@@ -1,7 +1,6 @@
 """Common functions."""
 
 import base64
-from collections import defaultdict
 import datetime as dt
 import hashlib
 import importlib
@@ -16,7 +15,6 @@ from typing import Any, Callable, TypeVar, cast
 import uuid
 import zipfile
 
-import enlighten
 import puremagic
 import pydantic
 
@@ -46,7 +44,7 @@ def catch_all_exceptions(func: F) -> F:
         except Exception as exc:  # pylint: disable=broad-except
             LOGGER.warning(
                 "Failed to convert note. "
-                'Enable extended log by "--stdout-log-level DEBUG".'
+                'Enable the extended log by "--stdout-log-level DEBUG".'
             )
             # https://stackoverflow.com/a/52466005/7410886
             LOGGER.debug(exc, exc_info=True)
@@ -252,47 +250,12 @@ class CounterMock:  # pylint: disable=too-few-public-methods
 
 
 @pydantic.dataclasses.dataclass
-class Stats:
+class Stats:  # pylint: disable=too-few-public-methods
     notebooks: int = 0
     notes: int = 0
     resources: int = 0
     tags: int = 0
     note_links: int = 0
-
-    def create_progress_bars(self, no_progress_bars: bool) -> dict:
-        if no_progress_bars:
-            return defaultdict(CounterMock)
-        manager = enlighten.get_manager()
-        common = {
-            "bar_format": "{desc:11s}{percentage:3.0f}%|{bar}| "
-            "{count:{len_total}d}/{total:d} [{elapsed}<{eta}]"
-        }
-        progress_bars = {}
-        if self.notebooks > 0:
-            progress_bars["notebooks"] = manager.counter(
-                total=self.notebooks, desc="Notebooks", **common
-            )
-        if self.notes > 0:
-            progress_bars["notes"] = manager.counter(
-                total=self.notes, desc="Notes", **common
-            )
-        if self.resources > 0:
-            progress_bars["resources"] = manager.counter(
-                total=self.resources, desc="Resources", **common
-            )
-        if self.tags > 0:
-            progress_bars["tags"] = manager.counter(
-                total=self.tags, desc="Tags", **common
-            )
-        if self.note_links > 0:
-            progress_bars["note_links"] = manager.counter(
-                total=self.note_links, desc="Note Links", **common
-            )
-        # Display all counters:
-        # https://python-enlighten.readthedocs.io/en/stable/faq.html#why-isn-t-my-progress-bar-displayed-until-update-is-called
-        for progress_bar in progress_bars.values():
-            progress_bar.refresh()
-        return progress_bars
 
     def __str__(self):
         if self == Stats():

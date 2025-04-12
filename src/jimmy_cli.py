@@ -114,11 +114,6 @@ def main():
         choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
         help="Create a log file next to the executable.",
     )
-    parser.add_argument(
-        "--no-progress-bars",
-        action="store_true",
-        help="Disable the progress bars. Useful for tests.",
-    )
 
     filters = parser.add_mutually_exclusive_group()
     filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
@@ -133,9 +128,6 @@ def main():
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
     config = parser.parse_args()
-
-    if config.no_stdout_log:
-        config.no_progress_bars = True  # TODO: find an explicit way
 
     if config.output_folder is None:
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
