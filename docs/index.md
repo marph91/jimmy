@@ -1,6 +1,6 @@
 # Welcome to Jimmy's documentation!
 
-![Jimmy logo](../docs/images/logo2.png)
+![Jimmy logo](./images/logo2.png)
 
 **Jimmy** is a tool to import your notes from different formats to Markdown.
 

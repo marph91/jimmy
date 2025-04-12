@@ -77,11 +77,12 @@ nav:
     - Obsidian: formats/obsidian.md
     - QOwnNotes: formats/qownnotes.md
     - RedNotebook: formats/rednotebook.md
+    - Samsung Notes: formats/samsung_notes.md
     - Simplenote: formats/simplenote.md
     - Standard Notes: formats/standard_notes.md
     - Synology Note Station: formats/synology_note_station.md
-    - Textbundle: formats/textbundle.md
     - Telegram: formats/telegram.md
+    - Textbundle: formats/textbundle.md
     - Tiddlywiki: formats/tiddlywiki.md
     # TODO
     # - Todo.txt: formats/todo.txt.md
@@ -99,6 +100,7 @@ nav:
     - Customizing the Output: additional_features/output_customization.md
     - Filters: additional_features/filters.md
     - Show the Note Tree: additional_features/show_note_tree.md
+    - Templates: additional_features/templates.md
     - Miscellaneous: additional_features/miscellaneous.md
   - Contributing:
     - How to Contribute?: contributing/contributing.md

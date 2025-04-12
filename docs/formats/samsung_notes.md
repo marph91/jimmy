@@ -5,7 +5,8 @@ This page describes how to convert notes from Samsung Notes to Markdown.
 - [Website](https://www.samsung.com/uk/apps/samsung-notes/)
 - Typical extensions: Folder with `.docx` files
 
-!!! note These instructions don't work with `.snb` files from the old S-Note app. You might try [this script](https://github.com/LucasMatuszewski/snb2md-recursive) instead.
+!!! note
+    These instructions don't work with `.snb` files from the old S-Note app. You might try [this script](https://github.com/LucasMatuszewski/snb2md-recursive) instead.
 
 ## Instructions
 
