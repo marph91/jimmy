@@ -39,6 +39,13 @@ def superscript():
     return pp.QuotedString("^{", endQuoteChar="}").set_parse_action(to_md)
 
 
+def highlight():
+    def to_md(_, t):  # noqa
+        return "==" + t[0] + "=="
+
+    return pp.QuotedString("__").set_parse_action(to_md)
+
+
 def italic():
     def to_md(_, t):  # noqa
         return "*" + t[0][0] + "*"
@@ -123,6 +130,8 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
     '# heading 1'
     >>> zim_to_md("== heading5 ==")
     '##### heading5'
+    >>> zim_to_md("**__highlighted and bold__**")
+    '**==highlighted and bold==**'
     >>> zim_to_md("'''\nsome code\nblock\n'''")
     '```\nsome code\nblock\n```'
     >>> zim_to_md("[ ] unchecked\n[x] not done")
@@ -146,6 +155,7 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
         pp.Literal("'''").set_parse_action(lambda: "```")
         # text formatting
         | quote("''", "`")
+        | highlight()
         | italic()
         | subscript()
         | superscript()
