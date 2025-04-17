@@ -79,11 +79,13 @@ class EndToEnd(unittest.TestCase):
                 )
                 if file_.endswith(".md"):
                     # detailed diff for markdown files
-                    diff = difflib.unified_diff(
-                        (dir1 / file_).read_text(encoding="utf-8").split("\n"),
-                        (dir2 / file_).read_text(encoding="utf-8").split("\n"),
+                    diff = list(
+                        difflib.unified_diff(
+                            (dir1 / file_).read_text(encoding="utf-8").split("\n"),
+                            (dir2 / file_).read_text(encoding="utf-8").split("\n"),
+                        )
                     )
-                    if list(diff):
+                    if diff:
                         differences.append("\n".join(list(diff)[2:]))
                     else:
                         differences.append(
@@ -200,6 +202,7 @@ class EndToEnd(unittest.TestCase):
             [["wordpress/test_4/adversarial-example.xml"]],
             [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
             [["zim/test_1/notebook"]],
+            [["zim/test_2/Zim-Sample-Notebook"]],
             [["zoho_notebook/test_1/Notebook_18Jan2025_1756_html.zip"]],
         ],
         name_func=name_func,
