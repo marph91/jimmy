@@ -3,7 +3,7 @@ This page describes how to convert notes from CherryTree to Markdown.
 ## General Information
 
 - [Website](https://www.giuspen.net/cherrytree/)
-- Typical extension: `.ctd`
+- Typical extension: `.ctd` or folder of `.ctd` files
 
 ## Instructions
 

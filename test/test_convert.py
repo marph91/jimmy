@@ -53,8 +53,8 @@ class EndToEnd(unittest.TestCase):
 
     def assert_dir_trees_equal(self, dir1: Path, dir2: Path):
         """Check that two directories are equal, including file contents."""
-        self.assertTrue(dir1.exists(), dir1)
-        self.assertTrue(dir2.exists(), dir2)
+        self.assertTrue(dir1.exists(), f'Directory "{dir1}" does not exist.')
+        self.assertTrue(dir2.exists(), f'Directory "{dir2}" does not exist.')
 
         differences = []
 
@@ -144,7 +144,9 @@ class EndToEnd(unittest.TestCase):
             [["cherrytree/test_1/cherry.ctb.ctd"]],
             [["cherrytree/test_2/cherrytree_manual.ctd"]],
             [["cherrytree/test_3/lab_report.ctd"]],
-            [["cherrytree/test_4/notes.ctd"]],
+            [["cherrytree/test_4/various_sources"]],
+            [["cherrytree/test_5/Learning-Resources-Cherry-Tree"]],
+            [["cherrytree/test_6/practice"]],
             [["clipto/test_1/clipto_backup_240401_105154.json"]],
             [["day_one/test_1/Day.One.zip"]],
             [["day_one/test_2/dayone-to-obsidian.zip"]],

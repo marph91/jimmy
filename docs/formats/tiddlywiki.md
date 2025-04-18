@@ -3,7 +3,7 @@ This page describes how to convert notes from TiddlyWiki to Markdown.
 ## General Information
 
 - [Website](https://tiddlywiki.com/)
-- Typical extension: `.json`, `.tid` of folder of `.tid` files
+- Typical extension: `.json`, `.tid` or folder of `.tid` files
 
 ## Instructions
 

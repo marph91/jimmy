@@ -77,14 +77,14 @@ def convert_rich_text(rich_text):
     for attrib, attrib_value in rich_text.attrib.items():
         match attrib:
             case "background" | "foreground" | "justification":
-                LOGGER.debug(
-                    f"ignoring {attrib}={attrib_value} "
-                    "as it's not supported in markdown"
-                )
+                pass  # not supported in markdown
             case "family":
                 match attrib_value:
                     case "monospace":
-                        md_content = f"`{md_content}`"
+                        if "\n" in md_content:  # multiline -> code block
+                            md_content = f"\n```\n{md_content}\n```\n"
+                        else:  # single line -> inline code
+                            md_content = f"`{md_content}`"
                     case _:
                         LOGGER.warning(f"ignoring {attrib}={attrib_value}")
             case "link":
@@ -177,6 +177,7 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
 
 class Converter(converter.BaseConverter):
     accepted_extensions = [".ctd"]
+    accept_folder = True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -241,9 +242,9 @@ class Converter(converter.BaseConverter):
             )
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
-            note_imf.created = common.timestamp_to_datetime(int(created_time))
+            note_imf.created = common.timestamp_to_datetime(float(created_time))
         if (updated_time := node.attrib.get("ts_lastsave")) is not None:
-            note_imf.updated = common.timestamp_to_datetime(int(updated_time))
+            note_imf.updated = common.timestamp_to_datetime(float(updated_time))
 
         # If the cherrytree node is only used to contain children (i. e. a folder),
         # don't create a superfluous empty note.
@@ -256,9 +257,9 @@ class Converter(converter.BaseConverter):
             )
             parent_notebook.child_notes.append(note_imf)
 
-    def convert(self, file_or_folder: Path):
-        self.root_path = common.get_temp_folder()
-        root_node = ET.parse(file_or_folder).getroot()
+    @common.catch_all_exceptions
+    def convert_ctd(self, ctd_file: Path, parent_notebook: imf.Notebook):
+        root_node = ET.parse(ctd_file).getroot()
 
         for child in root_node:
             match child.tag:
@@ -266,9 +267,22 @@ class Converter(converter.BaseConverter):
                     # We assume that bookmarks are defined before any nodes.
                     self.bookmarked_nodes = child.attrib.get("list", "").split(",")
                 case "node":
-                    self.convert_note(child, self.root_notebook)
+                    self.convert_note(child, parent_notebook)
                 case _:
                     self.logger.warning(f"ignoring tag {child.tag}")
+
+    def convert(self, file_or_folder: Path):
+        self.root_path = common.get_temp_folder()
+
+        if file_or_folder.is_file():
+            self.convert_ctd(file_or_folder, self.root_notebook)
+        else:  # folder of .ctd
+            for ctd_file in sorted(file_or_folder.glob("*.ctd")):
+                title = ctd_file.stem
+                self.logger.debug(f'Converting notebook "{title}"')
+                parent_notebook = imf.Notebook(title)
+                self.root_notebook.child_notebooks.append(parent_notebook)
+                self.convert_ctd(ctd_file, parent_notebook)
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()
