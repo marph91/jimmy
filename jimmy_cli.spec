@@ -35,7 +35,7 @@ print("libc:", platform.libc_ver())
 
 # need to correspond to ".github/workflows/build.yml"
 match os.getenv("RUNNER_MACHINE"):
-    case "windows-latest" | "ubuntu-20.04":
+    case "windows-latest" | "ubuntu-22.04":
         pass  # default - nothing to do
     case "ubuntu-latest":
         # Differentiate between old glibc (above, for maximum compatibility)
