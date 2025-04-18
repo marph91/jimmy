@@ -205,6 +205,7 @@ class EndToEnd(unittest.TestCase):
             [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
             [["zim/test_1/notebook"]],
             [["zim/test_2/Zim-Sample-Notebook"]],
+            [["zim/test_3/doc"]],
             [["zoho_notebook/test_1/Notebook_18Jan2025_1756_html.zip"]],
         ],
         name_func=name_func,
