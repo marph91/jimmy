@@ -63,11 +63,10 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Remnote](https://www.remnote.com/) | - [doc](https://help.remnote.com/en/articles/7898019-exporting-notes#h_fffe55a9a8) <br>- [script](https://github.com/AnweshGangula/PKMigrator/tree/main/Remnote2Obsidian) <br>- [example file](https://github.com/AnweshGangula/PKMigrator/blob/main/Data/RemNote_Export_August_23rd_2021_Guest_json.zip) |     |
 | [Reor](https://github.com/reorproject/reor) |     |     |
 | [Rightnote](https://www.bauerapps.com/rightnote/) |     |     |
-| [Roam](https://roamresearch.com/) | [format doc](https://github.com/obsidianmd/obsidian-importer/blob/master/src/formats/roam-json.ts) |     |
 | [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) |     |
 | [Signal](https://signal.org/de/) |     | <https://github.com/marph91/jimmy/issues/8> |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
-| [Skiff Pages](https://skiff.com/pages) |     |     |
+| [Skiff Pages](https://skiff.com/pages) |     | Has joined Notion |
 | [Slite](https://slite.com/) | [doc](https://slite.slite.page/p/GB20MuMNuUTvwM/Backing-Up-Your-Data) (Markdown, paid only) |     |
 | [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | <https://github.com/marph91/jimmy/issues/4> |
 | [Supernotes](https://supernotes.app/) | [doc](https://help.supernotes.app/en/articles/3068672-printing-exporting#h_f37e2930e4) |     |

@@ -138,6 +138,18 @@ class BaseConverter(abc.ABC):
                 non_empty_child_notebooks.append(notebook)
         root_notebook.child_notebooks = non_empty_child_notebooks
 
+    def remove_empty_notes(self, root_notebook: imf.Notebook | None = None):
+        """Remove empty notes before exporting."""
+        if root_notebook is None:
+            root_notebook = self.root_notebook
+        non_empty_child_notes = []
+        for notebook in root_notebook.child_notebooks:
+            self.remove_empty_notes(notebook)
+        for note in root_notebook.child_notes:
+            if not note.is_empty():
+                non_empty_child_notes.append(note)
+        root_notebook.child_notes = non_empty_child_notes
+
 
 def decode_strange_ascii(ascii_: str) -> str:
     new_str = []
