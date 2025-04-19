@@ -191,7 +191,7 @@ class EnexToMarkdown:
                     bullet = {"ol": "1. ", "ul": "- "}[self.active_lists[-1]]
                 self.md.append(" " * 4 * (len(self.active_lists) - 1) + bullet)
             case _:
-                LOGGER.warning(f"ignoring opening tag {tag}")
+                LOGGER.debug(f"ignoring opening tag {tag}")
 
         for key, value in attrib.items():
             match key:
@@ -304,7 +304,7 @@ class EnexToMarkdown:
                 ):
                     pass  # handled later or ignored
                 case _:
-                    LOGGER.warning(f'tag "{tag}", ignoring attribute "{key}: {value}"')
+                    LOGGER.debug(f'tag "{tag}", ignoring attribute "{key}: {value}"')
 
     def end(self, tag: str):
         newlines = 0
@@ -406,7 +406,7 @@ class EnexToMarkdown:
             case "li":
                 pass
             case _:
-                LOGGER.warning(f"ignoring closing tag {tag}")
+                LOGGER.debug(f"ignoring closing tag {tag}")
 
         self.global_level -= 1
 
@@ -429,7 +429,7 @@ class EnexToMarkdown:
                 case "underline":
                     self.md.append("++")
                 case _:
-                    LOGGER.warning(f'unhandled formatting "{formatting}"')
+                    LOGGER.debug(f'unhandled formatting "{formatting}"')
             if self.md[-2] == self.md[-1]:
                 # Remove the formatting if there is no data between.
                 # TODO: doesn't work for multiple active formattings

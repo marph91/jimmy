@@ -35,7 +35,7 @@ class Converter(converter.BaseConverter):
                     if item.tag.endswith("list-item"):
                         md_content.append(f"- {item.text}")
                     else:
-                        self.logger.warning(f"ignoring list tag {item.tag}")
+                        self.logger.debug(f"ignoring list tag {item.tag}")
             elif child.tag.endswith("monospace"):
                 md_content.append(f"`{child.text}`")
             elif child.tag.endswith("strikeout"):
@@ -53,7 +53,7 @@ class Converter(converter.BaseConverter):
                     imf.NoteLink(f"[[{child.text}]]", child.text, child.text)
                 )
             else:
-                self.logger.warning(f"ignoring tag {child.tag}")
+                self.logger.debug(f"ignoring tag {child.tag}")
             if child.tail is not None:
                 md_content.append(child.tail)
         if node.tail is not None:

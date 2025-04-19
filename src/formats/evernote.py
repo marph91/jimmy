@@ -152,7 +152,7 @@ class Converter(converter.BaseConverter):
                             self.logger.debug("Skip empty resource")
                             continue
                         if (encoding := resource_data.get("encoding")) != "base64":
-                            self.logger.warning(f"Unsupported encoding: {encoding}")
+                            self.logger.debug(f"Unsupported encoding: {encoding}")
                         temp_filename = self.resource_folder / (
                             common.unique_title()
                             if resource_title is None
@@ -225,9 +225,9 @@ class Converter(converter.BaseConverter):
                                 ):
                                     pass  # TODO
                                 case _:
-                                    self.logger.warning(f"ignoring attr {attr.tag}")
+                                    self.logger.debug(f"ignoring attr {attr.tag}")
                     case _:
-                        self.logger.warning(f"ignoring tag {note_element.tag}")
+                        self.logger.debug(f"ignoring tag {note_element.tag}")
             # replace tasks
             for group_id, tasks_md in tasks.items():
                 # tasks_md: [list_index, markdown task]

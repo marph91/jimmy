@@ -27,7 +27,7 @@ class Converter(converter.BaseConverter):
                     # TODO: add when arbitrary metadata is supported
                     pass
                 case _:
-                    self.logger.warning(f"ignoring attribute {key}={value}")
+                    self.logger.debug(f"ignoring attribute {key}={value}")
 
     def handle_markdown_links(
         self, body: str, source_folder: Path
@@ -117,7 +117,7 @@ class Converter(converter.BaseConverter):
                 case "manlinks":
                     pass  # TODO: Should correspond to the parsed note links.
                 case _:
-                    self.logger.warning(f"ignoring item {item.tag}={item.text}")
+                    self.logger.debug(f"ignoring item {item.tag}={item.text}")
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):

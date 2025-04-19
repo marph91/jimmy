@@ -86,7 +86,7 @@ def convert_rich_text(rich_text):
                         else:  # single line -> inline code
                             md_content = f"`{md_content}`"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "link":
                 url = attrib_value
                 if url.startswith("webs "):
@@ -118,33 +118,33 @@ def convert_rich_text(rich_text):
                     case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
                         leading = f"{'#' * int(attrib_value[-1])} " + leading
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":
                 match attrib_value:
                     case "true":
                         md_content = f"~~{md_content}~~"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "style":
                 match attrib_value:
                     case "italic":
                         md_content = f"*{md_content}*"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "underline":
                 match attrib_value:
                     case "single":
                         md_content = f"++{md_content}++"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "weight":
                 match attrib_value:
                     case "heavy":
                         md_content = f"**{md_content}**"
                     case _:
-                        LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                        LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case _:
-                LOGGER.warning(f"ignoring {attrib}={attrib_value}")
+                LOGGER.debug(f"ignoring {attrib}={attrib_value}")
     md_content = leading + md_content + trailing
     if not md_content:
         # TODO: make this more robust
@@ -228,7 +228,7 @@ class Converter(converter.BaseConverter):
                 case "table":
                     note_body += "\n" + convert_table(child) + "\n"
                 case _:
-                    self.logger.warning(f"ignoring tag {child.tag}")
+                    self.logger.debug(f"ignoring tag {child.tag}")
 
         note_imf.body = note_body
 
@@ -269,7 +269,7 @@ class Converter(converter.BaseConverter):
                 case "node":
                     self.convert_note(child, parent_notebook)
                 case _:
-                    self.logger.warning(f"ignoring tag {child.tag}")
+                    self.logger.debug(f"ignoring tag {child.tag}")
 
     def convert(self, file_or_folder: Path):
         self.root_path = common.get_temp_folder()
