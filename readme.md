@@ -58,7 +58,7 @@ Export data from your app and convert it to Markdown. For details, click on the 
 
 ## Supported Formats
 
-Import a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can import a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
+Convert a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can convert a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
 
 ||||
 | :--- | :---: | :---: |
@@ -126,13 +126,13 @@ What is converted (in most cases)?
 Example commands for the Linux CLI app:
 
 ```bash
-# import a single file supported by pandoc
+# convert a single file supported by pandoc
 jimmy-cli-linux libre_office_document.odt
 
-# import all files in a folder
+# convert all files in a folder
 jimmy-cli-linux path/to/folder
 
-# import a Google Keep export
+# convert a Google Keep export
 jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
 ```
 

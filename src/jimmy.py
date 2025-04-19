@@ -1,4 +1,4 @@
-"""Importer for many (note) formats to Markdown."""
+"""Converter for many (note) formats to Markdown."""
 
 import importlib
 import logging
@@ -13,7 +13,7 @@ from rich.tree import Tree
 import common
 import converter
 import filters
-import importer
+import writer
 import intermediate_format as imf
 
 
@@ -67,7 +67,7 @@ def setup_logging(
 def convert_all_inputs(config):
     """
     Convert the input data to an intermediate representation
-    that can be used by the importer later.
+    that can be used by the writer later.
     """
     # Try to use an app specific converter. If there is none,
     # fall back to the default converter.
@@ -124,7 +124,7 @@ def get_pandoc_version():
 def jimmy(config) -> common.Stats:
     LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
-    LOGGER.info(f'Importing notes from "{inputs_str}"')
+    LOGGER.info(f'Converting notes from "{inputs_str}"')
     LOGGER.info(
         "Start parsing. This may take some time. "
         'The extended log can be enabled by "--stdout-log-level DEBUG".'
@@ -151,14 +151,12 @@ def jimmy(config) -> common.Stats:
     stats_written = common.Stats()
     for note_tree in root_notebooks:
         # first pass
-        pd = importer.PathDeterminer(config)
+        pd = writer.PathDeterminer(config)
         pd.determine_paths(note_tree)
 
         # second pass
-        file_system_importer = importer.FilesystemImporter(
-            pd.note_id_map, stats_written
-        )
-        file_system_importer.import_notebook(note_tree)
+        file_system_writer = writer.FilesystemWriter(pd.note_id_map, stats_written)
+        file_system_writer.write_notebook(note_tree)
     LOGGER.info(f"Finished writing to file system: {stats_written}")
     LOGGER.info(
         "Converted files were written to: "

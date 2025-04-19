@@ -129,8 +129,8 @@ def remove_void_links(body: str) -> str:
     return VOID_LINK_REGEX.sub(replace_with_logging, body)
 
 
-class FilesystemImporter:
-    """Import notebooks, notes and related data to the filesystem."""
+class FilesystemWriter:
+    """Write notebooks, notes and related data to the filesystem."""
 
     def __init__(self, note_id_map, stats: common.Stats):
         self.stats = stats
@@ -204,17 +204,8 @@ class FilesystemImporter:
             note_link.original_text, f"[{link_title}]({relative_path})"
         )
 
-    def write_note(self, note: imf.Note):
-        assert note.path is not None
-        note.path = common.get_unique_path(note.path, note.body)
-        # We need to unify line endings explicitly. Pathlib converts them later to
-        # the OS specific line endings, but only if they are not mixed.
-        note.path.write_text(note.body.replace("\r\n", "\n"), encoding="utf-8")
-        self.stats.notes += 1  # update stats only after successful write
-        self.stats.tags += len(note.tags)
-
     @common.catch_all_exceptions
-    def import_note(self, note: imf.Note):
+    def write_note(self, note: imf.Note):
         # Handle resources and note links first, since the note body changes.
         # "dict.fromkeys()" to remove duplicated resources while retaining order.
         for resource in dict.fromkeys(note.resources):
@@ -230,16 +221,23 @@ class FilesystemImporter:
         # This can only be done now to avoid removing any note links or
         # resources unintentionally.
         note.body = remove_void_links(note.body)
+
         # Finally write the note to the filesystem.
-        self.write_note(note)
+        assert note.path is not None
+        note.path = common.get_unique_path(note.path, note.body)
+        # We need to unify line endings explicitly. Pathlib converts them later to
+        # the OS specific line endings, but only if they are not mixed.
+        note.path.write_text(note.body.replace("\r\n", "\n"), encoding="utf-8")
+        self.stats.notes += 1  # update stats only after successful write
+        self.stats.tags += len(note.tags)
 
     @common.catch_all_exceptions
-    def import_notebook(self, notebook: imf.Notebook):
+    def write_notebook(self, notebook: imf.Notebook):
         assert notebook.path is not None
         notebook.path.mkdir(exist_ok=True, parents=True)
         self.stats.notebooks += 1
         for note in notebook.child_notes:
-            self.import_note(note)
+            self.write_note(note)
         for child_notebook in notebook.child_notebooks:
-            self.import_notebook(child_notebook)
+            self.write_notebook(child_notebook)
         return self.stats

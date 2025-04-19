@@ -30,13 +30,13 @@ The default conversion covers the following formats:
 1. [Install Jimmy](../index.md#installation)
 2. Convert to Markdown. Examples:
 ```sh
-# import a single file supported by pandoc
+# convert a single file supported by pandoc
 jimmy-cli-linux libre_office_document.odt
 
-# import multiple files
+# convert multiple files
 jimmy-cli-linux plaintext.txt markdown.md
 
-# import all files in a folder recursively
+# convert all files in a folder recursively
 jimmy-cli-linux path/to/folder
 ```
 3. [Import to your app](../import_instructions.md)

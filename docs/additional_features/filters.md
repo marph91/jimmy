@@ -1,4 +1,4 @@
-There are some simple filters to select which data to import. For more complex filtering, a separate plugin or script should be used.
+There are some simple filters to select which data to convert. For more complex filtering, a separate plugin or script should be used.
 
 ## Available Filters
 
@@ -20,12 +20,12 @@ Filtering by notebooks is not possible, because nesting can yield some ambiguiti
 # show the help
 jimmy-cli-linux --help
 
-# import specific nots only
+# convert specific notes only
 jimmy-cli-linux obsidian_vault/ --format obsidian --include-notes "Sample note" "Second sample note"
 
 # exclude notes with a tag
 jimmy-cli-linux obsidian_vault/ --format obsidian --exclude-notes-with-tags "ignore this tag"
 
-# don't import any tags
+# don't convert any tags
 jimmy-cli-linux obsidian_vault/ --format obsidian --exclude-tags "*"
 ```

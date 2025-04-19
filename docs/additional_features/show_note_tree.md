@@ -2,7 +2,7 @@ The note tree in the intermediate format can be shown by `--print-tree`.
 
 ## Examples
 
-1. Simply show the imported note tree:
+1. Simply show the converted note tree:
 
 ```sh
 $ jimmy-cli-linux .cache/arbitrary_folder/arbitrary_folder/ --print-tree

@@ -2,7 +2,7 @@
 
 ![Jimmy logo](./images/logo2.png)
 
-**Jimmy** is a tool to import your notes from different formats to Markdown.
+**Jimmy** is a tool to convert your notes from different formats to Markdown.
 
 ## Features
 
@@ -54,7 +54,7 @@ Export data from your app and convert it to Markdown. For details, click on the 
 
 ## Supported Formats
 
-Import a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can import a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
+Convert a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can convert a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.
 
 ||||
 | :--- | :---: | :---: |
