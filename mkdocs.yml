@@ -7,6 +7,8 @@ repo_url: https://github.com/marph91/jimmy
 
 theme:
   name: material
+  logo: images/favicon.png
+  favicon: images/favicon.png
   # add open graph metadata (for example for discourse links)
   # https://mrkeo.github.io/reference/meta-tags/#customization
   custom_dir: docs/overrides
