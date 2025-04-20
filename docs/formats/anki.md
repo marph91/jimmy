@@ -25,7 +25,7 @@ description: Convert from Anki to Markdown.
 
 A converted page looks like:
 
-![](../images/anki_markdown_example.png)
+![Anki import in Joplin](../images/anki_markdown_example.png)
 
 ## Known Limitations
 
