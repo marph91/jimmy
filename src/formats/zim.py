@@ -54,9 +54,23 @@ class Converter(converter.BaseConverter):
             metadata = ""
 
         for line in metadata.split("\n"):
-            key, value = line.split(": ", maxsplit=1)
-            if key == "Creation-Date":
-                imf_note.created = dt.datetime.fromisoformat(value)
+            try:
+                key, value = line.split(": ", maxsplit=1)
+            except ValueError:
+                self.logger.debug(
+                    "Failed to parse metadata. Probably only a txt attachment."
+                )
+                return
+
+            match key:
+                case "Content-Type":
+                    if value != "text/x-zim-wiki":
+                        self.logger.warning(
+                            f'Unexpected content type "{value}". '
+                            "Trying to parse anyway."
+                        )
+                case "Creation-Date":
+                    imf_note.created = dt.datetime.fromisoformat(value)
 
         resource_path = item.parent / item.stem
         imf_note.body = zim_to_md(body, resource_path)
