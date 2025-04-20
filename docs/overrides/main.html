@@ -1,15 +1,24 @@
 {% extends "base.html" %}
 
+{# add opengraph metadata for discourse links #}
 {% block extrahead %}
+
   {% set title = config.site_name %}
   {% if page and page.meta and page.meta.title %}
     {% set title = title ~ " - " ~ page.meta.title %}
   {% elif page and page.title and not page.is_homepage %}
     {% set title = title ~ " - " ~ page.title | striptags %}
   {% endif %}
+
+  {% if page and page.meta and page.meta.description %}
+    {% set description = page.meta.description %}
+  {% else %}
+    {% set description = config.site_description %}
+  {% endif %}
+
   <meta property="og:type" content="website" />
   <meta property="og:title" content="{{ title }}" />
-  <meta property="og:description" content="{{ config.site_description }}" />
+  <meta property="og:description" content="{{ description }}" />
   <meta property="og:url" content="{{ page.canonical_url }}" />
   <meta property="og:image" content="<TODO>" />
   <meta property="og:image:type" content="image/png" />
