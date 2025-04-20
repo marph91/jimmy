@@ -1,4 +1,4 @@
-This page describes how to convert chats from Telegram to Markdown.
+# Convert from Telegram to Markdown
 
 ## General Information
 

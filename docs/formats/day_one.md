@@ -1,4 +1,4 @@
-This page describes how to convert notes from Day One to Markdown.
+# Convert from Day One to Markdown
 
 ## General Information
 

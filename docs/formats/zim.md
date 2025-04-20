@@ -1,4 +1,4 @@
-This page describes how to convert notes from Zim Wiki to Markdown.
+# Convert from Zim Wiki to Markdown
 
 ## General Information
 

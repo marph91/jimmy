@@ -1,4 +1,4 @@
-This page describes how to convert notes from ColorNote to Markdown.
+# Convert from ColorNote to Markdown
 
 ## General Information
 

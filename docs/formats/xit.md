@@ -1,4 +1,4 @@
-This page describes how to convert notes from [x]it! to Markdown.
+# Convert from [x]it! to Markdown
 
 ## General Information
 

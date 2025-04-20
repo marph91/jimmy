@@ -1,4 +1,4 @@
-This page describes how to convert notes from Standard Notes to Markdown.
+# Convert from Standard Notes to Markdown
 
 ## General Information
 

@@ -1,4 +1,4 @@
-This page describes how to convert notes in Joplin's JEX format to Markdown.
+# Convert from Joplin to Markdown
 
 ## General Information
 

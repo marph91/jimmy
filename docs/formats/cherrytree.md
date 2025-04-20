@@ -1,4 +1,4 @@
-This page describes how to convert notes from CherryTree to Markdown.
+# Convert from CherryTree to Markdown
 
 ## General Information
 

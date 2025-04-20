@@ -1,4 +1,4 @@
-This page describes how to convert notes from Todo.txt to Markdown.
+# Convert from Todo.txt to Markdown
 
 ## General Information
 

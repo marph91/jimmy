@@ -1,4 +1,4 @@
-This page describes how to convert notes from Turtl to Markdown.
+# Convert from Turtl to Markdown
 
 ## General Information
 

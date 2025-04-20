@@ -1,4 +1,4 @@
-This page describes how to convert notes from RedNotebook to Markdown.
+# Convert from RedNotebook to Markdown
 
 ## General Information
 

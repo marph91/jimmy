@@ -1,4 +1,4 @@
-This page describes how to convert notes from Evernote to Markdown.
+# Convert from Evernote to Markdown
 
 ## General Information
 

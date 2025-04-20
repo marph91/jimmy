@@ -1,9 +1,9 @@
-This page describes how to convert notes from Tomboy-ng and Gnote to Markdown.
+# Convert from Tomboy-ng to Markdown
 
 ## General Information
 
-- [Tomboy-ng Website](https://wiki.gnome.org/Apps/Tomboy/tomboy-ng)
-- [Gnote Website](https://wiki.gnome.org/Apps/Gnote)
+- [Tomboy-ng Website](https://github.com/tomboy-notes/tomboy-ng)
+- [Gnote Website](https://wiki.gnome.org/Apps/Gnote). Gnote is a [port of Tomboy to C++](https://askubuntu.com/a/77046/641874). They use a similar note format.
 - Typical extension: `.note` file or folder with `.note` files
 
 ## Instructions

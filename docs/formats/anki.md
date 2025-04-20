@@ -1,4 +1,4 @@
-This page describes how to convert Anki cards to Markdown.
+# Convert from Anki to Markdown
 
 ## General Information
 

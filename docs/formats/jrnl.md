@@ -1,4 +1,4 @@
-This page describes how to convert notes from jrnl to Markdown.
+# Convert from jrnl to Markdown
 
 ## General Information
 

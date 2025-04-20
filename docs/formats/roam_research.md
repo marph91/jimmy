@@ -1,4 +1,4 @@
-This page describes how to convert notes from Roam Research to Markdown.
+# Convert from Roam Research to Markdown
 
 ## General Information
 

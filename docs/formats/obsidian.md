@@ -1,4 +1,4 @@
-This page describes how to convert notes from Obsidian to Markdown.
+# Convert from Obsidian to Markdown
 
 ## General Information
 

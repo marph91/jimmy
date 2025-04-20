@@ -1,4 +1,4 @@
-This page describes how to convert notes from TiddlyWiki to Markdown.
+# Convert from TiddlyWiki to Markdown
 
 ## General Information
 

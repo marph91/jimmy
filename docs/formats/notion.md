@@ -1,4 +1,4 @@
-This page describes how to convert notes from Notion to Markdown.
+# Convert from Notion to Markdown
 
 ## General Information
 

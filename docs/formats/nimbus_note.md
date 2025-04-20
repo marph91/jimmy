@@ -1,8 +1,9 @@
-This page describes how to convert notes from FuseBase (formerly Nimbus Note) to Markdown.
+# Convert from FuseBase to Markdown
 
 ## General Information
 
 - [Website](https://nimbusweb.me/note/)
+- FuseBase was formerly called Nimbus Note
 - Typical extension: Folder with `.zip` files
 
 ## Instructions

@@ -1,4 +1,4 @@
-This page describes how to convert notes from Simplenote to Markdown.
+# Convert from Simplenote to Markdown
 
 ## General Information
 

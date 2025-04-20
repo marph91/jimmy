@@ -1,4 +1,4 @@
-This page describes how to convert notes from Clipto to Markdown.
+# Convert from Clipto to Markdown
 
 ## General Information
 

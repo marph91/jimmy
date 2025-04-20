@@ -1,4 +1,4 @@
-This page describes how to convert notes from Bear to Markdown.
+# Convert from Bear to Markdown
 
 ## General Information
 

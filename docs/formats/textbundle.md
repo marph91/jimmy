@@ -1,4 +1,4 @@
-This page describes how to convert notes from Textbundle to Markdown.
+# Convert from Textbundle to Markdown
 
 ## General Information
 

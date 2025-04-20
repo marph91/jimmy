@@ -1,4 +1,4 @@
-This page describes how to convert notes from Dynalist to Markdown.
+# Convert from Dynalist to Markdown
 
 ## General Information
 

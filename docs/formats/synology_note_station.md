@@ -1,4 +1,4 @@
-This page describes how to convert notes from Synology Note Station to Markdown.
+# Convert from Synology Note Station to Markdown
 
 ## General Information
 

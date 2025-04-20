@@ -1,4 +1,4 @@
-This page describes how to convert notes from Google Docs to Markdown.
+# Convert from Google Docs to Markdown
 
 ## General Information
 

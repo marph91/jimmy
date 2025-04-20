@@ -1,4 +1,4 @@
-This page describes how to convert notes from Toodledo to Markdown.
+# Convert from Toodledo to Markdown
 
 ## General Information
 

@@ -1,4 +1,4 @@
-This page describes how to convert notes from Anytype to Markdown.
+# Convert from Anytype to Markdown
 
 ## General Information
 

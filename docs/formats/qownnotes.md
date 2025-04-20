@@ -1,4 +1,4 @@
-This page describes how to convert notes from QOwnNotes to Markdown.
+# Convert from QOwnNotes to Markdown
 
 ## General Information
 
