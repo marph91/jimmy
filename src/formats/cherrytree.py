@@ -13,6 +13,9 @@ import markdown_lib.common
 
 LOGGER = logging.getLogger("jimmy")
 
+LIST_RE = re.compile(r"^([^\S\r\n]*)(\d+)?(☐|☑|☒|•|◇|▪|▸|→|⇒|\)|-|>){1}", re.MULTILINE)
+WHITESPACE_RE = re.compile(r"^(\s*)(.+?)(\s*)$")
+
 
 def convert_table(node):
     table_md = markdown_lib.common.MarkdownTable()
@@ -31,28 +34,46 @@ def convert_table(node):
     return table_md.create_md()
 
 
+def list_sub_function(matchobj) -> str:  # pylint: disable=too-many-return-statements
+    spaces, number, bullet = matchobj.groups()
+    match bullet:
+        # checklist
+        case "☐":
+            return spaces + "- [ ]"
+        case "☑" | "☒":
+            return spaces + "- [x]"
+        # unnumbered list
+        case "•" | "◇" | "▪" | "▸" | "→" | "⇒":
+            return spaces + "-"
+        # numbered list
+        case ")" | "-" | ">":
+            if number is None:
+                return spaces + bullet
+            return spaces + number + "."
+    LOGGER.debug(f'Could not find list replacement for "{spaces, number, bullet}"')
+    if number is None:
+        return spaces + bullet
+    return spaces + number + bullet
+
+
 def fix_inline_formatting(md_content: str) -> str:
+    r"""
+    >>> fix_inline_formatting("☐ unchecked")
+    '- [ ] unchecked'
+    >>> fix_inline_formatting("☐ unchecked\n    ☒ nested checked")
+    '- [ ] unchecked\n    - [x] nested checked'
+    >>> fix_inline_formatting("dsa-dsa")
+    'dsa-dsa'
+    >>> fix_inline_formatting("☐4)")
+    '- [ ]4)'
+    >>> fix_inline_formatting("1) item\n    12- item\n\t145> item")
+    '1. item\n    12. item\n\t145. item'
+    """
     # horizontal line
     md_content = md_content.replace("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", "---")
-
-    # TODO: make list replacements more robust
-    # checklist
-    md_content = md_content.replace("☐", "- [ ]")
-    for checked_checkbox in ("☑", "☒"):
-        md_content = md_content.replace(checked_checkbox, "- [x]")
-
-    # numbered list
-    for number in range(10):
-        for bullet in (")", "-", ">"):
-            md_content = md_content.replace(f"{number}{bullet}", f"{number}.")
-
-    # unnumbered list
-    for bullet in ("•", "◇", "▪", "▸", "→", "⇒"):
-        md_content = md_content.replace(bullet, "-")
+    # lists
+    md_content = LIST_RE.sub(list_sub_function, md_content)
     return md_content
-
-
-WHITESPACE_RE = re.compile(r"^(\s*)(.+?)(\s*)$")
 
 
 def separate_whitespace(string: str) -> tuple[str, str, str]:
@@ -153,10 +174,7 @@ def convert_rich_text(rich_text, heading_on_line: bool):
     if not md_content:
         # TODO: make this more robust
         md_content = rich_text.text
-    if not rich_text.attrib:
-        # TODO: make this more robust
-        # Make sure to don't break links.
-        md_content = fix_inline_formatting(md_content)
+    md_content = fix_inline_formatting(md_content)
     return md_content, note_links, heading_on_line and "\n" not in md_content
 
 
