@@ -64,11 +64,11 @@ def separate_whitespace(string: str) -> tuple[str, str, str]:
     return match_.groups(default="")  # type: ignore[return-value]
 
 
-def convert_rich_text(rich_text):
+def convert_rich_text(rich_text, heading_on_line: bool):
     if rich_text.text is None:
-        return "", []
+        return "", [], False
     if not rich_text.text.strip():
-        return rich_text.text, []  # keep whitespaces but don't format them
+        return rich_text.text, [], False  # keep whitespaces but don't format them
     # TODO: is this fine with mixed text and child tags?
     note_links = []
 
@@ -116,7 +116,11 @@ def convert_rich_text(rich_text):
                     case "sub":
                         md_content = f"~{md_content}~"
                     case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
-                        leading = f"{'#' * int(attrib_value[-1])} " + leading
+                        # This is an ugly hack to prevent multiple headings on one line.
+                        # TODO: Avoid this by a list-based approach.
+                        if not heading_on_line:
+                            leading = f"{'#' * int(attrib_value[-1])} " + leading
+                        heading_on_line = True
                     case _:
                         LOGGER.debug(f"ignoring {attrib}={attrib_value}")
             case "strikethrough":
@@ -153,7 +157,7 @@ def convert_rich_text(rich_text):
         # TODO: make this more robust
         # Make sure to don't break links.
         md_content = fix_inline_formatting(md_content)
-    return md_content, note_links
+    return md_content, note_links, heading_on_line and "\n" not in md_content
 
 
 def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
@@ -191,10 +195,13 @@ class Converter(converter.BaseConverter):
 
         new_root_notebook = None  # only needed if there are sub notes
         note_body = ""
+        heading_on_line = False  # True if there is a heading on the same line.
         for child in node:
             match child.tag:
                 case "rich_text":
-                    content_md, note_links_imf = convert_rich_text(child)
+                    content_md, note_links_imf, heading_on_line = convert_rich_text(
+                        child, heading_on_line
+                    )
                     note_body += content_md
                     note_imf.note_links.extend(note_links_imf)
                 case "node":
