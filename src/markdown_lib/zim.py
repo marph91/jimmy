@@ -95,7 +95,7 @@ def link(resource_path: Path):
         url = url.lstrip("+")
         title = url if len(t_splitted) < 2 else t_splitted[1]
 
-        if any(url.startswith(scheme) for scheme in markdown_lib.common.schemes):
+        if any(url.startswith(scheme) for scheme in markdown_lib.common.web_schemes):
             # URLs are recognized because they start with e.g. "https://" or "mailto:".
             pass
         elif "/" in url:

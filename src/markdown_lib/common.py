@@ -73,6 +73,22 @@ class MarkdownTable:
         return caption + "\n".join(rows_md)
 
 
+# https://en.wikipedia.org/wiki/List_of_URI_schemes
+web_schemes = [
+    "file",
+    "ftp",
+    "http",
+    "https",
+    "imap",
+    "irc",
+    "udp",
+    "tcp",
+    "ntp",
+    "app",
+    "s3",
+]
+
+
 @pydantic.dataclasses.dataclass
 class MarkdownLink:
     """
@@ -90,8 +106,7 @@ class MarkdownLink:
 
     @property
     def is_web_link(self) -> bool:
-        # not robust, but sufficient for now
-        return self.url.startswith("http")
+        return any(self.url.startswith(f"{protocol}://") for protocol in web_schemes)
 
     @property
     def is_mail_link(self) -> bool:
@@ -351,20 +366,6 @@ def markup_to_markdown(
 
 # Problem: "//" is part of many URI (between scheme and host).
 # We need to exclude them to prevent unwanted conversions.
-# https://en.wikipedia.org/wiki/List_of_URI_schemes
-schemes = [
-    "file",
-    "ftp",
-    "http",
-    "https",
-    "imap",
-    "irc",
-    "udp",
-    "tcp",
-    "ntp",
-    "app",
-    "s3",
-]
-NEG_LOOKBEHINDS = "".join(f"(?<!{scheme}:)" for scheme in schemes)
+NEG_LOOKBEHINDS = "".join(f"(?<!{scheme}:)" for scheme in web_schemes)
 double_slash_re = re.compile(rf"{NEG_LOOKBEHINDS}\/\/(.*?){NEG_LOOKBEHINDS}\/\/")
 horizontal_line_re = re.compile(r"^-{3,}$", re.MULTILINE)
