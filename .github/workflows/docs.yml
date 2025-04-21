@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - "docs/**"
+      - mkdocs.yml
+      - requirements/requirements-docs.txt
   workflow_dispatch:
 
 permissions:
