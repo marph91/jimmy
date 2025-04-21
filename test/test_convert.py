@@ -10,7 +10,7 @@ import unittest
 
 from parameterized import parameterized
 
-import jimmy
+from jimmy import jimmy
 
 
 def name_func(testcase_func, param_num, param):

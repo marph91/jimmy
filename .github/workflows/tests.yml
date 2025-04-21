@@ -27,5 +27,5 @@ jobs:
       - name: Run tests
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
-          PYTHONPATH: src
+          PYTHONPATH: jimmy
         run: pytest --capture=no

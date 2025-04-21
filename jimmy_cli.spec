@@ -26,7 +26,7 @@ def list_python_files(folder):
     return file_list
 
 
-hiddenimports = list_python_files(Path("src/formats"))
+hiddenimports = list_python_files(Path("jimmy/formats"))
 
 
 # Generate the executable name based on OS.
@@ -50,7 +50,7 @@ executable_name = f"jimmy-cli-{system}"
 
 
 a = Analysis(
-    ["src/jimmy_cli.py"],
+    ["jimmy/jimmy_cli.py"],
     pathex=[],
     binaries=[],
     datas=datas,

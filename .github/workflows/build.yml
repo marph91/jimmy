@@ -17,7 +17,7 @@ jobs:
       contents: write
     env:
       RUNNER_MACHINE: ${{ matrix.os }}  # TODO: Is there a built-in env variable?
-      PYTHONPATH: src
+      PYTHONPATH: jimmy
     strategy:
       fail-fast: false
       matrix:

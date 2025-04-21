@@ -1,2 +1,4 @@
 -r requirements.txt
 pyinstaller==6.12.0
+hatch==1.14.1
+twine==6.1.0
