@@ -166,19 +166,20 @@ class FilesystemWriter:
             note.body = note.body.replace(resource.original_text, resource_markdown)
 
     def write_resource(self, resource: imf.Resource):
-        if not resource.filename.is_file():
-            LOGGER.warning(f'Resource "{resource.filename}" does not exist.')
+        # Resolve the source file path to avoid accessing deleted folders, like
+        # "deleted_folder/../image.png".
+        source_file = resource.filename.resolve()
+        if not source_file.exists():
+            LOGGER.warning(f'Resource "{source_file}" does not exist.')
             return
         if resource.path is None:
-            LOGGER.warning(
-                f'Could not determine path for resource "{resource.filename}".'
-            )
+            LOGGER.warning(f'Could not determine path for resource "{source_file}".')
             return
 
-        resource.path = common.get_unique_path(resource.path, resource.filename)
+        resource.path = common.get_unique_path(resource.path, source_file)
         # TODO: done for each resource in each note
         resource.path.parent.mkdir(exist_ok=True, parents=True)
-        shutil.copy(resource.filename, resource.path)
+        shutil.copy(source_file, resource.path)
 
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
