@@ -129,9 +129,13 @@ def main():
     config = parser.parse_args()
 
     if config.output_folder is None:
+        # If there is no output folder specified, just put
+        # the output next to the first input.
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         format_ = "filesystem" if config.format is None else config.format
-        config.output_folder = Path(f"{now} - Jimmy Import from {format_}")
+        config.output_folder = (
+            config.input[0].parent / f"{now} - Jimmy Import from {format_}"
+        )
 
     jimmy.main.setup_logging(
         no_stdout_log=config.no_stdout_log,
