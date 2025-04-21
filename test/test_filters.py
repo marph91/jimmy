@@ -2,9 +2,9 @@ import copy
 from types import SimpleNamespace
 import unittest
 
-import common
-from filters import apply_filters
-import intermediate_format as imf
+from jimmy import common
+from jimmy.filters import apply_filters
+from jimmy import intermediate_format as imf
 
 
 TEST_NOTE_TREE = [

@@ -8,7 +8,7 @@ import platform
 from PyInstaller.utils.hooks import collect_data_files
 
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
-datas = [(".version", ".")]
+datas = []
 datas += collect_data_files("anyblock_exporter")
 datas += collect_data_files("pypandoc")
 
@@ -22,7 +22,7 @@ def list_python_files(folder):
     file_list = []
     for file_ in folder.iterdir():
         if file_.suffix == ".py" and file_.name != "__init__.py":
-            file_list.append(f"{folder.stem}.{file_.stem}")
+            file_list.append(f"jimmy.{folder.stem}.{file_.stem}")
     return file_list
 
 

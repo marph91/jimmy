@@ -51,8 +51,6 @@ jobs:
         run: pip install -r requirements/requirements-build.txt
       - name: Build executables with pyinstaller
         run: |
-          # store the latest tag in static file
-          git describe --tags --abbrev=0 > .version
           python -m PyInstaller jimmy_cli.spec
           # python -m PyInstaller jimmy_gui.spec
       - name: Release

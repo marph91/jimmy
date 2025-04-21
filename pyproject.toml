@@ -4,8 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jimmy"
-version = "0.1.0"
-dynamic = ["dependencies"]
+dynamic = ["dependencies", "version"]
 description = "Convert your notes to Markdown"
 authors = [
     {name = "Marph", email = "martin.d@andix.de"},
@@ -52,6 +51,9 @@ packages = ["jimmy"]
 allow-direct-references = true
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements/requirements.txt"]
+
+[tool.hatch.version]
+path = "jimmy/version.py"
 
 [tool.mypy]
 # almost like strict, but leave out some too strict checks

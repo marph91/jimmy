@@ -3,14 +3,20 @@
 import importlib
 import logging
 from pathlib import Path
-import sys
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
 from rich.logging import RichHandler
 from rich.tree import Tree
 
-from jimmy import common, converter, filters, writer, intermediate_format as imf
+from jimmy import (
+    common,
+    converter,
+    filters,
+    writer,
+    intermediate_format as imf,
+    version,
+)
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -69,11 +75,11 @@ def convert_all_inputs(config):
     # fall back to the default converter.
     try:
         LOGGER.debug(f'Try converting with converter "{config.format}"')
-        module = importlib.import_module(f"formats.{config.format}")
+        module = importlib.import_module(f"jimmy.formats.{config.format}")
         converter_ = module.Converter(config)
     except ModuleNotFoundError as exc:
         LOGGER.debug(f"Fallback to default converter: {exc}")
-        if str(exc) == f"No module named 'formats.{config.format}'":
+        if str(exc) == f"No module named 'jimmy.formats.{config.format}'":
             converter_ = converter.DefaultConverter(config)
         else:
             raise exc  # this is unexpected -> reraise
@@ -98,18 +104,6 @@ def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
     return root_tree
 
 
-def get_jimmy_version():
-    # Pyinstaller has different path than module.
-    # https://stackoverflow.com/a/44352931/7410886
-    base_path = getattr(sys, "_MEIPASS", Path(__file__).parent)
-    version_file = Path(base_path) / ".version"
-    return (
-        version_file.read_text().lstrip("v").rstrip()
-        if version_file.is_file()
-        else "dev"
-    )
-
-
 def get_pandoc_version():
     try:
         return pypandoc.get_pandoc_version()
@@ -117,8 +111,8 @@ def get_pandoc_version():
         return "unknown"
 
 
-def jimmy(config) -> common.Stats:
-    LOGGER.info(f"Jimmy {get_jimmy_version()} (Pandoc {get_pandoc_version()})")
+def run_conversion(config) -> common.Stats:
+    LOGGER.info(f"Jimmy {version.VERSION} (Pandoc {get_pandoc_version()})")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Converting notes from "{inputs_str}"')
     LOGGER.info(

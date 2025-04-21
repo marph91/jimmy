@@ -5,8 +5,8 @@ import datetime
 import logging
 from pathlib import Path
 
-from jimmy import common, jimmy
-
+import jimmy.common
+import jimmy.main
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -53,7 +53,7 @@ def main():
     # specific formats that need a special handling
     parser.add_argument(
         "--format",
-        choices=common.get_available_formats(),
+        choices=jimmy.common.get_available_formats(),
         help="The source format.",
     )
     parser.add_argument(
@@ -133,13 +133,13 @@ def main():
         format_ = "filesystem" if config.format is None else config.format
         config.output_folder = Path(f"{now} - Jimmy Import from {format_}")
 
-    jimmy.setup_logging(
+    jimmy.main.setup_logging(
         no_stdout_log=config.no_stdout_log,
         stdout_log_level=config.stdout_log_level,
         log_file=config.log_file,
     )
 
-    jimmy.jimmy(config)
+    jimmy.main.run_conversion(config)
 
 
 if __name__ == "__main__":

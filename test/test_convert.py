@@ -10,7 +10,7 @@ import unittest
 
 from parameterized import parameterized
 
-from jimmy import jimmy
+import jimmy.main
 
 
 def name_func(testcase_func, param_num, param):
@@ -19,7 +19,7 @@ def name_func(testcase_func, param_num, param):
 
 class EndToEnd(unittest.TestCase):
     def setUp(self):
-        jimmy.setup_logging(no_stdout_log=False)
+        jimmy.main.setup_logging(no_stdout_log=False)
 
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
@@ -120,7 +120,7 @@ class EndToEnd(unittest.TestCase):
         self.config.input = test_data
         self.config.format = test_input.parts[0]
         self.config.output_folder = test_data_output
-        jimmy.jimmy(self.config)
+        jimmy.main.run_conversion(self.config)
 
         # Skip only here to catch potential errors during conversion.
         if not reference_data.exists():
@@ -289,7 +289,7 @@ class EndToEnd(unittest.TestCase):
 
         self.config.input = test_data
         self.config.output_folder = test_data_output
-        jimmy.jimmy(self.config)
+        jimmy.main.run_conversion(self.config)
 
         if len(test_input) == 1:
             self.assert_dir_trees_equal(test_data_output, reference_data)
@@ -329,7 +329,7 @@ class EndToEnd(unittest.TestCase):
             self.config.template_file = (
                 Path("test/data/test_data/template") / template
             ).resolve()
-        jimmy.jimmy(self.config)
+        jimmy.main.run_conversion(self.config)
 
         self.assert_dir_trees_equal(
             test_data_output / Path(template).stem, reference_data
@@ -375,7 +375,7 @@ class EndToEnd(unittest.TestCase):
         self.config.output_folder = test_data_output
         for option, value in folder_options.items():
             setattr(self.config, option, value)
-        jimmy.jimmy(self.config)
+        jimmy.main.run_conversion(self.config)
 
         self.assert_dir_trees_equal(test_data_output, reference_data)
         if name == "global_outside":
