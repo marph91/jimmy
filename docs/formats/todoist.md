@@ -1,5 +1,5 @@
 ---
-description: Convert from Todoist to Markdown.
+source_app: Todoist
 ---
 
 # Convert from Todoist to Markdown

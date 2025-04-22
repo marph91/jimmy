@@ -1,3 +1,7 @@
+---
+description: This page describes how you can filter data before converting with Jimmy.
+---
+
 There are some simple filters to select which data to convert. For more complex filtering, a separate plugin or script should be used.
 
 ## Available Filters

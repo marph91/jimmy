@@ -1,5 +1,5 @@
 ---
-description: Convert from Clipto to Markdown.
+source_app: Clipto
 ---
 
 # Convert from Clipto to Markdown

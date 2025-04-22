@@ -1,5 +1,5 @@
 ---
-description: Convert from Simplenote to Markdown.
+source_app: Simplenote
 ---
 
 # Convert from Simplenote to Markdown

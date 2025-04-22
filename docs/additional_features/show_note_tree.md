@@ -1,3 +1,7 @@
+---
+description: This page describes how to visualize the complete note tree in Jimmy.
+---
+
 The note tree in the intermediate format can be shown by `--print-tree`.
 
 ## Examples

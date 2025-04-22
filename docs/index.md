@@ -1,3 +1,7 @@
+---
+title: Jimmy - Note Conversion Tool
+---
+
 # Welcome to Jimmy's documentation!
 
 ![Jimmy logo](./images/logo2.png)

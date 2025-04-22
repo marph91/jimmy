@@ -1,3 +1,7 @@
+---
+description: This page describes some non-obvious ways to get example data from note applications.
+---
+
 Documentation how to get sample exports from "difficult" apps. Difficult means that I don't have access through my phone, Linux desktop or Windows VM.
 
 ## All Apple only Apps

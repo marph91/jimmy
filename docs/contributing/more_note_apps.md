@@ -1,3 +1,7 @@
+---
+description: This page is a loose collections of note applications that aren't supported by Jimmy, yet.
+---
+
 Loose collection of note apps/messengers/wikis/formats that could be implemented. For concrete implementations and discussions, a [github issue](https://github.com/marph91/jimmy/issues) should be used.
 
 | App/Format | Backup/Export | Remarks |

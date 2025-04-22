@@ -1,5 +1,5 @@
 ---
-description: Convert from Bear to Markdown.
+source_app: Bear
 ---
 
 # Convert from Bear to Markdown

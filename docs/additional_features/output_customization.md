@@ -1,3 +1,7 @@
+---
+description: This page describes how to customize the Markdown output of Jimmy.
+---
+
 The output can be customized in the following ways.
 
 ## Front Matter

@@ -1,5 +1,5 @@
 ---
-description: Convert from Day One to Markdown.
+source_app: Day One
 ---
 
 # Convert from Day One to Markdown

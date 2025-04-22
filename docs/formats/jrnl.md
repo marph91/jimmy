@@ -1,5 +1,5 @@
 ---
-description: Convert from jrnl to Markdown.
+source_format: jrnl
 ---
 
 # Convert from jrnl to Markdown

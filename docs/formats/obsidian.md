@@ -1,5 +1,5 @@
 ---
-description: Convert from Obsidian to Markdown.
+source_app: Obsidian
 ---
 
 # Convert from Obsidian to Markdown

@@ -1,5 +1,5 @@
 ---
-description: Convert from Textbundle to Markdown.
+source_app: Textbundle
 ---
 
 # Convert from Textbundle to Markdown

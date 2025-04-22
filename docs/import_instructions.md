@@ -1,3 +1,7 @@
+---
+description: This page describes how you can import Markdown notes converted with Jimmy to note applications like Joplin and Obsidian.
+---
+
 # Import Instructions
 
 This page describes how you can import the notes that you just converted to Markdown.

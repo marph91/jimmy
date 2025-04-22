@@ -1,5 +1,5 @@
 ---
-description: Convert from Notion to Markdown.
+source_app: Notion
 ---
 
 # Convert from Notion to Markdown

@@ -1,5 +1,5 @@
 ---
-description: Convert from Joplin to Markdown.
+source_format: Joplin notes
 ---
 
 # Convert from Joplin to Markdown

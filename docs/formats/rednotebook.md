@@ -1,5 +1,5 @@
 ---
-description: Convert from RedNotebook to Markdown.
+source_app: RedNotebook
 ---
 
 # Convert from RedNotebook to Markdown

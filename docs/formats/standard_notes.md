@@ -1,5 +1,5 @@
 ---
-description: Convert from Standard Notes to Markdown.
+source_app: Standard Notes
 ---
 
 # Convert from Standard Notes to Markdown

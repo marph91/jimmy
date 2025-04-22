@@ -1,5 +1,5 @@
 ---
-description: Convert from Samsung Notes to Markdown.
+source_app: Samsung Notes
 ---
 
 # Convert from Samsung Notes to Markdown

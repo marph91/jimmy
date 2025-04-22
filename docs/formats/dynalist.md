@@ -1,5 +1,5 @@
 ---
-description: Convert from Dynalist to Markdown.
+source_format: Dynalist notes
 ---
 
 # Convert from Dynalist to Markdown

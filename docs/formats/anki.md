@@ -1,5 +1,5 @@
 ---
-description: Convert from Anki to Markdown.
+source_app: Anki
 ---
 
 # Convert from Anki to Markdown

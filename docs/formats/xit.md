@@ -1,5 +1,5 @@
 ---
-description: Convert from [x]it! to Markdown.
+source_app: [x]it!
 ---
 
 # Convert from [x]it! to Markdown

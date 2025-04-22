@@ -1,5 +1,5 @@
 ---
-description: Convert from Drafts to Markdown.
+source_app: Drafts
 ---
 
 # Convert from Drafts to Markdown

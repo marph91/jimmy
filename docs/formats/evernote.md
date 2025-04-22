@@ -1,5 +1,5 @@
 ---
-description: Convert from Evernote to Markdown.
+source_format: Evernote notes
 ---
 
 # Convert from Evernote to Markdown

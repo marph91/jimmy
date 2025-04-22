@@ -1,5 +1,5 @@
 ---
-description: Convert from Google Keep to Markdown.
+source_format: Google Keep notes
 ---
 
 # Convert from Google Keep to Markdown

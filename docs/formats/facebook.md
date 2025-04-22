@@ -1,5 +1,5 @@
 ---
-description: Convert from Facebook to Markdown.
+source_format: Facebook posts and messages
 ---
 
 # Convert from Facebook to Markdown

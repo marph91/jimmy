@@ -1,3 +1,7 @@
+---
+description: This page describes how to use templates in Jimmy.
+---
+
 Templates can be used to customize notes. You can specify a template by `--template my_template.txt`.
 
 !!! warning

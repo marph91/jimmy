@@ -1,3 +1,7 @@
+---
+description: This page describes how to contribute to Jimmy.
+---
+
 ## Contact
 
 - General discussion at the

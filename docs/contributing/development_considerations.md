@@ -1,3 +1,7 @@
+---
+description: This page describes some development considerations of Jimmy.
+---
+
 # Development Considerations
 
 ## Why Markdown?

@@ -1,5 +1,5 @@
 ---
-description: Convert from Google Docs to Markdown.
+source_format: Google Docs
 ---
 
 # Convert from Google Docs to Markdown

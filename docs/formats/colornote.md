@@ -1,5 +1,5 @@
 ---
-description: Convert from ColorNote to Markdown.
+source_app: ColorNote
 ---
 
 # Convert from ColorNote to Markdown
