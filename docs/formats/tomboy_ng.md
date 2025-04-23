@@ -1,5 +1,5 @@
 ---
-source_app: Tomboy-ng
+source_app: Gnote and Tomboy-ng
 ---
 
 # Convert from Tomboy-ng to Markdown

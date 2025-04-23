@@ -1,5 +1,5 @@
 ---
-source_app: FuseBase
+source_app: FuseBase and Nimbus Note
 ---
 
 # Convert from FuseBase to Markdown
