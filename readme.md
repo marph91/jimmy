@@ -14,6 +14,10 @@ If there is an issue at download or execution, please take a look at the [step-b
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
 [![tests](https://github.com/marph91/jimmy/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/tests.yml)
 
+## Demo
+
+https://github.com/user-attachments/assets/71e179b0-ae7f-48ac-ac9a-9b59186af220
+
 ## Features
 
 - ✅ Several supported input formats
