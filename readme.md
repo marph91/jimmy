@@ -16,7 +16,7 @@ If there is an issue at download or execution, please take a look at the [step-b
 
 ## Demo
 
-https://github.com/user-attachments/assets/71e179b0-ae7f-48ac-ac9a-9b59186af220
+https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981
 
 ## Features
 
