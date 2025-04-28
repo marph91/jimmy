@@ -18,6 +18,8 @@ theme:
   # https://mrkeo.github.io/reference/meta-tags/#customization
   custom_dir: docs/overrides
   features:
+    # enable previous and next buttons: https://squidfunk.github.io/mkdocs-material/setup/setting-up-the-footer/#navigation
+    - navigation.footer
     # index.html for collapsible sections
     - navigation.indexes
     # show breadcrumbs
@@ -32,6 +34,16 @@ theme:
     # dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/marph91/jimmy
+    # TODO
+    #- icon: fontawesome/brands/python
+    #  link: https://pypi.org/project/jimmy
+    - icon: fontawesome/brands/youtube
+      link: https://www.youtube.com/watch?v=54t6WalJUmo
 
 plugins:
   # show last updated at bottom
