@@ -22,4 +22,7 @@ source_app: FuseBase and Nimbus Note
 - Tags aren't included in single page exports.
 - Note links aren't converted.
 
-If you have a complete workspace backup (premium feature), feel free to share. It may lead to tag and note link support.
+If you have a backup including tags and note links (premium feature), feel free to share.
+
+!!! note
+    It was possible to [export multiple pages at once as JSON or HTML](https://discourse.joplinapp.org/t/feature-request-nimbus-notes-import/5165/7). As of 2025, both options appear to have been removed. It is now only possible to export individual pages. Please ask their support for the reason.
