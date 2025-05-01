@@ -86,10 +86,10 @@ graph TD;
 ## Intermediate Format
 
 - **HTML**:
-  - Easily modifiable by beautifulsoup and others.
-  - Supports wide range of elements that can be "reduced" to Markdown.
-  - No additional dependency (beautifulsoup is used already).
+    - Easily modifiable by beautifulsoup and others.
+    - Supports wide range of elements that can be "reduced" to Markdown.
+    - No additional dependency ([beautifulsoup](https://beautiful-soup-4.readthedocs.io/) is used already).
 - Pandoc AST:
-  - Python: Panflute and pandocfilters aren't up-to-date (problems with tables especially).
-  - Lua: Learning curve, second scripting language in this repo.
-  - General: Some filters need some preprocessing (in HTML), like iframes.
+    - Python: [Panflute](https://panflute.readthedocs.io/) and [pandocfilters](https://github.com/jgm/pandocfilters) aren't up-to-date (problems with tables especially).
+    - Lua: Learning curve, second scripting language in this repo.
+    - General: Some filters need some preprocessing (in HTML), like iframes.

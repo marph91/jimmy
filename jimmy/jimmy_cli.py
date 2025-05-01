@@ -67,7 +67,6 @@ def main():
         choices=(None, "joplin", "obsidian", "qownnotes"),
         help="Frontmatter type.",
     )
-    # TODO: document
     parser.add_argument(
         "--template-file",
         type=Path,

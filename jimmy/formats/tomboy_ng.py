@@ -43,7 +43,9 @@ class Converter(converter.BaseConverter):
                     # Don't put note title again in the note body.
                     md_content.append(f"++{child.text}++")
             elif child.tag.endswith("small"):
-                md_content.append(child.text)  # TODO: How to handle?
+                # There is no <small> in Markdown. Keep the text only.
+                # https://blog.markdowntools.com/posts/small-text-in-markdown
+                md_content.append(child.text)
             elif child.tag.endswith("internal"):
                 # Just some arbitrary format. It gets replaced later.
                 md_content.append(f"[[{child.text}]]")

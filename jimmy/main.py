@@ -83,7 +83,7 @@ def convert_all_inputs(config):
             converter_ = converter.DefaultConverter(config)
         else:
             raise exc  # this is unexpected -> reraise
-    # TODO: Children are added to the parent node / node tree implicitly.
+    # Children are added to the parent node / node tree implicitly.
     # This is an anti-pattern, but works for now.
     parent = converter_.convert_multiple(config.input)
     return parent

@@ -175,7 +175,7 @@ class DefaultConverter(BaseConverter):
         note_links = []
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
-            # TODO: fix properly
+            # TODO: fix the source issue not the symptoms
             if "\x02amp\x03" in str(link):
                 self.logger.warning(f'Trying to repair corrupted link "{link}".')
                 link.text = decode_strange_ascii(link.text)

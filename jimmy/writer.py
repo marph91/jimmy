@@ -21,7 +21,8 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
     '../im%20age.png'
     """
-    # TODO: doctest works only on linux. quote seems to be working for windows, though.
+    # The doctest works only on linux. The implementation seems to be working
+    # for windows, though.
     return urllib.parse.quote(str(target.relative_to(source, walk_up=True)))
 
 

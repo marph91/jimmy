@@ -35,7 +35,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Journalify](https://www.journalify.com/) |     |     |
 | [Journey.cloud](https://journey.cloud/) |     | [demo](https://journey.cloud/app/timeline) |
 | [keynote-nf](https://github.com/dpradov/keynote-nf) |     | <https://github.com/marph91/jimmy/issues/3> |
-| [Laverna](https://laverna.cc/) |     | dead |
+| [~~Laverna~~](https://laverna.cc/) |     | dead |
 | [Lifeograph](https://sourceforge.net/projects/lifeograph/) | [doc](https://lifeograph.sourceforge.net/doku.php) |     |
 | [Linked](https://github.com/lostdesign/linked) |     |     |
 | [Logseq](https://logseq.com/) | - [doc](https://help.taskade.com/en/articles/8958600-import-from-logseq) <br>- [doc](https://randomgeekery.org/post/2022/03/logseq-export-formats/) (json) | [script](https://github.com/NishantTharani/LogSeqToObsidian) |
@@ -48,7 +48,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Miro](https://miro.com/) | [doc](https://help.taskade.com/en/articles/8958608-import-from-miro) |     |
 | [Monday](https://monday.com/) | [doc](https://help.taskade.com/en/articles/8958596-import-from-monday) |     |
 | [MyInfo](https://www.myinfoapp.com/) | [doc](https://www.myinfoapp.com/features) |     |
-| Nixnote/[Nixnote 2](https://github.com/baumgarr/Nixnote2) | - [doc](https://github.com/baumgarr/nixnote2/issues/483) <br>- [thread](https://discourse.joplinapp.org/t/import-from-nixnote/183/7) | [dead](https://github.com/robert7/nixnote2/issues/181) |
+| ~~Nixnote~~/[~~Nixnote 2~~](https://github.com/baumgarr/Nixnote2) | - [doc](https://github.com/baumgarr/nixnote2/issues/483) <br>- [thread](https://discourse.joplinapp.org/t/import-from-nixnote/183/7) | [dead](https://github.com/robert7/nixnote2/issues/181) |
 | [Notable](https://notable.app/) | notes stored as Markdown in folder |     |
 | [Notebooks](https://www.notebooksapp.com/) | [doc](https://www.notebooksapp.com/ios/backup/) |     |
 | [Notejoy](https://notejoy.com/) | [doc](https://notejoy.com/help/export-notes) (paid only and to Google Drive only) |     |
@@ -79,7 +79,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Taskade](https://www.taskade.com/) | [doc](https://help.taskade.com/en/collections/8400888-export) |     |
 | [TheBrain](https://www.thebrain.com/) | - [thread](https://forums.thebrain.com/post/exporting-brain-possible-9725592) <br>- [script](https://github.com/sanderdatema/thebrain2markdown) |     |
 | [Things](https://github.com/thingsapi/things-cli) |     |     |
-| Treepad | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
+| ~~Treepad~~ | [thread](https://discourse.joplinapp.org/t/how-can-i-export-html-notes-from-treepad/27554) | [dead](https://www.myinfoapp.com/blog/what-happened-to-treepad) |
 | [Trello](https://trello.com/) | [doc](https://support.atlassian.com/trello/docs/exporting-data-from-trello/) (json) |     |
 | [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (Markdown?) |     |
 | [Twos](https://www.twosapp.com/) | [export](https://www.twosapp.com/export) (markdown, only single notes?) |     |
@@ -88,8 +88,8 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Vnote](https://github.com/vnotex/vnote) | [doc](https://app.vnote.fun/en_us/#!docs/Users/Export.md) (Markdown?) |     |
 | [Wenote](https://play.google.com/store/apps/details?id=com.yocto.wenote) |     | mobile only |
 | [Wiznote](https://www.wiz.cn/) | [script](https://github.com/scher000/wiz2joplin) |     |
-| [Workflowy](https://workflowy.com/) | [doc](https://workflowy.com/help/exporting/) (unusable?) |     |
-| Wunderlist | [script](https://github.com/eschlot/Wunderlist2Joplin) | dead? |
+| [Workflowy](https://workflowy.com/) | [doc](https://workflowy.com/learn/exporting/) ([unusable](https://www.reddit.com/r/Workflowy/comments/1czcchy/exporting_with_images/)?) |     |
+| ~~Wunderlist~~ | [script](https://github.com/eschlot/Wunderlist2Joplin) | [dead](https://www.microsoft.com/en-us/microsoft-365/blog/2017/04/19/introducing-microsoft-to-do-now-available-in-preview/) |
 | [Xiaomi Notes](https://i.mi.com/note/h5) |     | - account needed <br>- [export possible?](https://www.reddit.com/r/Xiaomi/comments/je76bz/is_there_any_way_to_export_all_your_notes_stored/) |
 | [XWiki](https://www.xwiki.org/) | [doc](https://www.xwiki.org/xwiki/bin/view/Documentation/UserGuide/Features/Exports) |     |
 | [Zotero](https://www.zotero.org/) | [doc](https://www.zotero.org/support/kb/exporting) |     |
