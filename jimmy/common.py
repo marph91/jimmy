@@ -375,5 +375,11 @@ def date_to_unix_ms(date_: dt.date) -> int:
     )
 
 
+def iso_to_datetime(iso: str) -> dt.datetime:
+    # parse iso -> convert to UTC -> remove timezone
+    return dt.datetime.fromisoformat(iso).astimezone(dt.UTC).replace(tzinfo=None)
+
+
 def timestamp_to_datetime(timestamp_s: int | float) -> dt.datetime:
-    return dt.datetime.fromtimestamp(timestamp_s, dt.UTC)
+    # parse timestamp -> convert to UTC -> remove timezone
+    return dt.datetime.fromtimestamp(timestamp_s, dt.UTC).replace(tzinfo=None)

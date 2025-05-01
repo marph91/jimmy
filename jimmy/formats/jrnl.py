@@ -1,6 +1,5 @@
 """Convert jrnl notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import json
 
@@ -15,9 +14,7 @@ class Converter(converter.BaseConverter):
         title = f"{note_jrnl['date']} {note_jrnl['time']} {note_jrnl['title']}"
         self.logger.debug(f'Converting note "{title}"')
 
-        unix_time = dt.datetime.fromisoformat(
-            f"{note_jrnl['date']}T{note_jrnl['time']}"
-        )
+        unix_time = common.iso_to_datetime(f"{note_jrnl['date']}T{note_jrnl['time']}")
 
         tags = [tag.lstrip("@") for tag in note_jrnl["tags"]]
         if note_jrnl["starred"]:

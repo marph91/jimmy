@@ -1,7 +1,6 @@
 """Convert cacher notes to the intermediate format."""
 
 from collections import defaultdict
-import datetime as dt
 from pathlib import Path
 import json
 
@@ -26,8 +25,8 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title,
             body,
-            created=dt.datetime.fromisoformat(file_["createdAt"]),
-            updated=dt.datetime.fromisoformat(file_["updatedAt"]),
+            created=common.iso_to_datetime(file_["createdAt"]),
+            updated=common.iso_to_datetime(file_["updatedAt"]),
             source_application=self.format,
             tags=tags,
             original_id=file_["guid"],

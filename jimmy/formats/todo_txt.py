@@ -40,7 +40,7 @@ class Converter(converter.BaseConverter):
         #         # "due: [1, 2]".
         #         # Just take the first one for simplicity.
         #         if key == "due":
-        #             note_data["due"] = dt.datetime.fromisoformat(value[0])
+        #             note_data["due"] = common.iso_to_datetime(value[0])
         #         else:
         #             self.logger.debug(f"ignoring unsupported key {key}")
 

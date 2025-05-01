@@ -5,7 +5,6 @@ Specification: https://evernote.com/blog/how-evernotes-xml-export-format-works
 
 import base64
 import collections
-import datetime as dt
 import difflib
 import hashlib
 from pathlib import Path
@@ -136,7 +135,7 @@ class Converter(converter.BaseConverter):
                             setattr(
                                 note_imf,
                                 note_element.tag,
-                                dt.datetime.fromisoformat(note_element.text),
+                                common.iso_to_datetime(note_element.text),
                             )
                         except ValueError:
                             self.logger.debug("couldn't parse date")

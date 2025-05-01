@@ -1,6 +1,5 @@
 """Convert clipto notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import json
 
@@ -17,8 +16,8 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title,
             note_clipto["text"],
-            created=dt.datetime.fromisoformat(note_clipto["created"]),
-            updated=dt.datetime.fromisoformat(note_clipto["updated"]),
+            created=common.iso_to_datetime(note_clipto["created"]),
+            updated=common.iso_to_datetime(note_clipto["updated"]),
             source_application=self.format,
             tags=[tag for tag in tags if tag.reference_id in note_clipto["tagIds"]],
         )

@@ -1,6 +1,5 @@
 """Convert Drafts drafts to the intermediate format."""
 
-import datetime as dt
 import json
 from pathlib import Path
 
@@ -26,8 +25,8 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title,
             body=draft["content"],
-            created=dt.datetime.fromisoformat(draft["created_at"]),
-            updated=dt.datetime.fromisoformat(draft["modified_at"]),
+            created=common.iso_to_datetime(draft["created_at"]),
+            updated=common.iso_to_datetime(draft["modified_at"]),
             tags=[imf.Tag(title) for title in draft.get("tags", [])],
             source_application=self.format,
             original_id=draft["uuid"],

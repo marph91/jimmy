@@ -1,6 +1,5 @@
 """Convert Zim Wiki notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
@@ -68,7 +67,7 @@ class Converter(converter.BaseConverter):
                             "Trying to parse anyway."
                         )
                 case "Creation-Date":
-                    imf_note.created = dt.datetime.fromisoformat(value)
+                    imf_note.created = common.iso_to_datetime(value)
 
         resource_path = item.parent / item.stem
         imf_note.body = zim_to_md(body, resource_path)

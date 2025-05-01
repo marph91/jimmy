@@ -1,6 +1,5 @@
 """Convert Day One notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import json
 
@@ -119,7 +118,7 @@ class Converter(converter.BaseConverter):
     def convert_note(
         self, entry, resource_id_filename_map, root_notebook: imf.Notebook
     ):
-        created = dt.datetime.fromisoformat(entry["creationDate"])
+        created = common.iso_to_datetime(entry["creationDate"])
         title = self.get_unique_name(created.strftime("%Y-%m-%d"))
         self.note_names_per_journal.append(title)
         self.logger.debug(f'Converting note "{title}"')
@@ -127,7 +126,7 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title,
             created=created,
-            updated=dt.datetime.fromisoformat(entry["modifiedDate"]),
+            updated=common.iso_to_datetime(entry["modifiedDate"]),
             source_application=self.format,
             original_id=entry["uuid"],
         )

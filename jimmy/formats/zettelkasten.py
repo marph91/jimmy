@@ -22,8 +22,7 @@ class Converter(converter.BaseConverter):
                 case "ts_edited":
                     note_imf.updated = dt.datetime.strptime(value, "%y%m%d%H%M")
                 case "rating" | "ratingcount":
-                    # TODO: add when arbitrary metadata is supported
-                    pass
+                    note_imf.custom_metadata[key] = value
                 case _:
                     self.logger.debug(f"ignoring attribute {key}={value}")
 

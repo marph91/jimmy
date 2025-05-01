@@ -1,6 +1,5 @@
 """Convert a Wordpress XML export to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
@@ -47,10 +46,10 @@ class Converter(converter.BaseConverter):
         note_imf.author = get_text(item.find("dc:creator", namespaces))
 
         try:
-            note_imf.created = dt.datetime.fromisoformat(
+            note_imf.created = common.iso_to_datetime(
                 get_text(item.find("wp:post_date_gmt", namespaces))  # type:ignore[arg-type]
             )
-            note_imf.updated = dt.datetime.fromisoformat(
+            note_imf.updated = common.iso_to_datetime(
                 get_text(item.find("wp:post_modified_gmt", namespaces))  # type:ignore[arg-type]
             )
         except (TypeError, ValueError):

@@ -1,6 +1,5 @@
 """Convert simplenote notes to the intermediate format."""
 
-import datetime as dt
 import json
 from pathlib import Path
 
@@ -35,8 +34,8 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title.strip(),
             body.lstrip(),
-            created=dt.datetime.fromisoformat(note_simplenote["creationDate"]),
-            updated=dt.datetime.fromisoformat(note_simplenote["lastModified"]),
+            created=common.iso_to_datetime(note_simplenote["creationDate"]),
+            updated=common.iso_to_datetime(note_simplenote["lastModified"]),
             source_application=self.format,
             # Tags don't have a separate id. Just use the name as id.
             tags=[imf.Tag(tag) for tag in tags],

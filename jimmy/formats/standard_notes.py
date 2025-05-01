@@ -1,7 +1,6 @@
 """Convert Standard Notes notes to the intermediate format."""
 
 from collections import defaultdict
-import datetime as dt
 import enum
 import logging
 import json
@@ -221,8 +220,8 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
-            created=dt.datetime.fromisoformat(item["created_at"]),
-            updated=dt.datetime.fromisoformat(item["updated_at"]),
+            created=common.iso_to_datetime(item["created_at"]),
+            updated=common.iso_to_datetime(item["updated_at"]),
             source_application=self.format,
             original_id=item["uuid"],
         )

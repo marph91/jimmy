@@ -1,6 +1,5 @@
 """Convert tomboy-ng notes to the intermediate format."""
 
-import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
@@ -93,9 +92,9 @@ class Converter(converter.BaseConverter):
             title, body, tags=[imf.Tag(tag) for tag in tags], note_links=note_links
         )
         if (date_ := root_node.find("{*}create-date")) is not None:
-            note_imf.created = dt.datetime.fromisoformat(str(date_.text))
+            note_imf.created = common.iso_to_datetime(str(date_.text))
         if (date_ := root_node.find("{*}last-change-date")) is not None:
-            note_imf.updated = dt.datetime.fromisoformat(str(date_.text))
+            note_imf.updated = common.iso_to_datetime(str(date_.text))
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):

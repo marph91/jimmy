@@ -1,7 +1,6 @@
 """Convert Joplin notes to the intermediate format."""
 
 from collections import defaultdict
-import datetime as dt
 import enum
 import math
 from pathlib import Path
@@ -58,24 +57,26 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(
             title.strip(),
             body.strip(),
-            created=dt.datetime.fromisoformat(metadata_json["created_time"]),
-            updated=dt.datetime.fromisoformat(metadata_json["updated_time"]),
-            # TODO: How to handle todos?
-            # is_todo=bool(int(metadata_json.get("is_todo", 0))),
-            # completed=bool(
-            #     int(metadata_json.get("todo_completed", False))
-            # ),
-            # due=int(metadata_json.get("todo_due", 0)),
+            created=common.iso_to_datetime(metadata_json["created_time"]),
+            updated=common.iso_to_datetime(metadata_json["updated_time"]),
             author=metadata_json.get("author") or None,
             source_application=self.format,
             original_id=metadata_json["id"],
         )
+
         # not set is exported as 0.0
         for key in ("latitude", "longitude", "altitude"):
             if (val := metadata_json.get(key)) is not None and not math.isclose(
                 val_float := float(val), 0.0
             ):
                 setattr(note_imf, key, val_float)
+
+        for key in ("todo_completed", "todo_due"):
+            if (val := metadata_json.get(key)) is not None and val != "0":
+                note_imf.custom_metadata[key] = common.timestamp_to_datetime(
+                    float(val) / 1000
+                )
+
         parent_id_note_map.append((metadata_json["parent_id"], note_imf))
 
     def parse_data(self):

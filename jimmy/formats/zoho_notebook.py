@@ -1,6 +1,5 @@
 """Convert Zoho Notebook notes to the intermediate format."""
 
-import datetime as dt
 import json
 from pathlib import Path
 
@@ -57,16 +56,39 @@ class Converter(converter.BaseConverter):
         title = metadata["data-notecard"]["name"]
         self.logger.debug(f'Converting note "{title}" (ID: "{file_.stem}")')
 
+        note_imf = imf.Note(
+            title,
+            created=common.iso_to_datetime(metadata["data-notecard"]["created_date"]),
+            updated=common.iso_to_datetime(metadata["data-notecard"]["modified_date"]),
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in metadata.get("data-tag", [])],
+            original_id=file_.stem,
+        )
+
+        # remaining note metadata
+        if (color := metadata["data-notecard"].get("color")) is not None:
+            note_imf.custom_metadata["color"] = color
+
+        for index, reminder in enumerate(metadata.get("data-remainder", [])):
+            note_imf.custom_metadata[f"reminder_{index}"] = common.iso_to_datetime(
+                reminder["ZReminderTime"]
+            )
+
+        # convert the note body to Markdown
+        if soup.body is not None:
+            note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup))
+
+            # resources and internal links
+            note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+                note_imf.body
+            )
+
         # get or find parent notebook
         # Assume that notebooks can't be nested.
         notebook_imf = imf.Notebook(
             metadata["data-notebook"]["name"],
-            created=dt.datetime.fromisoformat(
-                metadata["data-notebook"]["created_date"]
-            ),
-            updated=dt.datetime.fromisoformat(
-                metadata["data-notebook"]["modified_date"]
-            ),
+            created=common.iso_to_datetime(metadata["data-notebook"]["created_date"]),
+            updated=common.iso_to_datetime(metadata["data-notebook"]["modified_date"]),
         )
         parent_notebook = None
         for potential_parent in self.root_notebook.child_notebooks:
@@ -85,50 +107,6 @@ class Converter(converter.BaseConverter):
             parent_notebook = notebook_imf
             self.root_notebook.child_notebooks.append(parent_notebook)
 
-        # note metadata
-        # TODO: optionally handle color
-
-        # TODO: How to handle remainder?
-        # if (reminders := metadata.get("data-remainder")) is not None:
-        #     # There seem to be possibly multiple reminders, but we can handle
-        #     # only one. Take the first one.
-        #     note_data["is_todo"] = True
-        #     note_data["created"] = dt.datetime.fromisoformat(
-        #         reminders[0]["ZReminderTime"]
-        #     )
-        #     if bool(int(reminders[0]["is-completed"])):
-        #         note_data["completed"] = True
-        #         # There isn't a due time. Just take the last modified time.
-        #         note_data["due"] = dt.datetime.fromisoformat(
-        #             reminders[0]["modified-time"]
-        #         )
-
-        # convert the note body to Markdown
-        if soup.body is not None:
-            body = jimmy.md_lib.common.markup_to_markdown(str(soup))
-
-            # resources and internal links
-            resources, note_links = self.handle_markdown_links(body)
-        else:
-            body = ""
-            resources, note_links = [], []
-
-        # create note
-        note_imf = imf.Note(
-            title,
-            body,
-            created=dt.datetime.fromisoformat(
-                metadata["data-notecard"]["created_date"]
-            ),
-            updated=dt.datetime.fromisoformat(
-                metadata["data-notecard"]["modified_date"]
-            ),
-            source_application=self.format,
-            tags=[imf.Tag(tag) for tag in metadata.get("data-tag", [])],
-            resources=resources,
-            note_links=note_links,
-            original_id=file_.stem,
-        )
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
