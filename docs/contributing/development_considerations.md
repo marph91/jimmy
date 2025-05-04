@@ -2,8 +2,6 @@
 description: This page describes some development considerations of Jimmy.
 ---
 
-# Development Considerations
-
 ## Why Markdown?
 
 To provide a flexible base for migrating your notes to the app of your choice.

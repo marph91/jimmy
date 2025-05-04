@@ -60,6 +60,8 @@ markdown_extensions:
         # mermaid code blocks
         - name: mermaid
           class: mermaid
+  # strikethrough
+  - pymdownx.tilde
   # disable the toc, since there is not that much content
   # https://github.com/squidfunk/mkdocs-material/discussions/2644#discussioncomment-715040
   - toc:
@@ -124,5 +126,6 @@ nav:
     - Miscellaneous: additional_features/miscellaneous.md
   - Contributing:
     - How to Contribute?: contributing/contributing.md
+    - How to get sample data?: contributing/get_sample_data.md
     - More Note Apps: contributing/more_note_apps.md
     - Development Considerations: contributing/development_considerations.md
