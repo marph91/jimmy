@@ -14,7 +14,28 @@ If there is an issue at download or execution, please take a look at the [step-b
 [![lint](https://github.com/marph91/jimmy/actions/workflows/lint.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/lint.yml)
 [![tests](https://github.com/marph91/jimmy/actions/workflows/tests.yml/badge.svg)](https://github.com/marph91/jimmy/actions/workflows/tests.yml)
 
+## Use Cases
+
+- Migrate between note apps
+- Save your notes in a future-proof, human-readable format
+- Prepare your notes for processing in a LLM
+
 ## Demo
+
+Example commands for the Linux CLI app:
+
+```bash
+# convert a single file supported by pandoc
+jimmy-cli-linux libre_office_document.odt
+
+# convert all files in a folder
+jimmy-cli-linux path/to/folder
+
+# convert a Google Keep export
+jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
+```
+
+This is an example of a successful conversion:
 
 https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981
 
@@ -30,12 +51,6 @@ https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or Node.js installation required)
 - ❎ No AI
-
-## Use Cases
-
-- Migrate between note apps
-- Save your notes in a future-proof, human-readable format
-- Prepare your notes for processing in a LLM
 
 ## Supported Apps
 
@@ -125,43 +140,8 @@ What is converted (in most cases)?
 
 [3] On macOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings → Privacy & Security → Security → Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
 
-## Demo
-
-Example commands for the Linux CLI app:
-
-```bash
-# convert a single file supported by pandoc
-jimmy-cli-linux libre_office_document.odt
-
-# convert all files in a folder
-jimmy-cli-linux path/to/folder
-
-# convert a Google Keep export
-jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
-```
-
-This is an example of a successful conversion:
-
-```bash
-$ jimmy-cli-linux .cache/google_keep/takeout-20240401T160516Z-001.zip --format google_keep --frontmatter joplin
-[09/19/24 15:15:34] INFO     Importing notes from ".cache/google_keep/takeout-20240401T160516Z-001.zip"
-                    INFO     Start parsing
-                    INFO     Finished parsing: 1 notebooks, 3 notes, 1 resources, 3 tags
-                    INFO     Start filtering
-                    INFO     Finished filtering: 1 notebooks, 3 notes, 1 resources, 3 tags
-                    INFO     Start writing to file system
-                    INFO     Converted notes successfully to Markdown: "20240919T131534Z - Jimmy Import from google_keep". Please verify that everything was converted correctly.
-                    INFO     Feel free to open an issue on Github, write a message at the Joplin forum or an email.
-
-Notebooks  100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00]
-Notes      100%|████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00]
-Resources  100%|████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00]
-Tags       100%|████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00]
-```
-
 ## Similar Projects
 
 - [Obsidian-Importer](https://github.com/obsidianmd/obsidian-importer)
 - [YANOM-Note-O-Matic (fork)](https://github.com/stereohorse/YANOM-Note-O-Matic)
 - [MarkItDown](https://github.com/microsoft/markitdown)
-- [Docling](https://github.com/docling-project/docling)

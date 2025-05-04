@@ -8,6 +8,33 @@ title: Jimmy - Note Conversion Tool
 
 **Jimmy** is a tool to convert your notes from different formats to Markdown.
 
+## Installation
+
+**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [macOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
+
+## Use Cases
+
+- Migrate between note apps
+- Save your notes in a future-proof, human-readable format
+- Prepare your notes for processing in a LLM
+
+## Demo
+
+Example commands for the Linux CLI app:
+
+```bash
+# convert a single file supported by pandoc
+jimmy-cli-linux libre_office_document.odt
+
+# convert all files in a folder
+jimmy-cli-linux path/to/folder
+
+# convert a Google Keep export
+jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
+```
+
+For a video, check the [Github readme](https://github.com/marph91/jimmy?tab=readme-ov-file#demo).
+
 ## Features
 
 - ✅ Several supported input formats
@@ -20,16 +47,6 @@ title: Jimmy - Note Conversion Tool
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or Node.js installation required)
 - ❎ No AI
-
-## Use Cases
-
-- Migrate between note apps
-- Save your notes in a future-proof, human-readable format
-- Prepare your notes for processing in a LLM
-
-## Installation
-
-**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [macOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64)**
 
 If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
