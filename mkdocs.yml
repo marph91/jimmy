@@ -53,6 +53,8 @@ plugins:
   - search
 markdown_extensions:
   - admonition
+  # for image width
+  - attr_list
   - footnotes
   # code block highlighting
   - pymdownx.superfences:
