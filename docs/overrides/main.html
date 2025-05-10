@@ -50,12 +50,49 @@
   <title>{{ title }}</title>
 {% endblock %}
 
-{# add opengraph metadata for discourse links #}
 {% block extrahead %}
+  {# add opengraph metadata for discourse links #}
   <meta property="og:type" content="website" />
   <meta property="og:title" content="{{ title }}" />
   <meta property="og:description" content="{{ description }}" />
   <meta property="og:url" content="{{ page.canonical_url }}" />
   <meta property="og:image" content="{{ config.site_url + '/images/logo2.png' }}" />
   <meta property="og:image:type" content="image/png" />
+
+  {# JSON-LD metadata: https://github.com/mkdocs/mkdocs/discussions/3329#discussioncomment-6618758 #}
+  {% set keywords = "Markdown, Joplin, Obsidian, Conversion, Migration, Import, Export" %}
+  {% if page and page.meta and page.meta.source_app %}
+    {% set keywords = page.meta.source_app ~ ", " ~ keywords %}
+  {% endif %}
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "TechArticle",
+    "author": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "maintainer": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "headline": "{{ title }}",
+    "name": "{{ title }}",
+    "about": "{{ description }}",
+    "description": "{{ description }}",
+    "proficiencyLevel": "Beginner",
+    "educationalLevel": "intermediate",
+    "creativeWorkStatus": "Published",
+    "discussionUrl": "https://github.com/marph91/jimmy/issues",
+    "identifier": "{{ page.canonical_url }}",
+    "inLanguage": "English",
+    "isPartOf": "{{ config.site_url }}",
+    "keywords": "{{ keywords }}",
+    "license": "https://github.com/marph91/jimmy/blob/77c165a4de9204e6f808348f190fba65bdcd75cd/license",
+    "mainEntity": "{{ config.site_url }}",
+    "teaches": "{{ description }}",
+    "timeRequired": "PT10M",
+    "typicalAgeRange": "14-"
+  }
+  </script>
 {% endblock %}
