@@ -34,7 +34,7 @@ class Converter(converter.BaseConverter):
             return  # handled already
         if file_.name == "assets":
             return  # not needed, since it's included in link paths
-        if file_.suffix.lower() not in (".md", ".markdown"):
+        if file_.suffix.lower() not in common.MARKDOWN_SUFFIXES:
             # take only the exports in markdown format
             self.logger.debug(f'Ignoring folder or file "{file_.name}"')
             return

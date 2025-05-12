@@ -187,7 +187,7 @@ class DefaultConverter(BaseConverter):
             resource_path = path / link.url
             if resource_path.is_file():
                 # TODO: How to distinguish notes from resources properly?
-                if resource_path.suffix != ".md":
+                if resource_path.suffix not in common.MARKDOWN_SUFFIXES:
                     # resource
                     resources.append(imf.Resource(resource_path, str(link), link.text))
                 else:

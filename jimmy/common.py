@@ -29,6 +29,7 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
+MARKDOWN_SUFFIXES = (".md", ".mdown", ".markdown")
 F = TypeVar("F", bound=Callable[..., Any])
 
 

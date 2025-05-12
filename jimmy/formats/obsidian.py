@@ -18,7 +18,9 @@ class Converter(converter.BaseConverter):
         for link in jimmy.md_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if link.url.endswith(".md"):
+            if any(
+                link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES
+            ):
                 # internal link
                 linked_note_id = Path(unquote(link.url)).stem
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
@@ -64,7 +66,7 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, item: Path, parent: imf.Notebook):
-        if item.suffix.lower() != ".md":
+        if item.suffix.lower() not in common.MARKDOWN_SUFFIXES:
             return
         title = item.stem
         self.logger.debug(f'Converting note "{title}"')

@@ -55,7 +55,9 @@ class Converter(converter.BaseConverter):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             unquoted_url = unquote(link.url)
-            if link.url.endswith(".md") or link.url.endswith(".html"):
+            if any(
+                link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES
+            ) or link.url.endswith(".html"):
                 # internal link
                 _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
@@ -74,7 +76,7 @@ class Converter(converter.BaseConverter):
     ):
         if (
             item.is_file()
-            and item.suffix.lower() not in (".md", ".html")
+            and item.suffix.lower() not in common.MARKDOWN_SUFFIXES + (".html",)
             or item.name == "index.html"
         ):
             return
