@@ -138,6 +138,7 @@ What is converted (in most cases)?
 
 ## Similar Projects
 
+- [Notesnook Importer](https://github.com/streetwriters/notesnook-importer)
 - [Obsidian-Importer](https://github.com/obsidianmd/obsidian-importer)
 - [YANOM-Note-O-Matic (fork)](https://github.com/stereohorse/YANOM-Note-O-Matic)
 - [MarkItDown](https://github.com/microsoft/markitdown)

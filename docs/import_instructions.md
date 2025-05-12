@@ -26,6 +26,16 @@ Since Logseq doesn't support folders, this will only work with "flat exports". I
 1. Use the arguments `--output-folder "pages" --global-resource-folder "../assets"`. This exports the Markdown notes to the `pages` folder and the resources next to it in a `assets` folder. Just like it is in Logseq. A complete command could look like `jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep --output-folder "pages" --global-resource-folder "../assets"`
 2. Either copy the folders to your Logseq graph or open them as new graph to check how it looks.
 
+## Notion
+
+Markdown files can be imported to Notion as described [on the website](https://www.notion.so/help/import-data-into-notion). This will only import Markdown notes, though. Importing resources seems to be not supported.
+
+## Notesnook
+
+1. Go to the [Notesnook Importer website](https://importer.notesnook.com/).
+2. Select `Markdown`
+3. Follow the instructions on the page.
+
 ## Obsidian
 
 Markdown files can be imported to Obsidian as described [on the website](https://help.obsidian.md/import/markdown):
@@ -43,10 +53,6 @@ Markdown files can be imported to Obsidian as described [on the website](https:/
     2. Detect the front matter tags by installing the [epsilon-notes-tags](https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags) or [yaml-nested-tags](https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags) plugin.
 
 A complete command could look like `jimmy-cli-linux takeout.zip --format google_keep --frontmatter qownnotes --local-resource-folder attachments --local-image-folder media`.
-
-## Notion
-
-Markdown files can be imported to Notion as described [on the website](https://www.notion.so/help/import-data-into-notion). This will only import Markdown notes, though. Importing resources seems to be not supported.
 
 ## UpNote
 
