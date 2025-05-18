@@ -315,7 +315,7 @@ class EndToEnd(unittest.TestCase):
 
         test_data = [Path("test/data/test_data/template") / Path(template).stem]
         test_data_output = Path("tmp_output/template")
-        shutil.rmtree(test_data_output, ignore_errors=True)
+        shutil.rmtree(test_data_output / Path(template).stem, ignore_errors=True)
         # separate folder for each input
         reference_data = Path("test/data/reference_data/template") / Path(template).stem
 

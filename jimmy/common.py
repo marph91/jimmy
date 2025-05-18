@@ -310,7 +310,7 @@ def get_single_child_folder(parent_folder: Path) -> Path:
 
 def get_temp_folder() -> Path:
     """Return a temporary folder."""
-    temp_folder = Path(tempfile.gettempdir()) / f"jimmy_{int(time.time() * 1000)}"
+    temp_folder = Path(tempfile.gettempdir()) / f"jimmy_{int(time.time() * 10**6)}"
     temp_folder.mkdir(exist_ok=True)
     return temp_folder
 
