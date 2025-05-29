@@ -139,6 +139,7 @@ class EndToEnd(unittest.TestCase):
             [["anytype/test_2/Anytype.20241113.215524.09.zip"]],
             [["bear/test_1/backup.bear2bk"]],
             [["bear/test_2/backup-2.bear2bk"]],
+            [["bear/test_3/Bear Notes 2025-05-28 at 19.06.bear2bk"]],
             [["cacher/test_1/cacher-export-202406182304.json"]],
             [["colornote/test_1/colornote-20241014.backup"]],
             [["cherrytree/test_1/cherry.ctb.ctd"]],

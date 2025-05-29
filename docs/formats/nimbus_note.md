@@ -8,7 +8,7 @@ source_app: FuseBase and Nimbus Note
 
 - [Website](https://nimbusweb.me/note/)
 - FuseBase was formerly called Nimbus Note
-- Typical extension: Folder with `.zip` files
+- Typical extension: `.zip` or folder with `.zip` files
 
 ## Instructions
 
