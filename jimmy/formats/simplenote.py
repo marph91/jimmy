@@ -7,6 +7,19 @@ from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
 
 
+def extract_tags_from_body(body: str) -> tuple[str, list[str]]:
+    r"""
+    >>> extract_tags_from_body("body\r\n\r\n\r\nTags:\r\n  Ed, NxtProject, Reference")
+    ('body\n\n', ['Ed', 'NxtProject', 'Reference'])
+    >>> extract_tags_from_body("body, no tags")
+    ('body, no tags', [])
+    """
+    body_lines = body.splitlines()
+    if len(body_lines) > 1 and body_lines[-2] == "Tags:":
+        return "\n".join(body_lines[:-2]), body_lines[-1].strip().split(", ")
+    return body, []
+
+
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
 
@@ -18,30 +31,33 @@ class Converter(converter.BaseConverter):
         )
         self.logger.debug(f'Converting note "{title}"')
 
-        note_links = []
+        note_imf = imf.Note(
+            title.strip(),
+            created=common.iso_to_datetime(note_simplenote["creationDate"]),
+            updated=common.iso_to_datetime(note_simplenote["lastModified"]),
+            source_application=self.format,
+            original_id=note_simplenote["id"],
+        )
+
         for link in jimmy.md_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("simplenote://"):
                 # internal link
                 _, linked_note_id = link.url.rsplit("/", 1)
-                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
+                note_imf.note_links.append(
+                    imf.NoteLink(str(link), linked_note_id, link.text)
+                )
 
-        tags = note_simplenote.get("tags", [])
+        note_imf.tags = [imf.Tag(tag) for tag in note_simplenote.get("tags", [])]
         if note_simplenote.get("pinned"):
-            tags.append("simplenote-pinned")
+            note_imf.tags.append(imf.Tag("simplenote-pinned"))
+        # sometimes tags are appended like "Tags:\n  Tag1, Tag2"
+        body_without_tags, body_tags = extract_tags_from_body(body)
+        note_imf.tags.extend([imf.Tag(tag) for tag in body_tags])
 
-        note_imf = imf.Note(
-            title.strip(),
-            body.lstrip(),
-            created=common.iso_to_datetime(note_simplenote["creationDate"]),
-            updated=common.iso_to_datetime(note_simplenote["lastModified"]),
-            source_application=self.format,
-            # Tags don't have a separate id. Just use the name as id.
-            tags=[imf.Tag(tag) for tag in tags],
-            note_links=note_links,
-            original_id=note_simplenote["id"],
-        )
+        note_imf.body = body_without_tags.lstrip()
+
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):

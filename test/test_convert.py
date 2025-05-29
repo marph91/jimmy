@@ -179,6 +179,8 @@ class EndToEnd(unittest.TestCase):
             [["roam_research/test_2/help-graph.json"]],
             [["roam_research/test_3/roam-to-git-demo-2025-04-15-12-05-52.json"]],
             [["simplenote/test_1/notes.zip"]],
+            [["simplenote/test_2/notes_1.zip"]],
+            [["simplenote/test_3/simplenote.zip"]],
             [["standard_notes/test_1/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
             [["standard_notes/test_2/Standard.Notes.-.super_format.GMT+0100.zip"]],
             [["standard_notes/test_3/backup.zip"]],
