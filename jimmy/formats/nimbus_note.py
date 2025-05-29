@@ -8,6 +8,7 @@ import jimmy.md_lib.html_filter
 
 
 class Converter(converter.BaseConverter):
+    accepted_extensions = [".zip"]
     accept_folder = True
 
     def handle_markdown_links(self, note_body: str, root_folder: Path) -> imf.Resources:
@@ -50,6 +51,12 @@ class Converter(converter.BaseConverter):
         temp_folder_note.mkdir()
         common.extract_zip(file_, temp_folder=temp_folder_note)
 
+        if not (temp_folder_note / "note.html").is_file():
+            self.logger.error(
+                "Export structure not implemented yet. Please report at Github."
+            )
+            return
+
         # HTML note seems to have the name "note.html" always
         note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
         note_body_markdown = jimmy.md_lib.common.markup_to_markdown(
@@ -68,5 +75,8 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         temp_folder = common.get_temp_folder()
 
-        for file_ in sorted(file_or_folder.rglob("*.zip")):
-            self.convert_note(file_, temp_folder)
+        if file_or_folder.suffix == ".zip":
+            self.convert_note(file_or_folder, temp_folder)
+        else:  # folder of .zip
+            for file_ in sorted(file_or_folder.rglob("*.zip")):
+                self.convert_note(file_, temp_folder)

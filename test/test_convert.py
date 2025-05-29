@@ -161,6 +161,7 @@ class EndToEnd(unittest.TestCase):
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
             [["joplin/test_1/29_04_2024.jex"]],
             [["jrnl/test_1/myjournal.json"]],
+            # [["nimbus_note/test_1/nimbus-export.zip"]],
             [["nimbus_note/test_2/Demo Workspace"]],
             [["notion/test_1/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
             [["notion/test_2/testexport-nofolders.zip"]],
@@ -214,6 +215,8 @@ class EndToEnd(unittest.TestCase):
             [["zim/test_2/Zim-Sample-Notebook"]],
             [["zim/test_3/doc"]],
             [["zoho_notebook/test_1/Notebook_18Jan2025_1756_html.zip"]],
+            # [["zoho_notebook/test_2/Notebook_02Mar2022_0441_znote.zip"]],
+            # [["zoho_notebook/test_3/Notebook_14Apr2024_0732_znote.zip"]],
         ],
         name_func=name_func,
     )
