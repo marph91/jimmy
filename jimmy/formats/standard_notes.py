@@ -239,12 +239,22 @@ class Converter(converter.BaseConverter):
                     note_imf.body = super_converter.convert(body)
                 else:
                     note_imf.body = ""
-
             case _:
                 note_imf.body = item["content"]["text"]
                 self.logger.debug(
                     f'Unsupported note type "{item["content"]["noteType"]}"'
                 )
+
+        note_language = (
+            item["content"]["appData"]
+            .get("org.standardnotes.sn.components", {})
+            .get("e9085d93-1f1d-43cb-bd7c-f75ac7bfcccf", {})
+            .get("mode", "markdown")
+            .lower()
+        )
+        if note_language not in ("htmlmixed", "markdown"):
+            # handle most languages as code block
+            note_imf.body = f"```{note_language}\n{note_imf.body}\n```\n"
 
         if item["content"].get("trashed", False):
             parent = self.trash_notebook

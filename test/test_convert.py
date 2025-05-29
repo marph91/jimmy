@@ -183,6 +183,8 @@ class EndToEnd(unittest.TestCase):
             [["standard_notes/test_2/Standard.Notes.-.super_format.GMT+0100.zip"]],
             [["standard_notes/test_3/backup.zip"]],
             [["standard_notes/test_4/SN-Empty-SuperNote-Backup.zip"]],
+            [["standard_notes/test_5/Standard Notes - Fri Jan 14 2022 10_31_29.zip"]],
+            [["standard_notes/test_6/Standard Notes - Tue Aug 29 2023 08_51_11.zip"]],
             [["synology_note_station/test_1/20240331_144226_11102_Lagavulin.nsx"]],
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
             [["synology_note_station/test_3/notestation-test-books.nsx"]],
