@@ -129,5 +129,5 @@ flowchart LR
 
 | Jimmy Version | Glibc Version |
 | --- | --- |
-| From [v1.0.0](https://github.com/marph91/jimmy/releases/tag/v0.1.0) | 2.35 |
+| From [v0.1.0](https://github.com/marph91/jimmy/releases/tag/v0.1.0) | 2.35 |
 | [v0.0.56](https://github.com/marph91/jimmy/releases/tag/v0.0.56) | 2.31 |
