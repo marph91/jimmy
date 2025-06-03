@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% if page and page.meta and page.meta.title %}
+  {% set title = page.meta.title %}
+{% elif page and page.meta and page.meta.source_app %}
+  {% set title = "How do I convert from " ~ page.meta.source_app ~ " to Markdown? - " ~ config.site_name %}
+{% elif page and page.title and not page.is_homepage %}
+  {% set title = page.title | striptags ~ " - " ~ config.site_name %}
+{% else %}
+  {% set title = config.site_name %}
+{% endif %}
+
+{% if page and page.meta and page.meta.description %}
+  {% set description = page.meta.description %}
+{% elif page and page.meta and page.meta.source_app %}
+  {% set description = "This page describes how to convert from " ~ page.meta.source_app ~ " to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian." %}
+{% else %}
+  {% set description = config.site_description %}
+{% endif %}
+
+{# https://github.com/squidfunk/mkdocs-material/blob/4c0004e16b1d51511fbd3c8537394069f004ecfe/material/templates/base.html#L8-L36 #}
+{% block site_meta %}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="{{ description }}">
+  {% if page.meta and page.meta.author %}
+    <meta name="author" content="{{ page.meta.author }}">
+  {% elif config.site_author %}
+    <meta name="author" content="{{ config.site_author }}">
+  {% endif %}
+  {% if page.canonical_url %}
+    <link rel="canonical" href="{{ page.canonical_url }}">
+  {% endif %}
+  {% if page.previous_page %}
+    <link rel="prev" href="{{ page.previous_page.url | url }}">
+  {% endif %}
+  {% if page.next_page %}
+    <link rel="next" href="{{ page.next_page.url | url }}">
+  {% endif %}
+  {% if "rss" in config.plugins %}
+    <link rel="alternate" type="application/rss+xml" title="{{ lang.t('rss.created') }}" href="{{ 'feed_rss_created.xml' | url }}">
+    <link rel="alternate" type="application/rss+xml" title="{{ lang.t('rss.updated') }}" href="{{ 'feed_rss_updated.xml' | url }}">
+  {% endif %}
+  <link rel="icon" href="{{ config.theme.favicon | url }}">
+  <meta name="generator" content="mkdocs-{{ mkdocs_version }}, mkdocs-material-9.6.12">
+{% endblock %}
+
+{# https://github.com/squidfunk/mkdocs-material/blob/4c0004e16b1d51511fbd3c8537394069f004ecfe/material/templates/base.html#L37-L45 #}
+{% block htmltitle %}
+  <title>{{ title }}</title>
+{% endblock %}
+
+{% block extrahead %}
+  {# add opengraph metadata for discourse links #}
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="{{ title }}" />
+  <meta property="og:description" content="{{ description }}" />
+  <meta property="og:url" content="{{ page.canonical_url }}" />
+  <meta property="og:image" content="{{ config.site_url + '/images/logo2.png' }}" />
+  <meta property="og:image:type" content="image/png" />
+
+  {# JSON-LD metadata: https://github.com/mkdocs/mkdocs/discussions/3329#discussioncomment-6618758 #}
+  {% set keywords = "Markdown, Joplin, Obsidian, Conversion, Migration, Import, Export" %}
+  {% if page and page.meta and page.meta.source_app %}
+    {% set keywords = page.meta.source_app ~ ", " ~ keywords %}
+  {% endif %}
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "TechArticle",
+    "author": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "maintainer": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "headline": "{{ title }}",
+    "name": "{{ title }}",
+    "about": "{{ description }}",
+    "description": "{{ description }}",
+    "proficiencyLevel": "Beginner",
+    "educationalLevel": "intermediate",
+    "creativeWorkStatus": "Published",
+    "discussionUrl": "https://github.com/marph91/jimmy/issues",
+    "identifier": "{{ page.canonical_url }}",
+    "inLanguage": "English",
+    "isPartOf": "{{ config.site_url }}",
+    "keywords": "{{ keywords }}",
+    "license": "https://github.com/marph91/jimmy/blob/77c165a4de9204e6f808348f190fba65bdcd75cd/license",
+    "mainEntity": "{{ config.site_url }}",
+    "teaches": "{{ description }}",
+    "timeRequired": "PT10M",
+    "typicalAgeRange": "14-"
+  }
+  </script>
+{% endblock %}
