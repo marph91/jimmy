@@ -67,7 +67,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Remnote](https://www.remnote.com/) | - [doc](https://help.remnote.com/en/articles/7898019-exporting-notes#h_fffe55a9a8) <br>- [script](https://github.com/AnweshGangula/PKMigrator/tree/main/Remnote2Obsidian) <br>- [example file](https://github.com/AnweshGangula/PKMigrator/blob/main/Data/RemNote_Export_August_23rd_2021_Guest_json.zip) |     |
 | [Reor](https://github.com/reorproject/reor) |     |     |
 | [Rightnote](https://www.bauerapps.com/rightnote/) |     | 30-day trial |
-| [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) |     |
+| [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) | 30-day trial |
 | [Signal](https://signal.org/de/) |     | <https://github.com/marph91/jimmy/issues/8> |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
 | [Skiff Pages](https://skiff.com/pages) |     | Has joined Notion |

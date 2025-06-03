@@ -36,6 +36,9 @@ Markdown files can be imported to Notion as described [on the website](https://w
 2. Select `Markdown`
 3. Follow the instructions on the page.
 
+!!! note
+    Attachments are only allowed if you have a pro account. See <https://notesnook.com/pricing/>.
+
 ## Obsidian
 
 Markdown files can be imported to Obsidian as described [on the website](https://help.obsidian.md/import/markdown):
@@ -53,6 +56,15 @@ Markdown files can be imported to Obsidian as described [on the website](https:/
     2. Detect the front matter tags by installing the [epsilon-notes-tags](https://github.com/qownnotes/scripts/tree/master/epsilon-notes-tags) or [yaml-nested-tags](https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags) plugin.
 
 A complete command could look like `jimmy-cli-linux takeout.zip --format google_keep --frontmatter qownnotes --local-resource-folder attachments --local-image-folder media`.
+
+## SiYuan
+
+!!! note
+    Markdown folder import is supported in the desktop app only.
+
+1. Create a new notebook.
+2. Right click → `Import → Markdown Folder`
+3. Select the root folder.
 
 ## UpNote
 
