@@ -50,6 +50,7 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
         # TODO: Could be done with https://pypi.org/project/txt2tags/
         # TODO: links are converted, but not correctly
+        # TODO: underline is converted to italic "*"
         body = jimmy.md_lib.common.markup_to_markdown(data["text"], format_="t2t")
         body, resources = self.handle_markdown_links(body)
         note_imf = imf.Note(

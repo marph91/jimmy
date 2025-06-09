@@ -2,6 +2,7 @@
 
 import base64
 import datetime as dt
+import difflib
 import hashlib
 import importlib
 import logging
@@ -238,6 +239,29 @@ def unique_title() -> str:
 
 def uuid_title() -> str:
     return uuid.UUID(int=random.getrandbits(128), version=4).hex
+
+
+def get_best_match(title: str, note_id_title_map: dict) -> str:
+    """
+    Compare a given string to each string of a sequence and return the best match.
+    Useful for linking notes without ID.
+    """
+
+    # try to map by title similarity
+    match_ratios = [
+        difflib.SequenceMatcher(None, title, reference_title).ratio()
+        for reference_title in note_id_title_map.values()
+    ]
+    best_match_ratio = max(match_ratios)
+    best_match_id, best_match_title = list(note_id_title_map.items())[
+        match_ratios.index(best_match_ratio)
+    ]
+    if best_match_ratio < 0.6:  # threshold taken from the hep string
+        LOGGER.debug(
+            f"Low match ratio: {best_match_ratio:.2f}. Link from "
+            f'"{title}" to "{best_match_title}" may not be correct.'
+        )
+    return best_match_id
 
 
 ###########################################################

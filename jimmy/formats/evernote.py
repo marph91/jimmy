@@ -5,7 +5,6 @@ Specification: https://evernote.com/blog/how-evernotes-xml-export-format-works
 
 import base64
 import collections
-import difflib
 import hashlib
 from pathlib import Path
 from urllib.parse import unquote
@@ -41,14 +40,7 @@ class Converter(converter.BaseConverter):
                 "https://www.evernote.com/shard"
             ):
                 # internal link
-                # TODO: similar in synology note station
-                # try to map by title similarity
-                def get_match_ratio(id_, link_text=link.text):
-                    return difflib.SequenceMatcher(
-                        None, link_text, self.note_id_title_map[id_]
-                    ).ratio()
-
-                best_match_id = max(self.note_id_title_map, key=get_match_ratio)
+                best_match_id = common.get_best_match(link.text, self.note_id_title_map)
                 note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
             elif link.url.startswith("data:image/") and "base64" in link.url:
                 # inline resource

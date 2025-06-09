@@ -2,7 +2,6 @@
 
 import copy
 import dataclasses
-import difflib
 import json
 from pathlib import Path
 from urllib.parse import urlparse
@@ -58,13 +57,7 @@ class Converter(converter.BaseConverter):
                 # TODO: Is there a connection between the ID's?
                 # _, linked_note_id = link.url.rsplit("/", 1)
 
-                # try to map by title similarity
-                def get_match_ratio(id_, link_text=link.text):
-                    return difflib.SequenceMatcher(
-                        None, link_text, note_id_title_map[id_]
-                    ).ratio()
-
-                best_match_id = max(note_id_title_map, key=get_match_ratio)
+                best_match_id = common.get_best_match(link.text, note_id_title_map)
                 note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
             elif source_url is not None and ("/" in link.url or "?" in link.url):
                 # TODO: detect relative path of a clipped website properly
