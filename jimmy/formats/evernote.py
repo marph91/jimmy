@@ -73,169 +73,166 @@ class Converter(converter.BaseConverter):
             self.link_notes_by_title(notebook)
 
     @common.catch_all_exceptions
-    def convert_note(self, file_or_folder: Path, parent_notebook: imf.Notebook):
-        self.logger.debug(f'Converting note "{file_or_folder.name}"')
-        try:
-            root_node = ET.parse(file_or_folder).getroot()
-        except ET.ParseError as exc:
-            self.logger.error(f'Failed to parse file "{file_or_folder}"')
-            self.logger.debug(exc, exc_info=True)
-            return
-        for note in root_node.findall("./note"):
-            title = note.find("title")
-            title = (
-                common.unique_title()
-                if title is None or title.text is None
-                else title.text.strip()
-            )
-            self.logger.debug(f'Converting note "{title}"')
-            note_imf = imf.Note(
-                title,
-                # The ids are not exported. We can only try to match
-                # against the title later. A unique ID is still required.
-                original_id=str(uuid.uuid4()),
-                source_application=self.format,
-            )
-            self.note_id_title_map[note_imf.original_id] = note_imf.title
+    def convert_note(self, note, parent_notebook: imf.Notebook):
+        title = note.find("title")
+        title = (
+            common.unique_title()
+            if title is None or title.text is None
+            else title.text.strip()
+        )
+        self.logger.debug(f'Converting note "{title}"')
+        note_imf = imf.Note(
+            title,
+            # The ids are not exported. We can only try to match
+            # against the title later. A unique ID is still required.
+            original_id=str(uuid.uuid4()),
+            source_application=self.format,
+        )
+        self.note_id_title_map[note_imf.original_id] = note_imf.title
 
-            hashes = []
-            tasks = collections.defaultdict(list)
-            for note_element in note:
-                match note_element.tag:
-                    case "title":
-                        pass  # handled already
-                    case "content":
-                        if note_element.text:
-                            parser = ET.XMLParser(
-                                target=jimmy.md_lib.evernote.EnexToMarkdown(
-                                    self.password
-                                )
-                            )
-                            try:
-                                parser.feed(note_element.text.strip())
-                            except ET.ParseError as exc:
-                                self.logger.error("Failed to parse note")
-                                self.logger.debug(exc, exc_info=True)
-                                continue
-                            # assume that this is done always before "resource"
-                            body, hashes = parser.close()
-                            note_imf.body = body
-                    case "created" | "updated":
-                        if note_element.text is None:
-                            continue
+        hashes = []
+        tasks = collections.defaultdict(list)
+        for note_element in note:
+            match note_element.tag:
+                case "title":
+                    pass  # handled already
+                case "content":
+                    if note_element.text:
+                        parser = ET.XMLParser(
+                            target=jimmy.md_lib.evernote.EnexToMarkdown(self.password)
+                        )
                         try:
-                            setattr(
-                                note_imf,
-                                note_element.tag,
-                                common.iso_to_datetime(note_element.text),
-                            )
-                        except ValueError:
-                            self.logger.debug("couldn't parse date")
-                    case "resource":
-                        # Use the original filename if possible.
-                        resource_title = note_element.find(
-                            "./resource-attributes/file-name"
-                        )
-                        resource_data = note_element.find("data")
-                        if resource_data is None or not resource_data.text:
-                            self.logger.debug("Skip empty resource")
+                            parser.feed(note_element.text.strip())
+                        except ET.ParseError as exc:
+                            self.logger.error("Failed to parse note")
+                            self.logger.debug(exc, exc_info=True)
                             continue
-                        if (encoding := resource_data.get("encoding")) != "base64":
-                            self.logger.debug(f"Unsupported encoding: {encoding}")
-                        temp_filename = self.resource_folder / (
-                            common.unique_title()
-                            if resource_title is None
-                            or not isinstance(resource_title.text, str)
-                            else common.safe_path(resource_title.text)
+                        # assume that this is done always before "resource"
+                        body, hashes = parser.close()
+                        note_imf.body = body
+                case "created" | "updated":
+                    if note_element.text is None:
+                        continue
+                    try:
+                        setattr(
+                            note_imf,
+                            note_element.tag,
+                            common.iso_to_datetime(note_element.text),
                         )
-                        resource_data_decoded = base64.b64decode(resource_data.text)
-                        md5_hash = hashlib.md5(resource_data_decoded).hexdigest()
-                        temp_filename = common.write_base64(
-                            temp_filename, resource_data.text
+                    except ValueError:
+                        self.logger.debug("couldn't parse date")
+                case "resource":
+                    # Use the original filename if possible.
+                    resource_title = note_element.find(
+                        "./resource-attributes/file-name"
+                    )
+                    resource_data = note_element.find("data")
+                    if resource_data is None or not resource_data.text:
+                        self.logger.debug("Skip empty resource")
+                        continue
+                    if (encoding := resource_data.get("encoding")) != "base64":
+                        self.logger.debug(f"Unsupported encoding: {encoding}")
+                    temp_filename = self.resource_folder / (
+                        common.unique_title()
+                        if resource_title is None
+                        or not isinstance(resource_title.text, str)
+                        else common.safe_path(resource_title.text)
+                    )
+                    resource_data_decoded = base64.b64decode(resource_data.text)
+                    md5_hash = hashlib.md5(resource_data_decoded).hexdigest()
+                    temp_filename = common.write_base64(
+                        temp_filename, resource_data.text
+                    )
+                    resource_title = (
+                        resource_title
+                        if resource_title is None
+                        else resource_title.text
+                    )
+                    if md5_hash in hashes:
+                        resource_md = f"![]({md5_hash})"
+                        note_imf.resources.append(
+                            imf.Resource(temp_filename, resource_md, resource_title)
                         )
-                        resource_title = (
-                            resource_title
-                            if resource_title is None
-                            else resource_title.text
+                    else:
+                        note_imf.resources.append(
+                            imf.Resource(temp_filename, None, resource_title)
                         )
-                        if md5_hash in hashes:
-                            resource_md = f"![]({md5_hash})"
-                            note_imf.resources.append(
-                                imf.Resource(temp_filename, resource_md, resource_title)
-                            )
-                        else:
-                            note_imf.resources.append(
-                                imf.Resource(temp_filename, None, resource_title)
-                            )
-                    case "tag":
-                        if isinstance(note_element.text, str):
-                            note_imf.tags.append(imf.Tag(note_element.text))
-                    case "task":
-                        status_element = note_element.find("taskStatus")
-                        bullet = (
-                            "- [ ] "
-                            if status_element is not None
-                            and status_element.text == "open"
-                            else "- [x] "
+                case "tag":
+                    if isinstance(note_element.text, str):
+                        note_imf.tags.append(imf.Tag(note_element.text))
+                case "task":
+                    status_element = note_element.find("taskStatus")
+                    bullet = (
+                        "- [ ] "
+                        if status_element is not None and status_element.text == "open"
+                        else "- [x] "
+                    )
+                    task_group_element = note_element.find("taskGroupNoteLevelID")
+                    if task_group_element is not None and (
+                        task_group_id := task_group_element.text
+                    ) not in [None, ""]:
+                        title_element = note_element.find("title")
+                        if (
+                            title_element is None
+                            or not isinstance(title_element.text, str)
+                            or title_element.text == ""
+                        ):
+                            continue
+                        weight_element = note_element.find("sortWeight")
+                        weight = (
+                            "a"
+                            if weight_element is None
+                            or not isinstance(weight_element.text, str)
+                            else weight_element.text
                         )
-                        task_group_element = note_element.find("taskGroupNoteLevelID")
-                        if task_group_element is not None and (
-                            task_group_id := task_group_element.text
-                        ) not in [None, ""]:
-                            title_element = note_element.find("title")
-                            if (
-                                title_element is None
-                                or not isinstance(title_element.text, str)
-                                or title_element.text == ""
+                        tasks[task_group_id].append(
+                            [weight, f"{bullet}{title_element.text}\n"]
+                        )
+                case "note-attributes":
+                    for attr in note_element:
+                        match attr.tag:
+                            case "author" | "latitude" | "longitude" | "altitude":
+                                setattr(note_imf, note_element.tag, attr.text)
+                            case (
+                                "reminder-order"
+                                | "reminder-done-time"
+                                | "reminder-time"
+                                | "source"
+                                | "source-application"
+                                | "source-url"
                             ):
-                                continue
-                            weight_element = note_element.find("sortWeight")
-                            weight = (
-                                "a"
-                                if weight_element is None
-                                or not isinstance(weight_element.text, str)
-                                else weight_element.text
-                            )
-                            tasks[task_group_id].append(
-                                [weight, f"{bullet}{title_element.text}\n"]
-                            )
-                    case "note-attributes":
-                        for attr in note_element:
-                            match attr.tag:
-                                case "author" | "latitude" | "longitude" | "altitude":
-                                    setattr(note_imf, note_element.tag, attr.text)
-                                case (
-                                    "reminder-order"
-                                    | "reminder-done-time"
-                                    | "reminder-time"
-                                    | "source"
-                                    | "source-application"
-                                    | "source-url"
-                                ):
-                                    pass  # TODO
-                                case _:
-                                    self.logger.debug(f"ignoring attr {attr.tag}")
-                    case _:
-                        self.logger.debug(f"ignoring tag {note_element.tag}")
-            # replace tasks
-            for group_id, tasks_md in tasks.items():
-                # tasks_md: [list_index, markdown task]
-                tasks_sorted_md = "".join(
-                    [t[1] for t in sorted(tasks_md, key=lambda t: t[0])]
-                )
-                note_imf.body = note_imf.body.replace(
-                    f"tasklist://{group_id}", "\n" + tasks_sorted_md
-                )
-            parent_notebook.child_notes.append(note_imf)
+                                pass  # TODO
+                            case _:
+                                self.logger.debug(f"ignoring attr {attr.tag}")
+                case _:
+                    self.logger.debug(f"ignoring tag {note_element.tag}")
+        # replace tasks
+        for group_id, tasks_md in tasks.items():
+            # tasks_md: [list_index, markdown task]
+            tasks_sorted_md = "".join(
+                [t[1] for t in sorted(tasks_md, key=lambda t: t[0])]
+            )
+            note_imf.body = note_imf.body.replace(
+                f"tasklist://{group_id}", "\n" + tasks_sorted_md
+            )
+        parent_notebook.child_notes.append(note_imf)
+
+    @common.catch_all_exceptions
+    def convert_file(self, file_or_folder: Path, parent_notebook: imf.Notebook):
+        self.logger.debug(f'Converting note "{file_or_folder.name}"')
+        # We are only interested in complete notes.
+        for _, elem in ET.iterparse(file_or_folder, events=("end",)):
+            if elem.tag == "note":
+                self.convert_note(elem, parent_notebook)
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.is_file():
-            self.convert_note(file_or_folder, self.root_notebook)
+            self.convert_file(file_or_folder, self.root_notebook)
         else:
             for file_ in sorted(file_or_folder.glob("*.enex")):
                 parent_notebook = imf.Notebook(file_.stem)
                 self.root_notebook.child_notebooks.append(parent_notebook)
-                self.convert_note(file_, parent_notebook)
+                self.convert_file(file_, parent_notebook)
 
         # second pass: match note links by name
         self.link_notes_by_title()

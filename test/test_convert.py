@@ -157,6 +157,7 @@ class EndToEnd(unittest.TestCase):
             [["evernote/test_1/obsidian-importer"]],
             [["evernote/test_2/joplin"]],
             [["evernote/test_3/yarle"]],
+            [["evernote/test_4/Manuals.enex"]],
             [["google_docs/test_1/takeout-20240929T124909Z-001.zip"]],
             [["google_keep/test_1/takeout-20250130T150824Z-001.tgz"]],
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
