@@ -5,6 +5,8 @@ import datetime
 import logging
 from pathlib import Path
 
+from rich.logging import RichHandler
+
 import jimmy.common
 import jimmy.main
 
@@ -136,11 +138,25 @@ def main():
             config.input[0].parent / f"{now} - Jimmy Import from {format_}"
         )
 
-    jimmy.main.setup_logging(
-        no_stdout_log=config.no_stdout_log,
-        stdout_log_level=config.stdout_log_level,
-        log_file=config.log_file,
-    )
+    # setup logging
+    custom_handlers: list[logging.Handler] = []
+    if config.log_file is not None:
+        # log to file
+        file_handler_formatter = logging.Formatter(
+            "%(asctime)s [%(levelname)-5.5s]  %(message)s"
+        )
+        file_handler = logging.FileHandler(config.log_file, mode="w")
+        file_handler.setFormatter(file_handler_formatter)
+        file_handler.setLevel(logging.DEBUG)
+        custom_handlers.append(file_handler)
+    if not config.no_stdout_log:
+        # log to stdout
+        console_handler_formatter = logging.Formatter("%(message)s")
+        console_handler = RichHandler(markup=True, show_path=False)
+        console_handler.setFormatter(console_handler_formatter)
+        console_handler.setLevel(config.stdout_log_level)
+        custom_handlers.append(console_handler)
+    jimmy.main.setup_logging(custom_handlers=custom_handlers)
 
     jimmy.main.run_conversion(config)
 

@@ -2,11 +2,9 @@
 
 import importlib
 import logging
-from pathlib import Path
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
-from rich.logging import RichHandler
 from rich.tree import Tree
 
 from jimmy import (
@@ -22,11 +20,7 @@ from jimmy import (
 LOGGER = logging.getLogger("jimmy")
 
 
-def setup_logging(
-    no_stdout_log: bool = True,
-    stdout_log_level: str = "DEBUG",
-    log_file: str | Path | None = None,
-):
+def setup_logging(custom_handlers: list | None = None):
     LOGGER.handlers.clear()
 
     # setup the root logger, but don't propagate. We will log use our own
@@ -34,36 +28,27 @@ def setup_logging(
     logging.basicConfig(level=logging.DEBUG)
     LOGGER.propagate = False
 
-    if log_file is not None:
-        # log to file
-        file_handler_formatter = logging.Formatter(
-            "%(asctime)s [%(levelname)-5.5s]  %(message)s"
-        )
-        file_handler = logging.FileHandler(log_file, mode="w")
-        file_handler.setFormatter(file_handler_formatter)
-        file_handler.setLevel(logging.DEBUG)
-        LOGGER.addHandler(file_handler)
-
-    if not no_stdout_log:
-        # log to stdout
-        console_handler_formatter = logging.Formatter("%(message)s")
-        console_handler = RichHandler(markup=True, show_path=False)
-        console_handler.setFormatter(console_handler_formatter)
-        console_handler.setLevel(stdout_log_level)
-        LOGGER.addHandler(console_handler)
+    if custom_handlers is None:
+        custom_handlers = []
+    for custom_handler in custom_handlers:
+        LOGGER.addHandler(custom_handler)
 
     # handle other loggers
     # https://stackoverflow.com/a/53250066/7410886
     other_loggers = [
         logging.getLogger(log)
-        for log in ("anyblock_exporter", "pypandoc", "python-markdown", "watchdog")
+        for log in (
+            "anyblock_exporter",
+            "asyncio",
+            "pypandoc",
+            "python-markdown",
+            "watchdog",
+        )
     ]
     for log in other_loggers:
         log.propagate = False
         log.handlers.clear()
         log.setLevel(logging.WARNING)
-        if not no_stdout_log:
-            log.addHandler(console_handler)
 
 
 def convert_all_inputs(config):
