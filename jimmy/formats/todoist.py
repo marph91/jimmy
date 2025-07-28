@@ -91,7 +91,7 @@ def split_labels(title_labels: str) -> tuple[str, list[str]]:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".csv"]
+    # accepted_extensions = [".csv"]
 
     def convert(self, file_or_folder: Path):
         return  # TODO: implement a checklist based approach

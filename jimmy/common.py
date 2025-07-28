@@ -170,6 +170,8 @@ def get_available_formats() -> dict:
         module_ = importlib.import_module(f"jimmy.formats.{module.name}")
         accepted_extensions = module_.Converter.accepted_extensions
         accept_folder = module_.Converter.accept_folder
+        if accepted_extensions is None and not accept_folder:
+            continue  # The file is there, but the format is not supported anymore.
         formats_dict[module.name] = {
             "accepted_extensions": accepted_extensions,
             "accept_folder": accept_folder,
