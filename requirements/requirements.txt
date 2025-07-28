@@ -10,5 +10,7 @@ pyparsing==3.2.3
 python-frontmatter==1.1.0
 # pytodotxt==1.5.0
 pyyaml==6.0.2
-rich==14.0.0
+rich==14.1.0
 # stage-left==0.2.2
+textual==5.0.1
+textual-fspicker==0.4.1

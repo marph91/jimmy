@@ -9,6 +9,7 @@ from rich.logging import RichHandler
 
 import jimmy.common
 import jimmy.main
+import jimmy.jimmy_tui
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -49,73 +50,84 @@ def relative_path(path: str | Path | None) -> Path | None:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    subparsers = parser.add_subparsers(dest="interface")
+
+    # TUI parser
+    subparsers.add_parser(
+        "tui", help="Configure Jimmy in a Terminal User Interface (TUI)."
+    )
+
+    # CLI parser
+    parser_cli = subparsers.add_parser(
+        "cli", help="Specify all arguments directly on command line."
+    )
+    parser_cli.add_argument(
         "input", type=Path, nargs="+", help="The input file(s) or folder(s)."
     )
     # specific formats that need a special handling
-    parser.add_argument(
+    parser_cli.add_argument(
         "--format",
         choices=jimmy.common.get_available_formats(),
         help="The source format.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--password",
         default="",
         help="Password to decrypt the input.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--frontmatter",
         default=None,
         choices=(None, "joplin", "obsidian", "qownnotes"),
         help="Frontmatter type.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--template-file",
         type=Path,
         help="Path to a template file, applied to the note body.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--output-folder",
         type=Path,
         help="The output folder.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--global-resource-folder",
         type=relative_path,
         help="The resource folder for images, PDF and other data. "
         "Relative to the output folder.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--local-resource-folder",
         type=relative_path,
         help="The resource folder for images, PDF and other data. "
         "Relative to the location of the corresponding note.",
         default=Path("."),  # next to the note
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--local-image-folder",
         type=relative_path,
         help="The folder for images. Works only together with "
         "--local-resource-folder. "
         "Relative to the location of the corresponding note.",
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--print-tree",
         action="store_true",
         help="Print the parsed note tree in intermediate format.",
     )
-    parser.add_argument("--log-file", type=Path, help="Path for the log file.")
-    parser.add_argument(
+    parser_cli.add_argument("--log-file", type=Path, help="Path for the log file.")
+    parser_cli.add_argument(
         "--no-stdout-log", action="store_true", help="Don't log to stdout."
     )
-    parser.add_argument(
+    parser_cli.add_argument(
         "--stdout-log-level",
         default="INFO",
         choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
         help="Create a log file next to the executable.",
     )
 
-    filters = parser.add_mutually_exclusive_group()
+    filters = parser_cli.add_mutually_exclusive_group()
     filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
     filters.add_argument("--include-notes", nargs="+", help="Include notes by title.")
     filters.add_argument(
@@ -128,6 +140,14 @@ def main():
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
     config = parser.parse_args()
+
+    match config.interface:
+        case None:
+            parser.print_help()
+            return
+        case "tui":
+            jimmy.jimmy_tui.main()
+            return
 
     if config.output_folder is None:
         # If there is no output folder specified, just put
