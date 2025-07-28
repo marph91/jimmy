@@ -37,13 +37,13 @@ The default conversion covers the following formats:
 2. Convert to Markdown. Examples:
 ```sh
 # convert a single file supported by pandoc
-jimmy-cli-linux libre_office_document.odt
+jimmy-linux cli libre_office_document.odt
 
 # convert multiple files
-jimmy-cli-linux plaintext.txt markdown.md
+jimmy-linux cli plaintext.txt markdown.md
 
 # convert all files in a folder recursively
-jimmy-cli-linux path/to/folder
+jimmy-linux cli path/to/folder
 ```
 3. [Import to your app](../import_instructions.md)
 

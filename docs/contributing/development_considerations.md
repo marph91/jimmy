@@ -34,29 +34,29 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='jimmy_cli',
+    name="jimmy",
 )
 ```
 
 The resulting files can be listed and ordered by size by:
 
 ```bash
-$ du -lh --max-depth=2 dist/jimmy_cli | sort -h
-12K     dist/jimmy_cli/_internal/src
-24K     dist/jimmy_cli/_internal/wheel-0.44.0.dist-info
-40K     dist/jimmy_cli/_internal/Markdown-3.7.dist-info
-44K     dist/jimmy_cli/_internal/anyblock_exporter
-60K     dist/jimmy_cli/_internal/cryptography-43.0.3.dist-info
-60K     dist/jimmy_cli/_internal/setuptools
-108K    dist/jimmy_cli/_internal/ossl-modules
-164K    dist/jimmy_cli/_internal/puremagic
-296K    dist/jimmy_cli/_internal/charset_normalizer
-2,4M    dist/jimmy_cli/_internal/yaml
-11M     dist/jimmy_cli/_internal/cryptography
-15M     dist/jimmy_cli/_internal/lib-dynload
-144M    dist/jimmy_cli/_internal/pypandoc
-213M    dist/jimmy_cli/_internal
-262M    dist/jimmy_cli
+$ du -lh --max-depth=2 dist/jimmy | sort -h
+12K     dist/jimmy/_internal/src
+24K     dist/jimmy/_internal/wheel-0.44.0.dist-info
+40K     dist/jimmy/_internal/Markdown-3.7.dist-info
+44K     dist/jimmy/_internal/anyblock_exporter
+60K     dist/jimmy/_internal/cryptography-43.0.3.dist-info
+60K     dist/jimmy/_internal/setuptools
+108K    dist/jimmy/_internal/ossl-modules
+164K    dist/jimmy/_internal/puremagic
+296K    dist/jimmy/_internal/charset_normalizer
+2,4M    dist/jimmy/_internal/yaml
+11M     dist/jimmy/_internal/cryptography
+15M     dist/jimmy/_internal/lib-dynload
+144M    dist/jimmy/_internal/pypandoc
+213M    dist/jimmy/_internal
+262M    dist/jimmy
 ```
 
 ## Why cryptography and not pycryptodome?

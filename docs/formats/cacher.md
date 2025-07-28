@@ -13,7 +13,7 @@ source_app: Cacher
 
 1. Export as described [at the website](https://www.cacher.io/docs/guides/snippets/exporting-snippets#how-to-export-1)
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux cacher-export-202406182304.json --format cacher`
+3. Convert to Markdown. Example: `jimmy-linux cli cacher-export-202406182304.json --format cacher`
 4. [Import to your app](../import_instructions.md)
 
 ## Import Structure

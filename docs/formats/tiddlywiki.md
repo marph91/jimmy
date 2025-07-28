@@ -16,9 +16,9 @@ source_app: TiddlyWiki
     2. Choose "TID text file" if you want to export a single tiddler only. Resources and internal links won't be converted in this case.
 2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Examples:
-    1. `jimmy-cli-linux tiddlers.json --format tiddlywiki`
-    2. `jimmy-cli-linux tiddlers.tid --format tiddlywiki`
-    3. `jimmy-cli-linux /folder/to/tiddlers --format tiddlywiki`
+    1. `jimmy-linux cli tiddlers.json --format tiddlywiki`
+    2. `jimmy-linux cli tiddlers.tid --format tiddlywiki`
+    3. `jimmy-linux cli /folder/to/tiddlers --format tiddlywiki`
 4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations

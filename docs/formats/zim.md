@@ -12,7 +12,7 @@ source_app: Zim Wiki
 ## Instructions
 
 1. [Install Jimmy](../index.md#installation)
-2. Convert to Markdown. Example: `jimmy-cli-linux zim/folder --format zim`
+2. Convert to Markdown. Example: `jimmy-linux cli zim/folder --format zim`
 3. [Import to your app](../import_instructions.md)
 
 ## Import Structure
