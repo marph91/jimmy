@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "docs/**"
+      - .github/workflows/docs.yml
       - mkdocs.yml
       - requirements/requirements-docs.txt
   workflow_dispatch:
@@ -21,7 +22,9 @@ jobs:
         with:
           # https://github.com/timvink/mkdocs-git-revision-date-localized-plugin?tab=readme-ov-file#note-when-using-build-systems-like-github-actions
           fetch-depth: 0
-          sparse-checkout: docs
+          sparse-checkout: |
+            docs
+            requirements
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
