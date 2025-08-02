@@ -1,0 +1,1836 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Jimmy is tool to convert your notes from various formats to Markdown. This can be used to import to note applications such as Joplin and Obsidian.">
+  
+  
+    <link rel="canonical" href="https://marph91.github.io/jimmy/index.html">
+  
+  
+  
+    <link rel="next" href="formats/default.html">
+  
+  
+  <link rel="icon" href="images/favicon.png">
+  <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.6.12">
+
+    
+  <title>Jimmy - Note Conversion Tool</title>
+
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.66ac8b77.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Jimmy - Note Conversion Tool" />
+  <meta property="og:description" content="Jimmy is tool to convert your notes from various formats to Markdown. This can be used to import to note applications such as Joplin and Obsidian." />
+  <meta property="og:url" content="https://marph91.github.io/jimmy/index.html" />
+  <meta property="og:image" content="https://marph91.github.io/jimmy//images/logo2.png" />
+  <meta property="og:image:type" content="image/png" />
+
+  
+  
+  
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "TechArticle",
+    "author": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "maintainer": {
+      "@type": "Person",
+      "name": "Marph"
+    },
+    "headline": "Jimmy - Note Conversion Tool",
+    "name": "Jimmy - Note Conversion Tool",
+    "about": "Jimmy is tool to convert your notes from various formats to Markdown. This can be used to import to note applications such as Joplin and Obsidian.",
+    "description": "Jimmy is tool to convert your notes from various formats to Markdown. This can be used to import to note applications such as Joplin and Obsidian.",
+    "proficiencyLevel": "Beginner",
+    "educationalLevel": "intermediate",
+    "creativeWorkStatus": "Published",
+    "discussionUrl": "https://github.com/marph91/jimmy/issues",
+    "identifier": "https://marph91.github.io/jimmy/index.html",
+    "inLanguage": "English",
+    "isPartOf": "https://marph91.github.io/jimmy/",
+    "keywords": "Markdown, Joplin, Obsidian, Conversion, Migration, Import, Export",
+    "license": "https://github.com/marph91/jimmy/blob/77c165a4de9204e6f808348f190fba65bdcd75cd/license",
+    "mainEntity": "https://marph91.github.io/jimmy/",
+    "teaches": "Jimmy is tool to convert your notes from various formats to Markdown. This can be used to import to note applications such as Joplin and Obsidian.",
+    "timeRequired": "PT10M",
+    "typicalAgeRange": "14-"
+  }
+  </script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="Jimmy" class="md-header__button md-logo" aria-label="Jimmy" data-md-component="logo">
+      
+  <img src="images/favicon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Jimmy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Jimmy - Note Conversion Tool
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/marph91/jimmy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    marph91/jimmy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Jimmy" class="md-nav__button md-logo" aria-label="Jimmy" data-md-component="logo">
+      
+  <img src="images/favicon.png" alt="logo">
+
+    </a>
+    Jimmy
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/marph91/jimmy" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    marph91/jimmy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="index.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Jimmy - Note Conversion Tool
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Formats
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Formats
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/default.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Default Conversion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/anki.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anki
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/anytype.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anytype
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/bear.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bear
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/cacher.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cacher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/cherrytree.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CherryTree
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/clipto.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Clipto
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/colornote.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ColorNote
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/day_one.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Day One
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/drafts.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Drafts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/dynalist.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dynalist
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/evernote.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evernote
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/facebook.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Facebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/nimbus_note.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FuseBase
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/tomboy_ng.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Gnote
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/google_docs.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Google Docs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/google_keep.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Google Keep
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/joplin.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Joplin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/jrnl.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    jrnl
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/nimbus_note.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Nimbus Note
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/notion.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Notion
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/obsidian.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Obsidian
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/qownnotes.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    QOwnNotes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/rednotebook.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RedNotebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/roam_research.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Roam Research
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/samsung_notes.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Samsung Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/simplenote.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Simplenote
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/standard_notes.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Standard Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/synology_note_station.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synology Note Station
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/telegram.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Telegram
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/textbundle.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Textbundle
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/tiddlywiki.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tiddlywiki
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/tomboy_ng.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tomboy-ng
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/turtl.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Turtl
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/wordpress.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Wordpress
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/zettelkasten.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zettelkasten
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/zim.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zim
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="formats/zoho_notebook.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Zoho Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="import_instructions.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Import Instructions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Additional features
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Additional features
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="additional_features/output_customization.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Customizing the Output
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="additional_features/filters.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="additional_features/show_note_tree.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Show the Note Tree
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="additional_features/templates.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="additional_features/miscellaneous.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Miscellaneous
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Contributing
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing/contributing.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How to Contribute?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing/get_sample_data.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How to get sample data?
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing/more_note_apps.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    More Note Apps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="contributing/development_considerations.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Development Considerations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="welcome-to-jimmys-documentation">Welcome to Jimmy's documentation!<a class="headerlink" href="#welcome-to-jimmys-documentation" title="Permanent link">&para;</a></h1>
+<p><img alt="Jimmy logo" src="images/logo2.png" width="75%" /></p>
+<p><strong>Jimmy</strong> is a tool to convert your notes from different formats to Markdown.</p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p><strong>Download Jimmy here: <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux">Linux</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe">Windows</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64">macOS</a></strong></p>
+<h2 id="use-cases">Use Cases<a class="headerlink" href="#use-cases" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Migrate between note apps</li>
+<li>Save your notes in a future-proof, human-readable format</li>
+<li>Prepare your notes for processing in a LLM</li>
+</ul>
+<h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
+<p>Example commands for the Linux CLI app:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># convert a single file supported by pandoc</span>
+jimmy-cli-linux<span class="w"> </span>libre_office_document.odt
+
+<span class="c1"># convert all files in a folder</span>
+jimmy-cli-linux<span class="w"> </span>path/to/folder
+
+<span class="c1"># convert a Google Keep export</span>
+jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span class="w"> </span>--format<span class="w"> </span>google_keep
+</code></pre></div>
+<p>For a video, check the <a href="https://github.com/marph91/jimmy?tab=readme-ov-file#demo">Github readme</a>.</p>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
+<ul>
+<li>✅ Several supported input formats</li>
+<li>✅ Markdown + Front matter output<ul>
+<li>Compatible with any text editor</li>
+<li>Can be imported to Joplin/Obsidian/...</li>
+<li>Preserves resources, tags and note links when possible</li>
+</ul>
+</li>
+<li>✅ Offline</li>
+<li>✅ Open Source</li>
+<li>✅ Cross-platform</li>
+<li>✅ Standalone (no Docker, Python or Node.js installation required)</li>
+<li>❎ No AI</li>
+</ul>
+<p>If there is an issue at download or execution, please take a look at the <a href="#step-by-step-instructions">step-by-step instructions</a>.</p>
+<h2 id="supported-apps">Supported Apps<a class="headerlink" href="#supported-apps" title="Permanent link">&para;</a></h2>
+<p>Export data from your app and convert it to Markdown. For details, click on the links.</p>
+<p><code>A</code> <img alt="Anki logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Anki-icon.svg/240px-Anki-icon.svg.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/anki/">Anki</a> <img alt="Anytype logo" src="https://raw.githubusercontent.com/anyproto/anytype-ts/f5bad768813c6e8b783192adfd25c7410494977c/src/img/logo/symbol.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/anytype/">Anytype</a>
+<code>B</code> <img alt="Bear logo" src="https://bear.app/images/logo.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/bear/">Bear</a>
+<code>C</code> <img alt="Cacher logo" src="https://raw.githubusercontent.com/CacherApp/cacher-cli/e241f06867dba740131db5314ef7fe279135baf6/images/cacher-icon.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/cacher/">Cacher</a> <img alt="CherryTree logo" src="https://raw.githubusercontent.com/giuspen/cherrytree/c822b16681b002b8882645d8d1e8f109514ddb58/icons/cherrytree.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/cherrytree/">CherryTree</a> <img alt="Clipto logo" src="https://avatars.githubusercontent.com/u/53916365?s=200&v=4" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/clipto/">Clipto</a> <img alt="ColorNote logo" src="https://www.colornote.com/wp-content/uploads/2016/05/cropped-favicon.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/colornote/">ColorNote</a>
+<code>D</code> <img alt="Day One logo" src="https://iconape.com/wp-content/files/rb/342127/png/day-one-logo.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/day_one/">Day One</a> <img alt="Drafts logo" src="https://getdrafts.com/assets/favicon/favicon.ico" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/drafts/">Drafts</a> <img alt="Dynalist logo" src="https://images.saasworthy.com/dynalist_5288_logo_1576239391_xhkcg.jpg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/dynalist/">Dynalist</a>
+<code>E</code> <img alt="Evernote logo" src="https://avatars.githubusercontent.com/u/1120885" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/evernote/">Evernote</a>
+<code>F</code> <img alt="Facebook logo" src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/facebook/">Facebook</a> <img alt="FuseBase logo" src="https://wavebox.pro/store2/store/0b46bf0a-107c-4fa2-a657-3df7412e3d3d.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/nimbus_note/">FuseBase / Nimbus Note</a>
+<code>G</code> <img alt="Google Docs logo" src="https://www.gstatic.com/images/branding/product/1x/docs_2020q4_96dp.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/google_docs/">Google Docs</a> <img alt="Google Keep logo" src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_96dp.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/google_keep/">Google Keep</a>
+<code>J</code> <img alt="Joplin logo" src="https://github.com/laurent22/joplin/blob/dev/Assets/LinuxIcons/128x128.png?raw=true" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/joplin/">Joplin</a> <img alt="jrnl logo" src="https://raw.githubusercontent.com/jrnl-org/jrnl/85a98afcd91ed873c0eceba9893c3ec424f201b8/docs_theme/img/logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/jrnl/">jrnl</a>
+<code>N</code> <img alt="Notion logo" src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/notion/">Notion</a>
+<code>O</code> <img alt="Obsidian logo" src="https://upload.wikimedia.org/wikipedia/commons/1/10/2023_Obsidian_logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/obsidian/">Obsidian</a>
+<code>Q</code> <img alt="QOwnNotes logo" src="https://raw.githubusercontent.com/pbek/QOwnNotes/d89a597a28eeb16f57692ac121933b478f44bf07/src/images/icons/256x256/apps/QOwnNotes.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/qownnotes/">QOwnNotes</a>
+<code>R</code> <img alt="RedNotebook logo" src="https://raw.githubusercontent.com/jendrikseipp/rednotebook/b2cefe5f321b21ab7ad855059f3c0496eb0830d2/rednotebook/images/rednotebook-icon/rn-256.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/rednotebook/">RedNotebook</a> <img alt="Roam Research logo" src="https://upload.wikimedia.org/wikipedia/commons/6/61/Astrolabe-black.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/roam_research/">Roam Research</a>
+<code>S</code> <img alt="Simplenote logo" src="https://raw.githubusercontent.com/Automattic/simplenote-electron/4a140a96545763c849b26a81a2e27ff67eaa68f0/lib/icons/app-icon/icon_256x256.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/simplenote/">Simplenote</a> <img alt="Standard Notes logo" src="https://avatars.githubusercontent.com/u/24537496?s=100" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/standard_notes/">Standard Notes</a> <img alt="Synology Note Station logo" src="https://www.synology.com/img/dsm/note_station/notestation_72.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/synology_note_station/">Synology Note Station</a>
+<code>T</code> <img alt="Telegram logo" src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/tiddlywiki/">Telegram</a> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/textbundle/">Textbundle / Textpack</a> <img alt="Tiddlywiki logo" src="https://talk.tiddlywiki.org/uploads/default/original/1X/5d4e8afa05b64280281f851dfc982796b5f7fcd1.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/tiddlywiki/">Tiddlywiki</a> <img alt="Tomboy-ng logo" src="https://dl.flathub.org/media/org/gnome/Gnote/4f2ede31f33a5f935bec4206a6035410/icons/128x128/org.gnome.Gnote.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/tomboy_ng/">Tomboy-ng / Gnote</a> <img alt="Turtl logo" src="https://turtlapp.com/images/logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/turtl/">Turtl</a>
+<code>W</code> <img alt="Wordpress logo" src="https://s.w.org/style/images/about/WordPress-logotype-wmark.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/wordpress/">Wordpress</a>
+<code>Z</code> <img alt="Zettelkasten logo" src="https://raw.githubusercontent.com/Zettelkasten-Team/Zettelkasten/refs/heads/main/src/main/resources/de/danielluedecke/zettelkasten/resources/icons/zkn3-256x256.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/zettelkasten/">Zettelkasten</a> <img alt="Zim logo" src="https://zim-wiki.org/images/globe.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/zim/">Zim</a> <img alt="Zoho Notebook logo" src="https://zohowebstatic.com/sites/default/files/ogimage/notebook-logo.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/zoho_notebook/">Zoho Notebook</a></p>
+<h2 id="supported-formats">Supported Formats<a class="headerlink" href="#supported-formats" title="Permanent link">&para;</a></h2>
+<p>Convert a single file or a folder (recursively). Files of these formats will be converted to Markdown. The formats can be mixed. For example, you can convert a folder with two Asciidoc files and one DOCX file. The conversion result will be a folder with three Markdown files and the corresponding attachments.</p>
+<p><code>A</code> <img alt="Asciidoc logo" src="https://avatars.githubusercontent.com/u/3137042?s=100&v=4" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">Asciidoc</a>
+<code>C</code> <img alt="CSV logo" src="https://upload.wikimedia.org/wikipedia/commons/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">CSV</a>
+<code>D</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">DocBook</a> <img alt="DOCX logo" src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Microsoft_Office_Word_%282019%E2%80%93present%29.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">DOCX</a>
+<code>E</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://en.wikipedia.org/wiki/Email#Filename_extensions">EML</a> <img alt="EPUB logo" src="https://upload.wikimedia.org/wikipedia/commons/9/91/Epub_logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">EPUB</a>
+<code>F</code> <img alt="Fountain logo" src="https://fountain.io/wp-content/uploads/2023/05/fountain-sign-164-150x150.png" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">Fountain</a>
+<code>H</code> <img alt="HTML logo" src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">HTML</a>
+<code>J</code> <img alt="Jupyter Notebook logo" src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">Jupyter Notebook</a>
+<code>M</code> <img alt="Markdown logo" src="https://upload.wikimedia.org/wikipedia/commons/f/f4/Markdown-mark-4th.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">Markdown</a> <img alt="MediaWiki logo" src="https://www.mediawiki.org/static/images/icons/mediawikiwiki.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">MediaWiki</a>
+<code>O</code> <img alt="ODT logo" src="https://upload.wikimedia.org/wikipedia/commons/0/02/LibreOffice_6.1_Writer_Icon.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">ODT</a> <img alt="OPML logo" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Opml-icon.svg" style="height:20px;max-width:20px;"> <a href="https://marph91.github.io/jimmy/formats/default/">OPML</a>
+<code>R</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">reStructuredText</a> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">RTF</a>
+<code>T</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">txt2tags</a></p>
+<h2 id="general-usage">General Usage<a class="headerlink" href="#general-usage" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    A[App 1] --&gt;|Backup| M
+    B[App 2] --&gt;|Export| M
+    C[...] --&gt; M
+    D[Filesystem] --&gt; M
+    M(ZIP archive/JSON/Folder) --&gt; N
+    N{Jimmy} --&gt; O(Markdown + Frontmatter)
+    O --&gt;|Import| P[Joplin]
+    O --&gt;|Import| Q[Obsidian]
+    O --&gt; R[...]
+    O --&gt; S[Editor, e. g. VSCode]</code></pre>
+<ol>
+<li>Export/backup notes from your note application</li>
+<li>Run <code>jimmy</code>, which converts your notes to Markdown</li>
+<li>Import the result to Joplin/Obsidian or even use any editor like VSCode</li>
+</ol>
+<h2 id="step-by-step-instructions">Step-by-step Instructions<a class="headerlink" href="#step-by-step-instructions" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Linux / macOS Example</th>
+<th>Windows Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Export your notes to your download folder</td>
+<td><code>/home/user/Downloads/Export.zip</code></td>
+<td><code>C:\Users\user\Downloads\Export.zip</code></td>
+</tr>
+<tr>
+<td>Download Jimmy to your download folder [1]</td>
+<td><code>/home/user/Downloads/jimmy-cli-linux</code></td>
+<td><code>C:\Users\user\Downloads\jimmy-cli-windows.exe</code></td>
+</tr>
+<tr>
+<td>Open a terminal</td>
+<td><a href="https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu">Linux</a> / <a href="https://www.wikihow.com/Open-a-Terminal-Window-in-Mac">macOS</a> instructions</td>
+<td><a href="https://www.wikihow.com/Open-Terminal-in-Windows">Windows instructions</a></td>
+</tr>
+<tr>
+<td>Change to the download folder</td>
+<td><code>cd /home/user/Downloads/</code></td>
+<td><code>cd C:\Users\user\Downloads\</code></td>
+</tr>
+<tr>
+<td>Make Jimmy executable</td>
+<td><code>chmod +x jimmy-cli-linux</code></td>
+<td>-</td>
+</tr>
+<tr>
+<td>Do the conversion [2] [3] [4]</td>
+<td><code>./jimmy-cli-linux Export.zip --format notion</code></td>
+<td><code>jimmy-cli-windows.exe Export.zip --format notion</code></td>
+</tr>
+<tr>
+<td>Check the output folder</td>
+<td><code>/home/user/Downloads/20250226T200101Z - Jimmy Import from notion</code></td>
+<td><code>C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion</code></td>
+</tr>
+</tbody>
+</table>
+<p>[1] On Windows: If Jimmy is flagged as virus, please <a href="https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors">report the false positive to your antivirus vendor</a>. As workaround, you can try an older version of Jimmy.</p>
+<p>[2] On macOS: If there is the error message <code>zsh: bad CPU type in executable</code>, please use <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64">this executable</a>. It is supported by Intel chips.</p>
+<p>[3] On macOS: If there is the error message <code>"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified</code>, please authorize Jimmy at <code>System Settings → Privacy &amp; Security → Security → Open Anyway</code>. See also the <a href="https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac">Apple support guide</a>.</p>
+<p>[4] On Linux: If there is the error message <code>version `GLIBC_2.35' not found</code>, you can either try update your OS or use an older Jimmy build. The glibc version is usually upwards compatible:</p>
+<table>
+<thead>
+<tr>
+<th>Jimmy Version</th>
+<th>Glibc Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>From <a href="https://github.com/marph91/jimmy/releases/tag/v0.1.0">v0.1.0</a></td>
+<td>2.35</td>
+</tr>
+<tr>
+<td><a href="https://github.com/marph91/jimmy/releases/tag/v0.0.56">v0.0.56</a></td>
+<td>2.31</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 2, 2025 15:00:27">August 2, 2025</span>
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+        
+          
+          <a href="formats/default.html" class="md-footer__link md-footer__link--next" aria-label="Next: Default Conversion">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Default Conversion
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/marph91/jimmy" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://www.youtube.com/watch?v=54t6WalJUmo" target="_blank" rel="noopener" title="www.youtube.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.footer", "navigation.indexes", "navigation.path", "toc.integrate"], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.3220b9d7.min.js"></script>
+      
+        <script src="js/open_in_new_tab.js"></script>
+      
+    
+  </body>
+</html>
