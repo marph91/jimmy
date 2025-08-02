@@ -9,6 +9,11 @@ site_url: https://marph91.github.io/jimmy/
 repo_name: marph91/jimmy
 repo_url: https://github.com/marph91/jimmy
 
+# Generate URLs in the format "jimmy/formats/cherrytree/".
+# Don't remove this as it would yield in many invalid links!
+# https://www.mkdocs.org/user-guide/configuration/#use_directory_urls
+use_directory_urls: true
+
 theme:
   # https://github.com/squidfunk/mkdocs-material/blob/4c0004e16b1d51511fbd3c8537394069f004ecfe/material/templates/base.html
   name: material
