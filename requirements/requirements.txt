@@ -1,14 +1,14 @@
 anyblock_exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744
-beautifulsoup4==4.13.3
-cryptography==44.0.2
-markdown==3.7
-platformdirs==4.3.7
-puremagic==1.28
-pydantic==2.11.3
+beautifulsoup4==4.13.4
+cryptography==45.0.5
+markdown==3.8.2
+platformdirs==4.3.8
+puremagic==1.30
+pydantic==2.11.7
 pypandoc_binary==1.15
 pyparsing==3.2.3
 python-frontmatter==1.1.0
 # pytodotxt==1.5.0
 pyyaml==6.0.2
-rich==14.0.0
+rich==14.1.0
 # stage-left==0.2.2

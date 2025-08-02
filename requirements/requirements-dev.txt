@@ -1,15 +1,15 @@
 -r requirements.txt
-mypy==1.15.0
+mypy==1.17.1
 parameterized==0.9.0
-py7zr==0.22.0
-pylint==3.3.6
-pytest==8.3.5
+py7zr==1.0.0
+pylint==3.3.7
+pytest==8.4.1
 # for better log when using pytest-xdist
 pytest-sugar==1.0.0
 # for faster test execution
-pytest-xdist==3.6.1
+pytest-xdist==3.8.0
 requests==2.32.4
-ruff==0.11.5
-types-beautifulsoup4==4.12.0.20250204
-types-Markdown==3.7.0.20241204
-types-pyyaml==6.0.12.20250402
+ruff==0.12.7
+types-beautifulsoup4==4.12.0.20250516
+types-Markdown==3.8.0.20250708
+types-pyyaml==6.0.12.20250516

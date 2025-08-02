@@ -33,7 +33,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [iaWriter](https://ia.net/writer) | [doc](https://ia.net/writer/support/preview/export-share-print) (Markdown) | two-week trial |
 | [Inkdrop](https://www.inkdrop.app/) |     | 30-day trial |
 | [Journalify](https://www.journalify.com/) |     | Google or Facebook account needed |
-| [Journey.cloud](https://journey.cloud/) |     | [demo](https://journey.cloud/app/timeline) |
+| [Journey.cloud](https://journey.cloud/) | [script](https://github.com/davep/journey2md) | [demo](https://journey.cloud/app/timeline) |
 | [keynote-nf](https://github.com/dpradov/keynote-nf) |     | <https://github.com/marph91/jimmy/issues/3> |
 | [~~Laverna~~](https://laverna.cc/) |     | dead |
 | [Lifeograph](https://sourceforge.net/projects/lifeograph/) | [doc](https://lifeograph.sourceforge.net/doku.php) |     |
