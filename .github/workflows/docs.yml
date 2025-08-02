@@ -28,5 +28,8 @@ jobs:
           python-version: "3.13"
       - name: Install pip dependencies
         run: pip install -r requirements/requirements-docs.txt
+      # TODO: remove temporary workaround
+      - name: Fix mkdocs URLs
+        run: pip install --force-reinstall "click<8.2.2"
       - name: Deploy site
         run: mkdocs gh-deploy --force
