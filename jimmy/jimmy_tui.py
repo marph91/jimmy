@@ -22,6 +22,21 @@ import jimmy.common
 import jimmy.main
 
 
+class CustomButton(Button):
+    """
+    Behaves like textual's built-in button.
+    Only doesn't highlight the text when focussed.
+    """
+
+    DEFAULT_CSS = """
+    CustomButton {
+        &:focus {
+            text-style: bold;
+        }
+    }
+    """
+
+
 class HelpScreen(ModalScreen):
     BINDINGS = [("escape", "app.pop_screen", "Back")]
 
@@ -63,14 +78,14 @@ class HelpScreen(ModalScreen):
                     "contact me by:"
                 )
             with HorizontalGroup():
-                yield Button("Email", id="contact_email")
-                yield Button("Github", id="contact_github")
-                yield Button("Joplin Forum", id="contact_joplin")
-                yield Button("Obsidian Forum", id="contact_obsidian")
+                yield CustomButton("Email", id="contact_email")
+                yield CustomButton("Github", id="contact_github")
+                yield CustomButton("Joplin Forum", id="contact_joplin")
+                yield CustomButton("Obsidian Forum", id="contact_obsidian")
             with HorizontalGroup():
                 yield Label("Please include the input file and log if possible.")
             with HorizontalGroup():
-                yield Button("Ok", id="ok")
+                yield CustomButton("Ok", id="ok")
 
     def on_button_pressed(self, event: Button.Pressed):
         match event.button.id:
@@ -130,7 +145,7 @@ class SelectInputScreen(ModalScreen):
             with HorizontalGroup():
                 yield Label("Please select an input before starting the conversion.")
             with HorizontalGroup():
-                yield Button("Ok")
+                yield CustomButton("Ok")
 
     def on_button_pressed(self, _event: Button.Pressed):
         self.app.pop_screen()
@@ -151,7 +166,8 @@ class LoggingConsole(RichLog):
 class JimmyApp(App):
     SCREENS = {"help_screen": HelpScreen}
     BINDINGS = [
-        Binding(key="escape", action="quit", description="Quit"),
+        Binding(key="escape", action="quit", description="Quit", key_display=False),
+        Binding(key="q", action="quit", description="Quit"),
         Binding(key="c", action="copy_log", description="Copy Log"),
         Binding(key="s", action="save_log", description="Save Log"),
         Binding(key="h", action="push_screen('help_screen')", description="Help"),
@@ -211,16 +227,16 @@ class JimmyApp(App):
         yield hg
         hg = HorizontalGroup(
             DataTable(show_header=False, show_cursor=False),
-            Button("Add File", id="select_input_file"),
-            Button("Add Folder", id="select_input_folder"),
-            Button("Clear", id="clear_inputs"),
+            CustomButton("Add File", id="select_input_file"),
+            CustomButton("Add Folder", id="select_input_folder"),
+            CustomButton("Clear", id="clear_inputs"),
             id="select_inputs",
             classes="border",
         )
         hg.border_title = "Inputs"
         yield hg
         yield HorizontalGroup(
-            Button("Start Conversion", id="start_conversion"),
+            CustomButton("Start Conversion", id="start_conversion"),
             classes="start_conversion",
         )
         hg = HorizontalGroup(self.logging_console, classes="border log")
