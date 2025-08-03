@@ -15,7 +15,7 @@ from textual.widget import Widget
 from textual.widgets import Button, DataTable, Footer, Label, RichLog, Select
 from textual.worker import Worker, WorkerState
 
-from textual_fspicker import FileOpen, Filters, SelectDirectory
+from textual_fspicker import FileOpen, FileSave, Filters, SelectDirectory
 from textual_fspicker.file_dialog import FileFilter
 
 import jimmy.common
@@ -143,11 +143,17 @@ class LoggingConsole(RichLog):
     def print(self, content):
         self.write(content)
 
+    def get_log(self) -> str:
+        """Get the visible log as string."""
+        return "\n".join(line.text for line in self.lines)
+
 
 class JimmyApp(App):
     SCREENS = {"help_screen": HelpScreen}
     BINDINGS = [
         Binding(key="escape", action="quit", description="Quit"),
+        Binding(key="c", action="copy_log", description="Copy Log"),
+        Binding(key="s", action="save_log", description="Save Log"),
         Binding(key="h", action="push_screen('help_screen')", description="Help"),
     ]
     CSS = """
@@ -180,7 +186,7 @@ class JimmyApp(App):
         self.file_dialog_extensions = None
 
         # log to widget
-        self.logging_console = LoggingConsole()
+        self.logging_console = LoggingConsole(id="logging_console")
         console_handler_formatter = logging.Formatter("%(message)s")
         console_handler = RichHandler(
             console=self.logging_console,  # type: ignore[arg-type]
@@ -328,6 +334,27 @@ class JimmyApp(App):
                     name="jimmy_conversion",
                     thread=True,
                 )
+
+    def _action_copy_log(self):
+        """Copy log to clipboard."""
+        log_text = self.query_one("#logging_console").get_log()
+        self.copy_to_clipboard(log_text)
+
+    def _action_save_log(self):
+        """Save log to file."""
+
+        def save_log_to_file(log_file: Path | None):
+            if log_file is not None:
+                log_file.write_text(self.query_one("#logging_console").get_log())
+
+        now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        self.push_screen(
+            FileSave(
+                title="Save Log to File",
+                default_file=self.output_folder.parent / f"{now}_jimmmy_log.txt",
+            ),
+            callback=save_log_to_file,
+        )
 
 
 def main():
