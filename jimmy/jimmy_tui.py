@@ -166,7 +166,7 @@ class LoggingConsole(RichLog):
 class JimmyApp(App):
     SCREENS = {"help_screen": HelpScreen}
     BINDINGS = [
-        Binding(key="escape", action="quit", description="Quit", key_display=False),
+        Binding(key="escape", action="quit", description="Quit", show=False),
         Binding(key="q", action="quit", description="Quit"),
         Binding(key="c", action="copy_log", description="Copy Log"),
         Binding(key="s", action="save_log", description="Save Log"),
@@ -176,12 +176,20 @@ class JimmyApp(App):
     .border {
         border: round;
         align: left middle;
-        height: 5;
     }
 
     Button, DataTable, RichLog {
         margin-left: 1;
         margin-right: 1;
+    }
+
+    .input_label {
+        background: $surface;
+        color: $foreground;
+        padding: 0 1;
+        border: tall $border-blurred;
+        height: 3;
+        width: 1fr;
     }
 
     .log {
@@ -196,7 +204,8 @@ class JimmyApp(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.available_formats = jimmy.common.get_available_formats()
-        self.output_folder = Path().cwd()
+        now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        self.output_folder = Path().cwd() / f"{now} - Jimmy Import"
 
         self.conversion_worker: Worker | None = None
         self.file_dialog_extensions = None
@@ -234,6 +243,13 @@ class JimmyApp(App):
             classes="border",
         )
         hg.border_title = "Inputs"
+        yield hg
+        hg = HorizontalGroup(
+            Label(str(self.output_folder), classes="input_label", id="output_folder"),
+            CustomButton("Change Folder", id="select_output_folder"),
+            classes="border",
+        )
+        hg.border_title = "Output Folder"
         yield hg
         yield HorizontalGroup(
             CustomButton("Start Conversion", id="start_conversion"),
@@ -285,6 +301,11 @@ class JimmyApp(App):
             table = self.query_one(DataTable)
             table.add_rows([[str(selected_input)]])
 
+    def select_output_folder(self, selected_output_folder: Path | None):
+        if selected_output_folder is not None:
+            self.output_folder = selected_output_folder
+            self.query_one("#output_folder").update(str(selected_output_folder))
+
     def on_worker_state_changed(self, event: Worker.StateChanged):
         if event.state == WorkerState.SUCCESS:
             assert self.conversion_worker is not None  # for mypy
@@ -313,6 +334,11 @@ class JimmyApp(App):
                 )
             case "clear_inputs":
                 self.query_one(DataTable).clear()
+            case "select_output_folder":
+                self.push_screen(
+                    SelectDirectory(title="Select Output Folder"),
+                    callback=self.select_output_folder,
+                )
             case "start_conversion":
                 config = types.SimpleNamespace(
                     password=None,
@@ -340,9 +366,7 @@ class JimmyApp(App):
                     self.push_screen(SelectInputScreen())
                     return
 
-                now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
-                config.output_folder = Path().cwd() / f"{now} - Jimmy Import"
-                self.output_folder = config.output_folder
+                config.output_folder = self.output_folder
 
                 self.logging_console.clear()
                 self.conversion_worker = self.run_worker(
