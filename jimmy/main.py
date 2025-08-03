@@ -98,6 +98,7 @@ def get_pandoc_version():
 
 def run_conversion(config) -> common.Stats:
     LOGGER.info(f"Jimmy {version.VERSION} (Pandoc {get_pandoc_version()})")
+    LOGGER.debug(f"{config=}")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Converting notes from "{inputs_str}"')
     LOGGER.info(
