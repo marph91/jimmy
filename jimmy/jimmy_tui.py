@@ -194,8 +194,9 @@ class JimmyApp(App):
     def compose(self) -> ComposeResult:
         hg = HorizontalGroup(
             Select(
-                ((f,) * 2 for f in self.available_formats),
-                prompt="Default",
+                (("Default", None),) + tuple((f,) * 2 for f in self.available_formats),
+                allow_blank=False,
+                value=None,
                 id="select_format",
             ),
             classes="border",
@@ -231,7 +232,7 @@ class JimmyApp(App):
         file_dialog = self.query_one("#select_input_file")
         folder_dialog = self.query_one("#select_input_folder")
         # from select_format
-        if event.value == Select.BLANK:
+        if event.value is None or event.value == Select.BLANK:
             file_dialog.disabled = False
             folder_dialog.disabled = False
             self.file_dialog_extensions = None
