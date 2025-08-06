@@ -47,7 +47,7 @@ This is an example of a successful conversion:
 
 | TUI | CLI |
 | --- | --- |
-| TODO | https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981 |
+| <video src="https://github.com/user-attachments/assets/bfe1ae55-4528-44ef-b921-5f057932b413"> | <video src="https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981"> |
 
 ## Features
 
