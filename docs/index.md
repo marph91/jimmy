@@ -14,9 +14,9 @@ title: Jimmy - Note Conversion Tool
 
 ## Use Cases
 
-- Migrate between note apps
-- Save your notes in a future-proof, human-readable format
-- Prepare your notes for processing in a LLM
+- Migrate between note apps. Jimmy's output is [compatible with Joplin, Obsidian and more](https://marph91.github.io/jimmy/import_instructions/).
+- Save your notes in a future-proof, human-readable format.
+- Prepare your notes for processing in a LLM.
 
 ## Demo
 
