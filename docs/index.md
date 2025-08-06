@@ -20,9 +20,17 @@ title: Jimmy - Note Conversion Tool
 
 ## Demo
 
-Example commands for the Linux CLI app:
+Jimmy provides two interfaces:
+
+- The Command Line Interface (CLI) can be used for scripting and provides the full set of features.
+- The Terminal User Interface (TUI) can be used to do the conversion interactively. Currently it provides only a feature subset and is still in beta.
+
+Example commands for Linux:
 
 ```bash
+# do the conversion using an interactive TUI
+jimmy-linux tui
+
 # convert a single file supported by pandoc
 jimmy-linux cli libre_office_document.odt
 

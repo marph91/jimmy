@@ -22,10 +22,15 @@ If there is an issue at download or execution, please take a look at the [step-b
 
 ## Demo
 
-Example commands for the Linux CLI app:
+Jimmy provides two interfaces:
+
+- The Command Line Interface (CLI) can be used for scripting and provides the full set of features.
+- The Terminal User Interface (TUI) can be used to do the conversion interactively. Currently it provides only a feature subset and is still in beta.
+
+Example commands for Linux:
 
 ```bash
-# do the conversion using an interactive Terminal User Interface (TUI)
+# do the conversion using an interactive TUI
 jimmy-linux tui
 
 # convert a single file supported by pandoc
@@ -40,7 +45,9 @@ jimmy-linux cli takeout-20240401T160516Z-001.zip --format google_keep
 
 This is an example of a successful conversion:
 
-https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981
+| TUI | CLI |
+| --- | --- |
+| TODO | https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981 |
 
 ## Features
 
