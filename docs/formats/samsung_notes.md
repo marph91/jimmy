@@ -16,7 +16,7 @@ source_app: Samsung Notes
 
 1. Select the notes to export and choose "Save as file → Microsoft Word file"
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux export/folder/`
+3. Convert to Markdown. Example: `jimmy-linux cli export/folder/`
 4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations

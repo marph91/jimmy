@@ -14,7 +14,7 @@ source_app: FuseBase and Nimbus Note
 
 1. Export as described [at the website](https://nimbusweb.me/guides/settings/how-to-export-notes-to-html-or-pdf/)
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux nimbus_note/Example/ --format nimbus_note`
+3. Convert to Markdown. Example: `jimmy-linux cli nimbus_note/Example/ --format nimbus_note`
 4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations

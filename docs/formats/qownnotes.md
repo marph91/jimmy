@@ -12,7 +12,7 @@ source_app: QOwnNotes
 ## Instructions
 
 1. [Install Jimmy](../index.md#installation)
-2. Convert to Markdown. Example: `jimmy-cli-linux qownnotes_folder/ --format qownnotes`
+2. Convert to Markdown. Example: `jimmy-linux cli qownnotes_folder/ --format qownnotes`
 3. [Import to your app](../import_instructions.md)
 
 ## Import Structure

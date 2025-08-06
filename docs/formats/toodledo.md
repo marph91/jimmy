@@ -15,9 +15,9 @@ source_app: Toodledo
     1. Uncheck "Use relative data" when exporting.
 2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Examples:
-    1. `jimmy-cli-linux toodledo_completed_240427.csv --format toodledo`
-    2. `jimmy-cli-linux toodledo_current_240427.csv --format toodledo`
-    3. `jimmy-cli-linux toodledo_notebook_240427.csv --format toodledo`
+    1. `jimmy-linux cli toodledo_completed_240427.csv --format toodledo`
+    2. `jimmy-linux cli toodledo_current_240427.csv --format toodledo`
+    3. `jimmy-linux cli toodledo_notebook_240427.csv --format toodledo`
 4. [Import to your app](../import_instructions.md)
 
 ## Known Limitations

@@ -2,7 +2,7 @@
 
 Free your notes by converting them to Markdown.
 
-:floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe) | [**macOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://hanadigital.github.io/grev/?user=marph91&repo=jimmy)
+:floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe) | [**macOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://hanadigital.github.io/grev/?user=marph91&repo=jimmy)
 
 If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
@@ -22,22 +22,32 @@ If there is an issue at download or execution, please take a look at the [step-b
 
 ## Demo
 
-Example commands for the Linux CLI app:
+Jimmy provides two interfaces:
+
+- The Command Line Interface (CLI) can be used for scripting and provides the full set of features.
+- The Terminal User Interface (TUI) can be used to do the conversion interactively. Currently it provides only a feature subset and is still in beta.
+
+Example commands for Linux:
 
 ```bash
+# do the conversion using an interactive TUI
+jimmy-linux tui
+
 # convert a single file supported by pandoc
-jimmy-cli-linux libre_office_document.odt
+jimmy-linux cli libre_office_document.odt
 
 # convert all files in a folder
-jimmy-cli-linux path/to/folder
+jimmy-linux cli path/to/folder
 
 # convert a Google Keep export
-jimmy-cli-linux takeout-20240401T160516Z-001.zip --format google_keep
+jimmy-linux cli takeout-20240401T160516Z-001.zip --format google_keep
 ```
 
 This is an example of a successful conversion:
 
-https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981
+| TUI | CLI |
+| --- | --- |
+| <video src="https://github.com/user-attachments/assets/bfe1ae55-4528-44ef-b921-5f057932b413"> | <video src="https://github.com/user-attachments/assets/dcd2bc5e-2442-468e-a792-5def563c6981"> |
 
 ## Features
 
@@ -123,18 +133,18 @@ What is converted (in most cases)?
 | Step | Linux / macOS Example | Windows Example |
 | --- | --- | --- |
 | Export your notes to your download folder | `/home/user/Downloads/Export.zip` | `C:\Users\user\Downloads\Export.zip` |
-| Download Jimmy to your download folder [1] | `/home/user/Downloads/jimmy-cli-linux` | `C:\Users\user\Downloads\jimmy-cli-windows.exe` |
+| Download Jimmy to your download folder [1] | `/home/user/Downloads/jimmy-linux` | `C:\Users\user\Downloads\jimmy-windows.exe` |
 | Open a terminal | [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) / [macOS](https://www.wikihow.com/Open-a-Terminal-Window-in-Mac) instructions | [Windows instructions](https://www.wikihow.com/Open-Terminal-in-Windows) |
 | Change to the download folder | `cd /home/user/Downloads/` | `cd C:\Users\user\Downloads\` |
-| Make Jimmy executable | `chmod +x jimmy-cli-linux` | \-  |
-| Do the conversion [2] [3] [4] | `./jimmy-cli-linux Export.zip --format notion` | `jimmy-cli-windows.exe Export.zip --format notion` |
+| Make Jimmy executable | `chmod +x jimmy-linux` | \-  |
+| Do the conversion [2] [3] [4] | `./jimmy-linux cli Export.zip --format notion` | `jimmy-windows.exe cli Export.zip --format notion` |
 | Check the output folder | `/home/user/Downloads/20250226T200101Z - Jimmy Import from notion` | `C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion` |
 
 [1] On Windows: If Jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround, you can try an older version of Jimmy.
 
-[2] On macOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64). It is supported by Intel chips.
+[2] On macOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-x86_64). It is supported by Intel chips.
 
-[3] On macOS: If there is the error message `"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings → Privacy & Security → Security → Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
+[3] On macOS: If there is the error message `"jimmy-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings → Privacy & Security → Security → Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
 
 [4] On Linux: If there is the error message ``version `GLIBC_2.35' not found``, you can either try update your OS or use an older Jimmy build. The glibc version is usually upwards compatible:
 

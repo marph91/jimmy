@@ -51,34 +51,36 @@ jobs:
         run: pip install -r requirements/requirements-build.txt
       - name: Build executables with pyinstaller
         run: |
-          python -m PyInstaller jimmy_cli.spec
-          # python -m PyInstaller jimmy_gui.spec
+          python -m PyInstaller jimmy.spec
       - name: Release
         uses: softprops/action-gh-release@v2
         # release only if there is a release tag
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           files: ./dist/jimmy*
+      - name: Check executable size
+        shell: bash
+        run: ls -lh ./dist
       - name: Smoke test
         working-directory: ./dist  # run in a different directory to make sure that the paths are working
         run: |
           # pandoc and asciidoc converter
-          ./jimmy-cli* ../test/data/test_data/default_format/arbitrary_folder
+          ./jimmy* cli ../test/data/test_data/default_format/arbitrary_folder
           # filters and frontmatter module
-          ./jimmy-cli* ../test/data/test_data/obsidian/test_1 --format obsidian
-          ./jimmy-cli* ../test/data/test_data/obsidian/test_1 --format obsidian --exclude-tags "*"
-          ./jimmy-cli* ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes-with-tags "*"
-          ./jimmy-cli* ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes "Second sample note" "Sample note"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --exclude-tags "*"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes-with-tags "*"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes "Second sample note" "Sample note"
           # textbundle converter called from bear converter
-          ./jimmy-cli* ../test/data/test_data/bear/test_1/backup.bear2bk --format bear
+          ./jimmy* cli ../test/data/test_data/bear/test_1/backup.bear2bk --format bear
           # cryptography module
-          ./jimmy-cli* ../test/data/test_data/colornote/test_1/colornote-20241014.backup --format colornote --password 1234
+          ./jimmy* cli ../test/data/test_data/colornote/test_1/colornote-20241014.backup --format colornote --password 1234
           # sqlite3 module
-          ./jimmy-cli* ../test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
+          ./jimmy* cli ../test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
           # pyyaml module
-          ./jimmy-cli* ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
+          ./jimmy* cli ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
           # anytype module
-          ./jimmy-cli* ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype
+          ./jimmy* cli ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype
       # - name: Scan for viruses (just for information)
       #   if: runner.os == 'Linux'
       #   run: |

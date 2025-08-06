@@ -12,7 +12,7 @@ source_app: [x]it!
 ## Instructions
 
 1. [Install Jimmy](../index.md#installation)
-2. Convert to Markdown. Example: `jimmy-cli-linux example.xit --format xit`
+2. Convert to Markdown. Example: `jimmy-linux cli example.xit --format xit`
 3. [Import to your app](../import_instructions.md)
 
 ## Import Structure

@@ -11,7 +11,7 @@ from jimmy import converter
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".txt"]
+    # accepted_extensions = [".txt"]
 
     def convert(self, file_or_folder: Path):
         return  # TODO: implement a checklist based approach

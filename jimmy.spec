@@ -46,7 +46,7 @@ match os.getenv("RUNNER_MACHINE"):
     case "macos-latest" | "macos-13":
         # Differentiate between ARM and Intel based Macs.
         system += "-" + platform.machine().lower()
-executable_name = f"jimmy-cli-{system}"
+executable_name = f"jimmy-{system}"
 
 
 a = Analysis(
@@ -94,5 +94,5 @@ exe = EXE(
 #     strip=False,
 #     upx=True,
 #     upx_exclude=[],
-#     name='jimmy_cli',
+#     name='jimmy',
 # )

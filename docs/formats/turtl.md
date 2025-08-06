@@ -13,7 +13,7 @@ source_app: Turtl
 
 1. Export as shown [at the website](https://turtlapp.com/features/)
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux turtl-backup.json --format turtl`
+3. Convert to Markdown. Example: `jimmy-linux cli turtl-backup.json --format turtl`
 4. [Import to your app](../import_instructions.md)
 
 ## Import Structure
