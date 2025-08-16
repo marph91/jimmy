@@ -14,7 +14,7 @@ source_app: Day One
 1. Export as described [at the website](https://dayoneapp.com/guides/tips-and-tutorials/exporting-entries/)
     1. Choose "Day One JSON (.zip)"
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux Export-Tagebuch.zip --format day_one`
+3. Convert to Markdown. Example: `jimmy-linux cli Export-Tagebuch.zip --format day_one`
 4. [Import to your app](../import_instructions.md)
 
 ## Import Structure

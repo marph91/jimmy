@@ -12,5 +12,5 @@ source_app: Obsidian
 ## Instructions
 
 1. [Install Jimmy](../index.md#installation)
-2. Convert to Markdown. Example: `jimmy-cli-linux obsidian_vault/ --format obsidian`
+2. Convert to Markdown. Example: `jimmy-linux cli obsidian_vault/ --format obsidian`
 3. [Import to your app](../import_instructions.md)

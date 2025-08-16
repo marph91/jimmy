@@ -9,7 +9,7 @@ The note tree in the intermediate format can be shown by `--print-tree`.
 1. Simply show the converted note tree:
 
 ```sh
-$ jimmy-cli-linux .cache/arbitrary_folder/arbitrary_folder/ --print-tree
+$ jimmy-linux cli .cache/arbitrary_folder/arbitrary_folder/ --print-tree
 [09/17/24 17:39:20] INFO     Importing notes from ".cache/arbitrary_folder/arbitrary_folder"
                     INFO     Start parsing
 [09/17/24 17:39:21] INFO     Finished parsing: 3 notebooks, 7 notes, 3 resources, 1 note links
@@ -43,7 +43,7 @@ Note Links 100%|█████████████████████�
 2. Verify that the tags are really excluded:
 
 ```sh
-$ jimmy-cli-linux .cache/obsidian/obsidian_vault --format obsidian --exclude-tags "*" --print-tree
+$ jimmy-linux cli .cache/obsidian/obsidian_vault --format obsidian --exclude-tags "*" --print-tree
 [09/17/24 17:42:14] INFO     Importing notes from ".cache/obsidian/obsidian_vault"
                     INFO     Start parsing
                     INFO     Finished parsing: 2 notebooks, 2 notes, 3 resources, 4 tags, 4 note links

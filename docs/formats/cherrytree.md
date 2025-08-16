@@ -14,7 +14,7 @@ source_app: CherryTree
 1. Export as described [at the website](https://www.giuspen.com/cherrytreemanual/#_exporting)
     1. Choose "Export" → "Export to CherryTreeDocument" → "All the Tree" → "XML, Not Protected (.cdt)"
 2. [Install Jimmy](../index.md#installation)
-3. Convert to Markdown. Example: `jimmy-cli-linux cherry.ctd --format cherrytree`
+3. Convert to Markdown. Example: `jimmy-linux cli cherry.ctd --format cherrytree`
 4. [Import to your app](../import_instructions.md)
 
 ## Import Structure

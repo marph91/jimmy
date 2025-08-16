@@ -24,7 +24,7 @@ Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
 1. Export from any of the mentioned apps
 2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Examples:
-    1. `jimmy-cli-linux "Textbundle Example v1.textbundle/" --format textbundle`
-    2. `jimmy-cli-linux "example.textpack" --format textbundle`
-    3. `jimmy-cli-linux folder/with/textbundles/ --format textbundle`
+    1. `jimmy-linux cli "Textbundle Example v1.textbundle/" --format textbundle`
+    2. `jimmy-linux cli "example.textpack" --format textbundle`
+    3. `jimmy-linux cli folder/with/textbundles/ --format textbundle`
 4. [Import to your app](../import_instructions.md)

@@ -27,7 +27,7 @@ def parse_date(date_: str, time_: str = "") -> dt.datetime | None:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".csv"]
+    # accepted_extensions = [".csv"]
 
     def find_parent_notebook(self, notebook_name, current_notebook):
         for notebook in current_notebook.child_notebooks:
