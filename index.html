@@ -1555,7 +1555,7 @@
 <p><img alt="Jimmy logo" src="images/logo2.png" width="75%" /></p>
 <p><strong>Jimmy</strong> is a tool to convert your notes from different formats to Markdown.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p><strong>Download Jimmy here: <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-linux">Linux</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-windows.exe">Windows</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-arm64">macOS</a></strong></p>
+<p><strong>Download Jimmy here: <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux">Linux</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe">Windows</a> | <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64">macOS</a></strong></p>
 <h2 id="use-cases">Use Cases<a class="headerlink" href="#use-cases" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Migrate between note apps. Jimmy's output is <a href="https://marph91.github.io/jimmy/import_instructions/">compatible with Joplin, Obsidian and more</a>.</li>
@@ -1563,15 +1563,23 @@
 <li>Prepare your notes for processing in a LLM.</li>
 </ul>
 <h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
-<p>Example commands for the Linux CLI app:</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># convert a single file supported by pandoc</span>
-jimmy-cli-linux<span class="w"> </span>libre_office_document.odt
+<p>Jimmy provides two interfaces:</p>
+<ul>
+<li>The Command Line Interface (CLI) can be used for scripting and provides the full set of features.</li>
+<li>The Terminal User Interface (TUI) can be used to do the conversion interactively. Currently it provides only a feature subset and is still in beta.</li>
+</ul>
+<p>Example commands for Linux:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># do the conversion using an interactive TUI</span>
+jimmy-linux<span class="w"> </span>tui
+
+<span class="c1"># convert a single file supported by pandoc</span>
+jimmy-linux<span class="w"> </span>cli<span class="w"> </span>libre_office_document.odt
 
 <span class="c1"># convert all files in a folder</span>
-jimmy-cli-linux<span class="w"> </span>path/to/folder
+jimmy-linux<span class="w"> </span>cli<span class="w"> </span>path/to/folder
 
 <span class="c1"># convert a Google Keep export</span>
-jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span class="w"> </span>--format<span class="w"> </span>google_keep
+jimmy-linux<span class="w"> </span>cli<span class="w"> </span>takeout-20240401T160516Z-001.zip<span class="w"> </span>--format<span class="w"> </span>google_keep
 </code></pre></div>
 <p>For a video, check the <a href="https://github.com/marph91/jimmy?tab=readme-ov-file#demo">Github readme</a>.</p>
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
@@ -1655,8 +1663,8 @@ jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span cla
 </tr>
 <tr>
 <td>Download Jimmy to your download folder [1]</td>
-<td><code>/home/user/Downloads/jimmy-cli-linux</code></td>
-<td><code>C:\Users\user\Downloads\jimmy-cli-windows.exe</code></td>
+<td><code>/home/user/Downloads/jimmy-linux</code></td>
+<td><code>C:\Users\user\Downloads\jimmy-windows.exe</code></td>
 </tr>
 <tr>
 <td>Open a terminal</td>
@@ -1670,13 +1678,13 @@ jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span cla
 </tr>
 <tr>
 <td>Make Jimmy executable</td>
-<td><code>chmod +x jimmy-cli-linux</code></td>
+<td><code>chmod +x jimmy-linux</code></td>
 <td>-</td>
 </tr>
 <tr>
 <td>Do the conversion [2] [3] [4]</td>
-<td><code>./jimmy-cli-linux Export.zip --format notion</code></td>
-<td><code>jimmy-cli-windows.exe Export.zip --format notion</code></td>
+<td><code>./jimmy-linux cli Export.zip --format notion</code></td>
+<td><code>jimmy-windows.exe cli Export.zip --format notion</code></td>
 </tr>
 <tr>
 <td>Check the output folder</td>
@@ -1686,8 +1694,8 @@ jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span cla
 </tbody>
 </table>
 <p>[1] On Windows: If Jimmy is flagged as virus, please <a href="https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors">report the false positive to your antivirus vendor</a>. As workaround, you can try an older version of Jimmy.</p>
-<p>[2] On macOS: If there is the error message <code>zsh: bad CPU type in executable</code>, please use <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-cli-darwin-x86_64">this executable</a>. It is supported by Intel chips.</p>
-<p>[3] On macOS: If there is the error message <code>"jimmy-cli-darwin-arm64" cannot be opened because the developer cannot be verified</code>, please authorize Jimmy at <code>System Settings → Privacy &amp; Security → Security → Open Anyway</code>. See also the <a href="https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac">Apple support guide</a>.</p>
+<p>[2] On macOS: If there is the error message <code>zsh: bad CPU type in executable</code>, please use <a href="https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-x86_64">this executable</a>. It is supported by Intel chips.</p>
+<p>[3] On macOS: If there is the error message <code>"jimmy-darwin-arm64" cannot be opened because the developer cannot be verified</code>, please authorize Jimmy at <code>System Settings → Privacy &amp; Security → Security → Open Anyway</code>. See also the <a href="https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac">Apple support guide</a>.</p>
 <p>[4] On Linux: If there is the error message <code>version `GLIBC_2.35' not found</code>, you can either try update your OS or use an older Jimmy build. The glibc version is usually upwards compatible:</p>
 <table>
 <thead>
@@ -1727,7 +1735,7 @@ jimmy-cli-linux<span class="w"> </span>takeout-20240401T160516Z-001.zip<span cla
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 6, 2025 14:29:12">August 6, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 16, 2025 13:31:40">August 16, 2025</span>
   </span>
 
     
