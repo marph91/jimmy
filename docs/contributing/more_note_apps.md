@@ -20,7 +20,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Clickup](https://clickup.com/) | - [doc](https://help.clickup.com/hc/en-us/articles/6310551109527-Task-data-export) <br>- [script](https://github.com/jordanbates/clickup_to_joplin) | project management |
 | [Craft](https://www.craft.do/) | - [doc](https://support.craft.do/hc/en-us/articles/4418134683665-Exporting-documents-from-Craft) <br>- [script](https://github.com/coofdy/craft-to-obsidian) |     |
 | [Cryptee](https://crypt.ee/) |     |     |
-| [Diaro](https://diaroapp.com/) | - [doc](https://diaroapp.com/faq/how-do-i-backup-my-data-2/) <br>- [script](https://forum.obsidian.md/t/meta-migration-workflows/15252/46) |     |
 | [Didthis](https://didthis.app/) |     |     |
 | [DokuWiki](https://www.dokuwiki.org/) | [doc](https://www.dokuwiki.org/faq:backup) |     |
 | [Dropbox Paper](https://paper.dropbox.com/) | [doc](https://help.dropbox.com/de-de/view-edit/paper-export-docs) (Markdown) |     |
