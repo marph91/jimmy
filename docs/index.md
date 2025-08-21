@@ -43,6 +43,8 @@ jimmy-linux cli takeout-20240401T160516Z-001.zip --format google_keep
 
 For a video, check the [Github readme](https://github.com/marph91/jimmy?tab=readme-ov-file#demo).
 
+If there is an issue at download or execution, please take a look at the [step-by-step instructions](https://marph91.github.io/jimmy/using_jimmy/).
+
 ## Features
 
 - ✅ Several supported input formats
@@ -55,8 +57,6 @@ For a video, check the [Github readme](https://github.com/marph91/jimmy?tab=read
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or Node.js installation required)
 - ❎ No AI
-
-If there is an issue at download or execution, please take a look at the [step-by-step instructions](#step-by-step-instructions).
 
 ## Supported Apps
 
@@ -114,28 +114,3 @@ flowchart LR
 1. Export/backup notes from your note application
 2. Run `jimmy`, which converts your notes to Markdown
 3. Import the result to Joplin/Obsidian or even use any editor like VSCode
-
-## Step-by-step Instructions
-
-| Step | Linux / macOS Example | Windows Example |
-| --- | --- | --- |
-| Export your notes to your download folder | `/home/user/Downloads/Export.zip` | `C:\Users\user\Downloads\Export.zip` |
-| Download Jimmy to your download folder [1] | `/home/user/Downloads/jimmy-linux` | `C:\Users\user\Downloads\jimmy-windows.exe` |
-| Open a terminal | [Linux](https://www.wikihow.com/Open-a-Terminal-Window-in-Ubuntu) / [macOS](https://www.wikihow.com/Open-a-Terminal-Window-in-Mac) instructions | [Windows instructions](https://www.wikihow.com/Open-Terminal-in-Windows) |
-| Change to the download folder | `cd /home/user/Downloads/` | `cd C:\Users\user\Downloads\` |
-| Make Jimmy executable | `chmod +x jimmy-linux` | \-  |
-| Do the conversion [2] [3] [4] | `./jimmy-linux cli Export.zip --format notion` | `jimmy-windows.exe cli Export.zip --format notion` |
-| Check the output folder | `/home/user/Downloads/20250226T200101Z - Jimmy Import from notion` | `C:\Users\user\Downloads\20250226T200101Z - Jimmy Import from notion` |
-
-[1] On Windows: If Jimmy is flagged as virus, please [report the false positive to your antivirus vendor](https://github.com/pyinstaller/pyinstaller/blob/c7f12ccfaa2e116c3b7cfb58dadfc1e6b8c6882d/.github/ISSUE_TEMPLATE/antivirus.md#reporting-false-positives-to-av-vendors). As workaround, you can try an older version of Jimmy.
-
-[2] On macOS: If there is the error message `zsh: bad CPU type in executable`, please use [this executable](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-x86_64). It is supported by Intel chips.
-
-[3] On macOS: If there is the error message `"jimmy-darwin-arm64" cannot be opened because the developer cannot be verified`, please authorize Jimmy at `System Settings → Privacy & Security → Security → Open Anyway`. See also the [Apple support guide](https://support.apple.com/en-gb/guide/mac-help/mchlc5fb7f9c/mac).
-
-[4] On Linux: If there is the error message ``version `GLIBC_2.35' not found``, you can either try update your OS or use an older Jimmy build. The glibc version is usually upwards compatible:
-
-| Jimmy Version | Glibc Version |
-| --- | --- |
-| From [v0.1.0](https://github.com/marph91/jimmy/releases/tag/v0.1.0) | 2.35 |
-| [v0.0.56](https://github.com/marph91/jimmy/releases/tag/v0.0.56) | 2.31 |

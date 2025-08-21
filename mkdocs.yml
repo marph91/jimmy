@@ -78,6 +78,7 @@ markdown_extensions:
 # Page tree
 nav:
   - index.md
+  - Using Jimmy: using_jimmy.md
   - Formats:
     - Default Conversion: formats/default.md
     - Anki: formats/anki.md
