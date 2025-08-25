@@ -103,23 +103,41 @@ def multiline_markup(soup: bs4.BeautifulSoup):
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
-    #   - type is in the class attr (list-item-number, -bullet, -checkbox)
-    # - indentation is in the class attr (indent-0)
+    #   - type is in the class attr
+    #     (outline-list-item or list-item-number, -bullet, -checkbox)
+    # - indentation is in the class attr (indent-X or level-X)
+
+    def get_indentation_level(item) -> int:
+        for class_ in item["class"]:
+            if class_.startswith("indent-"):
+                return int(class_[len("indent-") :])
+            if class_.startswith("level-"):
+                return int(class_[len("level-") :])
+        LOGGER.debug("Couldn't detect indentation. Set to '0'.")
+        return 0
+
+    def get_list_item_type(item) -> tuple[str, str]:
+        if "outline-list-item" in item["class"] or "list-item-bullet" in item["class"]:
+            item_type = "bullet"
+        elif "list-item-number" in item["class"]:
+            item_type = "number"
+        elif "list-item-checkbox" in item["class"]:
+            item_type = "checkbox"
+        else:
+            LOGGER.debug("Couldn't detect list type. Set to 'unnumbered'.")
+            item_type = "bullet"
+        list_type = {"checkbox": "ul", "bullet": "ul", "number": "ol"}[item_type]
+        return list_type, item_type
+
     for list_ in soup.find_all("ul"):
         current_indent = 0
         current_list = list_
         for item in list_.find_all("li"):
-            item_type = [
-                i[len("list-item-") :]
-                for i in item["class"]
-                if i.startswith("list-item-")
-            ][0]
-            list_type = {"checkbox": "ul", "bullet": "ul", "number": "ol"}[item_type]
+            list_type, item_type = get_list_item_type(item)
             if item_type == "checkbox":
                 item.insert(0, soup.new_tag("input", type="checkbox"))
 
-            indent = [i for i in item["class"] if i.startswith("indent-")][0]
-            indent_int = int(indent[len("indent-") :])  # 1 digit number always
+            indent_int = get_indentation_level(item)
             if indent_int == 0:
                 # would be sufficient to do only one time
                 current_list.name = list_type
