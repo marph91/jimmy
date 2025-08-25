@@ -50,6 +50,71 @@ def iframes_to_links(soup: bs4.BeautifulSoup):
         iframe.attrs = {"href": iframe.attrs["src"]}
 
 
+def _to_markdown_header_id(text: str) -> str:
+    """
+    Convert any (header) text to a Markdown header ID.
+    See: https://pandoc.org/MANUAL.html#extension-auto_identifiers
+
+    >>> _to_markdown_header_id("Heading identifiers in HTML")
+    'heading-identifiers-in-html'
+    >>> _to_markdown_header_id("Maître d'hôtel")
+    'maître-dhôtel'
+    >>> _to_markdown_header_id("*Dogs*?--in *my* house?")
+    'dogs--in-my-house'
+    >>> _to_markdown_header_id("[HTML], [S5], or [RTF]?")
+    'html-s5-or-rtf'
+    >>> _to_markdown_header_id("3. Applications")
+    'applications'
+    >>> _to_markdown_header_id("33")
+    'section'
+    """
+    # Remove all non-alphanumeric characters, except underscores, hyphens, and periods.
+    text = "".join(
+        [
+            character
+            for character in text
+            if (character.isalnum() or character in (" ", "_", "-"))
+        ]
+    )
+    # Replace all spaces and newlines with hyphens.
+    text = text.replace(" ", "-").replace("\n", "-")
+    # Convert all alphabetic characters to lowercase.
+    text = text.lower()
+    # Remove everything up to the first letter (identifiers may not begin with a number
+    # or punctuation mark).
+    new_text = []
+    found_first_letter = False
+    for character in text:
+        if character.isalpha() or found_first_letter:
+            new_text.append(character)
+            found_first_letter = True
+    text = "".join(new_text)
+    # If nothing is left after this, use the identifier section.
+    if not text:
+        text = "section"
+    return text
+
+
+def link_internal_headings(soup: bs4.BeautifulSoup):
+    """
+    Replace internal link IDs with their corresponding header ID.
+    Only consider headings, since they can be linked in markdown later.
+    All other IDs are stripped away.
+    """
+    href_elements = soup.find_all(href=True)
+    for element in href_elements:
+        if not (id_ := element.get("href", "")).startswith("#"):
+            continue
+        linked_element = soup.find(id=id_[1:])
+        if (
+            linked_element is None
+            or linked_element.name is None
+            or not linked_element.name.startswith("h")
+        ):
+            continue
+        element.attrs["href"] = "#" + _to_markdown_header_id(linked_element.text)
+
+
 def merge_single_element_lists(soup: bs4.BeautifulSoup):
     """
     Notion lists and odt lists sometimes contain only one item.
