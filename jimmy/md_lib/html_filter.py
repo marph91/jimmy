@@ -173,7 +173,7 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - indentation is in the class attr (indent-X or level-X)
 
     def get_indentation_level(item) -> int:
-        for class_ in item["class"]:
+        for class_ in item.get("class", []):
             if class_.startswith("indent-"):
                 return int(class_[len("indent-") :])
             if class_.startswith("level-"):
@@ -182,11 +182,12 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
         return 0
 
     def get_list_item_type(item) -> tuple[str, str]:
-        if "outline-list-item" in item["class"] or "list-item-bullet" in item["class"]:
+        classes = item.get("class", [])
+        if "outline-list-item" in classes or "list-item-bullet" in classes:
             item_type = "bullet"
-        elif "list-item-number" in item["class"]:
+        elif "list-item-number" in classes:
             item_type = "number"
-        elif "list-item-checkbox" in item["class"]:
+        elif "list-item-checkbox" in classes:
             item_type = "checkbox"
         else:
             LOGGER.debug("Couldn't detect list type. Set to 'unnumbered'.")
