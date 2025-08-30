@@ -10,6 +10,7 @@ import itertools
 import logging
 import re
 import string
+import urllib.parse
 
 import bs4
 
@@ -184,6 +185,22 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
         if highlighted_element.attrs["data-block-background"] == "transparent":
             continue
         wrap_content(soup, highlighted_element, "mark")
+
+
+def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
+    # note links are represented by "mention" tags
+    for mention in soup.find_all("mention"):
+        if (mention_type := mention.attrs.get("data-mention-type", "")) != "note":
+            LOGGER.debug(f"Unexpected mention type: {mention_type}")
+        if not (mention_name := mention.attrs.get("data-mention-name", "")):
+            LOGGER.debug("Couldn't add link. Link name is empty.")
+            continue
+        # TODO: check if linking by ID is possible
+        mention.replace_with(
+            soup.new_tag(
+                "a", attrs={"href": f"nimbusnote://{urllib.parse.quote(mention_name)}"}
+            )
+        )
 
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):

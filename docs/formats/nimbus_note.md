@@ -20,7 +20,6 @@ source_app: FuseBase and Nimbus Note
 ## Known Limitations
 
 - Tags aren't included in single page exports.
-- Note links aren't converted.
 
 If you have a backup including tags and note links (premium feature), feel free to share.
 
