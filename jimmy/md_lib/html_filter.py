@@ -17,6 +17,15 @@ LOGGER = logging.getLogger("jimmy")
 HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
+def wrap_content(soup, element, tag: str):
+    """Wrap the content of an element."""
+    new_element = soup.new_tag(tag)
+    for content in reversed(element.contents):
+        new_element.insert(0, content.extract())
+
+    element.append(new_element)
+
+
 def div_checklists(soup: bs4.BeautifulSoup):
     """Convert div checklists to plain HTML checklists."""
     # reverse to handle nested lists first
@@ -164,6 +173,17 @@ def multiline_markup(soup: bs4.BeautifulSoup):
                 linebreak.parent.unwrap()
             case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
                 linebreak.decompose()
+
+
+def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
+    for highlighted_element in soup.find_all(attrs={"data-highlight": True}):
+        if highlighted_element.attrs["data-highlight"] == "transparent":
+            continue
+        wrap_content(soup, highlighted_element, "mark")
+    for highlighted_element in soup.find_all(attrs={"data-block-background": True}):
+        if highlighted_element.attrs["data-block-background"] == "transparent":
+            continue
+        wrap_content(soup, highlighted_element, "mark")
 
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):

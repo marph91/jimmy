@@ -61,7 +61,10 @@ class Converter(converter.BaseConverter):
         note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
         note_body_markdown = jimmy.md_lib.common.markup_to_markdown(
             note_body_html,
-            custom_filter=[jimmy.md_lib.html_filter.nimbus_note_streamline_lists],
+            custom_filter=[
+                jimmy.md_lib.html_filter.nimbus_note_streamline_lists,
+                jimmy.md_lib.html_filter.nimbus_note_add_mark,
+            ],
         )
         resources = self.handle_markdown_links(note_body_markdown, temp_folder_note)
         note_imf = imf.Note(
