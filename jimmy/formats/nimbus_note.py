@@ -3,6 +3,8 @@
 from pathlib import Path
 from urllib.parse import unquote
 
+from bs4 import BeautifulSoup
+
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
 import jimmy.md_lib.html_filter
@@ -56,8 +58,7 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, temp_folder: Path):
-        title = file_.stem
-        self.logger.debug(f'Converting note "{title}"')
+        self.logger.debug(f'Converting note "{file_.stem}"')
         temp_folder_note = temp_folder / file_.stem
         temp_folder_note.mkdir()
         common.extract_zip(file_, temp_folder=temp_folder_note)
@@ -69,9 +70,19 @@ class Converter(converter.BaseConverter):
             return
 
         # HTML note seems to have the name "note.html" always
-        note_body_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
+        note_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
+
+        # Use the filename only as fallback title,
+        # because some characters might be replaced.
+        # TODO: soup is created for filtering again
+        soup = BeautifulSoup(note_html, "html.parser")
+        if (title_element := soup.find("title")) is not None and title_element.text:
+            title = title_element.text
+        else:
+            title = file_.stem
+
         note_body_markdown = jimmy.md_lib.common.markup_to_markdown(
-            note_body_html,
+            note_html,
             custom_filter=[
                 jimmy.md_lib.html_filter.nimbus_note_add_mark,
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,
