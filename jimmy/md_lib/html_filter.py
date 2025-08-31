@@ -177,6 +177,10 @@ def multiline_markup(soup: bs4.BeautifulSoup):
 
 
 def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
+    # old editor
+    for highlighted_element in soup.find_all(class_="nn-marker"):
+        wrap_content(soup, highlighted_element, "mark")
+    # new editor
     for highlighted_element in soup.find_all(attrs={"data-highlight": True}):
         if highlighted_element.attrs["data-highlight"] == "transparent":
             continue
@@ -189,16 +193,18 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
 
 def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
     # note links are represented by "mention" tags
-    for mention in soup.find_all("mention"):
-        if (mention_type := mention.attrs.get("data-mention-type", "")) != "note":
+    for mention_link in soup.find_all("span", class_="mention-link"):
+        if (mention_type := mention_link.attrs.get("data-mention-type", "")) != "note":
             LOGGER.debug(f"Unexpected mention type: {mention_type}")
-        if not (mention_name := mention.attrs.get("data-mention-name", "")):
+        if not (mention_name := mention_link.attrs.get("data-mention-name", "")):
             LOGGER.debug("Couldn't add link. Link name is empty.")
             continue
         # TODO: check if linking by ID is possible
-        mention.replace_with(
+        mention_link.parent.replace_with(
             soup.new_tag(
-                "a", attrs={"href": f"nimbusnote://{urllib.parse.quote(mention_name)}"}
+                "a",
+                attrs={"href": f"nimbusnote://{urllib.parse.quote(mention_name)}"},
+                string=mention_link.get_text(),
             )
         )
 
@@ -220,11 +226,16 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
 
     def get_list_item_type(item) -> tuple[str, str]:
         classes = item.get("class", [])
+        parent_classes = item.parent.get("class", [])
         if "outline-list-item" in classes or "list-item-bullet" in classes:
             item_type = "bullet"
         elif "list-item-number" in classes:
             item_type = "number"
-        elif "list-item-checkbox" in classes:
+        elif (
+            "list-item-checkbox" in classes
+            or "nn-checkbox-list" in parent_classes
+            or "checklist" in parent_classes
+        ):
             item_type = "checkbox"
         else:
             LOGGER.debug("Couldn't detect list type. Set to 'unnumbered'.")
@@ -238,7 +249,12 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
         for item in list_.find_all("li"):
             list_type, item_type = get_list_item_type(item)
             if item_type == "checkbox":
-                item.insert(0, soup.new_tag("input", type="checkbox"))
+                input_element = soup.new_tag("input", type="checkbox")
+                if item.attrs.get(
+                    "data-checked", "false"
+                ) == "true" or "nn-checked" in item.get("class", []):
+                    input_element.attrs["checked"] = ""  # checkbox is checked
+                item.insert(0, input_element)
 
             indent_int = get_indentation_level(item)
             if indent_int == 0:
