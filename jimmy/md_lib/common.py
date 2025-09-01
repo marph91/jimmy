@@ -277,12 +277,16 @@ PANDOC_OUTPUT_FORMAT = (
     # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
     # Don't use "commonmark_x". There is too much noise.
     "markdown_strict"
+    # https://pandoc.org/demo/example33/8.11-backslash-escapes.html#all-symbols-escapable
+    "+all_symbols_escapable"
     # https://pandoc.org/chunkedhtml-demo/8.5-verbatim-code-blocks.html#extension-backtick_code_blocks
     "+backtick_code_blocks"
     # https://pandoc.org/chunkedhtml-demo/8.21-non-default-extensions.html#extension-mark
     "+mark"
     # https://pandoc.org/chunkedhtml-demo/8.9-tables.html#extension-pipe_tables
     "+pipe_tables"
+    # https://pandoc.org/demo/example33/8.3-headings.html#extension-space_in_atx_header
+    "+space_in_atx_header"
     # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-strikeout
     "+strikeout"
     # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-superscript-subscript
