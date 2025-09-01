@@ -209,6 +209,12 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
         )
 
 
+def nimbus_note_remove_table_footer(soup: bs4.BeautifulSoup):
+    # There is no useful information in Nimbus Note table footers.
+    for table_footer in soup.find_all("tfoot"):
+        table_footer.decompose()
+
+
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
     #   - type is in the class attr
