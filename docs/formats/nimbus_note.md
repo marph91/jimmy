@@ -2,7 +2,7 @@
 source_app: FuseBase and Nimbus Note
 ---
 
-# Convert from FuseBase to Markdown
+# Convert from FuseBase or Nimbus Note to Markdown
 
 ## General Information
 
@@ -19,7 +19,9 @@ source_app: FuseBase and Nimbus Note
 
 ## Known Limitations
 
-- Tags aren't included in single page exports.
+- Tags and the folder structure aren't included in the exports.
+- Indentation outside of lists is not converted, because Markdown uses indentation only for lists and code blocks.
+- Some items can't be converted if they are exported with the old note editor format. For example links in the format `nimbusweb.me/*` or some attachments.
 
 If you have a backup including tags and note links (premium feature), feel free to share.
 
