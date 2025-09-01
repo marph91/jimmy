@@ -317,6 +317,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     jimmy.md_lib.html_filter.merge_single_element_lists(soup)
     jimmy.md_lib.html_filter.remove_bold_header(soup)
     jimmy.md_lib.html_filter.streamline_tables(soup)
+    jimmy.md_lib.html_filter.underline(soup)
     jimmy.md_lib.html_filter.whitespace_in_math(soup)
     # final cleanup
     jimmy.md_lib.html_filter.multiline_markup(soup)
@@ -337,6 +338,8 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
 
     text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
+    text_md = text_md.replace("{UNDERLINESTART}", "<u>")
+    text_md = text_md.replace("{UNDERLINESTOP}", "</u>")
     return text_md.strip()
 
 

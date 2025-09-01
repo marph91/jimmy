@@ -466,6 +466,17 @@ def streamline_tables(soup: bs4.BeautifulSoup):
         table.attrs = {}
 
 
+def underline(soup: bs4.BeautifulSoup):
+    # Underlining seems to be converted to italic by Pandoc.
+    # Joplin supports the "++insert++"" syntax, but it seems to be not widely used.
+    # Use HTML for underlining.
+    # TODO: Check if there is a better solution.
+    for underlined in soup.find_all(["ins", "u"]):
+        underlined.insert_before(soup.new_string("{UNDERLINESTART}"))
+        underlined.insert_after(soup.new_string("{UNDERLINESTOP}"))
+        underlined.unwrap()
+
+
 def whitespace_in_math(soup: bs4.BeautifulSoup):
     """
     - Escape unescaped newlines inside tex math blocks.
