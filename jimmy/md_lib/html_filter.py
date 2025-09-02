@@ -181,14 +181,15 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
     for highlighted_element in soup.find_all(class_="nn-marker"):
         wrap_content(soup, highlighted_element, "mark")
     # new editor
-    for highlighted_element in soup.find_all(attrs={"data-highlight": True}):
-        if highlighted_element.attrs["data-highlight"] == "transparent":
-            continue
-        wrap_content(soup, highlighted_element, "mark")
-    for highlighted_element in soup.find_all(attrs={"data-block-background": True}):
-        if highlighted_element.attrs["data-block-background"] == "transparent":
-            continue
-        wrap_content(soup, highlighted_element, "mark")
+    for highlight_attribute in [
+        "data-highlight",
+        "data-block-background",
+        "data-comment-color",
+    ]:
+        for highlighted_element in soup.find_all(attrs={highlight_attribute: True}):
+            if highlighted_element.attrs[highlight_attribute] == "transparent":
+                continue
+            wrap_content(soup, highlighted_element, "mark")
 
 
 def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
