@@ -19,7 +19,7 @@ source_app: FuseBase and Nimbus Note
 
 ## Known Limitations
 
-- Comments, Tags and the folder structure aren't included in the exports.
+- Comments and Tags aren't included in the exports.
 - Indentation outside of lists is not converted, because Markdown uses indentation only for lists and code blocks.
 - Some items can't be converted if they are exported with the old note editor format. For example links in the format `nimbusweb.me/*` or some attachments.
 

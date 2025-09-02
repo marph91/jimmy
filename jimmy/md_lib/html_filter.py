@@ -64,6 +64,7 @@ def _to_markdown_header_id(text: str) -> str:
     """
     Convert any (header) text to a Markdown header ID.
     See: https://pandoc.org/MANUAL.html#extension-auto_identifiers
+    Slightly adapted to work in Firefox and VSCode.
 
     >>> _to_markdown_header_id("Heading identifiers in HTML")
     'heading-identifiers-in-html'
@@ -74,10 +75,14 @@ def _to_markdown_header_id(text: str) -> str:
     >>> _to_markdown_header_id("[HTML], [S5], or [RTF]?")
     'html-s5-or-rtf'
     >>> _to_markdown_header_id("3. Applications")
-    'applications'
-    >>> _to_markdown_header_id("33")
+    '3-applications'
+    >>> _to_markdown_header_id("4-х актная  структура выступления (монолога)")
+    '4-х-актная-структура-выступления-монолога'
+    >>> _to_markdown_header_id("")
     'section'
     """
+    # Reduce consecutive whitespaces.
+    text = " ".join(text.split())
     # Remove all non-alphanumeric characters, except underscores, hyphens, and periods.
     text = "".join(
         [
@@ -95,7 +100,7 @@ def _to_markdown_header_id(text: str) -> str:
     new_text = []
     found_first_letter = False
     for character in text:
-        if character.isalpha() or found_first_letter:
+        if character.isalnum() or found_first_letter:
             new_text.append(character)
             found_first_letter = True
     text = "".join(new_text)
