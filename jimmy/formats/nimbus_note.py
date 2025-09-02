@@ -14,6 +14,10 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
     accept_folder = True
 
+    def __init__(self, config):
+        super().__init__(config)
+        self.temp_folder = common.get_temp_folder()
+
     def handle_markdown_links(
         self, note_body: str, root_folder: Path
     ) -> tuple[imf.Resources, imf.NoteLinks]:
@@ -57,9 +61,9 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_note(self, file_: Path, temp_folder: Path):
+    def convert_note(self, file_: Path, parent: imf.Notebook):
         self.logger.debug(f'Converting note "{file_.stem}"')
-        temp_folder_note = temp_folder / file_.stem
+        temp_folder_note = self.temp_folder / file_.stem
         temp_folder_note.mkdir()
         common.extract_zip(file_, temp_folder=temp_folder_note)
 
@@ -101,13 +105,22 @@ class Converter(converter.BaseConverter):
             note_links=note_links,
             original_id=title,
         )
-        self.root_notebook.child_notes.append(note_imf)
+        parent.child_notes.append(note_imf)
+
+    def convert_folder(self, file_or_folder: Path, parent: imf.Notebook):
+        for item in sorted(file_or_folder.iterdir()):
+            if item.is_dir():
+                new_parent = imf.Notebook(item.name)
+                self.convert_folder(item, new_parent)
+                parent.child_notebooks.append(new_parent)
+            elif item.suffix == ".zip":
+                self.convert_note(item, parent)
 
     def convert(self, file_or_folder: Path):
-        temp_folder = common.get_temp_folder()
-
         if file_or_folder.suffix == ".zip":
-            self.convert_note(file_or_folder, temp_folder)
+            self.convert_note(file_or_folder, self.root_notebook)
         else:  # folder of .zip
-            for file_ in sorted(file_or_folder.rglob("*.zip")):
-                self.convert_note(file_, temp_folder)
+            self.convert_folder(file_or_folder, self.root_notebook)
+
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()

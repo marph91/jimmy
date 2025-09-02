@@ -267,7 +267,9 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
             if indent_int == 0:
                 # would be sufficient to do only one time
                 current_list.name = list_type
-                if item_type == "checkbox" and "checklist" not in current_list["class"]:
+                if item_type == "checkbox" and "checklist" not in current_list.get(
+                    "class", []
+                ):
                     current_list["class"] = ["checklist"]  # drop the other classes
             if indent_int > current_indent:
                 # new child list
