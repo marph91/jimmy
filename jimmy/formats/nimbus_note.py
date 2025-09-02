@@ -92,6 +92,7 @@ class Converter(converter.BaseConverter):
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,
                 jimmy.md_lib.html_filter.nimbus_note_remove_table_footer,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_lists,
+                jimmy.md_lib.html_filter.nimbus_note_streamline_tables,
             ],
         )
         resources, note_links = self.handle_markdown_links(

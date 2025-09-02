@@ -286,6 +286,31 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
             current_list.append(item)
 
 
+def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
+    # remove:
+    # - first row (only contains A, B, ...)
+    # - first column (only contains 1, 2, ...)
+    # - second column (empty)
+    for table in soup.find_all("table"):
+        # This seems to affect new tables only. Some sanity checks are needed.
+        for row_index, row in enumerate(table.find_all("tr")):
+            for col_index, col in enumerate(row.find_all("td")):
+                text = col.text.strip()
+                if row_index == 0 and text and text not in string.ascii_uppercase:
+                    LOGGER.debug("Old table. Skip streamlining.")
+                    return
+                if col_index in (0, 1) and text and text not in string.digits:
+                    LOGGER.debug("Old table. Skip streamlining.")
+                    return
+
+        for row_index, row in enumerate(table.find_all("tr")):
+            if row_index == 0:
+                row.decompose()  # first row
+            for col_index, col in enumerate(row.find_all("td")):
+                if col_index in (0, 1):
+                    col.decompose()  # first and second column
+
+
 def notion_streamline_lists(soup: bs4.BeautifulSoup):
     # Checklists are unnumbered lists with special classes.
     for list_ in soup.find_all("ul", class_="to-do-list"):
