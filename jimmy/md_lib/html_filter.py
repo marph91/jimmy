@@ -190,6 +190,7 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
         "data-highlight",
         "data-block-background",
         "data-comment-color",
+        "data-palette-bg-rgb",  # table cells
     ]:
         for highlighted_element in soup.find_all(attrs={highlight_attribute: True}):
             if highlighted_element.attrs[highlight_attribute] == "transparent":
