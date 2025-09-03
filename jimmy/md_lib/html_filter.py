@@ -301,11 +301,11 @@ def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
         for row_index, row in enumerate(table.find_all("tr")):
             for col_index, col in enumerate(row.find_all("td")):
                 text = col.text.strip()
-                if row_index == 0 and text and text not in string.ascii_uppercase:
-                    LOGGER.debug("Old table. Skip streamlining.")
+                if row_index == 0 and text and not text.isalpha():
+                    LOGGER.debug("Old table (first row). Skip streamlining.")
                     return
-                if col_index in (0, 1) and text and text not in string.digits:
-                    LOGGER.debug("Old table. Skip streamlining.")
+                if col_index in (0, 1) and text and not text.isdigit():
+                    LOGGER.debug("Old table (first columns). Skip streamlining.")
                     return
 
         for row_index, row in enumerate(table.find_all("tr")):
