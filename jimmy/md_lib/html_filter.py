@@ -506,8 +506,8 @@ def underline(soup: bs4.BeautifulSoup):
     # Use HTML for underlining.
     # TODO: Check if there is a better solution.
     for underlined in soup.find_all(["ins", "u"]):
-        underlined.insert_before(soup.new_string("{UNDERLINESTART}"))
-        underlined.insert_after(soup.new_string("{UNDERLINESTOP}"))
+        underlined.insert_before(soup.new_string("++"))
+        underlined.insert_after(soup.new_string("++"))
         underlined.unwrap()
 
 

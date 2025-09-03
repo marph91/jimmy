@@ -338,8 +338,6 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
 
     text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
-    text_md = text_md.replace("{UNDERLINESTART}", "<u>")
-    text_md = text_md.replace("{UNDERLINESTOP}", "</u>")
     return text_md.strip()
 
 
