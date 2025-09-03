@@ -281,11 +281,11 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
                 new_list = soup.new_tag(list_type)
                 current_list.append(new_list)
                 current_list = new_list
-                current_indent = indent_int
             elif indent_int < current_indent:
                 # find parent list at the corresponding level
                 for _ in range(current_indent - indent_int):
                     current_list = current_list.parent
+            current_indent = indent_int
 
             item.attrs = {}  # remove all attributes
             current_list.append(item)
