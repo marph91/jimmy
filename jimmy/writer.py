@@ -42,20 +42,23 @@ class PathDeterminer:
 
     def __init__(self, config):
         self.root_path = None
+        self.max_name_length = config.max_name_length
         self.global_resource_folder = (
             None
             if config.global_resource_folder is None
-            else common.safe_path(config.global_resource_folder)
+            else common.safe_path(config.global_resource_folder, self.max_name_length)
         )
         self.local_resource_folder = (
             config.local_resource_folder
             if config.local_resource_folder == Path(".")
-            else Path(common.safe_path(config.local_resource_folder))
+            else Path(
+                common.safe_path(config.local_resource_folder, self.max_name_length)
+            )
         )
         self.local_image_folder = (
             None
             if config.local_image_folder is None
-            else Path(common.safe_path(config.local_image_folder))
+            else Path(common.safe_path(config.local_image_folder, self.max_name_length))
         )
         # reference id - path (new id)
         self.note_id_map: dict[str, Path] = {}
@@ -71,13 +74,15 @@ class PathDeterminer:
                 target_folder = self.local_resource_folder
             # local resources (next to the markdown files)
             resource_folder = note.path.parent / target_folder
-            resource.path = resource_folder / common.safe_path(resource.filename.name)
+            resource.path = resource_folder / common.safe_path(
+                resource.filename.name, self.max_name_length
+            )
         else:
             # global resource folder
             resource.path = (
                 self.root_path
                 / self.global_resource_folder
-                / common.safe_path(resource.filename.name)
+                / common.safe_path(resource.filename.name, self.max_name_length)
             )
         # add extension if possible
         assert resource.path is not None
@@ -96,7 +101,9 @@ class PathDeterminer:
         if self.root_path is None:
             self.root_path = notebook.path
         for note in notebook.child_notes:
-            note.path = notebook.path / common.safe_path(note.title)
+            note.path = notebook.path / common.safe_path(
+                note.title, self.max_name_length
+            )
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
                 note.path = note.path.with_suffix(note.path.suffix + ".md")
@@ -106,7 +113,9 @@ class PathDeterminer:
             for resource in note.resources:
                 self.determine_resource_path(note, resource)
         for child_notebook in notebook.child_notebooks:
-            child_notebook.path = notebook.path / common.safe_path(child_notebook.title)
+            child_notebook.path = notebook.path / common.safe_path(
+                child_notebook.title, self.max_name_length
+            )
             self.determine_paths(child_notebook)
 
 

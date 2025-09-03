@@ -112,6 +112,12 @@ def main():
         "Relative to the location of the corresponding note.",
     )
     parser_cli.add_argument(
+        "--max-name-length",
+        default=50,
+        type=int,
+        help="Experimental - Maximum filename length.",
+    )
+    parser_cli.add_argument(
         "--print-tree",
         action="store_true",
         help="Print the parsed note tree in intermediate format.",
