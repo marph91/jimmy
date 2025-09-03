@@ -33,7 +33,7 @@ class Converter(converter.BaseConverter):
                     f"Skip internal link {link.url}, because there is no test data."
                 )
             elif link.url.startswith("nimbusnote://"):
-                linked_note_name = unquote(Path(link.url).stem)
+                linked_note_name = unquote(link.url[len("nimbusnote://"):])
                 note_links.append(
                     imf.NoteLink(
                         str(link), linked_note_name, link.text or linked_note_name

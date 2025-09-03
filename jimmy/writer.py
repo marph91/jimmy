@@ -19,11 +19,19 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     >>> get_quoted_relative_path(Path("sample/a"), Path("sample/b"))
     '../b'
     >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
-    '../im%20age.png'
+    '<../im age.png>'
     """
     # The doctest works only on linux. The implementation seems to be working
     # for windows, though.
-    return urllib.parse.quote(str(target.relative_to(source, walk_up=True)))
+    relative_path = str(target.relative_to(source, walk_up=True))
+    # Prepend "./" for Obsidian compatibility.
+    if relative_path != "." and not relative_path.startswith("../"):
+        relative_path = f"./{relative_path}"
+    # Don't modify the URL if not needed.
+    if urllib.parse.quote(relative_path) == relative_path:
+        return relative_path
+    # Use brackets instead of url encoding to keep cyrillic URLs readable.
+    return f"<{relative_path}>"
 
 
 class PathDeterminer:
