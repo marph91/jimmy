@@ -492,9 +492,9 @@ def streamline_tables(soup: bs4.BeautifulSoup):
         for quote in table.find_all("blockquote"):
             quote.name = "q"
 
-        # remove "tbody"
-        if (body := table.find("tbody")) is not None:
-            body.unwrap()
+        # remove "thead" and "tbody"
+        for body_head in table.find_all(["thead", "tbody"]):
+            body_head.unwrap()
 
         table.attrs = {}
 
