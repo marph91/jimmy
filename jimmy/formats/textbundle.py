@@ -78,8 +78,10 @@ class Converter(converter.BaseConverter):
 
         # handle bear specific metadata
         if (bear_metadata := metadata.get("net.shinyfrog.bear")) is not None:
-            note_imf.created = common.iso_to_datetime(bear_metadata["creationDate"])
-            note_imf.updated = common.iso_to_datetime(bear_metadata["modificationDate"])
+            if (created := bear_metadata.get("creationDate")) is not None:
+                note_imf.created = common.iso_to_datetime(created)
+            if (updated := bear_metadata.get("modificationDate")) is not None:
+                note_imf.updated = common.iso_to_datetime(updated)
             # ID renamed in v2?
             # There are IDs, but at the end, the title is used in wikilinks.
             # note_imf.original_id = bear_metadata.get(
