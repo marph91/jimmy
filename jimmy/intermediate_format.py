@@ -189,7 +189,9 @@ class Note:
                             # Convert the tags to lower case before the import to
                             # avoid issues with special first characters.
                             # See: https://github.com/laurent22/joplin/issues/11179
-                            metadata["tags"] = [tag.title.lower() for tag in self.tags]
+                            metadata["tags"] = sorted(
+                                tag.title.lower() for tag in self.tags
+                            )
                 post = frontmatter.Post(self.body, **metadata)
                 self.body = frontmatter.dumps(post)
             case "obsidian":
