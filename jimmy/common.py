@@ -399,8 +399,22 @@ def date_to_unix_ms(date_: dt.date) -> int:
 
 
 def iso_to_datetime(iso: str) -> dt.datetime:
-    # parse iso -> convert to UTC -> remove timezone
-    return dt.datetime.fromisoformat(iso).astimezone(dt.UTC).replace(tzinfo=None)
+    """
+    >>> iso_to_datetime('2011-11-04T03:00:00')
+    datetime.datetime(2011, 11, 4, 3, 0)
+    >>> iso_to_datetime('2011-11-04T03:00:00+0200')
+    datetime.datetime(2011, 11, 4, 1, 0)
+    """
+    # parse iso -> (convert to UTC) -> remove timezone
+
+    # Coinvert to UTC if needed.
+    # https://docs.python.org/3/library/datetime.html#determining-if-an-object-is-aware-or-naive
+    datetime_object = dt.datetime.fromisoformat(iso)
+    if datetime_object.tzinfo is None or datetime_object.tzinfo.utcoffset(datetime_object) is None:
+        # naive - handle as UTC
+        return datetime_object.replace(tzinfo=None)
+    # aware - convert to UTC
+    return datetime_object.astimezone(dt.UTC).replace(tzinfo=None)
 
 
 def timestamp_to_datetime(timestamp_s: int | float) -> dt.datetime:
