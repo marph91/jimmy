@@ -226,8 +226,7 @@ class Converter(converter.BaseConverter):
                         new_root_notebook = imf.Notebook(title)
                         root_notebook.child_notebooks.append(new_root_notebook)
                     self.logger.debug(
-                        f"new notebook: {new_root_notebook.title}, "
-                        f"parent: {root_notebook.title}"
+                        f"new notebook: {new_root_notebook.title}, parent: {root_notebook.title}"
                     )
                     self.convert_note(child, new_root_notebook)
                 case "codebox":
@@ -239,9 +238,7 @@ class Converter(converter.BaseConverter):
                         note_body += f"\n```latex\n{child.text}\n```\n"
                         continue
                     if child.text is None and child.attrib.get("anchor"):
-                        self.logger.debug(
-                            f"ignoring anchor {child.attrib.get('anchor')}"
-                        )
+                        self.logger.debug(f"ignoring anchor {child.attrib.get('anchor')}")
                         continue
                     # We could handle resources here already,
                     # but we do it later with the common function.
@@ -260,9 +257,7 @@ class Converter(converter.BaseConverter):
         if note_imf.original_id in self.bookmarked_nodes:
             note_imf.tags.append(imf.Tag("cherrytree-bookmarked"))
         if tags_str := node.attrib.get("tags", ""):
-            note_imf.tags.extend(
-                imf.Tag(t) for t in tags_str.strip().split(" ") if t.strip()
-            )
+            note_imf.tags.extend(imf.Tag(t) for t in tags_str.strip().split(" ") if t.strip())
 
         if (created_time := node.attrib.get("ts_creation")) is not None:
             note_imf.created = common.timestamp_to_datetime(float(created_time))
@@ -275,9 +270,7 @@ class Converter(converter.BaseConverter):
             # Create the note below the notebook with the same name,
             # to stay compatible with the obsidian folder note plugins.
             # See: https://github.com/marph91/jimmy/issues/29
-            parent_notebook = (
-                root_notebook if new_root_notebook is None else new_root_notebook
-            )
+            parent_notebook = root_notebook if new_root_notebook is None else new_root_notebook
             parent_notebook.child_notes.append(note_imf)
 
     @common.catch_all_exceptions

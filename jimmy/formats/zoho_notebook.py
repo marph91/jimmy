@@ -17,9 +17,7 @@ class Converter(converter.BaseConverter):
         # There is always one subfolder that contains all data.
         return common.get_single_child_folder(unzipped_input)
 
-    def handle_markdown_links(
-        self, note_body: str
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, note_body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in jimmy.md_lib.common.get_markdown_links(note_body):
@@ -38,9 +36,7 @@ class Converter(converter.BaseConverter):
                 )
             elif (self.root_path / link.url).is_file():
                 # resource
-                resources.append(
-                    imf.Resource(self.root_path / link.url, str(link), link.text)
-                )
+                resources.append(imf.Resource(self.root_path / link.url, str(link), link.text))
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -79,9 +75,7 @@ class Converter(converter.BaseConverter):
             note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup))
 
             # resources and internal links
-            note_imf.resources, note_imf.note_links = self.handle_markdown_links(
-                note_imf.body
-            )
+            note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body)
 
         # get or find parent notebook
         # Assume that notebooks can't be nested.

@@ -29,21 +29,15 @@ class Converter(converter.BaseConverter):
             if "nimbusweb.me" in link.url:
                 # internal link
                 # TODO: Get export file with internal links.
-                self.logger.debug(
-                    f"Skip internal link {link.url}, because there is no test data."
-                )
+                self.logger.debug(f"Skip internal link {link.url}, because there is no test data.")
             elif link.url.startswith("nimbusnote://"):
                 linked_note_name = unquote(link.url[len("nimbusnote://") :])
                 note_links.append(
-                    imf.NoteLink(
-                        str(link), linked_note_name, link.text or linked_note_name
-                    )
+                    imf.NoteLink(str(link), linked_note_name, link.text or linked_note_name)
                 )
             elif (root_folder / link.url).is_file():
                 # resource
-                resources.append(
-                    imf.Resource(root_folder / link.url, str(link), link.text)
-                )
+                resources.append(imf.Resource(root_folder / link.url, str(link), link.text))
             elif link.url.startswith("data:image/svg+xml;base64,"):
                 # TODO: Generalize for other mime types.
                 # For example "data:image/png;base64,"
@@ -68,9 +62,7 @@ class Converter(converter.BaseConverter):
         common.extract_zip(file_, temp_folder=temp_folder_note)
 
         if not (temp_folder_note / "note.html").is_file():
-            self.logger.error(
-                "Export structure not implemented yet. Please report at Github."
-            )
+            self.logger.error("Export structure not implemented yet. Please report at Github.")
             return
 
         # HTML note seems to have the name "note.html" always
@@ -94,9 +86,7 @@ class Converter(converter.BaseConverter):
                 jimmy.md_lib.html_filter.nimbus_note_streamline_tables,
             ],
         )
-        resources, note_links = self.handle_markdown_links(
-            note_body_markdown, temp_folder_note
-        )
+        resources, note_links = self.handle_markdown_links(note_body_markdown, temp_folder_note)
         note_imf = imf.Note(
             title,
             note_body_markdown.strip(),

@@ -85,17 +85,13 @@ class Converter(converter.BaseConverter):
                 resource = matched_resources[0]
                 for resource_title in resource.titles:
                     resources.append(
-                        imf.Resource(
-                            resource.filename, str(link), link.text or resource_title
-                        )
+                        imf.Resource(resource.filename, str(link), link.text or resource_title)
                     )
         return body, resources, note_links
 
     def convert_notebooks(self, input_json: dict):
         for notebook_id in input_json["notebook"]:
-            notebook = json.loads(
-                (self.root_path / notebook_id).read_text(encoding="utf-8")
-            )
+            notebook = json.loads((self.root_path / notebook_id).read_text(encoding="utf-8"))
 
             self.root_notebook.child_notebooks.append(
                 imf.Notebook(notebook["title"], original_id=notebook_id)
@@ -117,9 +113,7 @@ class Converter(converter.BaseConverter):
                         # The attachment is not referenced. Add it here.
                         # Referenced attachments are added later.
                         resources.append(
-                            imf.Resource(
-                                file_resource.filename, title=note_resource["name"]
-                            )
+                            imf.Resource(file_resource.filename, title=note_resource["name"])
                         )
                     break
         return resources
@@ -141,9 +135,7 @@ class Converter(converter.BaseConverter):
         if (content_html := note.get("content")) is not None:
             content_markdown = jimmy.md_lib.common.markup_to_markdown(
                 content_html,
-                custom_filter=[
-                    jimmy.md_lib.html_filter.synology_note_station_fix_img_src
-                ],
+                custom_filter=[jimmy.md_lib.html_filter.synology_note_station_fix_img_src],
             )
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(
@@ -176,13 +168,9 @@ class Converter(converter.BaseConverter):
         parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        input_json = json.loads(
-            (self.root_path / "config.json").read_text(encoding="utf-8")
-        )
+        input_json = json.loads((self.root_path / "config.json").read_text(encoding="utf-8"))
         if "note" not in input_json:
-            self.logger.error(
-                '"note" not found. Is this really a Synology Note Station export?'
-            )
+            self.logger.error('"note" not found. Is this really a Synology Note Station export?')
             return
 
         # TODO: What is input_json["shortcut"]?
@@ -198,9 +186,7 @@ class Converter(converter.BaseConverter):
                     continue  # ignore thumbnails
                 # Don't use the actual hash: hashlib.md5(item.read_bytes()).hexdigest()
                 # It can change. So we need to take the hash from the filename.
-                self.available_resources.append(
-                    Attachment(item, item.stem.split("_")[-1])
-                )
+                self.available_resources.append(Attachment(item, item.stem.split("_")[-1]))
 
         # for internal links, we need to store the note titles
         note_id_title_map = {}

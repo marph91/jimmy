@@ -36,9 +36,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
         if "personalLibrary" not in input_json:
-            self.logger.error(
-                '"personalLibrary" not found. Is this really a cacher export?'
-            )
+            self.logger.error('"personalLibrary" not found. Is this really a cacher export?')
             return
 
         # Get the tags/labels for each snippet.

@@ -53,17 +53,13 @@ def main():
     subparsers = parser.add_subparsers(dest="interface")
 
     # TUI parser
-    subparsers.add_parser(
-        "tui", help="Configure Jimmy in a Terminal User Interface (TUI)."
-    )
+    subparsers.add_parser("tui", help="Configure Jimmy in a Terminal User Interface (TUI).")
 
     # CLI parser
     parser_cli = subparsers.add_parser(
         "cli", help="Specify all arguments directly on command line."
     )
-    parser_cli.add_argument(
-        "input", type=Path, nargs="+", help="The input file(s) or folder(s)."
-    )
+    parser_cli.add_argument("input", type=Path, nargs="+", help="The input file(s) or folder(s).")
     # specific formats that need a special handling
     parser_cli.add_argument(
         "--format",
@@ -94,8 +90,7 @@ def main():
     parser_cli.add_argument(
         "--global-resource-folder",
         type=relative_path,
-        help="The resource folder for images, PDF and other data. "
-        "Relative to the output folder.",
+        help="The resource folder for images, PDF and other data. Relative to the output folder.",
     )
     parser_cli.add_argument(
         "--local-resource-folder",
@@ -123,9 +118,7 @@ def main():
         help="Print the parsed note tree in intermediate format.",
     )
     parser_cli.add_argument("--log-file", type=Path, help="Path for the log file.")
-    parser_cli.add_argument(
-        "--no-stdout-log", action="store_true", help="Don't log to stdout."
-    )
+    parser_cli.add_argument("--no-stdout-log", action="store_true", help="Don't log to stdout.")
     parser_cli.add_argument(
         "--stdout-log-level",
         default="INFO",
@@ -136,12 +129,8 @@ def main():
     filters = parser_cli.add_mutually_exclusive_group()
     filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
     filters.add_argument("--include-notes", nargs="+", help="Include notes by title.")
-    filters.add_argument(
-        "--exclude-notes-with-tags", nargs="+", help="Exclude notes with tag."
-    )
-    filters.add_argument(
-        "--include-notes-with-tags", nargs="+", help="Include notes with tag."
-    )
+    filters.add_argument("--exclude-notes-with-tags", nargs="+", help="Exclude notes with tag.")
+    filters.add_argument("--include-notes-with-tags", nargs="+", help="Include notes with tag.")
     filters.add_argument("--exclude-tags", nargs="+", help="Exclude tags.")
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
@@ -160,17 +149,13 @@ def main():
         # the output next to the first input.
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         format_ = "filesystem" if config.format is None else config.format
-        config.output_folder = (
-            config.input[0].parent / f"{now} - Jimmy Import from {format_}"
-        )
+        config.output_folder = config.input[0].parent / f"{now} - Jimmy Import from {format_}"
 
     # setup logging
     custom_handlers: list[logging.Handler] = []
     if config.log_file is not None:
         # log to file
-        file_handler_formatter = logging.Formatter(
-            "%(asctime)s [%(levelname)-5.5s]  %(message)s"
-        )
+        file_handler_formatter = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
         file_handler = logging.FileHandler(config.log_file, mode="w")
         file_handler.setFormatter(file_handler_formatter)
         file_handler.setLevel(logging.DEBUG)

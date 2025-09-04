@@ -39,9 +39,7 @@ def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources
         content = part.get_payload(decode=True)
         unique_resource_path = common.get_unique_path(unique_resource_path, content)
         unique_resource_path.write_bytes(content)
-        resource = imf.Resource(
-            unique_resource_path, original_text=id_, title=resource_name
-        )
+        resource = imf.Resource(unique_resource_path, original_text=id_, title=resource_name)
         return [], [resource]
     LOGGER.debug(f"Unhandled mime type: {mime}")
     return [], []

@@ -54,17 +54,14 @@ class Converter(converter.BaseConverter):
             try:
                 key, value = line.split(": ", maxsplit=1)
             except ValueError:
-                self.logger.debug(
-                    "Failed to parse metadata. Probably only a txt attachment."
-                )
+                self.logger.debug("Failed to parse metadata. Probably only a txt attachment.")
                 return
 
             match key:
                 case "Content-Type":
                     if value != "text/x-zim-wiki":
                         self.logger.warning(
-                            f'Unexpected content type "{value}". '
-                            "Trying to parse anyway."
+                            f'Unexpected content type "{value}". Trying to parse anyway.'
                         )
                 case "Creation-Date":
                     imf_note.created = common.iso_to_datetime(value)
@@ -78,9 +75,7 @@ class Converter(converter.BaseConverter):
 
         # tags: https://zim-wiki.org/manual/Help/Tags.html
         # TODO: exclude invalid characters
-        imf_note.tags = [
-            imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(body, ["@"])
-        ]
+        imf_note.tags = [imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(body, ["@"])]
 
         parent.child_notes.append(imf_note)
 

@@ -50,15 +50,11 @@ def italic():
     def to_md(_, t):  # noqa
         return "*" + t[0][0] + "*"
 
-    return pp.Regex(
-        jimmy.md_lib.common.double_slash_re, as_group_list=True
-    ).set_parse_action(to_md)
+    return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(to_md)
 
 
 def horizontal_line():
-    return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(
-        lambda: "\n---\n"
-    )
+    return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(lambda: "\n---\n")
 
 
 def heading():

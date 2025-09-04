@@ -40,9 +40,7 @@ def any_link():
 
 def roam_internal_function():
     def to_md(_, t):  # noqa
-        return (
-            "{{[[" + t[0] + "]]}}"
-        )  # return the original string, but don't process further
+        return "{{[[" + t[0] + "]]}}"  # return the original string, but don't process further
 
     return pp.QuotedString("{{[[", endQuoteChar="]]}}").set_parse_action(to_md)
 
@@ -76,9 +74,7 @@ def embedded_block():
         title = t[0]
         return f"[{title}](roam-block://{title})"
 
-    return pp.QuotedString("{{[[embed]]: ((", endQuoteChar="))}}").set_parse_action(
-        to_md
-    )
+    return pp.QuotedString("{{[[embed]]: ((", endQuoteChar="))}}").set_parse_action(to_md)
 
 
 def page_link():

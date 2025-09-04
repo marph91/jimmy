@@ -141,9 +141,7 @@ class EnexToMarkdown:
                 self.active_formatting["italic"] = self.global_level
             case "img":
                 if (url := attrib.get("src")) is not None:
-                    self.md.append(
-                        f"![{attrib.get('title', attrib.get('alt', ''))}]({url})"
-                    )
+                    self.md.append(f"![{attrib.get('title', attrib.get('alt', ''))}]({url})")
             case "p":
                 self.add_newlines(2)
             case "s":
@@ -166,18 +164,12 @@ class EnexToMarkdown:
             case "en-todo":
                 if self.active_lists and self.active_lists[-1] == "ul":
                     # in a <li>
-                    bullet = (
-                        "[x] " if attrib.get("checked") in [True, "true"] else "[ ] "
-                    )
+                    bullet = "[x] " if attrib.get("checked") in [True, "true"] else "[ ] "
                 else:
                     # in a <div>
                     # TODO: integrate in active_lists
                     self.add_newlines(2)  # ensure empty line
-                    bullet = (
-                        "- [x] "
-                        if attrib.get("checked") in [True, "true"]
-                        else "- [ ] "
-                    )
+                    bullet = "- [x] " if attrib.get("checked") in [True, "true"] else "- [ ] "
                 self.md.append(bullet)
             case "ol" | "ul":
                 self.add_newlines(2)  # ensure empty line
@@ -212,14 +204,9 @@ class EnexToMarkdown:
                                     self.add_newlines(2)  # ensure empty line
                                     self.md.append("```")
                                     self.add_newlines(1)
-                                    self.active_formatting["codeblock"] = (
-                                        self.global_level
-                                    )
+                                    self.active_formatting["codeblock"] = self.global_level
                             case "-evernote-highlight":
-                                if (
-                                    value == "true"
-                                    and "bold" not in self.active_formatting
-                                ):
+                                if value == "true" and "bold" not in self.active_formatting:
                                     # highlight is converted to bold
                                     self.md.append("**")
                                     self.active_formatting["bold"] = self.global_level
@@ -230,18 +217,12 @@ class EnexToMarkdown:
                             #     if value == "true":
                             #         self.active_lists.append("tasklist")
                             case "font-family":
-                                if (
-                                    value == "monospace"
-                                    and "code" not in self.active_formatting
-                                ):
+                                if value == "monospace" and "code" not in self.active_formatting:
                                     self.md.append("`")
                                     self.active_formatting["code"] = self.global_level
                             case "font-style":
                                 # https://developer.mozilla.org/en-US/docs/Web/CSS/font-style
-                                if (
-                                    value == "italic"
-                                    and "italic" not in self.active_formatting
-                                ):
+                                if value == "italic" and "italic" not in self.active_formatting:
                                     self.md.append("*")
                                     self.active_formatting["italic"] = self.global_level
                                 # TODO: handle value == "normal"?
@@ -255,10 +236,7 @@ class EnexToMarkdown:
                                     # 700 and above is bold
                                     self.md.append("**")
                                     self.active_formatting["bold"] = self.global_level
-                                elif (
-                                    value == "italic"
-                                    and "italic" not in self.active_formatting
-                                ):
+                                elif value == "italic" and "italic" not in self.active_formatting:
                                     self.md.append("*")
                                     self.active_formatting["italic"] = self.global_level
                             # TODO: padding-left:40px;
@@ -336,18 +314,7 @@ class EnexToMarkdown:
                     if append := self.active_link.get("append"):
                         self.md.extend(append)
                     self.active_link = {}
-            case (
-                "b"
-                | "i"
-                | "s"
-                | "u"
-                | "center"
-                | "cite"
-                | "code"
-                | "em"
-                | "font"
-                | "strong"
-            ):
+            case "b" | "i" | "s" | "u" | "center" | "cite" | "code" | "em" | "font" | "strong":
                 pass  # handled already in active_formatting, TODO: sanity check
             case "br" | "div":
                 newlines = 1
@@ -356,9 +323,7 @@ class EnexToMarkdown:
             case "en-crypt":
                 self.encryption = None
             case "en-media":
-                title = self.active_resource.get(
-                    "title", self.active_link.get("alt", "")
-                )
+                title = self.active_resource.get("title", self.active_link.get("alt", ""))
                 self.md.append(f"![{title}]({self.active_resource['hash']})")
                 self.hashes.append(self.active_resource["hash"])
                 self.active_resource = {}
@@ -460,10 +425,7 @@ class EnexToMarkdown:
         if (
             self.active_lists
             and self.md
-            and any(
-                self.md[-1].endswith(bullet)
-                for bullet in ["- [x] ", "- [ ] ", "- ", "1. "]
-            )
+            and any(self.md[-1].endswith(bullet) for bullet in ["- [x] ", "- [ ] ", "- ", "1. "])
         ):
             # Normalize whitespaces at the start of list items.
             data = data.lstrip()
@@ -499,11 +461,7 @@ class EnexToMarkdown:
                 self.hashes.extend(decoded_hashes)
             return
 
-        if (
-            self.quote_level > 0
-            and self.md
-            and self.md[-len(self.active_formatting) - 1] == "\n"
-        ):
+        if self.quote_level > 0 and self.md and self.md[-len(self.active_formatting) - 1] == "\n":
             # insert before any active formatting
             self.md.insert(-len(self.active_formatting), "> " * self.quote_level)
 
@@ -512,9 +470,7 @@ class EnexToMarkdown:
             title = self.active_link.get("title", "")
             self.active_link["title"] = title + data
         elif self.active_resource:
-            LOGGER.warning(
-                f"Resource title not handled: {self.active_resource['hash']}"
-            )
+            LOGGER.warning(f"Resource title not handled: {self.active_resource['hash']}")
         else:
             target = self.table_cell if self.in_table else self.md
             target.append(data)

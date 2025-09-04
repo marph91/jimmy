@@ -104,7 +104,7 @@ notes = []  # don't show todos
 
 [tool.ruff]
 # Set the maximum line length to 88.
-line-length = 88
+line-length = 100
 # Include pyinstaller spec files.
 extend-include = ["*.spec"]
 [tool.ruff.lint]

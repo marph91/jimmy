@@ -26,9 +26,9 @@ def tag(source_tag, target_tag, replace_first_only=False):
             return target_tag + t[0]
         return target_tag + t[0] + target_tag
 
-    return pp.QuotedString(
-        f"[{source_tag}]", end_quote_char=f"[/{source_tag}]"
-    ).set_parse_action(to_md)
+    return pp.QuotedString(f"[{source_tag}]", end_quote_char=f"[/{source_tag}]").set_parse_action(
+        to_md
+    )
 
 
 def newline():
@@ -47,20 +47,16 @@ def code_block():
     def to_md(_, t):  # noqa
         return f"\n```\n{t[0]}\n```"
 
-    return pp.QuotedString(
-        "[code]", end_quote_char="[/code]", multiline=True
-    ).set_parse_action(to_md)
+    return pp.QuotedString("[code]", end_quote_char="[/code]", multiline=True).set_parse_action(
+        to_md
+    )
 
 
 def list_():
     def to_md(_, t):  # noqa
         type_, content = t[0]
         list_character = {"l": "*", "n": "1."}[type_]
-        return (
-            f"{list_character} "
-            + f"\n{list_character} ".join(content.split("[/*][*]"))
-            + "\n"
-        )
+        return f"{list_character} " + f"\n{list_character} ".join(content.split("[/*][*]")) + "\n"
 
     return pp.Regex(list_re, as_group_list=True).set_parse_action(to_md)
 

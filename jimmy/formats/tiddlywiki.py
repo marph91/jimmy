@@ -49,9 +49,7 @@ class MarkdownHtmlSeparator(HTMLParser):
         if not self.active_html_tags:
             LOGGER.debug(f'Unexpected closing tag "{tag}"')
         elif (opening_tag := self.active_html_tags.pop(-1)) != tag:
-            LOGGER.warning(
-                f'Closing tag "{tag}" doesn\'t match opening tag "{opening_tag}"'
-            )
+            LOGGER.warning(f'Closing tag "{tag}" doesn\'t match opening tag "{opening_tag}"')
             raise ValueError()
         else:
             self.html.append(f"</{tag}>")
@@ -152,18 +150,12 @@ class Converter(converter.BaseConverter):
             mime = tiddler.get("type", "")
             if mime == "image/svg+xml":
                 continue  # TODO
-            if (
-                mime.startswith("image/")
-                or mime == "application/pdf"
-                or mime == "audio/mp3"
-            ):
+            if mime.startswith("image/") or mime == "application/pdf" or mime == "audio/mp3":
                 if (text_base64 := tiddler.get("text")) is not None:
                     # Use the original filename if possible.
                     resource_title = tiddler.get("alt-text")
                     temp_filename = self.resource_folder / (
-                        common.unique_title()
-                        if resource_title is None
-                        else resource_title
+                        common.unique_title() if resource_title is None else resource_title
                     )
                     temp_filename = common.write_base64(temp_filename, text_base64)
                     body = f"![{temp_filename.name}]({temp_filename})"

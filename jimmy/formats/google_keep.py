@@ -22,9 +22,7 @@ class Converter(converter.BaseConverter):
         note_imf = imf.Note(title, source_application=self.format)
 
         note_imf.tags = [
-            imf.Tag(label["name"])
-            for label in note_keep.get("labels", [])
-            if "name" in label
+            imf.Tag(label["name"]) for label in note_keep.get("labels", []) if "name" in label
         ]
         if note_keep.get("isPinned"):
             note_imf.tags.append(imf.Tag("google-keep-pinned"))
@@ -77,9 +75,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         notes = list(self.root_path.rglob("*.json"))
         if len(notes) == 0:
-            self.logger.warning(
-                "Couldn't find a json file. Is this really a Google Keep export?"
-            )
+            self.logger.warning("Couldn't find a json file. Is this really a Google Keep export?")
             return
         # take only the exports in json format
         for note in sorted(notes):

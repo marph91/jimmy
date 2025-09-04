@@ -25,12 +25,9 @@ class Converter(converter.BaseConverter):
         # TODO: Is the reverse-engineered data correct?
         # print(ciphertext[:8].decode("utf-8") == "NOTE")
         major, minor, timestamp, note_count = struct.unpack(">LLQL", ciphertext[8:])
-        date = common.timestamp_to_datetime(timestamp / 1000).strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
+        date = common.timestamp_to_datetime(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S")
         self.logger.info(
-            f"Metadata: {note_count} notes exported at {date} "
-            f"with version {major}.{minor}"
+            f"Metadata: {note_count} notes exported at {date} with version {major}.{minor}"
         )
 
     def decrypt(self, salt: bytes, password: bytes, ciphertext: bytes) -> bytes | None:

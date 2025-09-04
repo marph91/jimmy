@@ -51,9 +51,7 @@ class PathDeterminer:
         self.local_resource_folder = (
             config.local_resource_folder
             if config.local_resource_folder == Path(".")
-            else Path(
-                common.safe_path(config.local_resource_folder, self.max_name_length)
-            )
+            else Path(common.safe_path(config.local_resource_folder, self.max_name_length))
         )
         self.local_image_folder = (
             None
@@ -87,10 +85,7 @@ class PathDeterminer:
         # add extension if possible
         assert resource.path is not None
         if resource.path.suffix == "":
-            if (
-                resource.title is not None
-                and (suffix := Path(resource.title).suffix) != ""
-            ):
+            if resource.title is not None and (suffix := Path(resource.title).suffix) != "":
                 resource.path = resource.path.with_suffix(suffix)
             else:
                 guessed_suffix = common.guess_suffix(resource.filename)
@@ -101,9 +96,7 @@ class PathDeterminer:
         if self.root_path is None:
             self.root_path = notebook.path
         for note in notebook.child_notes:
-            note.path = notebook.path / common.safe_path(
-                note.title, self.max_name_length
-            )
+            note.path = notebook.path / common.safe_path(note.title, self.max_name_length)
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
                 note.path = note.path.with_suffix(note.path.suffix + ".md")
@@ -158,15 +151,11 @@ class FilesystemWriter:
         assert note.path is not None
         assert resource.path is not None
         resource_title = (
-            resource.title
-            if resource.title not in [None, ""]
-            else resource.filename.name
+            resource.title if resource.title not in [None, ""] else resource.filename.name
         )
 
         relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-        resource_markdown = (
-            f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
-        )
+        resource_markdown = f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
         if resource.original_text is None:
             # append
             note.body = f"{note.body}\n\n{resource_markdown}"
@@ -201,26 +190,19 @@ class FilesystemWriter:
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
         assert note.path is not None
-        link_title = (
-            note_link.title
-            if note_link.title not in [None, ""]
-            else note_link.original_id
-        )
+        link_title = note_link.title if note_link.title not in [None, ""] else note_link.original_id
 
         new_path = self.note_id_map.get(note_link.original_id)
         if new_path is None:
             LOGGER.debug(
-                f'Note "{note.title}": '
-                f'could not find linked note: "{note_link.original_text}"',
+                f'Note "{note.title}": could not find linked note: "{note_link.original_text}"',
                 # prevent [[]] syntax titles to be handled as markup
                 extra={"markup": None},
             )
             return
 
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
-        note.body = note.body.replace(
-            note_link.original_text, f"[{link_title}]({relative_path})"
-        )
+        note.body = note.body.replace(note_link.original_text, f"[{link_title}]({relative_path})")
 
     @common.catch_all_exceptions
     def write_note(self, note: imf.Note):

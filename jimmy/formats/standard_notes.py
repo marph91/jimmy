@@ -184,9 +184,7 @@ class SuperToMarkdown:
             case "tablerow" | "tablecell":
                 pass  # handled in parse_table()
             case "code-highlight" | "text":
-                self.add_text(
-                    format_text(block["text"], Format(block["format"])), quote_level
-                )
+                self.add_text(format_text(block["text"], Format(block["format"])), quote_level)
             case "quote":
                 quote_level += 1
                 newlines = 2
@@ -241,9 +239,7 @@ class Converter(converter.BaseConverter):
                     note_imf.body = ""
             case _:
                 note_imf.body = item["content"]["text"]
-                self.logger.debug(
-                    f'Unsupported note type "{item["content"]["noteType"]}"'
-                )
+                self.logger.debug(f'Unsupported note type "{item["content"]["noteType"]}"')
 
         note_language = (
             item["content"]["appData"]
@@ -275,8 +271,7 @@ class Converter(converter.BaseConverter):
                 break
         if target_file is None:
             self.logger.error(
-                "Couldn't find text file in zip. "
-                "Is this really a Standard Notes export?"
+                "Couldn't find text file in zip. Is this really a Standard Notes export?"
             )
             return
 
@@ -295,9 +290,7 @@ class Converter(converter.BaseConverter):
                 if uuid := reference.get("uuid"):
                     self.note_id_tag_map[uuid].append(tag)
 
-        self.root_notebook.child_notebooks.extend(
-            [self.archive_notebook, self.trash_notebook]
-        )
+        self.root_notebook.child_notebooks.extend([self.archive_notebook, self.trash_notebook])
 
         # second pass: get all notes and assign tags to notes
         for item in input_json["items"]:

@@ -69,9 +69,7 @@ class Converter(converter.BaseConverter):
             }
             if (due_date := parse_date(row["DUEDATE"], row["DUETIME"])) is not None:
                 note_data["due"] = common.datetime_to_ms(due_date)
-            if (
-                start_date := parse_date(row["STARTDATE"], row["STARTTIME"])
-            ) is not None:
+            if (start_date := parse_date(row["STARTDATE"], row["STARTTIME"])) is not None:
                 note_data["created"] = common.datetime_to_ms(start_date)
             completed_date_string = row.get("COMPLETED", "")
             if (completed_date := parse_date(completed_date_string)) is not None:
@@ -81,9 +79,7 @@ class Converter(converter.BaseConverter):
             if not row["FOLDER"]:
                 parent_notebook = self.root_notebook
             else:
-                parent_notebook = self.find_parent_notebook(
-                    row["FOLDER"], self.root_notebook
-                )
+                parent_notebook = self.find_parent_notebook(row["FOLDER"], self.root_notebook)
                 if parent_notebook is None:
                     parent_notebook = imf.Notebook(row["FOLDER"])
                     self.root_notebook.child_notebooks.append(parent_notebook)
@@ -105,9 +101,7 @@ class Converter(converter.BaseConverter):
             if not row["FOLDER"]:
                 parent_notebook = self.root_notebook
             else:
-                parent_notebook = self.find_parent_notebook(
-                    row["FOLDER"], self.root_notebook
-                )
+                parent_notebook = self.find_parent_notebook(row["FOLDER"], self.root_notebook)
                 if parent_notebook is None:
                     parent_notebook = imf.Notebook(row["FOLDER"])
                     self.root_notebook.child_notebooks.append(parent_notebook)

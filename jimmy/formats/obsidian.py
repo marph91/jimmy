@@ -18,9 +18,7 @@ class Converter(converter.BaseConverter):
         for link in jimmy.md_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if any(
-                link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES
-            ):
+            if any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES):
                 # internal link
                 linked_note_id = Path(unquote(link.url)).stem
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
@@ -36,9 +34,7 @@ class Converter(converter.BaseConverter):
         # https://help.obsidian.md/Linking+notes+and+files/Internal+links
         note_links = []
         resources = []
-        for file_prefix, url, description in jimmy.md_lib.common.get_wikilink_links(
-            body
-        ):
+        for file_prefix, url, description in jimmy.md_lib.common.get_wikilink_links(body):
             alias = "" if description.strip() == "" else f"|{description}"
             original_text = f"{file_prefix}[[{url}{alias}]]"
             if file_prefix:
@@ -46,9 +42,7 @@ class Converter(converter.BaseConverter):
                 resource_path = common.find_file_recursively(self.root_path, url)
                 if resource_path is None:
                     continue
-                resources.append(
-                    imf.Resource(resource_path, original_text, description or url)
-                )
+                resources.append(imf.Resource(resource_path, original_text, description or url))
             else:
                 # internal link
                 note_links.append(imf.NoteLink(original_text, url, description or url))

@@ -19,7 +19,5 @@ class Converter(converter.BaseConverter):
         textbundle_converter = TextbundleConverter(self._config)
         textbundle_converter.root_notebook = self.root_notebook
         for textbundle in sorted(self.root_path.glob("*.textbundle")):
-            textbundle_converter.root_path = textbundle_converter.prepare_input(
-                textbundle
-            )
+            textbundle_converter.root_path = textbundle_converter.prepare_input(textbundle)
             textbundle_converter.convert(textbundle)

@@ -20,9 +20,7 @@ class Converter(converter.BaseConverter):
         # TODO: fix duplicated nested output folder
         intermediate_markdown_folder = common.get_temp_folder() / self.output_folder
 
-        anytype_converter = AnytypeConverter(
-            self.root_path, intermediate_markdown_folder
-        )
+        anytype_converter = AnytypeConverter(self.root_path, intermediate_markdown_folder)
         anytype_converter.process_all_files()
 
         # read the markdown again to respect settings like a custom resource folder

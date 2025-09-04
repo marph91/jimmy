@@ -35,9 +35,7 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f"Couldn't find board with id {board_id}")
         return self.root_notebook
 
-    def handle_markdown_links(
-        self, body: str, path: Path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, body: str, path: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         # pylint: disable=duplicate-code
         # TODO
         note_links = []
@@ -53,9 +51,7 @@ class Converter(converter.BaseConverter):
                 else:
                     # TODO: this could be a resource, too. How to distinguish?
                     # internal link
-                    note_links.append(
-                        imf.NoteLink(str(link), Path(link.url).stem, link.text)
-                    )
+                    note_links.append(imf.NoteLink(str(link), Path(link.url).stem, link.text))
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -96,9 +92,7 @@ class Converter(converter.BaseConverter):
         # else:
         #     self.logger.debug(f"Couldn't find file with id {note["id"]}")
 
-        resources, note_links = self.handle_markdown_links(
-            note_imf.body, self.resource_folder
-        )
+        resources, note_links = self.handle_markdown_links(note_imf.body, self.resource_folder)
         note_imf.resources = resources
         note_imf.note_links = note_links
 

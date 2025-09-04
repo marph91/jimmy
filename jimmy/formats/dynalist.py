@@ -12,10 +12,7 @@ def handle_markdown_links(body: str, root_folder: Path) -> imf.NoteLinks:
         if link.url.startswith("https://dynalist.io/d"):
             # Most likely internal link. We can only try to match against the name
             # (that might be modified in the meantime).
-            if (
-                common.find_file_recursively(root_folder, f"{link.text}.txt")
-                is not None
-            ):
+            if common.find_file_recursively(root_folder, f"{link.text}.txt") is not None:
                 note_links.append(imf.NoteLink(str(link), link.text, link.text))
         elif link.is_web_link or link.is_mail_link:
             continue  # keep the original links
@@ -44,8 +41,7 @@ class Converter(converter.BaseConverter):
             source_application=self.format,
         )
         note_imf.tags = [
-            imf.Tag(tag)
-            for tag in jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#", "@"])
+            imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#", "@"])
         ]
         note_imf.note_links = handle_markdown_links(note_imf.body, self.root_path)
         parent.child_notes.append(note_imf)

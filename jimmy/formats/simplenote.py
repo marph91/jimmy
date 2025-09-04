@@ -45,9 +45,7 @@ class Converter(converter.BaseConverter):
             if link.url.startswith("simplenote://"):
                 # internal link
                 _, linked_note_id = link.url.rsplit("/", 1)
-                note_imf.note_links.append(
-                    imf.NoteLink(str(link), linked_note_id, link.text)
-                )
+                note_imf.note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
 
         note_imf.tags = [imf.Tag(tag) for tag in note_simplenote.get("tags", [])]
         if note_simplenote.get("pinned"):
@@ -61,13 +59,9 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
-        input_json = json.loads(
-            (self.root_path / "source/notes.json").read_text(encoding="utf-8")
-        )
+        input_json = json.loads((self.root_path / "source/notes.json").read_text(encoding="utf-8"))
         if "activeNotes" not in input_json:
-            self.logger.error(
-                '"activeNotes" not found. Is this really a Simplenote export?'
-            )
+            self.logger.error('"activeNotes" not found. Is this really a Simplenote export?')
             return
 
         for note_simplenote in input_json["activeNotes"]:

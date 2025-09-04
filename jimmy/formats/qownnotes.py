@@ -38,24 +38,16 @@ class Converter(converter.BaseConverter):
         for link in jimmy.md_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if any(
-                link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES
-            ):
+            if any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES):
                 # internal link
-                note_links.append(
-                    imf.NoteLink(str(link), Path(unquote(link.url)).stem, link.text)
-                )
+                note_links.append(imf.NoteLink(str(link), Path(unquote(link.url)).stem, link.text))
             else:
                 # resource
-                resources.append(
-                    imf.Resource(self.root_path / link.url, str(link), link.text)
-                )
+                resources.append(imf.Resource(self.root_path / link.url, str(link), link.text))
 
         # qownnote style links
         for qlink in get_qownnote_links(body):
-            note_links.append(
-                imf.NoteLink(f"<{qlink}>", Path(unquote(qlink)).stem, qlink)
-            )
+            note_links.append(imf.NoteLink(f"<{qlink}>", Path(unquote(qlink)).stem, qlink))
 
         return resources, note_links
 
@@ -86,9 +78,7 @@ class Converter(converter.BaseConverter):
             # get related notes and assign the tags
             cur.execute("SELECT * FROM noteTagLink")
             for _, tag_id, note_id, *_ in cur.fetchall():
-                note_tag_map[note_id].append(
-                    imf.Tag(tag_id_name_map[tag_id], str(tag_id))
-                )
+                note_tag_map[note_id].append(imf.Tag(tag_id_name_map[tag_id], str(tag_id)))
         except sqlite3.OperationalError as exc:
             self.logger.warning("Parsing the tag DB failed.")
             self.logger.debug(exc, exc_info=True)
@@ -118,9 +108,7 @@ class Converter(converter.BaseConverter):
     def convert(self, file_or_folder: Path):
         notes = list(file_or_folder.glob("*.md"))
         if len(notes) == 0:
-            self.logger.warning(
-                "Couldn't find a Markdown file. Is this really a QOwnNotes export?"
-            )
+            self.logger.warning("Couldn't find a Markdown file. Is this really a QOwnNotes export?")
             return
 
         note_tag_map = self.parse_tags()

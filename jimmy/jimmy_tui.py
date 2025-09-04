@@ -74,8 +74,7 @@ class HelpScreen(ModalScreen):
                     yield Label(self.initial_string)
             with HorizontalGroup():
                 yield Label(
-                    "To raise a bug, open a feature request or ask a question, "
-                    "contact me by:"
+                    "To raise a bug, open a feature request or ask a question, contact me by:"
                 )
             with HorizontalGroup():
                 yield CustomButton("Email", id="contact_email")
@@ -323,9 +322,7 @@ class JimmyApp(App):
                 event.button.parent.remove()
             case "select_input_file":
                 self.push_screen(
-                    FileOpen(
-                        title="Select Output File", filters=self.file_dialog_extensions
-                    ),
+                    FileOpen(title="Select Output File", filters=self.file_dialog_extensions),
                     callback=self.add_input,
                 )
             case "select_input_folder":

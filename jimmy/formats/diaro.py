@@ -52,13 +52,9 @@ class Converter(converter.BaseConverter):
                                 "longitude": longitude,
                             }
                     case "diaro_moods":
-                        self.moods[get_text(item.find("uid"))] = get_text(
-                            item.find("title")
-                        )
+                        self.moods[get_text(item.find("uid"))] = get_text(item.find("title"))
                     case "diaro_tags":
-                        self.tags[get_text(item.find("uid"))] = get_text(
-                            item.find("title")
-                        )
+                        self.tags[get_text(item.find("uid"))] = get_text(item.find("title"))
                     case _:
                         self.logger.debug(f'Ignoring table "{table_name}"')
 
@@ -77,9 +73,7 @@ class Converter(converter.BaseConverter):
         timestamp = get_text(entry.find("date"))
         assert timestamp is not None
         date_ = common.timestamp_to_datetime(int(timestamp) // 10**3)
-        title = (
-            f"{date_.strftime('%Y-%m-%d')} {get_text(entry.find('title'), '')}".strip()
-        )
+        title = f"{date_.strftime('%Y-%m-%d')} {get_text(entry.find('title'), '')}".strip()
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
@@ -99,10 +93,7 @@ class Converter(converter.BaseConverter):
         # tags
         if (tags := get_text(entry.find("tags"))) is not None:
             for tag_id in tags.split(","):
-                if (
-                    tag_id.strip()
-                    and (tag_title := self.tags.get(tag_id.strip())) is not None
-                ):
+                if tag_id.strip() and (tag_title := self.tags.get(tag_id.strip())) is not None:
                     note_imf.tags.append(imf.Tag(tag_title))
 
         # ressources
@@ -121,8 +112,7 @@ class Converter(converter.BaseConverter):
         target_file = self.root_path / "DiaroBackup.xml"
         if not target_file.is_file():
             self.logger.error(
-                'Could not find "DiaroBackup.xml" file in zip. '
-                "Is this really a Diaro backup?"
+                'Could not find "DiaroBackup.xml" file in zip. Is this really a Diaro backup?'
             )
             return
         root_node = ET.parse(target_file).getroot()

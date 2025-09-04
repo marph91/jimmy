@@ -45,8 +45,7 @@ def catch_all_exceptions(func: F) -> F:
             func(*args, **kwargs)
         except Exception as exc:  # pylint: disable=broad-except
             LOGGER.warning(
-                "Failed to convert note. "
-                'Enable the extended log by "--stdout-log-level DEBUG".'
+                'Failed to convert note. Enable the extended log by "--stdout-log-level DEBUG".'
             )
             # https://stackoverflow.com/a/52466005/7410886
             LOGGER.debug(exc, exc_info=True)
@@ -150,8 +149,7 @@ def get_unique_path(path: Path, new_content: str | bytes | Path | None = None) -
         new_path = path.parent / f"{path.stem}_{uuid_title()}{path.suffix}"
 
     LOGGER.debug(
-        f'File "{path.name}" exists already with different content. '
-        f'New name: "{new_path.name}".'
+        f'File "{path.name}" exists already with different content. New name: "{new_path.name}".'
     )
     return new_path
 
@@ -397,9 +395,7 @@ def current_unix_ms() -> int:
 
 def date_to_unix_ms(date_: dt.date) -> int:
     # https://stackoverflow.com/a/61886944/7410886
-    return datetime_to_ms(
-        dt.datetime(year=date_.year, month=date_.month, day=date_.day)
-    )
+    return datetime_to_ms(dt.datetime(year=date_.year, month=date_.month, day=date_.day))
 
 
 def iso_to_datetime(iso: str) -> dt.datetime:

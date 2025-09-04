@@ -32,11 +32,7 @@ class Converter(converter.BaseConverter):
             elif string_.strip() == "---":
                 prefix = ""
                 level = -1
-            elif (
-                string_.startswith("```")
-                and string_.endswith("```")
-                and string_[-4] != "\n"
-            ):
+            elif string_.startswith("```") and string_.endswith("```") and string_[-4] != "\n":
                 string_ = string_[:-3] + "\n" + string_[-3:]
                 prefix = ""
             else:
@@ -97,26 +93,18 @@ class Converter(converter.BaseConverter):
                 if link.url.startswith("roam-page://"):
                     linked_page_title = link.url[len("roam-page://") :]
                     if (
-                        linked_page_id := self.page_title_page_id_map.get(
-                            linked_page_title
-                        )
+                        linked_page_id := self.page_title_page_id_map.get(linked_page_title)
                     ) is not None:
-                        note.note_links.append(
-                            imf.NoteLink(str(link), linked_page_id, link.text)
-                        )
+                        note.note_links.append(imf.NoteLink(str(link), linked_page_id, link.text))
                     else:
-                        self.logger.debug(
-                            f'Page with title "{linked_page_title}" not found.'
-                        )
+                        self.logger.debug(f'Page with title "{linked_page_title}" not found.')
                 elif link.url.startswith("roam-block://"):
                     # just link to page
                     linked_block_id = link.url[len("roam-block://") :]
                     if (
                         linked_page_id := self.block_id_page_id_map.get(linked_block_id)
                     ) is not None:
-                        note.note_links.append(
-                            imf.NoteLink(str(link), linked_page_id, link.text)
-                        )
+                        note.note_links.append(imf.NoteLink(str(link), linked_page_id, link.text))
                     else:
                         self.logger.debug(f"Block ID {linked_block_id} not found.")
 

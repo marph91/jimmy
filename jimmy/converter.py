@@ -26,8 +26,7 @@ class BaseConverter(abc.ABC):
             self.template = None
         elif not config.template_file.is_file():
             self.logger.warning(
-                f'Template file "{config.template_file}" does not exist. '
-                "Ignoring template."
+                f'Template file "{config.template_file}" does not exist. Ignoring template.'
             )
             self.template = None
         else:
@@ -53,8 +52,7 @@ class BaseConverter(abc.ABC):
     def has_valid_format(self, input_: Path) -> bool:
         """Check if the input has a valid format."""
         if self.accepted_extensions is not None and (
-            input_.suffix.lower() in self.accepted_extensions
-            or self.accepted_extensions == ["*"]
+            input_.suffix.lower() in self.accepted_extensions or self.accepted_extensions == ["*"]
         ):
             return True
         return self.accept_folder and input_.is_dir()
@@ -64,9 +62,7 @@ class BaseConverter(abc.ABC):
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
-            output_folder = self.output_folder.with_name(
-                self.output_folder.name + index_suffix
-            )
+            output_folder = self.output_folder.with_name(self.output_folder.name + index_suffix)
             self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
             self.root_path = self.prepare_input(file_or_folder)
             # Sanity check - do the input files / folders exist?
@@ -112,9 +108,7 @@ class BaseConverter(abc.ABC):
         # apply frontmatter/template to all note bodies
         if self.template is not None:
             if self.frontmatter is not None:
-                self.logger.warning(
-                    "Ignoring frontmatter, since a template was specified."
-                )
+                self.logger.warning("Ignoring frontmatter, since a template was specified.")
             for note in root_notebook.child_notes:
                 note.apply_template(self.template)
         elif self.frontmatter is not None:
@@ -169,9 +163,7 @@ class DefaultConverter(BaseConverter):
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
-    def handle_markdown_links(
-        self, body: str, path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, body: str, path) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
@@ -192,9 +184,7 @@ class DefaultConverter(BaseConverter):
                     resources.append(imf.Resource(resource_path, str(link), link.text))
                 else:
                     # internal link
-                    note_links.append(
-                        imf.NoteLink(str(link), Path(link.url).stem, link.text)
-                    )
+                    note_links.append(imf.NoteLink(str(link), Path(link.url).stem, link.text))
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -284,9 +274,7 @@ class DefaultConverter(BaseConverter):
                 root = ET.parse(file_).getroot()
                 root_tag = root.tag.rpartition("}")[-1]  # strip namespace
                 match root_tag:
-                    case (
-                        "endnote" | "mediawiki" | "opml"
-                    ):  # TODO: endnotexml and opml example
+                    case "endnote" | "mediawiki" | "opml":  # TODO: endnotexml and opml example
                         note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
                             format_=root_tag,
@@ -302,9 +290,7 @@ class DefaultConverter(BaseConverter):
                     case _:
                         note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
-                pandoc_format = jimmy.md_lib.common.PANDOC_INPUT_FORMAT_MAP.get(
-                    format_, format_
-                )
+                pandoc_format = jimmy.md_lib.common.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
                 note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     format_=pandoc_format,

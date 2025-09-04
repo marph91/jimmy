@@ -46,9 +46,7 @@ class Converter(converter.BaseConverter):
 
         return temp_folder
 
-    def handle_markdown_links(
-        self, body: str, item: Path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, body: str, item: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
@@ -63,17 +61,13 @@ class Converter(converter.BaseConverter):
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
             elif (item.parent / unquoted_url).is_file():
                 # resource
-                resources.append(
-                    imf.Resource(item.parent / unquoted_url, str(link), link.text)
-                )
+                resources.append(imf.Resource(item.parent / unquoted_url, str(link), link.text))
             else:
                 self.logger.debug(f'Unhandled link "{link}"')
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_note(
-        self, item: Path, relative_parent_path: str, parent_notebook: imf.Notebook
-    ):
+    def convert_note(self, item: Path, relative_parent_path: str, parent_notebook: imf.Notebook):
         if (
             item.is_file()
             and item.suffix.lower() not in common.MARKDOWN_SUFFIXES + (".html",)

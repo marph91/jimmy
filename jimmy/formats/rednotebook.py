@@ -39,9 +39,7 @@ class Converter(converter.BaseConverter):
                 # resource
                 if link.url is None:
                     continue
-                resources.append(
-                    imf.Resource(Path(link.url), original_link_text, link.text)
-                )
+                resources.append(imf.Resource(Path(link.url), original_link_text, link.text))
         return body, resources
 
     @common.catch_all_exceptions

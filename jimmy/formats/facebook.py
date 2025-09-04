@@ -68,8 +68,7 @@ class Converter(converter.BaseConverter):
                             )
                         case _:
                             self.logger.debug(
-                                "Unknown post attachment attribute "
-                                f"{post_attachment_datum}."
+                                f"Unknown post attachment attribute {post_attachment_datum}."
                             )
         return post_body, post_metadata
 
@@ -93,35 +92,25 @@ class Converter(converter.BaseConverter):
                     for post_data_key, post_data_value in post_datum.items():
                         match post_data_key:
                             case "update_timestamp":
-                                updated_time = common.timestamp_to_datetime(
-                                    post_data_value
-                                )
+                                updated_time = common.timestamp_to_datetime(post_data_value)
                             case "post":
                                 post_body = fix_encoding_error(post_data_value)
                             case _:
-                                self.logger.debug(
-                                    f"Unknown post attribute {post_datum}."
-                                )
+                                self.logger.debug(f"Unknown post attribute {post_datum}.")
 
                 if post.get("title") is not None:
                     # Skip posts in other profiles.
                     # TODO: Are this all posts in other profiles?
                     # post_title = fix_encoding_error(post_title_raw)
                     continue
-                post_title = (
-                    f"{timestamp_to_date_str(post['timestamp'])}: {post_body[:80]}"
-                )
+                post_title = f"{timestamp_to_date_str(post['timestamp'])}: {post_body[:80]}"
                 self.logger.debug(f'Converting note "{post_title}"')
 
-                att_body, att_metadata = self.handle_post_attachments(
-                    post.get("attachments", [])
-                )
+                att_body, att_metadata = self.handle_post_attachments(post.get("attachments", []))
                 post_body += att_body
 
                 if not post_body:
-                    self.logger.debug(
-                        f"Skipping entry {post['timestamp']} - empty body."
-                    )
+                    self.logger.debug(f"Skipping entry {post['timestamp']} - empty body.")
                     continue
 
                 posts_notebook.child_notes.append(
@@ -197,13 +186,9 @@ class Converter(converter.BaseConverter):
             for file_index, conversation_file in enumerate(conversation_files):
                 # Keep the split of json files to prevent too large markdown files.
                 # (10000 messages per file)
-                conversation_json = json.loads(
-                    conversation_file.read_text(encoding="utf-8")
-                )
+                conversation_json = json.loads(conversation_file.read_text(encoding="utf-8"))
                 if len(conversation_json.get("participants", [])) > 2:
-                    self.logger.debug(
-                        f"Skipping group conversation {conversation.name}."
-                    )
+                    self.logger.debug(f"Skipping group conversation {conversation.name}.")
                     continue
 
                 messages = conversation_json.get("messages")
@@ -226,9 +211,7 @@ class Converter(converter.BaseConverter):
                     )
 
                     message_content = self.get_message_content(message)
-                    note_body.append(
-                        f"**{sender}**: {fix_encoding_error(message_content)}"
-                    )
+                    note_body.append(f"**{sender}**: {fix_encoding_error(message_content)}")
                 note_body_str = "\n\n".join(note_body)
 
                 title = (

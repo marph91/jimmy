@@ -73,9 +73,7 @@ class Converter(converter.BaseConverter):
 
         for key in ("todo_completed", "todo_due"):
             if (val := metadata_json.get(key)) is not None and val != "0":
-                note_imf.custom_metadata[key] = common.timestamp_to_datetime(
-                    float(val) / 1000
-                )
+                note_imf.custom_metadata[key] = common.timestamp_to_datetime(float(val) / 1000)
 
         parent_id_note_map.append((metadata_json["parent_id"], note_imf))
 
@@ -120,13 +118,9 @@ class Converter(converter.BaseConverter):
                     self.root_path / "resources" / filename
                 )
             elif type_ == ItemType.TAG:
-                available_tags.append(
-                    imf.Tag(markdown.strip(), original_id=metadata_json["id"])
-                )
+                available_tags.append(imf.Tag(markdown.strip(), original_id=metadata_json["id"]))
             elif type_ == ItemType.NOTE_TAG:
-                note_tag_id_map[metadata_json["note_id"]].append(
-                    metadata_json["tag_id"]
-                )
+                note_tag_id_map[metadata_json["note_id"]].append(metadata_json["tag_id"])
             else:
                 self.logger.debug(f"Ignoring note type {type_}")
         return (
@@ -154,9 +148,7 @@ class Converter(converter.BaseConverter):
                         note.tags.append(tag)
                         break
             # resources and internal links
-            resources, note_links = handle_markdown_links(
-                note.body, resource_id_filename_map
-            )
+            resources, note_links = handle_markdown_links(note.body, resource_id_filename_map)
             note.resources = resources
             note.note_links = note_links
             # assign to parent notebook

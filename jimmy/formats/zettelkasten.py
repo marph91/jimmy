@@ -43,9 +43,7 @@ class Converter(converter.BaseConverter):
                 )
             else:
                 resources.append(
-                    imf.Resource(
-                        source_folder / "attachments" / link.url, str(link), link.text
-                    )
+                    imf.Resource(source_folder / "attachments" / link.url, str(link), link.text)
                 )
         return resources, note_links
 
@@ -65,9 +63,7 @@ class Converter(converter.BaseConverter):
                 case "content":
                     body = bbcode_to_md(item.text if item.text else "")
                     note_imf.body = body
-                    resources, note_links = self.handle_markdown_links(
-                        body, file_or_folder.parent
-                    )
+                    resources, note_links = self.handle_markdown_links(body, file_or_folder.parent)
                     note_imf.resources.extend(resources)
                     note_imf.note_links.extend(note_links)
 
@@ -93,9 +89,7 @@ class Converter(converter.BaseConverter):
                     for link in item.findall("link"):
                         if link.text is None:
                             continue
-                        note_imf.resources.append(
-                            imf.Resource(self.attachments_folder / link.text)
-                        )
+                        note_imf.resources.append(imf.Resource(self.attachments_folder / link.text))
                 case "luhmann":  # folgezettel
                     if item.text is None:
                         continue
@@ -106,9 +100,7 @@ class Converter(converter.BaseConverter):
                         text = f"[{note_id}]({note_id})"
                         sequences.append(text)
                         note_imf.note_links.append(imf.NoteLink(text, note_id, note_id))
-                    note_imf.body += (
-                        "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
-                    )
+                    note_imf.body += "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
                 case "misc" | "zettel":
                     pass  # always None
                 case "manlinks":
@@ -132,8 +124,7 @@ class Converter(converter.BaseConverter):
         self.images_available = self.images_folder.is_dir()
         if not self.images_available:
             self.logger.warning(
-                f"No images folder found at {self.images_folder}. "
-                "Images are not converted."
+                f"No images folder found at {self.images_folder}. Images are not converted."
             )
 
         tag_id_name_map = {}

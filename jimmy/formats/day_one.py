@@ -29,17 +29,13 @@ class Converter(converter.BaseConverter):
 
         for entry in entries:
             for json_key_name, actual_map in resource_id_filename_maps.items():
-                folder_name = (
-                    "pdfs" if json_key_name == "pdfAttachments" else json_key_name
-                )
+                folder_name = "pdfs" if json_key_name == "pdfAttachments" else json_key_name
                 for resource in entry.get(json_key_name, []):
                     potential_matches = list(
                         (self.root_path / folder_name).glob(f"{resource['md5']}.*")
                     )
                     if len(potential_matches) == 0:
-                        self.logger.warning(
-                            f"Couldn't find {folder_name} {resource['md5']}"
-                        )
+                        self.logger.warning(f"Couldn't find {folder_name} {resource['md5']}")
                     elif len(potential_matches) == 1:
                         actual_map[resource["identifier"]] = Path(potential_matches[0])
                     else:
@@ -58,9 +54,7 @@ class Converter(converter.BaseConverter):
             if original_id not in resource_id_filename_map[type_]:
                 self.logger.debug(f"Couldn't find audio with id {original_id}")
                 return
-            source_path = (
-                self.root_path / type_ / resource_id_filename_map[type_][original_id]
-            )
+            source_path = self.root_path / type_ / resource_id_filename_map[type_][original_id]
             if not source_path.is_file():
                 return
             resources.append(imf.Resource(source_path, str(link), link.text))
@@ -115,9 +109,7 @@ class Converter(converter.BaseConverter):
         return new_name
 
     @common.catch_all_exceptions
-    def convert_note(
-        self, entry, resource_id_filename_map, root_notebook: imf.Notebook
-    ):
+    def convert_note(self, entry, resource_id_filename_map, root_notebook: imf.Notebook):
         created = common.iso_to_datetime(entry["creationDate"])
         title = self.get_unique_name(created.strftime("%Y-%m-%d"))
         self.note_names_per_journal.append(title)
@@ -131,9 +123,7 @@ class Converter(converter.BaseConverter):
             original_id=entry["uuid"],
         )
 
-        note_imf.body = entry.get(
-            "text", ""
-        )  # TODO: Is there any advantage of rich text?
+        note_imf.body = entry.get("text", "")  # TODO: Is there any advantage of rich text?
         # Backslashes are added often. Removing them like this might cause issues.
         note_imf.body = note_imf.body.replace("\\", "")
         # https://stackoverflow.com/a/55400921/7410886

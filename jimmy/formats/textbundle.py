@@ -30,9 +30,7 @@ class Converter(converter.BaseConverter):
 
     def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
         note_links = []
-        for file_prefix, url, description in jimmy.md_lib.common.get_wikilink_links(
-            body
-        ):
+        for file_prefix, url, description in jimmy.md_lib.common.get_wikilink_links(body):
             alias = "" if description.strip() == "" else f"|{description}"
             original_text = f"{file_prefix}[[{url}{alias}]]"
             # strip sub-note links, like links to headings
@@ -63,16 +61,13 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
 
         # title = first line header
-        _, body = jimmy.md_lib.common.split_title_from_body(
-            file_.read_text(encoding="utf-8")
-        )
+        _, body = jimmy.md_lib.common.split_title_from_body(file_.read_text(encoding="utf-8"))
         body = body.replace(r"\#", "#")  # sometimes incorrectly escaped in bear
         # TODO: Convert Bear underline "~abc~" to Joplin underline "++abc++".
         note_imf = imf.Note(title, body, source_application=self.format)
         # TODO: Handle Bear multiword tags, like "#tag abc#".
         note_imf.tags = [
-            imf.Tag(tag)
-            for tag in jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#"])
+            imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#"])
         ]
         note_imf.resources, note_imf.note_links = self.handle_links(note_imf.body)
 
@@ -103,9 +98,7 @@ class Converter(converter.BaseConverter):
 
         # We can't check for "is_file()", since ".textbundle" is a folder.
         if file_or_folder.suffix in self.accepted_extensions:
-            metadata = json.loads(
-                (self.root_path / "info.json").read_text(encoding="utf-8")
-            )
+            metadata = json.loads((self.root_path / "info.json").read_text(encoding="utf-8"))
             for file_ in sorted(self.root_path.iterdir()):
                 self.convert_note(file_, self.root_notebook, metadata)
         else:
@@ -119,8 +112,6 @@ class Converter(converter.BaseConverter):
                 parent_notebook = imf.Notebook(file_.stem)
                 self.root_notebook.child_notebooks.append(parent_notebook)
 
-                metadata = json.loads(
-                    (self.root_path / "info.json").read_text(encoding="utf-8")
-                )
+                metadata = json.loads((self.root_path / "info.json").read_text(encoding="utf-8"))
                 for file_ in sorted(self.root_path.iterdir()):
                     self.convert_note(file_, parent_notebook, metadata)

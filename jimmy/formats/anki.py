@@ -46,9 +46,7 @@ class Converter(converter.BaseConverter):
 
         (created, original_id, model_id, updated, tags, data) = db_row
         model = models[str(model_id)]
-        template_replacements = dict(
-            zip([f["name"] for f in model["flds"]], data.split("\x1f"))
-        )
+        template_replacements = dict(zip([f["name"] for f in model["flds"]], data.split("\x1f")))
 
         # TODO: Templates are too complex for pandoc conversion.
         # Just take the replacements for now.
@@ -68,9 +66,7 @@ class Converter(converter.BaseConverter):
         #         + replace(template["afmt"], template_replacements)
         #     )
         #     body = jimmy.md_lib.common.markup_to_markdown(back)
-        body_md = "\n".join(
-            [f"- {key}: {value}" for key, value in template_replacements.items()]
-        )
+        body_md = "\n".join([f"- {key}: {value}" for key, value in template_replacements.items()])
         # cleanup
         body_md = (
             body_md.replace("<br>\n", "\n")
@@ -130,9 +126,7 @@ class Converter(converter.BaseConverter):
         # https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#collection
         collection = list(cur.execute("select * from col"))[0]
         if collection[4] != 11:
-            self.logger.warning(
-                f"Only tested with version 11. Got version {collection[4]}"
-            )
+            self.logger.warning(f"Only tested with version 11. Got version {collection[4]}")
 
         # models
         # https://github.com/ankidroid/Anki-Android/wiki/Database-Structure#models-jsonobjects

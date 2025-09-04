@@ -62,9 +62,7 @@ class Converter(converter.BaseConverter):
             attachment_text = get_text(attachment)
             if attachment_text is None:
                 continue
-            if attachment_text.lower().endswith(
-                (".gif", ".png", ".jpg", ".jpeg", ".webp")
-            ):
+            if attachment_text.lower().endswith((".gif", ".png", ".jpg", ".jpeg", ".webp")):
                 attchment_md = f"![]({attachment_text})\n"
             else:
                 attchment_md = f"<{attachment_text}>\n"
@@ -77,16 +75,10 @@ class Converter(converter.BaseConverter):
                     comment.find("wp:comment_author", namespaces),
                     default="Unknown",
                 )
-                comment_content = get_text(
-                    comment.find("wp:comment_content", namespaces)
-                )
+                comment_content = get_text(comment.find("wp:comment_content", namespaces))
                 if comment_content is not None:
-                    comment_content_md = jimmy.md_lib.common.markup_to_markdown(
-                        comment_content
-                    )
-                    comments_md.extend(
-                        ["", f"**{comment_author}**: {comment_content_md}"]
-                    )
+                    comment_content_md = jimmy.md_lib.common.markup_to_markdown(comment_content)
+                    comments_md.extend(["", f"**{comment_author}**: {comment_content_md}"])
             note_imf.body += "\n".join(comments_md)
 
         parent_notebook.child_notes.append(note_imf)
@@ -96,8 +88,7 @@ class Converter(converter.BaseConverter):
         # first pass: parse namespaces
         # TODO: move to common
         namespaces = {
-            node[0]: node[1]
-            for _, node in ET.iterparse(file_or_folder, events=["start-ns"])
+            node[0]: node[1] for _, node in ET.iterparse(file_or_folder, events=["start-ns"])
         }
 
         # second pass: actual conversion

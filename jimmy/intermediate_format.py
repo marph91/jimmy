@@ -189,9 +189,7 @@ class Note:
                             # Convert the tags to lower case before the import to
                             # avoid issues with special first characters.
                             # See: https://github.com/laurent22/joplin/issues/11179
-                            metadata["tags"] = sorted(
-                                tag.title.lower() for tag in self.tags
-                            )
+                            metadata["tags"] = sorted(tag.title.lower() for tag in self.tags)
                 post = frontmatter.Post(self.body, **metadata)
                 self.body = frontmatter.dumps(post)
             case "obsidian":
@@ -199,9 +197,7 @@ class Note:
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
                 metadata = {}
                 if self.tags:
-                    metadata["tags"] = [
-                        normalize_obsidian_tag(tag.title) for tag in self.tags
-                    ]
+                    metadata["tags"] = [normalize_obsidian_tag(tag.title) for tag in self.tags]
                     post = frontmatter.Post(self.body, **metadata)
                     self.body = frontmatter.dumps(post)
             case "qownnotes":

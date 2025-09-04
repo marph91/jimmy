@@ -53,9 +53,7 @@ class Converter(converter.BaseConverter):
             elif link.url.startswith("data:image/svg+xml,"):
                 svg_data = unquote(link.url[len("data:image/svg+xml,") :])
                 temp_filename = self.resource_folder / (
-                    common.unique_title() + ".svg"
-                    if link.text in [None, ""]
-                    else link.text
+                    common.unique_title() + ".svg" if link.text in [None, ""] else link.text
                 )
                 temp_filename = common.get_unique_path(temp_filename, svg_data)
                 temp_filename.write_text(svg_data)
@@ -75,11 +73,7 @@ class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, note, parent_notebook: imf.Notebook):
         title = note.find("title")
-        title = (
-            common.unique_title()
-            if title is None or title.text is None
-            else title.text.strip()
-        )
+        title = common.unique_title() if title is None or title.text is None else title.text.strip()
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
@@ -123,9 +117,7 @@ class Converter(converter.BaseConverter):
                         self.logger.debug("couldn't parse date")
                 case "resource":
                     # Use the original filename if possible.
-                    resource_title = note_element.find(
-                        "./resource-attributes/file-name"
-                    )
+                    resource_title = note_element.find("./resource-attributes/file-name")
                     resource_data = note_element.find("data")
                     if resource_data is None or not resource_data.text:
                         self.logger.debug("Skip empty resource")
@@ -134,19 +126,14 @@ class Converter(converter.BaseConverter):
                         self.logger.debug(f"Unsupported encoding: {encoding}")
                     temp_filename = self.resource_folder / (
                         common.unique_title()
-                        if resource_title is None
-                        or not isinstance(resource_title.text, str)
+                        if resource_title is None or not isinstance(resource_title.text, str)
                         else common.safe_path(resource_title.text)
                     )
                     resource_data_decoded = base64.b64decode(resource_data.text)
                     md5_hash = hashlib.md5(resource_data_decoded).hexdigest()
-                    temp_filename = common.write_base64(
-                        temp_filename, resource_data.text
-                    )
+                    temp_filename = common.write_base64(temp_filename, resource_data.text)
                     resource_title = (
-                        resource_title
-                        if resource_title is None
-                        else resource_title.text
+                        resource_title if resource_title is None else resource_title.text
                     )
                     if md5_hash in hashes:
                         resource_md = f"![]({md5_hash})"
@@ -154,9 +141,7 @@ class Converter(converter.BaseConverter):
                             imf.Resource(temp_filename, resource_md, resource_title)
                         )
                     else:
-                        note_imf.resources.append(
-                            imf.Resource(temp_filename, None, resource_title)
-                        )
+                        note_imf.resources.append(imf.Resource(temp_filename, None, resource_title))
                 case "tag":
                     if isinstance(note_element.text, str):
                         note_imf.tags.append(imf.Tag(note_element.text))
@@ -181,13 +166,10 @@ class Converter(converter.BaseConverter):
                         weight_element = note_element.find("sortWeight")
                         weight = (
                             "a"
-                            if weight_element is None
-                            or not isinstance(weight_element.text, str)
+                            if weight_element is None or not isinstance(weight_element.text, str)
                             else weight_element.text
                         )
-                        tasks[task_group_id].append(
-                            [weight, f"{bullet}{title_element.text}\n"]
-                        )
+                        tasks[task_group_id].append([weight, f"{bullet}{title_element.text}\n"])
                 case "note-attributes":
                     for attr in note_element:
                         match attr.tag:
@@ -209,12 +191,8 @@ class Converter(converter.BaseConverter):
         # replace tasks
         for group_id, tasks_md in tasks.items():
             # tasks_md: [list_index, markdown task]
-            tasks_sorted_md = "".join(
-                [t[1] for t in sorted(tasks_md, key=lambda t: t[0])]
-            )
-            note_imf.body = note_imf.body.replace(
-                f"tasklist://{group_id}", "\n" + tasks_sorted_md
-            )
+            tasks_sorted_md = "".join([t[1] for t in sorted(tasks_md, key=lambda t: t[0])])
+            note_imf.body = note_imf.body.replace(f"tasklist://{group_id}", "\n" + tasks_sorted_md)
         parent_notebook.child_notes.append(note_imf)
 
     @common.catch_all_exceptions

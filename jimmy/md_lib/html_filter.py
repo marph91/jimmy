@@ -85,11 +85,7 @@ def _to_markdown_header_id(text: str) -> str:
     text = " ".join(text.split())
     # Remove all non-alphanumeric characters, except underscores, hyphens, and periods.
     text = "".join(
-        [
-            character
-            for character in text
-            if (character.isalnum() or character in (" ", "_", "-"))
-        ]
+        [character for character in text if (character.isalnum() or character in (" ", "_", "-"))]
     )
     # Replace all spaces and newlines with hyphens.
     text = text.replace(" ", "-").replace("\n", "-")
@@ -257,9 +253,9 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
             list_type, item_type = get_list_item_type(item)
             if item_type == "checkbox":
                 input_element = soup.new_tag("input", type="checkbox")
-                if item.attrs.get(
-                    "data-checked", "false"
-                ) == "true" or "nn-checked" in item.get("class", []):
+                if item.attrs.get("data-checked", "false") == "true" or "nn-checked" in item.get(
+                    "class", []
+                ):
                     input_element.attrs["checked"] = ""  # checkbox is checked
                 item.insert(0, input_element)
 
@@ -267,9 +263,7 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
             if indent_int == 0:
                 # would be sufficient to do only one time
                 current_list.name = list_type
-                if item_type == "checkbox" and "checklist" not in current_list.get(
-                    "class", []
-                ):
+                if item_type == "checkbox" and "checklist" not in current_list.get("class", []):
                     current_list["class"] = ["checklist"]  # drop the other classes
             if indent_int > current_indent:
                 # new child list
@@ -403,9 +397,7 @@ def streamline_tables(soup: bs4.BeautifulSoup):
     # However, in practice it seems to be a bit more complicated.
 
     def simplify_list(list_, level: int = 0):
-        for index, list_item in enumerate(
-            list_.find_all("li", recursive=False), start=1
-        ):
+        for index, list_item in enumerate(list_.find_all("li", recursive=False), start=1):
             # handle nested lists
             for nested_list in list_item.find_all(["ul", "ol"], recursive=False):
                 simplify_list(nested_list, level=level + 1)
@@ -413,9 +405,7 @@ def streamline_tables(soup: bs4.BeautifulSoup):
             if list_item.text is None:
                 continue
             bullet = "- " if list_.name == "ul" else f"{index}. "
-            list_item.string = (
-                "{TEMPORARYNEWLINE}" + "&nbsp;" * level * 4 + bullet + list_item.text
-            )
+            list_item.string = "{TEMPORARYNEWLINE}" + "&nbsp;" * level * 4 + bullet + list_item.text
             list_item.unwrap()
         list_.unwrap()
 
@@ -472,9 +462,7 @@ def streamline_tables(soup: bs4.BeautifulSoup):
 
         # another hack: handle lists, i. e. replace items with "<br>- ..."
         # find only root lists (exclude nested lists)
-        for list_ in table.find_all(
-            lambda e: e.name in ("ul", "ol") and e.parent.name != "li"
-        ):
+        for list_ in table.find_all(lambda e: e.name in ("ul", "ol") and e.parent.name != "li"):
             simplify_list(list_)
 
         for row_index, row in enumerate(table.find_all("tr")):
@@ -519,6 +507,4 @@ def whitespace_in_math(soup: bs4.BeautifulSoup):
         if (encoding := annotation.attrs.get("encoding")) != "application/x-tex":
             LOGGER.debug(f'Unsupported annotation encoding "{encoding}"')
             continue
-        annotation.string = annotation.text.rstrip("\\" + string.whitespace).replace(
-            "\n\n", "\n"
-        )
+        annotation.string = annotation.text.rstrip("\\" + string.whitespace).replace("\n\n", "\n")
