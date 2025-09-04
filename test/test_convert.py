@@ -182,7 +182,9 @@ class EndToEnd(unittest.TestCase):
             [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
             [["notion/test_6/notion-testspace.zip"]],
             [["obsidian/test_1_frontmatter/vault"]],
-            [["qownnotes/test_1_frontmatter/note_folder"]],
+            # can't test with frontmatter - git doesn't preserve timestamps
+            # https://github.com/actions/checkout/issues/364#issuecomment-812618265
+            [["qownnotes/test_1/note_folder"]],
             [["rednotebook/test_1_frontmatter/data"]],
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
             [["roam_research/test_1_frontmatter/small-test-graph.json"]],
@@ -202,10 +204,12 @@ class EndToEnd(unittest.TestCase):
             [["synology_note_station/test_3_frontmatter/notestation-test-books.nsx"]],
             [["synology_note_station/test_4/test.nsx"]],
             [["synology_note_station/test_5/20241005_184010_8701_demouser.nsx"]],
+            # can't test with frontmatter - git doesn't preserve timestamps
+            # https://github.com/actions/checkout/issues/364#issuecomment-812618265
             [["textbundle/test_1/example.textpack"]],
             [["textbundle/test_2/Bug report in tables_bear.textbundle"]],
             [["textbundle/test_3/Python CHP NOTES.textbundle"]],
-            [["textbundle/test_4_frontmatter/Textbundle Example v1.textbundle"]],
+            [["textbundle/test_4/Textbundle Example v1.textbundle"]],
             [["textbundle/test_5/Textbundle Example v2.textbundle"]],
             [["textbundle/test_6/multiple_files"]],
             # [["tiddlywiki/test_1/tiddlers.json"]],
