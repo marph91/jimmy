@@ -19,7 +19,15 @@ def name_func(testcase_func, param_num, param):
 
 class EndToEnd(unittest.TestCase):
     def setUp(self):
-        jimmy.main.setup_logging()
+        import logging
+        from rich.logging import RichHandler
+
+        console_handler_formatter = logging.Formatter("%(message)s")
+        console_handler = RichHandler(markup=True, show_path=False)
+        console_handler.setFormatter(console_handler_formatter)
+        console_handler.setLevel("DEBUG")
+        jimmy.main.setup_logging(custom_handlers=[console_handler])
+        # jimmy.main.setup_logging()
 
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
@@ -64,14 +72,10 @@ class EndToEnd(unittest.TestCase):
 
             if dirs_cmp.left_only:
                 # .absolute().as_uri() needed for URI with spaces
-                differences.append(
-                    f"Only in {dir1.absolute().as_uri()}: {dirs_cmp.left_only}"
-                )
+                differences.append(f"Only in {dir1.absolute().as_uri()}: {dirs_cmp.left_only}")
 
             if dirs_cmp.right_only:
-                differences.append(
-                    f"Only in {dir2.absolute().as_uri()}: {dirs_cmp.right_only}"
-                )
+                differences.append(f"Only in {dir2.absolute().as_uri()}: {dirs_cmp.right_only}")
 
             for file_ in dirs_cmp.diff_files:
                 differences.append(
@@ -118,6 +122,8 @@ class EndToEnd(unittest.TestCase):
         shutil.rmtree(test_data_output, ignore_errors=True)
         reference_data = Path("test/data/reference_data") / test_input.parent
 
+        if "frontmatter" in str(test_input):
+            self.config.frontmatter = "joplin"
         self.config.input = test_data
         self.config.format = test_input.parts[0]
         self.config.output_folder = test_data_output
@@ -125,9 +131,7 @@ class EndToEnd(unittest.TestCase):
 
         # Skip only here to catch potential errors during conversion.
         if not reference_data.exists():
-            self.skipTest(
-                f'No reference data available at "{reference_data.resolve()}"'
-            )
+            self.skipTest(f'No reference data available at "{reference_data.resolve()}"')
 
         self.assert_dir_trees_equal(test_data_output, reference_data)
 
@@ -138,37 +142,37 @@ class EndToEnd(unittest.TestCase):
             [["anki/test_3/Hebrew_Alphabet_with_vowels.apkg"]],
             [["anytype/test_1/Anytype.20241112.175339.64"]],
             [["anytype/test_2/Anytype.20241113.215524.09.zip"]],
-            [["bear/test_1/backup.bear2bk"]],
+            [["bear/test_1_frontmatter/backup.bear2bk"]],
             [["bear/test_2/backup-2.bear2bk"]],
             [["bear/test_3/Bear Notes 2025-05-28 at 19.06.bear2bk"]],
-            [["cacher/test_1/cacher-export-202406182304.json"]],
-            [["colornote/test_1/colornote-20241014.backup"]],
-            [["cherrytree/test_1/cherry.ctb.ctd"]],
+            [["cacher/test_1_frontmatter/cacher-export-202406182304.json"]],
+            [["cherrytree/test_1_frontmatter/cherry.ctb.ctd"]],
             [["cherrytree/test_2/cherrytree_manual.ctd"]],
             [["cherrytree/test_3/lab_report.ctd"]],
             [["cherrytree/test_4/various_sources"]],
             [["cherrytree/test_5/Learning-Resources-Cherry-Tree"]],
             [["cherrytree/test_6/practice"]],
-            [["clipto/test_1/clipto_backup_240401_105154.json"]],
-            [["day_one/test_1/Day.One.zip"]],
+            [["clipto/test_1_frontmatter/clipto_backup_240401_105154.json"]],
+            [["colornote/test_1_frontmatter/colornote-20241014.backup"]],
+            [["day_one/test_1_frontmatter/Day.One.zip"]],
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
-            [["diaro/test_1/Diaro_20250821.zip"]],
-            [["drafts/test_1/DraftsExport.draftsExport"]],
-            [["dynalist/test_1/dynalist-backup-2024-04-12.zip"]],
-            [["evernote/test_1/obsidian-importer"]],
+            [["diaro/test_1_frontmatter/Diaro_20250821.zip"]],
+            [["drafts/test_1_frontmatter/DraftsExport.draftsExport"]],
+            [["dynalist/test_1_frontmatter/dynalist-backup-2024-04-12.zip"]],
+            [["evernote/test_1_frontmatter/obsidian-importer"]],
             [["evernote/test_2/joplin"]],
             [["evernote/test_3/yarle"]],
             [["evernote/test_4/Manuals.enex"]],
             [["google_docs/test_1/takeout-20240929T124909Z-001.zip"]],
-            [["google_keep/test_1/takeout-20250130T150824Z-001.tgz"]],
+            [["google_keep/test_1_frontmatter/takeout-20250130T150824Z-001.tgz"]],
             [["google_keep/test_2/takeout-20240920T140112Z-001.zip"]],
             [["google_keep/test_4/takeout2.zip"]],
-            [["joplin/test_1/29_04_2024.jex"]],
-            [["jrnl/test_1/myjournal.json"]],
+            [["joplin/test_1_frontmatter/29_04_2024.jex"]],
+            [["jrnl/test_1_frontmatter/myjournal.json"]],
             # [["nimbus_note/test_1/nimbus-export.zip"]],
-            [["nimbus_note/test_2/Demo Workspace"]],
-            [["notion/test_1/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
+            [["nimbus_note/test_2_frontmatter/Demo Workspace"]],
+            [["notion/test_1_frontmatter/7acd77c1-0197-44e3-9793-ae81ab520ac9_Export.zip"]],
             [["notion/test_2/testexport-nofolders.zip"]],
             # unzipped zip, HTML
             [["notion/test_3/Archive.zip"]],
@@ -177,17 +181,17 @@ class EndToEnd(unittest.TestCase):
             # same as test 1, but HTML
             [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
             [["notion/test_6/notion-testspace.zip"]],
-            [["obsidian/test_1/vault"]],
-            [["qownnotes/test_1/note_folder"]],
-            [["rednotebook/test_1/data"]],
+            [["obsidian/test_1_frontmatter/vault"]],
+            [["qownnotes/test_1_frontmatter/note_folder"]],
+            [["rednotebook/test_1_frontmatter/data"]],
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
-            [["roam_research/test_1/small-test-graph.json"]],
+            [["roam_research/test_1_frontmatter/small-test-graph.json"]],
             [["roam_research/test_2/help-graph.json"]],
             [["roam_research/test_3/roam-to-git-demo-2025-04-15-12-05-52.json"]],
-            [["simplenote/test_1/notes.zip"]],
+            [["simplenote/test_1_frontmatter/notes.zip"]],
             [["simplenote/test_2/notes_1.zip"]],
             [["simplenote/test_3/simplenote.zip"]],
-            [["standard_notes/test_1/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
+            [["standard_notes/test_1_frontmatter/Standard Notes - Sun Apr 28 2024 12_56_55.zip"]],
             [["standard_notes/test_2/Standard.Notes.-.super_format.GMT+0100.zip"]],
             [["standard_notes/test_3/backup.zip"]],
             [["standard_notes/test_4/SN-Empty-SuperNote-Backup.zip"]],
@@ -195,31 +199,31 @@ class EndToEnd(unittest.TestCase):
             [["standard_notes/test_6/Standard Notes - Tue Aug 29 2023 08_51_11.zip"]],
             [["synology_note_station/test_1/20240331_144226_11102_Lagavulin.nsx"]],
             [["synology_note_station/test_2/20240409_202124_7594_Lagavulin.nsx"]],
-            [["synology_note_station/test_3/notestation-test-books.nsx"]],
+            [["synology_note_station/test_3_frontmatter/notestation-test-books.nsx"]],
             [["synology_note_station/test_4/test.nsx"]],
             [["synology_note_station/test_5/20241005_184010_8701_demouser.nsx"]],
             [["textbundle/test_1/example.textpack"]],
             [["textbundle/test_2/Bug report in tables_bear.textbundle"]],
             [["textbundle/test_3/Python CHP NOTES.textbundle"]],
-            [["textbundle/test_4/Textbundle Example v1.textbundle"]],
+            [["textbundle/test_4_frontmatter/Textbundle Example v1.textbundle"]],
             [["textbundle/test_5/Textbundle Example v2.textbundle"]],
             [["textbundle/test_6/multiple_files"]],
             # [["tiddlywiki/test_1/tiddlers.json"]],
-            [["tiddlywiki/test_2/Deserializers.tid"]],
+            [["tiddlywiki/test_2_frontmatter/Deserializers.tid"]],
             [["tiddlywiki/test_3/Plugins.tid"]],
             [["tiddlywiki/test_4/html_folder"]],
-            [["tomboy_ng/test_1/gnote"]],
+            [["tomboy_ng/test_1_frontmatter/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
-            [["turtl/test_1/turtl-backup.json"]],
-            [["wordpress/test_1/mywordpresswebsite.WordPress.2024-12-17.xml"]],
+            [["turtl/test_1_frontmatter/turtl-backup.json"]],
+            [["wordpress/test_1_frontmatter/mywordpresswebsite.WordPress.2024-12-17.xml"]],
             [["wordpress/test_2/testing.wordpress.xml"]],
             [["wordpress/test_3/wp.xml"]],
             [["wordpress/test_4/adversarial-example.xml"]],
-            [["zettelkasten/test_1/test_zettelkasten.zkn3"]],
-            [["zim/test_1/notebook"]],
+            [["zettelkasten/test_1_frontmatter/test_zettelkasten.zkn3"]],
+            [["zim/test_1_frontmatter/notebook"]],
             [["zim/test_2/Zim-Sample-Notebook"]],
             [["zim/test_3/doc"]],
-            [["zoho_notebook/test_1/Notebook_18Jan2025_1756_html.zip"]],
+            [["zoho_notebook/test_1_frontmatter/Notebook_18Jan2025_1756_html.zip"]],
             # [["zoho_notebook/test_2/Notebook_02Mar2022_0441_znote.zip"]],
             # [["zoho_notebook/test_3/Notebook_14Apr2024_0732_znote.zip"]],
         ],
@@ -242,9 +246,7 @@ class EndToEnd(unittest.TestCase):
         """Test the conversion of custom formats to Markdown."""
         password = os.getenv("JIMMY_TEST_PASSWORD")
         if password is None:
-            self.skipTest(
-                'Need password for encrypted test data at "JIMMY_TEST_PASSWORD"'
-            )
+            self.skipTest('Need password for encrypted test data at "JIMMY_TEST_PASSWORD"')
 
         # Pythons zipfile doesn't support AES256 encryption. Use "py7zr" instead.
         test_input = Path(test_input[0])
@@ -256,10 +258,7 @@ class EndToEnd(unittest.TestCase):
                 encrypted_7z.extractall(path=test_input_path.parent)
 
         reference_data_path = Path("test/data/reference_data") / test_input.parent
-        if (
-            not reference_data_path.exists()
-            and reference_data_path.with_suffix(".7z").exists()
-        ):
+        if not reference_data_path.exists() and reference_data_path.with_suffix(".7z").exists():
             with py7zr.SevenZipFile(
                 reference_data_path.with_suffix(".7z"), password=password
             ) as encrypted_7z:
@@ -307,9 +306,7 @@ class EndToEnd(unittest.TestCase):
             self.assert_dir_trees_equal(test_data_output, reference_data)
         else:
             for index in range(len(test_input)):
-                actual_data = test_data_output.parent / (
-                    test_data_output.name + f" {index}"
-                )
+                actual_data = test_data_output.parent / (test_data_output.name + f" {index}")
                 reference = reference_data.parent / (reference_data.name + f" {index}")
                 self.assert_dir_trees_equal(actual_data, reference)
 
@@ -338,14 +335,10 @@ class EndToEnd(unittest.TestCase):
             self.config.template_file = None
         else:
             self.config.frontmatter = None
-            self.config.template_file = (
-                Path("test/data/test_data/template") / template
-            ).resolve()
+            self.config.template_file = (Path("test/data/test_data/template") / template).resolve()
         jimmy.main.run_conversion(self.config)
 
-        self.assert_dir_trees_equal(
-            test_data_output / Path(template).stem, reference_data
-        )
+        self.assert_dir_trees_equal(test_data_output / Path(template).stem, reference_data)
 
     @parameterized.expand(
         [
@@ -376,7 +369,7 @@ class EndToEnd(unittest.TestCase):
     def test_attachment_folder(self, name, folder_options):
         """Test the attachment folders."""
 
-        test_data = [Path("test/data/test_data/obsidian/test_1")]
+        test_data = [Path("test/data/test_data/obsidian/test_1_frontmatter")]
         test_data_output = Path(f"tmp_output/attachment_folder/{name}")
         shutil.rmtree(test_data_output, ignore_errors=True)
         # separate folder for each input
@@ -392,6 +385,4 @@ class EndToEnd(unittest.TestCase):
         self.assert_dir_trees_equal(test_data_output, reference_data)
         if name == "global_outside":
             # outside root dir -> verify separately
-            self.assert_dir_trees_equal(
-                test_data_output / value, reference_data / value
-            )
+            self.assert_dir_trees_equal(test_data_output / value, reference_data / value)
