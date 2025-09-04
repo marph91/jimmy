@@ -77,7 +77,9 @@ class Converter(converter.BaseConverter):
         timestamp = get_text(entry.find("date"))
         assert timestamp is not None
         date_ = common.timestamp_to_datetime(int(timestamp) // 10**3)
-        title = f"{date_.strftime('%Y-%m-%d')} {get_text(entry.find('title'), '')}"
+        title = (
+            f"{date_.strftime('%Y-%m-%d')} {get_text(entry.find('title'), '')}".strip()
+        )
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
@@ -96,9 +98,12 @@ class Converter(converter.BaseConverter):
 
         # tags
         if (tags := get_text(entry.find("tags"))) is not None:
-            for diaro_tag in tags.split(","):
-                if diaro_tag.strip():
-                    note_imf.tags.append(imf.Tag(diaro_tag.strip()))
+            for tag_id in tags.split(","):
+                if (
+                    tag_id.strip()
+                    and (tag_title := self.tags.get(tag_id.strip())) is not None
+                ):
+                    note_imf.tags.append(imf.Tag(tag_title))
 
         # ressources
         note_imf.resources = self.attachments.get(note_imf.original_id, [])
