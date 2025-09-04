@@ -195,9 +195,13 @@ class FilesystemWriter:
         new_path = self.note_id_map.get(note_link.original_id)
         if new_path is None:
             LOGGER.debug(
-                f'Note "{note.title}": could not find linked note: "{note_link.original_text}"',
+                f'Note "{note.title}": could not find linked note: "{note_link.original_id}"',
                 # prevent [[]] syntax titles to be handled as markup
                 extra={"markup": None},
+            )
+            # Replace at least with the original ID as fallback.
+            note.body = note.body.replace(
+                note_link.original_text, f"[{link_title}]({note_link.original_id})"
             )
             return
 
