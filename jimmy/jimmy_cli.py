@@ -51,6 +51,7 @@ def relative_path(path: str | Path | None) -> Path | None:
 def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="interface")
+    subparsers.default = "tui"
 
     # TUI parser
     subparsers.add_parser("tui", help="Configure Jimmy in a Terminal User Interface (TUI).")
