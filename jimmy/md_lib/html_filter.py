@@ -216,12 +216,6 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
         )
 
 
-def nimbus_note_remove_table_footer(soup: bs4.BeautifulSoup):
-    # There is no useful information in Nimbus Note table footers.
-    for table_footer in soup.find_all("tfoot"):
-        table_footer.decompose()
-
-
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
     #   - type is in the class attr
@@ -294,10 +288,15 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
 
 def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
     # remove:
+    # - footer
     # - first row (only contains A, B, ...)
     # - first column (only contains 1, 2, ...)
     # - second column (empty)
     for table in soup.find_all("table"):
+        # There is no useful information in Nimbus Note table footers.
+        for table_footer in table.find_all("tfoot"):
+            table_footer.decompose()
+
         # This seems to affect new tables only. Some sanity checks are needed.
         for row_index, row in enumerate(table.find_all("tr")):
             for col_index, col in enumerate(row.find_all("td")):
