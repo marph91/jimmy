@@ -67,16 +67,16 @@ jobs:
           # pandoc and asciidoc converter
           ./jimmy* cli ../test/data/test_data/default_format/arbitrary_folder
           # filters and frontmatter module
-          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian
-          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --exclude-tags "*"
-          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes-with-tags "*"
-          ./jimmy* cli ../test/data/test_data/obsidian/test_1 --format obsidian --include-notes "Second sample note" "Sample note"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --exclude-tags "*"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --include-notes-with-tags "*"
+          ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --include-notes "Second sample note" "Sample note"
           # textbundle converter called from bear converter
-          ./jimmy* cli ../test/data/test_data/bear/test_1/backup.bear2bk --format bear
+          ./jimmy* cli ../test/data/test_data/bear/test_1_frontmatter/backup.bear2bk --format bear
           # cryptography module
-          ./jimmy* cli ../test/data/test_data/colornote/test_1/colornote-20241014.backup --format colornote --password 1234
+          ./jimmy* cli ../test/data/test_data/colornote/test_1_frontmatter/colornote-20241014.backup --format colornote --password 1234
           # sqlite3 module
-          ./jimmy* cli ../test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
+          ./jimmy* cli ../test/data/test_data/qownnotes/test_1_frontmatter/note_folder --format qownnotes
           # pyyaml module
           ./jimmy* cli ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
           # anytype module
