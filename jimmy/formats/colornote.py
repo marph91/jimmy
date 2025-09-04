@@ -79,9 +79,11 @@ class Converter(converter.BaseConverter):
             updated=common.timestamp_to_datetime(note_json["modified_date"] / 1000),
             source_application=self.format,
             original_id=title,  # not "uuid", because the title is linked
-            latitude=note_json["latitude"],
-            longitude=note_json["longitude"],
         )
+        if (latitude := note_json.get("latitude", 0)) != 0:
+            note_imf.latitude = latitude
+        if (longitude := note_json.get("longitude", 0)) != 0:
+            note_imf.longitude = longitude
         if note_json["space"] == 16:
             note_imf.tags.append(imf.Tag("colornote-archived"))
         note_imf.note_links = self.handle_wikilink_links(note_imf.body)
