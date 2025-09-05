@@ -24,3 +24,19 @@ source_app: Samsung Notes
 - Tags and folder hierarchy are not preserved. The information is lost when exporting from Samsung Notes already.
 - Attachments are not preserved.
 - Most of the markup is not preserved.
+
+## Notes on the proprietary .sdocx format
+
+It would be desirable to convert Samsung Notes `.sdocx` files directly, as they should contain all information. The `.sdocx` files are zip archives with content:
+
+```
+├── abc8fd18-01b9-11f0-8139-fb1a97747e58.page
+├── abc90452-01b9-11f0-9538-4bbfa19fc222.page
+├── end_tag.bin
+├── media
+│   └── mediaInfo.dat
+├── note.note
+└── pageIdInfo.dat
+```
+
+It was not possible to reverse engineer the binary files in a reasonable amount of time, though. If you have any information about the layout, please share.
