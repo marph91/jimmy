@@ -21,9 +21,8 @@ def get_quoted_relative_path(source: Path, target: Path) -> str:
     >>> get_quoted_relative_path(Path("sample/a"), Path("sample/im age.png"))
     '<../im age.png>'
     """
-    # The doctest works only on linux. The implementation seems to be working
-    # for windows, though.
-    relative_path = str(target.relative_to(source, walk_up=True))
+    # Markdown URLs require posix paths.
+    relative_path = str(target.relative_to(source, walk_up=True).as_posix())
     # Prepend "./" for Obsidian compatibility.
     if relative_path != "." and not relative_path.startswith("../"):
         relative_path = f"./{relative_path}"
