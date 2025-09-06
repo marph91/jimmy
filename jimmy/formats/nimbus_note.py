@@ -16,6 +16,7 @@ class Converter(converter.BaseConverter):
 
     def __init__(self, config):
         super().__init__(config)
+        self._input_note_index = 0
         self.temp_folder = common.get_temp_folder()
 
     def handle_markdown_links(
@@ -56,9 +57,11 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent: imf.Notebook):
-        self.logger.debug(f'Converting note "{file_.stem}"')
-        temp_folder_note = self.temp_folder / file_.stem
+        self.logger.debug(f'Converting note {self._input_note_index + 1} "{file_.stem}"')
+        # Use a simple index to avoid folder name issues on Windows.
+        temp_folder_note = self.temp_folder / str(self._input_note_index)
         temp_folder_note.mkdir()
+        self._input_note_index += 1
         common.extract_zip(file_, temp_folder=temp_folder_note)
 
         if not (temp_folder_note / "note.html").is_file():
