@@ -189,6 +189,11 @@ class FilesystemWriter:
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
         assert note.path is not None
+        if note_link.original_text not in note.body:
+            LOGGER.debug(
+                f'Note "{note.title}": could not find original link: "{note_link.original_text}"'
+            )
+
         link_title = note_link.title if note_link.title not in [None, ""] else note_link.original_id
 
         new_path = self.note_id_map.get(note_link.original_id)

@@ -192,6 +192,9 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     [MarkdownLink(text='link', url=':/custom', title='', is_image=False)]
     >>> get_markdown_links('[weblink](https://duckduckgo.com)')
     [MarkdownLink(text='weblink', url='https://duckduckgo.com', title='', is_image=False)]
+
+    # >>> get_markdown_links('[\<weblink\>](https://duckduckgo.com)')
+    # [MarkdownLink(text='<weblink>', url='https://duckduckgo.com', title='', is_image=False)]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member
