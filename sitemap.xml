@@ -246,6 +246,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://marph91.github.io/jimmy/formats/upnote/</loc>
+         <lastmod>2025-09-07</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://marph91.github.io/jimmy/formats/wordpress/</loc>
          <lastmod>2025-09-07</lastmod>
          <changefreq>daily</changefreq>
