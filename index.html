@@ -1674,22 +1674,13 @@ jimmy-linux<span class="w"> </span>cli<span class="w"> </span>takeout-20240401T1
 <code>R</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">reStructuredText</a> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">RTF</a>
 <code>T</code> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" style="height:20px;max-width:20px;" fill="gray" opacity="0.5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16l160 0 0 80c0 17.7 14.3 32 32 32l80 0 0 288c0 8.8-7.2 16-16 16L64 464zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-293.5c0-17-6.7-33.3-18.7-45.3L274.7 18.7C262.7 6.7 246.5 0 229.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"/></svg> <a href="https://marph91.github.io/jimmy/formats/default/">txt2tags</a></p>
 <h2 id="general-usage">General Usage<a class="headerlink" href="#general-usage" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>flowchart LR
-    A[App 1] --&gt;|Backup| M
-    B[App 2] --&gt;|Export| M
-    C[...] --&gt; M
-    D[Filesystem] --&gt; M
-    M(ZIP archive/JSON/Folder) --&gt; N
-    N{Jimmy} --&gt; O(Markdown + Frontmatter)
-    O --&gt;|Import| P[Joplin]
-    O --&gt;|Import| Q[Obsidian]
-    O --&gt; R[...]
-    O --&gt; S[Editor, e. g. VSCode]</code></pre>
 <ol>
 <li>Export/backup notes from your note application</li>
 <li>Run <code>jimmy</code>, which converts your notes to Markdown</li>
 <li>Import the result to Joplin/Obsidian or even use any editor like VSCode</li>
 </ol>
+<h2 id="simplified-internal-workflow">Simplified Internal Workflow<a class="headerlink" href="#simplified-internal-workflow" title="Permanent link">&para;</a></h2>
+<p><img alt="" src="images/workflow.drawio.png" /></p>
 
 
 
@@ -1710,7 +1701,7 @@ jimmy-linux<span class="w"> </span>cli<span class="w"> </span>takeout-20240401T1
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 7, 2025 09:15:38">September 7, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="September 7, 2025 11:16:44">September 7, 2025</span>
   </span>
 
     
