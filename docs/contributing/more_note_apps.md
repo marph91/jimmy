@@ -83,7 +83,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Trilium](https://github.com/zadam/trilium) | [thread](https://github.com/zadam/trilium/discussions/2827) (Markdown?) |     |
 | [Twos](https://www.twosapp.com/) | [export](https://www.twosapp.com/export) (markdown, only single notes?) |     |
 | [Ulysses](https://ulysses.app/) | [thread](https://github.com/obsidianmd/obsidian-importer/issues/18) (Markdown) | apple only |
-| [UpNote](https://getupnote.com/) | [doc](https://medium.com/upnote/export-your-notes-3d8d6f7739d7) (Markdown, paid only) |     |
 | [Vnote](https://github.com/vnotex/vnote) | [doc](https://app.vnote.fun/en_us/#!docs/Users/Export.md) (Markdown?) |     |
 | [Wenote](https://play.google.com/store/apps/details?id=com.yocto.wenote) |     | mobile only |
 | [Wiznote](https://www.wiz.cn/) | [script](https://github.com/scher000/wiz2joplin) |     |

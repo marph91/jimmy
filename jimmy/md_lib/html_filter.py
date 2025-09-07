@@ -499,6 +499,32 @@ def underline(soup: bs4.BeautifulSoup):
         underlined.unwrap()
 
 
+def upnote_add_formula(soup: bs4.BeautifulSoup):
+    for formula in soup.find_all(attrs={"data-upnote-formula": True}):
+        formula.name = "annotation"
+        formula.attrs = {"encoding": "application/x-tex"}
+        formula.wrap(soup.new_tag("math", attrs={"display": "block"}))
+
+
+def upnote_add_highlight(soup: bs4.BeautifulSoup):
+    for highlight in soup.find_all(
+        attrs={"class": lambda c: c.startswith("shine-highlight") if c else False}
+    ):
+        highlight.name = "mark"
+
+
+def upnote_streamline_checklists(soup: bs4.BeautifulSoup):
+    for list_ in soup.find_all("ul"):
+        for item in list_.find_all("li", attrs={"data-checked": True}):
+            input_element = soup.new_tag("input", type="checkbox")
+            if item.attrs.get("data-checked", "false") == "true":
+                input_element.attrs["checked"] = ""  # checkbox is checked
+            item.insert(0, input_element)
+
+            if "checklist" not in list_.get("class", []):
+                list_["class"] = ["checklist"]  # drop the other classes
+
+
 def whitespace_in_math(soup: bs4.BeautifulSoup):
     """
     - Escape unescaped newlines inside tex math blocks.

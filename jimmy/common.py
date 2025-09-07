@@ -3,6 +3,7 @@
 import base64
 import datetime as dt
 import difflib
+import gzip
 import hashlib
 import importlib
 import logging
@@ -337,6 +338,17 @@ def get_temp_folder() -> Path:
     temp_folder = Path(tempfile.gettempdir()) / f"jimmy_{int(time.time() * 10**6)}"
     temp_folder.mkdir(exist_ok=True)
     return temp_folder
+
+
+def extract_gzip(input_: Path, temp_folder: Path | None = None) -> Path:
+    """Extract a gzip file to a new temporary directory."""
+    # TODO: Can there be multiple files or folders?
+    if temp_folder is None:
+        temp_folder = get_temp_folder()
+    unzipped_file = temp_folder / input_.stem
+    with gzip.open(input_, "rb") as gzip_file:
+        unzipped_file.write_bytes(gzip_file.read())
+    return unzipped_file
 
 
 def extract_tar(input_: Path) -> Path:

@@ -219,6 +219,7 @@ class EndToEnd(unittest.TestCase):
             [["tomboy_ng/test_1_frontmatter/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["turtl/test_1_frontmatter/turtl-backup.json"]],
+            [["upnote/test_1_frontmatter/new_user"]],
             [["wordpress/test_1_frontmatter/mywordpresswebsite.WordPress.2024-12-17.xml"]],
             [["wordpress/test_2/testing.wordpress.xml"]],
             [["wordpress/test_3/wp.xml"]],
