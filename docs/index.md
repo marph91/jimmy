@@ -99,20 +99,10 @@ Convert a single file or a folder (recursively). Files of these formats will be 
 
 ## General Usage
 
-```mermaid
-flowchart LR
-    A[App 1] -->|Backup| M
-    B[App 2] -->|Export| M
-    C[...] --> M
-    D[Filesystem] --> M
-    M(ZIP archive/JSON/Folder) --> N
-    N{Jimmy} --> O(Markdown + Frontmatter)
-    O -->|Import| P[Joplin]
-    O -->|Import| Q[Obsidian]
-    O --> R[...]
-    O --> S[Editor, e. g. VSCode]
-```
-
 1. Export/backup notes from your note application
 2. Run `jimmy`, which converts your notes to Markdown
 3. Import the result to Joplin/Obsidian or even use any editor like VSCode
+
+## Simplified Internal Workflow
+
+![](./images/workflow.drawio.png)
