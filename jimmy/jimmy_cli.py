@@ -140,12 +140,8 @@ def main():
     config = parser.parse_args()
 
     # Extend the path for "pydowndoc" here, since it's needed for CLI and TUI.
-    if (
-        getattr(sys, "frozen", False)
-        and hasattr(sys, "_MEIPASS")
-        and sys._MEIPASS not in os.environ.get("PATH", "")
-    ):
-        os.environ["PATH"] += os.pathsep + str(Path(sys._MEIPASS) / "files/pydowndoc")
+    if getattr(sys, "frozen", False):
+        os.environ["PATH"] += os.pathsep + str(Path(__file__).parent / "files/pydowndoc")
 
     match config.interface:
         case None:
