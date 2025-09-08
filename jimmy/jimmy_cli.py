@@ -3,7 +3,9 @@
 import argparse
 import datetime
 import logging
+import os
 from pathlib import Path
+import sys
 
 from rich.logging import RichHandler
 
@@ -136,6 +138,14 @@ def main():
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
     config = parser.parse_args()
+
+    # Extend the path for "pydowndoc" here, since it's needed for CLI and TUI.
+    if (
+        getattr(sys, "frozen", False)
+        and hasattr(sys, "_MEIPASS")
+        and sys._MEIPASS not in os.environ.get("PATH", "")
+    ):
+        os.environ["PATH"] += os.pathsep + str(Path(sys._MEIPASS) / "files/pydowndoc")
 
     match config.interface:
         case None:
