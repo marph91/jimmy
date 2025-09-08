@@ -11,6 +11,7 @@ from PyInstaller.utils.hooks import collect_data_files
 datas = []
 datas += collect_data_files("anyblock_exporter")
 datas += collect_data_files("pypandoc")
+datas += collect_data_files("pydowndoc")
 
 
 # Generate list of hidden imports
