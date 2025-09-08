@@ -457,8 +457,8 @@ class EnexToMarkdown:
 
                 # Insert decoded data to the existing data.
                 decoded_md, decoded_hashes = parser.close()
-                self.md.extend(decoded_md)
-                self.hashes.extend(decoded_hashes)
+                self.md.extend(decoded_md)  # type: ignore[arg-type]
+                self.hashes.extend(decoded_hashes)  # type: ignore[arg-type]
             return
 
         if self.quote_level > 0 and self.md and self.md[-len(self.active_formatting) - 1] == "\n":
@@ -475,5 +475,5 @@ class EnexToMarkdown:
             target = self.table_cell if self.in_table else self.md
             target.append(data)
 
-    def close(self):
+    def close(self) -> tuple[str, list[str]]:
         return "".join(self.md), self.hashes

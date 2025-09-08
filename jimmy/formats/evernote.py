@@ -84,7 +84,7 @@ class Converter(converter.BaseConverter):
         )
         self.note_id_title_map[note_imf.original_id] = note_imf.title
 
-        hashes = []
+        hashes: list[str] = []
         tasks = collections.defaultdict(list)
         for note_element in note:
             match note_element.tag:
@@ -102,8 +102,8 @@ class Converter(converter.BaseConverter):
                             self.logger.debug(exc, exc_info=True)
                             continue
                         # assume that this is done always before "resource"
-                        body, hashes = parser.close()
-                        note_imf.body = body
+                        body, hashes = parser.close()  # type: ignore[assignment]
+                        note_imf.body = body  # type: ignore[assignment]
                 case "created" | "updated":
                     if note_element.text is None:
                         continue
