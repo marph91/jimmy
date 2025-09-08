@@ -3,10 +3,10 @@
 import abc
 import logging
 from pathlib import Path
-import subprocess
 from xml.etree import ElementTree as ET
 
 import frontmatter
+import pydowndoc
 
 from jimmy import common, intermediate_format as imf
 import jimmy.md_lib.common
@@ -201,36 +201,18 @@ class DefaultConverter(BaseConverter):
         format_ = file_.suffix.lower()[1:]
         match format_:
             case "adoc" | "asciidoc" | "asciidoctor":
-                # asciidoc -> html -> markdown
-                # Technically, the first line is the document title and gets
-                # stripped from the note body:
-                # https://docs.asciidoctor.org/asciidoc/latest/document/title/
-                # However, we want everything in the note body. Thus, we need
-                # to use HTML (instead of docbook) as intermediate format.
-                # fmt: off
-                proc = subprocess.run(
-                    [
-                        "asciidoctor",
-                        # Don't generate the "last updated" footer.
-                        # https://stackoverflow.com/a/41777672/7410886
-                        "--attribute", "nofooter",
-                        "--backend", "html",
-                        "--out-file", "-",
-                        str(file_.resolve()),
-                    ],
-                    capture_output=True,
-                    check=True,
-                    encoding="utf8",
-                )
-                # fmt: on
-                if proc.stderr:
-                    self.logger.debug(proc.stderr.strip())
-                elif proc.returncode != 0:
-                    self.logger.warning(f"Asciidoctor error code: {proc.returncode}")
-                    return
-                note_imf.body = jimmy.md_lib.common.markup_to_markdown(
-                    proc.stdout, resource_folder=self.resource_folder
-                )
+                converted_file_contents = pydowndoc.run(
+                    file_,
+                    # Try to stay close to the Pandoc formatting.
+                    attributes={
+                        "markdown-list-indent": "4",
+                        "markdown-line-break": "\n",
+                        "quotes": " ",
+                    },
+                    output="-",
+                    process_capture_output=True,
+                ).stdout.decode("utf-8")
+                note_imf.body = converted_file_contents
             case "eml":
                 note_imf = jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder)
                 parent.child_notes.append(note_imf)
