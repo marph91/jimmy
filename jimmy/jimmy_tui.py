@@ -344,6 +344,7 @@ class JimmyApp(App):
                     global_resource_folder=None,
                     local_resource_folder=Path("."),
                     local_image_folder=None,
+                    max_name_length=50,
                     print_tree=False,
                     exclude_notes=None,
                     exclude_notes_with_tags=None,
