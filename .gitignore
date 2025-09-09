@@ -5,6 +5,7 @@ jimmy.log
 .cache
 .obsidian
 .venv
+bin
 build
 dist
 test_profile

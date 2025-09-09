@@ -5,7 +5,7 @@ markdown==3.8.2
 platformdirs==4.3.8
 puremagic==1.30
 pydantic==2.11.7
-pypandoc_binary==1.15
+pypandoc==1.15
 pyparsing==3.2.3
 python-frontmatter==1.1.0
 # pytodotxt==1.5.0

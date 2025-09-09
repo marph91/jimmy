@@ -3,7 +3,9 @@
 import argparse
 import datetime
 import logging
+import os
 from pathlib import Path
+import sys
 
 from rich.logging import RichHandler
 
@@ -136,6 +138,15 @@ def main():
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
     config = parser.parse_args()
+
+    # Extend the path here, since it's needed for CLI and TUI.
+    # Search for the local/pyinstaller binaries first.
+    if getattr(sys, "frozen", False):
+        binaries_folder = str(Path(__file__).parent / "bin")
+    else:
+        binaries_folder = str(Path(__file__).parent.parent / "bin")
+    if binaries_folder not in os.environ["PATH"]:
+        os.environ["PATH"] = binaries_folder + os.pathsep + os.environ["PATH"]
 
     match config.interface:
         case None:

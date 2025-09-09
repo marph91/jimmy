@@ -50,7 +50,9 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies
         # install only the really required modules before the pyinstaller build
-        run: pip install -r requirements/requirements-build.txt
+        run: |
+          pip install -r requirements/requirements-build.txt
+          python download_binaries.py
       - name: Build executables with pyinstaller
         run: |
           python -m PyInstaller jimmy.spec
