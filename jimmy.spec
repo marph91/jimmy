@@ -4,6 +4,7 @@
 import os
 from pathlib import Path
 import platform
+import shutil
 
 from PyInstaller.utils.hooks import collect_data_files
 
@@ -11,6 +12,7 @@ from PyInstaller.utils.hooks import collect_data_files
 datas = []
 datas += collect_data_files("anyblock_exporter")
 datas += collect_data_files("pypandoc")
+datas += ((shutil.which("downdoc"), "files/pydowndoc"),)
 
 
 # Generate list of hidden imports
@@ -74,7 +76,9 @@ exe = EXE(
     bootloader_ignore_signals=False,
     # Strip unneeded libs. Not recommended for windows.
     # https://pyinstaller.org/en/stable/usage.html#cmdoption-s
-    strip=platform.system().lower() != "windows",
+    # Don't strip, since it yields "Pkg: Error reading from file."
+    # for the asciidoctor binary.
+    strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
