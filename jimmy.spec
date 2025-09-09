@@ -76,7 +76,9 @@ exe = EXE(
     bootloader_ignore_signals=False,
     # Strip unneeded libs. Not recommended for windows.
     # https://pyinstaller.org/en/stable/usage.html#cmdoption-s
-    strip=platform.system().lower() != "windows",
+    # Don't strip, since it yields "Pkg: Error reading from file."
+    # for the asciidoctor binary.
+    strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
