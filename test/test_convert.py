@@ -27,7 +27,8 @@ class EndToEnd(unittest.TestCase):
         console_handler.setFormatter(console_handler_formatter)
         console_handler.setLevel("DEBUG")
         jimmy.main.setup_logging(custom_handlers=[console_handler])
-        # jimmy.main.setup_logging()
+
+        jimmy.main.add_binaries_to_path()
 
         # use the same seed before every test to get reproducible uuids
         random.seed(42)

@@ -2,7 +2,10 @@
 
 import importlib
 import logging
+import os
+from pathlib import Path
 import shutil
+import sys
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
@@ -19,6 +22,17 @@ from jimmy import (
 
 
 LOGGER = logging.getLogger("jimmy")
+
+
+def add_binaries_to_path():
+    # Extend the path here, since it's needed for CLI and TUI.
+    # Search for the local/pyinstaller binaries first.
+    if getattr(sys, "frozen", False):
+        binaries_folder = str(Path(__file__).parent / "bin")
+    else:
+        binaries_folder = str(Path(__file__).parent.parent / "bin")
+    if binaries_folder not in os.environ["PATH"]:
+        os.environ["PATH"] = binaries_folder + os.pathsep + os.environ["PATH"]
 
 
 def setup_logging(custom_handlers: list | None = None):
