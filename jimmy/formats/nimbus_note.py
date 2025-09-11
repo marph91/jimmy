@@ -53,6 +53,17 @@ class Converter(converter.BaseConverter):
                         temp_filename.name,
                     )
                 )
+            elif (root_folder / link.url).suffix.lower() in (".jpg", ".jpeg"):
+                # last resort: sometimes the extension is changed and referenced incorrectly
+                resource_path = root_folder / link.url
+                match resource_path.suffix:
+                    case ".jpg":
+                        try_suffix = ".jpeg"
+                    case ".jpeg":
+                        try_suffix = ".jpg"
+                try_resource_path = resource_path.with_suffix(try_suffix)
+                if try_resource_path.is_file():
+                    resources.append(imf.Resource(try_resource_path, str(link), link.text))
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -80,26 +91,31 @@ class Converter(converter.BaseConverter):
         else:
             title = file_.stem
 
-        note_body_markdown = jimmy.md_lib.common.markup_to_markdown(
+        note_imf = imf.Note(title, source_application=self.format, original_id=title)
+
+        note_imf.body = jimmy.md_lib.common.markup_to_markdown(
             note_html,
             custom_filter=[
                 jimmy.md_lib.html_filter.nimbus_note_add_mark,
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,
-                # TODO: move to common
-                jimmy.md_lib.html_filter.nimbus_note_fix_image_links,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_lists,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_tables,
+                jimmy.md_lib.html_filter.nimbus_strip_images,
             ],
+        ).strip()
+        note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+            note_imf.body, temp_folder_note
         )
-        resources, note_links = self.handle_markdown_links(note_body_markdown, temp_folder_note)
-        note_imf = imf.Note(
-            title,
-            note_body_markdown.strip(),
-            source_application=self.format,
-            resources=resources,
-            note_links=note_links,
-            original_id=title,
-        )
+
+        # append unreferenced resources
+        linked_resource_names = [r.filename.name for r in note_imf.resources]
+        if (temp_folder_note / "assets").is_dir():
+            for resource in (temp_folder_note / "assets").iterdir():
+                if resource.is_dir() or resource.name == "theme.css":
+                    continue
+                if resource.name not in linked_resource_names:
+                    note_imf.resources.append(imf.Resource(resource))
+
         parent.child_notes.append(note_imf)
 
     def convert_folder(self, file_or_folder: Path, parent: imf.Notebook):

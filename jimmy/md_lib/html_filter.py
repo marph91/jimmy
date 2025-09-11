@@ -45,6 +45,14 @@ def div_checklists(soup: bs4.BeautifulSoup):
                 child.name = "li"
 
 
+def fix_duplicated_image_links(soup: bs4.BeautifulSoup):
+    # They are linked twice. One href and one img. We only want the img.
+    for img in soup.find_all("img"):
+        img_src = img.attrs.get("src")
+        if img.parent.attrs.get("href", "") == img_src:
+            img.parent.unwrap()
+
+
 def highlighting(soup: bs4.BeautifulSoup):
     """Remove all attributes and enable the "mark" extension to get highlighting."""
     for mark in soup.find_all("mark"):
@@ -214,22 +222,6 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
         )
 
 
-def nimbus_note_fix_image_links(soup: bs4.BeautifulSoup):
-    # They are linked twice. One href and one img. We only want the img.
-    for img in soup.find_all("img"):
-        img_src = img.attrs.get("src")
-        if img.parent.attrs.get("href", "") == img_src:
-            img.parent.unwrap()
-
-    # Strip all inline SVGs, since they add icons that are not visible in the original document.
-    for svg in soup.find_all("svg"):
-        svg.decompose()
-
-    # Strip file size information.
-    for file_size in soup.find_all("span", class_="file-size"):
-        file_size.decompose()
-
-
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
     #   - type is in the class attr
@@ -335,6 +327,16 @@ def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
             for col_index, col in enumerate(row.find_all("td")):
                 if col_index in (0, 1):
                     col.decompose()  # first and second column
+
+
+def nimbus_strip_images(soup: bs4.BeautifulSoup):
+    # Strip all inline SVGs, since they add icons that are not visible in the original document.
+    for svg in soup.find_all("svg"):
+        svg.decompose()
+
+    # Strip file size information.
+    for file_size in soup.find_all("span", class_="file-size"):
+        file_size.decompose()
 
 
 def notion_streamline_lists(soup: bs4.BeautifulSoup):
