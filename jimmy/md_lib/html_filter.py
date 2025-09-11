@@ -199,8 +199,10 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
     for mention_link in soup.find_all("span", class_="mention-link"):
         if (mention_type := mention_link.attrs.get("data-mention-type", "")) != "note":
             LOGGER.debug(f"Unexpected mention type: {mention_type}")
-        if not (mention_name := mention_link.attrs.get("data-mention-name", "")):
-            LOGGER.debug("Couldn't add link. Link name is empty.")
+        if not (mention_name := mention_link.attrs.get("data-mention-name", "")) and not (
+            mention_name := mention_link.text
+        ):
+            LOGGER.debug("Couldn't add link. Link name and text is empty.")
             continue
         # TODO: check if linking by ID is possible
         mention_link.parent.replace_with(
