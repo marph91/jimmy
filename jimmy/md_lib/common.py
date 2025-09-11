@@ -340,6 +340,8 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     if "[TABLE]" in text_md:
         LOGGER.warning("Table is too complex and can't be converted to markdown.")
 
+    text_md = text_md.replace("{TEMPORARYCHECKBOXCHECKED}", "[x]")
+    text_md = text_md.replace("{TEMPORARYCHECKBOXUNCHECKED}", "[ ]")
     text_md = text_md.replace("{TEMPORARYNEWLINE}", "<br>")
     return text_md.strip()
 

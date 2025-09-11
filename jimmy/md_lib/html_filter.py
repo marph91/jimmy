@@ -220,6 +220,10 @@ def nimbus_note_fix_image_links(soup: bs4.BeautifulSoup):
         if img.parent.attrs.get("href", "") == img_src:
             img.parent.unwrap()
 
+    # Strip all inline SVGs, since they add icons that are not visible in the original document.
+    for svg in soup.find_all("svg"):
+        svg.decompose()
+
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
@@ -287,6 +291,15 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
 
             item.attrs = {}  # remove all attributes
             current_list.append(item)
+
+    # special case: single checkboxes in tables
+    for checkbox in soup.find_all("span", class_="checkbox-component"):
+        # Use the temporary strings here, because the checkbox brackets
+        # would be escaped by pandoc.
+        if "checked" in checkbox.get("class", []):
+            checkbox.string = "{TEMPORARYCHECKBOXCHECKED}"
+        else:
+            checkbox.string = "{TEMPORARYCHECKBOXUNCHECKED}"
 
 
 def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
