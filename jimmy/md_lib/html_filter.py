@@ -223,6 +223,10 @@ def nimbus_note_fix_image_links(soup: bs4.BeautifulSoup):
     for svg in soup.find_all("svg"):
         svg.decompose()
 
+    # Strip file size information.
+    for file_size in soup.find_all("span", class_="file-size"):
+        file_size.decompose()
+
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
     # - all lists are unnumbered lists (ul)
