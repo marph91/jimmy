@@ -85,6 +85,8 @@ class Converter(converter.BaseConverter):
             custom_filter=[
                 jimmy.md_lib.html_filter.nimbus_note_add_mark,
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,
+                # TODO: move to common
+                jimmy.md_lib.html_filter.nimbus_note_fix_image_links,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_lists,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_tables,
             ],

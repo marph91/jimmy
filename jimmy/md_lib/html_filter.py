@@ -189,7 +189,7 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
         "data-palette-bg-rgb",  # table cells
     ]:
         for highlighted_element in soup.find_all(attrs={highlight_attribute: True}):
-            if highlighted_element.attrs[highlight_attribute] == "transparent":
+            if highlighted_element.attrs[highlight_attribute] in ("transparent", "white"):
                 continue
             wrap_content(soup, highlighted_element, "mark")
 
@@ -211,6 +211,14 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
                 string=mention_link.get_text().replace("<", "-").replace(">", "-"),
             )
         )
+
+
+def nimbus_note_fix_image_links(soup: bs4.BeautifulSoup):
+    # They are linked twice. One href and one img. We only want the img.
+    for img in soup.find_all("img"):
+        img_src = img.attrs.get("src")
+        if img.parent.attrs.get("href", "") == img_src:
+            img.parent.unwrap()
 
 
 def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
