@@ -32,4 +32,4 @@ jobs:
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
           PYTHONPATH: jimmy
-        run: pytest --capture=no
+        run: pytest --capture=no --numprocesses=auto
