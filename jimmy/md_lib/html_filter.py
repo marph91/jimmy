@@ -207,8 +207,7 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
             soup.new_tag(
                 "a",
                 attrs={"href": f"nimbusnote://{urllib.parse.quote(mention_name)}"},
-                # TODO: Fix escaping of angle brackets.
-                string=mention_link.get_text().replace("<", "-").replace(">", "-"),
+                string=mention_link.get_text(),
             )
         )
 

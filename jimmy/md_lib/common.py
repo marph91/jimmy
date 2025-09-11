@@ -147,8 +147,8 @@ class LinkExtractor(Treeprocessor):
             self.md.images.append(
                 MarkdownLink(
                     self.unescape(image.get("alt", "")),
-                    image.get("src", ""),
-                    image.get("title", ""),
+                    self.unescape(image.get("src", "")),
+                    self.unescape(image.get("title", "")),
                     is_image=True,
                 )
             )
@@ -159,7 +159,9 @@ class LinkExtractor(Treeprocessor):
                 url = title  # don't add a title if there is no url
                 title = ""
             text = "" if link.text is None else link.text
-            self.md.links.append(MarkdownLink(text, url, title))
+            self.md.links.append(
+                MarkdownLink(self.unescape(text), self.unescape(url), self.unescape(title))
+            )
 
 
 class LinkExtractorExtension(Extension):
@@ -192,9 +194,10 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     [MarkdownLink(text='link', url=':/custom', title='', is_image=False)]
     >>> get_markdown_links('[weblink](https://duckduckgo.com)')
     [MarkdownLink(text='weblink', url='https://duckduckgo.com', title='', is_image=False)]
-
-    # >>> get_markdown_links('[\<weblink\>](https://duckduckgo.com)')
-    # [MarkdownLink(text='<weblink>', url='https://duckduckgo.com', title='', is_image=False)]
+    >>> get_markdown_links('[red\\_500x500.png]()')
+    [MarkdownLink(text='red\\_500x500.png', url='', title='', is_image=False)]
+    >>> get_markdown_links('[\\<weblink\\>]()')
+    [MarkdownLink(text='\\<weblink\\>', url='', title='', is_image=False)]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member
