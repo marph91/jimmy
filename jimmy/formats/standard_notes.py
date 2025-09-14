@@ -218,8 +218,6 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
-            created=common.iso_to_datetime(item["created_at"]),
-            updated=common.iso_to_datetime(item["updated_at"]),
             source_application=self.format,
             original_id=item["uuid"],
         )
@@ -251,6 +249,11 @@ class Converter(converter.BaseConverter):
         if note_language not in ("htmlmixed", "markdown"):
             # handle most languages as code block
             note_imf.body = f"```{note_language}\n{note_imf.body}\n```\n"
+
+        if (created := item.get("created_at", "")) != "1970-01-01T00:00:00.000Z":
+            note_imf.created = common.iso_to_datetime(created)
+        if (updated := item.get("updated_at", "")) != "1970-01-01T00:00:00.000Z":
+            note_imf.updated = common.iso_to_datetime(updated)
 
         if item["content"].get("trashed", False):
             parent = self.trash_notebook
