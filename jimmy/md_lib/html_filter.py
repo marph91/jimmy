@@ -45,14 +45,6 @@ def div_checklists(soup: bs4.BeautifulSoup):
                 child.name = "li"
 
 
-def fix_duplicated_image_links(soup: bs4.BeautifulSoup):
-    # They are linked twice. One href and one img. We only want the img.
-    for img in soup.find_all("img"):
-        img_src = img.attrs.get("src")
-        if img.parent.attrs.get("href", "") == img_src:
-            img.parent.unwrap()
-
-
 def highlighting(soup: bs4.BeautifulSoup):
     """Remove all attributes and enable the "mark" extension to get highlighting."""
     for mark in soup.find_all("mark"):
@@ -364,6 +356,21 @@ def remove_bold_header(soup: bs4.BeautifulSoup):
     for bold in find_all_bold(soup):
         for header in bold.find_all(HTML_HEADER_RE):
             header.unwrap()
+
+
+def remove_duplicated_links(soup: bs4.BeautifulSoup):
+    # They are linked twice. We only want one link.
+    # image links
+    for img in soup.find_all("img"):
+        img_src = img.attrs.get("src")
+        if img.parent.attrs.get("href", "") == img_src:
+            img.parent.unwrap()
+
+    # web links
+    for link in soup.find_all("a", href=True):
+        link_url = link.attrs.get("href", "")
+        for sublink in link.find_all("a", href=link_url):
+            sublink.unwrap()
 
 
 def remove_empty_elements(soup: bs4.BeautifulSoup):
