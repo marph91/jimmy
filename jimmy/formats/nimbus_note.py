@@ -36,6 +36,8 @@ class Converter(converter.BaseConverter):
                 note_links.append(
                     imf.NoteLink(str(link), linked_note_name, link.text or linked_note_name)
                 )
+            elif link.url.startswith("#"):
+                continue  # internal link to heading
             elif (root_folder / link.url).is_file():
                 # resource
                 resources.append(imf.Resource(root_folder / link.url, str(link), link.text))
@@ -53,17 +55,14 @@ class Converter(converter.BaseConverter):
                         temp_filename.name,
                     )
                 )
-            elif (root_folder / link.url).suffix.lower() in (".jpg", ".jpeg"):
+            elif (
+                other_resource_path := common.try_other_suffixes(root_folder / link.url)
+            ) is not None:
                 # last resort: sometimes the extension is changed and referenced incorrectly
-                resource_path = root_folder / link.url
-                match resource_path.suffix:
-                    case ".jpg":
-                        try_suffix = ".jpeg"
-                    case ".jpeg":
-                        try_suffix = ".jpg"
-                try_resource_path = resource_path.with_suffix(try_suffix)
-                if try_resource_path.is_file():
-                    resources.append(imf.Resource(try_resource_path, str(link), link.text))
+                resources.append(imf.Resource(other_resource_path, str(link), link.text))
+            else:
+                self.logger.warning(f'Resource "{root_folder / link.url}" does not exist.')
+
         return resources, note_links
 
     @common.catch_all_exceptions

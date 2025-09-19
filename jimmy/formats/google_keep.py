@@ -31,18 +31,11 @@ class Converter(converter.BaseConverter):
             resource_path = file_.parent.absolute() / resource_keep["filePath"]
             if resource_path.is_file():
                 note_imf.resources.append(imf.Resource(resource_path))
+            elif (other_resource_path := common.try_other_suffixes(resource_path)) is not None:
+                # last resort: sometimes the extension is changed and referenced incorrectly
+                note_imf.resources.append(imf.Resource(other_resource_path))
             else:
-                # last resort: sometimes the extension is not correct
-                match resource_path.suffix:
-                    case ".jpg":
-                        try_suffix = ".jpeg"
-                    case ".jpeg":
-                        try_suffix = ".jpg"
-                try_resource_path = resource_path.with_suffix(try_suffix)
-                if try_resource_path.is_file():
-                    note_imf.resources.append(imf.Resource(try_resource_path))
-                else:
-                    self.logger.warning(f'Resource "{resource_path}" does not exist.')
+                self.logger.warning(f'Resource "{resource_path}" does not exist.')
 
         # fall back to HTML if there is no plain text
         if "textContent" in note_keep:

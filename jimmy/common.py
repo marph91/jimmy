@@ -155,6 +155,32 @@ def get_unique_path(path: Path, new_content: str | bytes | Path | None = None) -
     return new_path
 
 
+def try_other_suffixes(original_path: Path) -> Path | None:
+    # lower case
+    alternative_path = original_path.with_suffix(original_path.suffix.lower())
+    if alternative_path.is_file():
+        return alternative_path
+
+    # upper case
+    alternative_path = original_path.with_suffix(original_path.suffix.upper())
+    if alternative_path.is_file():
+        return alternative_path
+
+    # different suffix
+    match original_path.suffix.lower():
+        case ".jpg":
+            try_suffix = ".jpeg"
+        case ".jpeg":
+            try_suffix = ".jpg"
+        case _:
+            try_suffix = ".bin"
+    alternative_path = original_path.with_suffix(try_suffix)
+    if alternative_path.is_file():
+        return alternative_path
+
+    return None
+
+
 def write_base64(path: Path, base64_str: str) -> Path:
     """Write a base64 encoded string to a file."""
     content = base64.b64decode(base64_str)
