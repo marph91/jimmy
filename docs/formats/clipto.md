@@ -18,3 +18,13 @@ source_app: Clipto
 4. [Import to your app](../import_instructions.md)
 
 [^export]: Export works with the mobile app only. See <https://github.com/clipto-pro/Desktop/issues/21#issuecomment-537401330>.
+
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ⬜ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

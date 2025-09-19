@@ -18,8 +18,12 @@ source_format: Evernote notes
     1. To decrypt encrypted notes, specify your password, like `jimmy-linux cli backup.enex --format evernote --password 1234`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Each `.enex` file is converted to a folder.
-- Notes inside the `.enex` file are converted to Markdown files.
-- Note links are recovered by matching the note name. This might not work sometimes, if the name was changed after creating the link.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

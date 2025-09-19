@@ -21,3 +21,13 @@ source_app: UpNote
 
 !!! note
     The simple HTML export is not suited, since it has a few limitations, like missing note links and no folder hierarchy. The backup contains everything needed.
+
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

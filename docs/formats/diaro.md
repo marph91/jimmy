@@ -16,12 +16,15 @@ source_app: Diaro
 3. Convert to Markdown. Example: `jimmy-linux cli Diaro_20250821.zip --format diaro`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Each Diaro folder is converted to a notebook.
-- Entries are converted to notes.
-- Tags are preserved.
-- Referenced photos are imported as resources.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 

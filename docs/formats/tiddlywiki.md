@@ -21,6 +21,16 @@ source_app: TiddlyWiki
     3. `jimmy-linux cli /folder/to/tiddlers --format tiddlywiki`
 4. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Known Limitations
 
 Note content is in TiddlyWiki's [WikiText format](https://tiddlywiki.com/#WikiText). It is converted, but Markdown supports only a subset. For example JavaScript functions won't work in the converted Markdown anymore.

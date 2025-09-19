@@ -47,7 +47,12 @@ jimmy-linux cli path/to/folder
 ```
 3. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Folders stay folders
-- Files are converted to Markdown notes
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

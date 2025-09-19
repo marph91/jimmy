@@ -15,7 +15,15 @@ source_app: Zettelkasten
 2. Convert to Markdown. Example: `jimmy-linux cli test_zettelkasten.zkn3 --format zettelkasten`
 3. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 Zettelkasten supports Markdown export. However, it doesn't convert everything and the note links and attachments get lost. Most data can be preserved, when using the original `.zkn3` location in the file system without any export.
 

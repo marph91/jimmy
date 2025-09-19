@@ -17,10 +17,15 @@ source_app: CherryTree
 3. Convert to Markdown. Example: `jimmy-linux cli cherry.ctd --format cherrytree`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- CherryTree nodes are converted to Markdown notes.
-- If a CherryTree node contains sub nodes, a folder is created as container. It has the same name as the corresponding note.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 

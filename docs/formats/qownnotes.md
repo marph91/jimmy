@@ -15,9 +15,17 @@ source_app: QOwnNotes
 2. Convert to Markdown. Example: `jimmy-linux cli qownnotes_folder/ --format qownnotes`
 3. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Markdown style links (`[Link to Markdown Cheatsheet](Markdown Cheatsheet.md)`) and QOwnNotes style links (`<Markdown Cheatsheet.md>`) as described [here](https://www.qownnotes.org/getting-started/markdown.html#links) are converted.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
+Markdown style links (`[Link to Markdown Cheatsheet](Markdown Cheatsheet.md)`) and QOwnNotes style links (`<Markdown Cheatsheet.md>`) as described [here](https://www.qownnotes.org/getting-started/markdown.html#links) are converted.
 
 ## Known Limitations
 

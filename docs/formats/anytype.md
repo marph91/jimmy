@@ -17,10 +17,16 @@ source_app: Anytype
 3. Convert to Markdown. Example: `jimmy-linux cli Anytype.20241112.175339.64 --format anytype`
 4. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ⬜ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Acknowledgements
 
 The converter is based on <https://github.com/jfcostello/AnyBlock-To-Markdown>. Thanks for developing it!
-
-## Known Limitations
-
-Images and attachments aren't converted.

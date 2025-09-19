@@ -18,6 +18,12 @@ source_format: jrnl
 3. Convert to Markdown. Example: `jimmy-linux cli myjournal.json --format jrnl`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-Each journal entry is converted to a separate note in a flat notebook.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ⬜ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

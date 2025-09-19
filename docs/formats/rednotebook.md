@@ -18,6 +18,16 @@ source_app: RedNotebook
     2. `jimmy-linux cli ~/.rednotebook/data/ --format rednotebook`
 4. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Known Limitations
 
 Images and files are not part of the backup. They will only be included, if the files exist in your file system.

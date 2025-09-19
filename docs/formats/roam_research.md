@@ -17,6 +17,16 @@ source_app: Roam Research
 3. Convert to Markdown. Example `jimmy-linux cli export.edn --format roam_research`
 4. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ⬜ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Known Limitations
 
 - Block links are converted to page links.
