@@ -18,6 +18,7 @@ class Converter(converter.BaseConverter):
         super().__init__(config)
         self._input_note_index = 0
         self.temp_folder = common.get_temp_folder()
+        self.note_title_map = {}
 
     def handle_markdown_links(
         self, note_body: str, root_folder: Path
@@ -89,6 +90,7 @@ class Converter(converter.BaseConverter):
             title = title_element.text
         else:
             title = file_.stem
+        self.note_title_map[title] = title
 
         note_imf = imf.Note(title, source_application=self.format, original_id=title)
 
@@ -126,11 +128,23 @@ class Converter(converter.BaseConverter):
             elif item.suffix == ".zip":
                 self.convert_note(item, parent)
 
+    def improve_note_links(self, parent_notebook: imf.Notebook):
+        for note in parent_notebook.child_notes:
+            for note_link in note.note_links:
+                best_match_id = common.get_best_match(note_link.original_id, self.note_title_map)
+                if best_match_id is not None:
+                    note_link.original_id = best_match_id
+        for notebook in parent_notebook.child_notebooks:
+            self.improve_note_links(notebook)
+
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix == ".zip":
             self.convert_note(file_or_folder, self.root_notebook)
         else:  # folder of .zip
             self.convert_folder(file_or_folder, self.root_notebook)
+
+        # second pass: fix odd note links
+        self.improve_note_links(self.root_notebook)
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()

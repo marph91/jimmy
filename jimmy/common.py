@@ -268,10 +268,16 @@ def uuid_title() -> str:
     return uuid.UUID(int=random.getrandbits(128), version=4).hex
 
 
-def get_best_match(title: str, note_id_title_map: dict) -> str:
+def get_best_match(title: str, note_id_title_map: dict) -> str | None:
     """
     Compare a given string to each string of a sequence and return the best match.
     Useful for linking notes without ID.
+
+    >>> get_best_match('*"quoted", and italic*', {1: "quoted and italic"})
+    1
+    >>> get_best_match("b", {"a": "a", "b": "b", "c": "c"})
+    'b'
+    >>> get_best_match("d", {"a": "a", "b": "b", "c": "c"})
     """
 
     # try to map by title similarity
@@ -283,11 +289,12 @@ def get_best_match(title: str, note_id_title_map: dict) -> str:
     best_match_id, best_match_title = list(note_id_title_map.items())[
         match_ratios.index(best_match_ratio)
     ]
-    if best_match_ratio < 0.6:  # threshold taken from the hep string
+    if best_match_ratio < 0.6:  # threshold taken from experience
         LOGGER.debug(
             f"Low match ratio: {best_match_ratio:.2f}. Link from "
-            f'"{title}" to "{best_match_title}" may not be correct.'
+            f'"{title}" to "{best_match_title}" is not added.'
         )
+        return None
     return best_match_id
 
 

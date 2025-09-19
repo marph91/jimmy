@@ -58,7 +58,8 @@ class Converter(converter.BaseConverter):
                 # _, linked_note_id = link.url.rsplit("/", 1)
 
                 best_match_id = common.get_best_match(link.text, note_id_title_map)
-                note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
+                if best_match_id is not None:
+                    note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
             elif source_url is not None and ("/" in link.url or "?" in link.url):
                 # TODO: detect relative path of a clipped website properly
                 # Replace directly, since it's neither a resource nor a note link.
