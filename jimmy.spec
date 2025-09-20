@@ -43,7 +43,7 @@ match os.getenv("RUNNER_MACHINE"):
         system += "-new-glibc"
     case "ubuntu-22.04-arm":
         system += "-" + platform.machine().lower()
-    case "macos-latest" | "macos-13":
+    case "macos-latest" | "macos-15-intel":
         # Differentiate between ARM and Intel based Macs.
         system += "-" + platform.machine().lower()
 executable_name = f"jimmy-{system}"

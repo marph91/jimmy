@@ -27,17 +27,17 @@ jobs:
       matrix:
         # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
         # "macos-latest" to support ARM based MACs
-        # "macos-13" to support Intel based MACs
+        # "macos-15-intel" to support Intel based MACs
         # "ubuntu-latest" just for testing if there is an issue with newer glibc
         # "ubuntu-22.04" to get the lowest possible glibc version for compatibility
-        os: ["windows-latest", "ubuntu-latest", "ubuntu-22.04", "ubuntu-22.04-arm", "macos-latest", "macos-13"]
-        # build "macos-13" executable only at release
+        os: ["windows-latest", "ubuntu-latest", "ubuntu-22.04", "ubuntu-22.04-arm", "macos-latest", "macos-15-intel"]
+        # build "macos-15-intel" executable only at release
         # https://github.com/orgs/community/discussions/26253?sort=top#discussioncomment-3250989
         is_release:
           - ${{ startsWith(github.ref, 'refs/tags/v') }}
         exclude:
           - is_release: false
-            os: "macos-13"
+            os: "macos-15-intel"
           - is_release: false
             os: "ubuntu-latest"
     steps:
