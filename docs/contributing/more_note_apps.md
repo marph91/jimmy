@@ -11,7 +11,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Apple Notes](https://www.icloud.com/notes) | [script](https://github.com/mattrose/AppleNotes2Joplin) | apple only |
 | [Appflowy](https://appflowy.io/) | [seems to be not possible yet](https://github.com/AppFlowy-IO/AppFlowy/issues/4387) |     |
 | [Asana](https://asana.com/) | [doc](https://help.taskade.com/en/articles/8958607-import-from-asana) |     |
-| [Beaver Notes](https://beavernotes.com/) | [doc](https://beaver-notes.github.io/Beaver-Docs/docs/user-docs/Beaver%20Notes/Getting%20Around) → each block is exported separately in json |     |
+| [Beaver Notes](https://beavernotes.com/) |     | https://github.com/marph91/jimmy/issues/52 |
 | [BoostNote](https://boostnote.io/) | - [example file 1](https://github.com/bitoffdev/sovereign-note/tree/main/tests/resources/example-boostnote-collection) <br>- [example file 2](https://github.com/notable/dumper/tree/80b2ccbe4a3a70e57d269d789126375506ba504e/test/source/boostnote) ([cson](https://pypi.org/project/cson/)) | dead? |
 | [Calibre](https://calibre-ebook.com/) | - [doc](https://manual.calibre-ebook.com/en/faq.html#how-do-i-move-my-calibre-data-from-one-computer-to-another) <br>- [script](https://github.com/Mick2nd/Calibre-Import) |     |
 | [Capacities](https://capacities.io/) | [doc](https://docs.capacities.io/reference/export#export) |     |
