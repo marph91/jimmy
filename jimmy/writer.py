@@ -210,9 +210,16 @@ class FilesystemWriter:
                 f'Note "{note.title}": could not find original link: "{note_link.original_text}"'
             )
 
-        link_title = note_link.title if note_link.title not in [None, ""] else note_link.original_id
-
         new_path = self.note_id_map.get(note_link.original_id)
+
+        # find the best note title
+        if note_link.title not in [None, ""]:
+            link_title = note_link.title
+        elif new_path is not None:
+            link_title = new_path.stem
+        else:
+            link_title = note_link.original_id
+
         if new_path is None:
             LOGGER.debug(
                 f'Note "{note.title}": could not find linked note: "{note_link.original_id}"',

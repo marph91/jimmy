@@ -159,7 +159,7 @@ class EndToEnd(unittest.TestCase):
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
             [["diaro/test_1_frontmatter/Diaro_20250821.zip"]],
-            [["drafts/test_1_frontmatter/DraftsExport.draftsExport"]],
+            [["drafts/test_1_frontmatter/Drafts-2025-09-21-21-50.draftsExport"]],
             [["dynalist/test_1_frontmatter/dynalist-backup-2024-04-12.zip"]],
             [["evernote/test_1_frontmatter/obsidian-importer"]],
             [["evernote/test_2/joplin"]],
