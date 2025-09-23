@@ -156,28 +156,19 @@ def get_unique_path(path: Path, new_content: str | bytes | Path | None = None) -
 
 
 def try_other_suffixes(original_path: Path) -> Path | None:
-    # lower case
-    alternative_path = original_path.with_suffix(original_path.suffix.lower())
-    if alternative_path.is_file():
-        return alternative_path
-
-    # upper case
-    alternative_path = original_path.with_suffix(original_path.suffix.upper())
-    if alternative_path.is_file():
-        return alternative_path
-
-    # different suffix
-    match original_path.suffix.lower():
-        case ".jpg":
-            try_suffix = ".jpeg"
-        case ".jpeg":
-            try_suffix = ".jpg"
-        case _:
-            try_suffix = ".bin"
-    alternative_path = original_path.with_suffix(try_suffix)
-    if alternative_path.is_file():
-        return alternative_path
-
+    """Try to find a file with same name, but different suffix."""
+    if not original_path.parent.is_dir():
+        LOGGER.debug(f"Folder does not exist: {original_path.parent}")
+        return None
+    candidates = [item for item in sorted(original_path.parent.iterdir()) if item.is_file()]
+    # case sensitive
+    for candidate in candidates:
+        if original_path.stem == candidate.stem:
+            return candidate
+    # case insensitive
+    for candidate in candidates:
+        if original_path.stem.lower() == candidate.stem.lower():
+            return candidate
     return None
 
 
