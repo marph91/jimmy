@@ -22,12 +22,16 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(
         self, note_body: str, root_folder: Path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    ) -> tuple[str, imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(note_body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
+            # speciality of nimbus note: duplicated https
+            if link.url.startswith("https:https://"):
+                note_body = note_body.replace(link.url, link.url[len("https:"):])
+                continue
             if "nimbusweb.me" in link.url:
                 # internal link
                 # TODO: Get export file with internal links.
@@ -64,7 +68,7 @@ class Converter(converter.BaseConverter):
             else:
                 self.logger.warning(f'Resource "{root_folder / link.url}" does not exist.')
 
-        return resources, note_links
+        return note_body, resources, note_links
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent: imf.Notebook):
@@ -104,7 +108,7 @@ class Converter(converter.BaseConverter):
                 jimmy.md_lib.html_filter.nimbus_strip_images,
             ],
         ).strip()
-        note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+        note_imf.body, note_imf.resources, note_imf.note_links = self.handle_markdown_links(
             note_imf.body, temp_folder_note
         )
 
