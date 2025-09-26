@@ -30,7 +30,7 @@ class Converter(converter.BaseConverter):
                 continue  # keep the original links
             # speciality of nimbus note: duplicated https
             if link.url.startswith("https:https://"):
-                note_body = note_body.replace(link.url, link.url[len("https:"):])
+                note_body = note_body.replace(link.url, link.url[len("https:") :])
                 continue
             if "nimbusweb.me" in link.url:
                 # internal link
@@ -82,6 +82,9 @@ class Converter(converter.BaseConverter):
         if not (temp_folder_note / "note.html").is_file():
             self.logger.error("Export structure not implemented yet. Please report at Github.")
             return
+
+        if not (temp_folder_note / "assets").is_dir():
+            self.logger.warning('"assets" folder not found. Resources might be missing.')
 
         # HTML note seems to have the name "note.html" always
         note_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
