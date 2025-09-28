@@ -88,7 +88,7 @@ jobs:
           # anytype module
           ./jimmy* cli ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype
           # onenote conversion with bundled executable
-          ./jimmy* cli ../test/data/test_data/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip --format onenote
+          ./jimmy* cli ../test/data/test_data/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip --format onenote --stdout-log-level DEBUG
       # - name: Scan for viruses (just for information)
       #   if: runner.os == 'Linux'
       #   run: |

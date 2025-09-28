@@ -1,6 +1,7 @@
 """Convert OneNote notes to the intermediate format."""
 
 from pathlib import Path
+import shutil
 import subprocess
 from urllib.parse import parse_qs, unquote, urlparse
 
@@ -53,7 +54,7 @@ class Converter(converter.BaseConverter):
     def extract_metadata(self, soup):
         # metadata is located in the first div
         if (metadata_div := soup.find("div")) is None:
-            return # TOCs don't contain the metadata
+            return  # TOCs don't contain the metadata
         # TODO: extract the two tags and the creation date
         metadata_div.decompose()
 
@@ -74,9 +75,7 @@ class Converter(converter.BaseConverter):
         self.extract_metadata(soup)
 
         # TODO: Strip title and extract date. This could be done in one2html already.
-        note_imf.body = jimmy.md_lib.common.markup_to_markdown(
-            str(soup)
-        )
+        note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup))
 
         note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body, page)
 
@@ -159,5 +158,6 @@ class Converter(converter.BaseConverter):
 
     def convert(self, _file_or_folder: Path):
         # notebook > section > page
+        self.logger.debug(f"Using one2html from: {shutil.which('one2html')}")
         self.logger.debug(f'temp_folder: "{self.temp_folder}"')
         self.convert_notebook()
