@@ -57,7 +57,6 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Nuclino](https://www.nuclino.com/) | [doc](https://help.nuclino.com/fb60e6f6-export-a-workspace) |     |
 | [OmniFocus](https://www.omnigroup.com/omnifocus) |     | apple only, one-week trial |
 | [Omni Notes](https://omninotes.app/) |     | mobile only |
-| [Onenote](https://www.onenote.com/) | [script](https://github.com/Ben-Gillman/onenote_to_markdown) |     |
 | PDF (OCR) | [app](https://github.com/VikParuchuri/marker) (many dependencies) |     |
 | [Primenote](https://gitlab.com/william.belanger/primenote) |     |     |
 | [QNAP Notes Station](https://www.qnap.com/de-de/software/notes-station) |     | [demo](https://www.qnap.com/de-de/live-demo) |

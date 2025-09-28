@@ -54,6 +54,9 @@ def highlighting(soup: bs4.BeautifulSoup):
 def iframes_to_links(soup: bs4.BeautifulSoup):
     """Convert iframes to simple links."""
     for iframe in soup.find_all("iframe"):
+        if not iframe.attrs.get("src", ""):
+            iframe.decompose()
+            continue
         iframe.name = "a"
         if iframe.text is None or not iframe.text.strip():  # link without text
             iframe.string = iframe.attrs.get("title", iframe.attrs["src"])
