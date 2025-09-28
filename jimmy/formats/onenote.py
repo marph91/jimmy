@@ -36,9 +36,8 @@ class Converter(converter.BaseConverter):
             elif link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             elif link_url.startswith("onenote:"):
-                location = link_url[len("onenote:") :].split("§")[0]
-                section, page = location.split("#")
-                section = section[: -len(".one")]
+                section = Path(urlparse(link_url).path).stem
+                page = urlparse(link_url).fragment.split("&")[0]
                 note_links.append(imf.NoteLink(str(link), f"{section}/{page}", link.text))
             elif (file_path := note_path.parent / link_url).is_file():
                 if file_path.suffix != ".html":
@@ -158,6 +157,10 @@ class Converter(converter.BaseConverter):
 
     def convert(self, _file_or_folder: Path):
         # notebook > section > page
-        self.logger.debug(f"Using one2html from: {shutil.which('one2html')}")
+        shutil_path = shutil.which("one2html")
+        if shutil_path is None:
+            self.logger.error('"one2html" binary not found.')
+            return
+        self.logger.debug(f"Using one2html from: {shutil_path}")
         self.logger.debug(f'temp_folder: "{self.temp_folder}"')
         self.convert_notebook()
