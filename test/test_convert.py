@@ -153,6 +153,7 @@ class EndToEnd(unittest.TestCase):
             [["cherrytree/test_4/various_sources"]],
             [["cherrytree/test_5/Learning-Resources-Cherry-Tree"]],
             [["cherrytree/test_6/practice"]],
+            [["cherrytree/test_7/ZZZZZZ--table_test.ctd"]],
             [["clipto/test_1_frontmatter/clipto_backup_240401_105154.json"]],
             [["colornote/test_1_frontmatter/colornote-20241014.backup"]],
             [["day_one/test_1_frontmatter/Day.One.zip"]],

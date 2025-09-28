@@ -1,5 +1,6 @@
 """Convert cherrytree notes to the intermediate format."""
 
+from collections import defaultdict
 import logging
 from pathlib import Path
 import re
@@ -25,11 +26,11 @@ def convert_table(node):
             cell_text = "" if cell.text is None else cell.text.replace("\n", "<br>")
             columns.append(cell_text)
 
-        if row_index == 0:  # header row
+        if row_index == len(node) - 1:  # last row seems to be the header row
             table_md.header_rows.append(columns)
         else:
             table_md.data_rows.append(columns)
-    return table_md.create_md()
+    return "\n" + table_md.create_md() + "\n"
 
 
 def list_sub_function(matchobj) -> str:  # pylint: disable=too-many-return-statements
@@ -192,7 +193,7 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     # assemble the markdown
     resource_md = f"![{temp_filename.name}]({temp_filename})"
     resource_imf = imf.Resource(temp_filename, resource_md, temp_filename.name)
-    return resource_md + "\n", resource_imf
+    return resource_md, resource_imf
 
 
 class Converter(converter.BaseConverter):
@@ -203,14 +204,19 @@ class Converter(converter.BaseConverter):
         super().__init__(*args, **kwargs)
         self.bookmarked_nodes = []
 
+    @staticmethod
+    def get_offset(item) -> int:
+        return int(item.attrib.get("char_offset", -1))
+
     @common.catch_all_exceptions
     def convert_note(self, node, root_notebook: imf.Notebook):
         title = node.attrib.get("name", "")
         self.logger.debug(f'Converting note "{title}", parent "{root_notebook.title}"')
         note_imf = imf.Note(title, source_application=self.format)
 
+        char_offset = 0
+        offset_object_map = defaultdict(list)
         new_root_notebook = None  # only needed if there are sub notes
-        note_body = ""
         heading_on_line = False  # True if there is a heading on the same line.
         for child in node:
             match child.tag:
@@ -218,8 +224,10 @@ class Converter(converter.BaseConverter):
                     content_md, note_links_imf, heading_on_line = convert_rich_text(
                         child, heading_on_line
                     )
-                    note_body += content_md
                     note_imf.note_links.extend(note_links_imf)
+
+                    char_offset += 0 if child.text is None else len(child.text)
+                    offset_object_map[char_offset].append(content_md)
                 case "node":
                     # there are sub notes -> create notebook with same name as note
                     if new_root_notebook is None:
@@ -231,11 +239,14 @@ class Converter(converter.BaseConverter):
                     self.convert_note(child, new_root_notebook)
                 case "codebox":
                     language = child.attrib.get("syntax_highlighting", "")
-                    note_body += f"\n```{language}\n{child.text}\n```\n"
+                    codebox_md = f"\n```{language}\n{child.text}\n```\n"
+                    offset_object_map[self.get_offset(child)].append(codebox_md)
                 case "encoded_png":
                     # Seems to be used for plaintext tex, too?!
                     if child.attrib.get("filename", "") == "__ct_special.tex":
-                        note_body += f"\n```latex\n{child.text}\n```\n"
+                        offset_object_map[self.get_offset(child)].append(
+                            f"\n```latex\n{child.text}\n```\n"
+                        )
                         continue
                     if child.text is None and child.attrib.get("anchor"):
                         self.logger.debug(f"ignoring anchor {child.attrib.get('anchor')}")
@@ -243,14 +254,18 @@ class Converter(converter.BaseConverter):
                     # We could handle resources here already,
                     # but we do it later with the common function.
                     resource_md, resource_imf = convert_png(child, self.root_path)
-                    note_body += resource_md
+                    offset_object_map[self.get_offset(child)].append(resource_md)
                     note_imf.resources.append(resource_imf)
                 case "table":
-                    note_body += "\n" + convert_table(child) + "\n"
+                    offset_object_map[self.get_offset(child)].append(convert_table(child))
                 case _:
                     self.logger.debug(f"ignoring tag {child.tag}")
 
-        note_imf.body = note_body
+        note_body_list = []
+        for _offset, objects in sorted(offset_object_map.items()):
+            note_body_list.extend(objects)
+
+        note_imf.body = "".join(note_body_list)
 
         # cherrytree bookmark -> tag
         note_imf.original_id = node.attrib["unique_id"]

@@ -31,5 +31,4 @@ source_app: CherryTree
 
 - Cherrytree checked (`☑`) and crossed checkboxes (`☒`) are converted to Markdown checked checkboxes (`[x]`).
 - Cherrytree latex is converted to a Markdown code block.
-- Some cherrytree elements are not inserted at their original location, but at the end of the note. This is a limitation of cherrytree's export.
 - Cherrytree anchors are not converted.
