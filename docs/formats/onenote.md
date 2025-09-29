@@ -7,7 +7,7 @@ source_app: OneNote
 ## General Information
 
 - [Website](https://www.onenote.com/)
-- Typical extension: `.zip`
+- Typical extension: `.zip` or folder of `.zip` files
 
 ## Instructions
 

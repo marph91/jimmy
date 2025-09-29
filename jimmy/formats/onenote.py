@@ -13,6 +13,7 @@ import jimmy.md_lib.common
 
 class Converter(converter.BaseConverter):
     accepted_extensions = [".zip"]
+    accept_folder = True
 
     def __init__(self, config):
         super().__init__(config)
@@ -135,9 +136,9 @@ class Converter(converter.BaseConverter):
         # HTML -> Markdown
         self.convert_section_to_markdown(intermediate_html_folder, parent)
 
-    def convert_notebook(self):
+    def convert_notebook(self, root_path: Path):
         # Only single notebooks can be exported.
-        notebook_path = common.get_single_child_folder(self.root_path)
+        notebook_path = common.get_single_child_folder(root_path)
 
         root_notebook = imf.Notebook(notebook_path.stem)
         self.logger.debug(f'Converting notebook: "{root_notebook.title}"')
@@ -155,7 +156,15 @@ class Converter(converter.BaseConverter):
                 continue
             self.convert_section_and_toc(item, root_notebook)
 
-    def convert(self, _file_or_folder: Path):
+    def convert_file_or_folder(self, file_or_folder: Path):
+        if file_or_folder.is_file():
+            self.convert_notebook(self.root_path)
+        else:
+            for onenote_zip in file_or_folder.glob("*.zip"):
+                root_path = common.extract_zip(onenote_zip)
+                self.convert_notebook(root_path)
+
+    def convert(self, file_or_folder: Path):
         # notebook > section > page
         shutil_path = shutil.which("one2html")
         if shutil_path is None:
@@ -163,4 +172,4 @@ class Converter(converter.BaseConverter):
             return
         self.logger.debug(f"Using one2html from: {shutil_path}")
         self.logger.debug(f'temp_folder: "{self.temp_folder}"')
-        self.convert_notebook()
+        self.convert_file_or_folder(file_or_folder)
