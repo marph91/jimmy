@@ -287,8 +287,6 @@ PANDOC_OUTPUT_FORMAT = (
     "+all_symbols_escapable"
     # https://pandoc.org/chunkedhtml-demo/8.5-verbatim-code-blocks.html#extension-backtick_code_blocks
     "+backtick_code_blocks"
-    # https://pandoc.org/demo/example33/8.21-non-default-extensions.html#extension-four_space_rule
-    "+four_space_rule"
     # https://pandoc.org/chunkedhtml-demo/8.21-non-default-extensions.html#extension-mark
     "+mark"
     # https://pandoc.org/chunkedhtml-demo/8.9-tables.html#extension-pipe_tables
