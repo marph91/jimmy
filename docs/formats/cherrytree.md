@@ -17,14 +17,18 @@ source_app: CherryTree
 3. Convert to Markdown. Example: `jimmy-linux cli cherry.ctd --format cherrytree`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- CherryTree nodes are converted to Markdown notes.
-- If a CherryTree node contains sub nodes, a folder is created as container. It has the same name as the corresponding note.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 
 - Cherrytree checked (`☑`) and crossed checkboxes (`☒`) are converted to Markdown checked checkboxes (`[x]`).
 - Cherrytree latex is converted to a Markdown code block.
-- Some cherrytree elements are not inserted at their original location, but at the end of the note. This is a limitation of cherrytree's export.
 - Cherrytree anchors are not converted.

@@ -28,3 +28,13 @@ Selection from [the textbundle website](http://textbundle.org/#supporting-apps):
     2. `jimmy-linux cli "example.textpack" --format textbundle`
     3. `jimmy-linux cli folder/with/textbundles/ --format textbundle`
 4. [Import to your app](../import_instructions.md)
+
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

@@ -17,11 +17,18 @@ source_app: Anki
 3. Convert to Markdown. Example: `jimmy-linux cli MEILLEUR_DECK_ANGLAIS_3000.apkg --format anki`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ⬜ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ⬜ | |
+| Rich Text | ✅ | |
 
 - Decks are converted to folders.
 - Cards are converted to Markdown files. The content is the "answer" data.
-- Referenced resources (audio, images and other files) are converted.
 
 A converted page looks like:
 

@@ -19,7 +19,16 @@ source_app: Gnote and Tomboy-ng
     3. `jimmy-linux cli tomboy-ng/5E74990A-E93E-4A11-AEA2-0814A37FEE1A.note --format tomboy_ng`
 3. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ⬜ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Known Limitations
 
-- Note links are not exported.
-- Multiple formats are not converted properly.
+Multiple formats are not converted properly.

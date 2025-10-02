@@ -14,3 +14,13 @@ source_app: Obsidian
 1. [Install Jimmy](../index.md#installation)
 2. Convert to Markdown. Example: `jimmy-linux cli obsidian_vault/ --format obsidian`
 3. [Import to your app](../import_instructions.md)
+
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |

@@ -2,6 +2,9 @@
 
 import importlib
 import logging
+import os
+from pathlib import Path
+import shutil
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
@@ -18,6 +21,20 @@ from jimmy import (
 
 
 LOGGER = logging.getLogger("jimmy")
+
+
+def add_binaries_to_path():
+    # Extend the path here, since it's needed for CLI and TUI.
+    # Search for the local/pyinstaller binaries first.
+    # https://pyinstaller.org/en/stable/runtime-information.html#using-file
+    binaries_folder = str(Path(__file__).parent.parent / "bin")
+    if binaries_folder not in os.environ["PATH"]:
+        os.environ["PATH"] = binaries_folder + os.pathsep + os.environ["PATH"]
+
+    # Extend the path for "pydowndoc"
+    pydowndoc_bin_folder = str(Path(__file__).parent / "files/pydowndoc")
+    if pydowndoc_bin_folder not in os.environ["PATH"]:
+        os.environ["PATH"] += pydowndoc_bin_folder + os.pathsep + os.environ["PATH"]
 
 
 def setup_logging(custom_handlers: list | None = None):
@@ -40,6 +57,7 @@ def setup_logging(custom_handlers: list | None = None):
         for log in (
             "anyblock_exporter",
             "asyncio",
+            # "markdown_it",
             "pypandoc",
             "python-markdown",
             "watchdog",
@@ -89,7 +107,7 @@ def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
     return root_tree
 
 
-def get_pandoc_version():
+def get_pandoc_version() -> str:
     try:
         return pypandoc.get_pandoc_version()
     except OSError:
@@ -98,6 +116,7 @@ def get_pandoc_version():
 
 def run_conversion(config) -> common.Stats:
     LOGGER.info(f"Jimmy {version.VERSION} (Pandoc {get_pandoc_version()})")
+    LOGGER.debug(f"Using pandoc from: {shutil.which('pandoc')}")
     LOGGER.debug(f"{config=}")
     inputs_str = " ".join(map(str, config.input))
     LOGGER.info(f'Converting notes from "{inputs_str}"')

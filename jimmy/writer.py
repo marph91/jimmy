@@ -145,7 +145,7 @@ class FilesystemWriter:
         self.stats = stats
         self.note_id_map: dict[str, Path] = note_id_map
 
-    def update_resource_links(self, note: imf.Note, resource: imf.Resource):
+    def update_resource_links(self, note: imf.Note, resource: imf.Resource) -> bool:
         """Replace the original ID of resources with their path in the filesystem."""
         assert note.path is not None
         assert resource.path is not None
@@ -156,19 +156,35 @@ class FilesystemWriter:
         relative_path = get_quoted_relative_path(note.path.parent, resource.path)
         resource_markdown = f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
         if resource.original_text is None:
-            # append
-            note.body = f"{note.body}\n\n{resource_markdown}"
-        else:
-            # replace existing link
-            # Don't use re.subn(), because the link text may contein invalid characters.
-            if (replacement_count := note.body.count(resource.original_text)) == 0:
-                # escape first bracket to avoid rich formatting
-                resource_text = resource.original_text.replace("[", "\\[")
-                LOGGER.warning(
-                    f"Made {replacement_count} replacements. "
-                    f'Resource link may be corrupted: "{resource_text}".',
-                )
-            note.body = note.body.replace(resource.original_text, resource_markdown)
+            return False
+        # replace existing link
+        # Don't use re.subn(), because the link text may contein invalid characters.
+        if (replacement_count := note.body.count(resource.original_text)) == 0:
+            # escape first bracket to avoid rich formatting
+            resource_text = resource.original_text.replace("[", "\\[")
+            LOGGER.warning(
+                f"Made {replacement_count} replacements. "
+                f'Resource link may be corrupted: "{resource_text}".',
+            )
+            return False
+        note.body = note.body.replace(resource.original_text, resource_markdown)
+        return True
+
+    def append_resource_links(self, note: imf.Note, resources: imf.Resources):
+        """Append all resources that are not linked in the note (yet)"""
+        assert note.path is not None
+        unlinked_resources = ["", "", "## Unlinked Resources", ""]
+        for resource in resources:
+            assert resource.path is not None
+            resource_title = (
+                resource.title if resource.title not in [None, ""] else resource.filename.name
+            )
+
+            relative_path = get_quoted_relative_path(note.path.parent, resource.path)
+            resource_markdown = f"- {'!' * resource.is_image}[{resource_title}]({relative_path})"
+            unlinked_resources.append(resource_markdown)
+
+        note.body += "\n".join(unlinked_resources)
 
     def write_resource(self, resource: imf.Resource):
         # Resolve the source file path to avoid accessing deleted folders, like
@@ -194,9 +210,16 @@ class FilesystemWriter:
                 f'Note "{note.title}": could not find original link: "{note_link.original_text}"'
             )
 
-        link_title = note_link.title if note_link.title not in [None, ""] else note_link.original_id
-
         new_path = self.note_id_map.get(note_link.original_id)
+
+        # find the best note title
+        if note_link.title not in [None, ""]:
+            link_title = note_link.title
+        elif new_path is not None:
+            link_title = new_path.stem
+        else:
+            link_title = note_link.original_id
+
         if new_path is None:
             LOGGER.debug(
                 f'Note "{note.title}": could not find linked note: "{note_link.original_id}"',
@@ -205,7 +228,7 @@ class FilesystemWriter:
             )
             # Replace at least with the original ID as fallback.
             note.body = note.body.replace(
-                note_link.original_text, f"[{link_title}]({note_link.original_id})"
+                note_link.original_text, f"[{link_title}](broken-link {note_link.original_id})"
             )
             return
 
@@ -216,12 +239,19 @@ class FilesystemWriter:
     def write_note(self, note: imf.Note):
         # Handle resources and note links first, since the note body changes.
         # "dict.fromkeys()" to remove duplicated resources while retaining order.
+        unlinked_resources = []
         for resource in dict.fromkeys(note.resources):
             # Write resources first before updating the links, since the path
             # can change in case of duplication.
             self.write_resource(resource)
-            self.update_resource_links(note, resource)
+            success = self.update_resource_links(note, resource)
+            if not success:
+                unlinked_resources.append(resource)
             self.stats.resources += 1
+        # append unlinked resources
+        if unlinked_resources:
+            self.append_resource_links(note, unlinked_resources)
+
         for note_link in note.note_links:
             self.update_note_links(note, note_link)
             self.stats.note_links += 1

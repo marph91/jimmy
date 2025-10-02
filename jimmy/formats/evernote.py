@@ -41,7 +41,8 @@ class Converter(converter.BaseConverter):
             ):
                 # internal link
                 best_match_id = common.get_best_match(link.text, self.note_id_title_map)
-                note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
+                if best_match_id is not None:
+                    note_links.append(imf.NoteLink(str(link), best_match_id, link.text))
             elif link.url.startswith("data:image/") and "base64" in link.url:
                 # inline resource
                 base64_data = link.url.split("base64,", 1)[1]  # TODO: make more robust

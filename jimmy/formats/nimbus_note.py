@@ -18,15 +18,20 @@ class Converter(converter.BaseConverter):
         super().__init__(config)
         self._input_note_index = 0
         self.temp_folder = common.get_temp_folder()
+        self.note_title_map = {}
 
     def handle_markdown_links(
         self, note_body: str, root_folder: Path
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    ) -> tuple[str, imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(note_body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
+            # speciality of nimbus note: duplicated https
+            if link.url.startswith("https:https://"):
+                note_body = note_body.replace(link.url, link.url[len("https:") :])
+                continue
             if "nimbusweb.me" in link.url:
                 # internal link
                 # TODO: Get export file with internal links.
@@ -36,6 +41,8 @@ class Converter(converter.BaseConverter):
                 note_links.append(
                     imf.NoteLink(str(link), linked_note_name, link.text or linked_note_name)
                 )
+            elif link.url.startswith("#"):
+                continue  # internal link to heading
             elif (root_folder / link.url).is_file():
                 # resource
                 resources.append(imf.Resource(root_folder / link.url, str(link), link.text))
@@ -53,7 +60,15 @@ class Converter(converter.BaseConverter):
                         temp_filename.name,
                     )
                 )
-        return resources, note_links
+            elif (
+                other_resource_path := common.try_other_suffixes(root_folder / link.url)
+            ) is not None:
+                # last resort: sometimes the extension is changed and referenced incorrectly
+                resources.append(imf.Resource(other_resource_path, str(link), link.text))
+            else:
+                self.logger.warning(f'Resource "{root_folder / link.url}" does not exist.')
+
+        return note_body, resources, note_links
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent: imf.Notebook):
@@ -68,6 +83,9 @@ class Converter(converter.BaseConverter):
             self.logger.error("Export structure not implemented yet. Please report at Github.")
             return
 
+        if not (temp_folder_note / "assets").is_dir():
+            self.logger.warning('"assets" folder not found. Resources might be missing.')
+
         # HTML note seems to have the name "note.html" always
         note_html = (temp_folder_note / "note.html").read_text(encoding="utf-8")
 
@@ -79,25 +97,33 @@ class Converter(converter.BaseConverter):
             title = title_element.text
         else:
             title = file_.stem
+        self.note_title_map[title] = title
 
-        note_body_markdown = jimmy.md_lib.common.markup_to_markdown(
+        note_imf = imf.Note(title, source_application=self.format, original_id=title)
+
+        note_imf.body = jimmy.md_lib.common.markup_to_markdown(
             note_html,
             custom_filter=[
                 jimmy.md_lib.html_filter.nimbus_note_add_mark,
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_lists,
                 jimmy.md_lib.html_filter.nimbus_note_streamline_tables,
+                jimmy.md_lib.html_filter.nimbus_strip_images,
             ],
+        ).strip()
+        note_imf.body, note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+            note_imf.body, temp_folder_note
         )
-        resources, note_links = self.handle_markdown_links(note_body_markdown, temp_folder_note)
-        note_imf = imf.Note(
-            title,
-            note_body_markdown.strip(),
-            source_application=self.format,
-            resources=resources,
-            note_links=note_links,
-            original_id=title,
-        )
+
+        # append unreferenced resources
+        linked_resource_names = [r.filename.name for r in note_imf.resources]
+        if (temp_folder_note / "assets").is_dir():
+            for resource in (temp_folder_note / "assets").iterdir():
+                if resource.is_dir() or resource.name == "theme.css":
+                    continue
+                if resource.name not in linked_resource_names:
+                    note_imf.resources.append(imf.Resource(resource))
+
         parent.child_notes.append(note_imf)
 
     def convert_folder(self, file_or_folder: Path, parent: imf.Notebook):
@@ -109,11 +135,23 @@ class Converter(converter.BaseConverter):
             elif item.suffix == ".zip":
                 self.convert_note(item, parent)
 
+    def improve_note_links(self, parent_notebook: imf.Notebook):
+        for note in parent_notebook.child_notes:
+            for note_link in note.note_links:
+                best_match_id = common.get_best_match(note_link.original_id, self.note_title_map)
+                if best_match_id is not None:
+                    note_link.original_id = best_match_id
+        for notebook in parent_notebook.child_notebooks:
+            self.improve_note_links(notebook)
+
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix == ".zip":
             self.convert_note(file_or_folder, self.root_notebook)
         else:  # folder of .zip
             self.convert_folder(file_or_folder, self.root_notebook)
+
+        # second pass: fix odd note links
+        self.improve_note_links(self.root_notebook)
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()

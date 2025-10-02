@@ -18,12 +18,19 @@ source_format: Facebook posts and messages
 3. Convert to Markdown. Example: `jimmy-linux cli facebook-xyz-07.07.2024-m9lv24pS.zip --format facebook`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ⬜ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ⬜ | |
+| Rich Text | ✅ | |
 
 - Posts and messages are stored in separate notebooks.
 - Each post is converted to a separate note, starting with the creation date (`YYYY-MM-DD`).
 - Each conversation is a note. Messages are concatenated inside the note and separated by the day. Conversations may be split to prevent too big notes.
-- Referenced resources (audio, gif, photos, videos and other files) are converted.
 
 ## Known Limitations
 

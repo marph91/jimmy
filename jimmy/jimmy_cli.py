@@ -3,9 +3,7 @@
 import argparse
 import datetime
 import logging
-import os
 from pathlib import Path
-import sys
 
 from rich.logging import RichHandler
 
@@ -139,9 +137,7 @@ def main():
 
     config = parser.parse_args()
 
-    # Extend the path for "pydowndoc" here, since it's needed for CLI and TUI.
-    if getattr(sys, "frozen", False):
-        os.environ["PATH"] += os.pathsep + str(Path(__file__).parent / "files/pydowndoc")
+    jimmy.main.add_binaries_to_path()
 
     match config.interface:
         case None:

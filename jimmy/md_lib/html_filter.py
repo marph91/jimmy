@@ -54,6 +54,9 @@ def highlighting(soup: bs4.BeautifulSoup):
 def iframes_to_links(soup: bs4.BeautifulSoup):
     """Convert iframes to simple links."""
     for iframe in soup.find_all("iframe"):
+        if not iframe.attrs.get("src", ""):
+            iframe.decompose()
+            continue
         iframe.name = "a"
         if iframe.text is None or not iframe.text.strip():  # link without text
             iframe.string = iframe.attrs.get("title", iframe.attrs["src"])
@@ -189,7 +192,7 @@ def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
         "data-palette-bg-rgb",  # table cells
     ]:
         for highlighted_element in soup.find_all(attrs={highlight_attribute: True}):
-            if highlighted_element.attrs[highlight_attribute] == "transparent":
+            if highlighted_element.attrs[highlight_attribute] in ("transparent", "white"):
                 continue
             wrap_content(soup, highlighted_element, "mark")
 
@@ -199,16 +202,17 @@ def nimbus_note_add_note_links(soup: bs4.BeautifulSoup):
     for mention_link in soup.find_all("span", class_="mention-link"):
         if (mention_type := mention_link.attrs.get("data-mention-type", "")) != "note":
             LOGGER.debug(f"Unexpected mention type: {mention_type}")
-        if not (mention_name := mention_link.attrs.get("data-mention-name", "")):
-            LOGGER.debug("Couldn't add link. Link name is empty.")
+        if not (mention_name := mention_link.attrs.get("data-mention-name", "")) and not (
+            mention_name := mention_link.text
+        ):
+            LOGGER.debug("Couldn't add link. Link name and text is empty.")
             continue
         # TODO: check if linking by ID is possible
         mention_link.parent.replace_with(
             soup.new_tag(
                 "a",
                 attrs={"href": f"nimbusnote://{urllib.parse.quote(mention_name)}"},
-                # TODO: Fix escaping of angle brackets.
-                string=mention_link.get_text().replace("<", "-").replace(">", "-"),
+                string=mention_link.get_text(),
             )
         )
 
@@ -280,6 +284,15 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
             item.attrs = {}  # remove all attributes
             current_list.append(item)
 
+    # special case: single checkboxes in tables
+    for checkbox in soup.find_all("span", class_="checkbox-component"):
+        # Use the temporary strings here, because the checkbox brackets
+        # would be escaped by pandoc.
+        if "checked" in checkbox.get("class", []):
+            checkbox.string = "{TEMPORARYCHECKBOXCHECKED}"
+        else:
+            checkbox.string = "{TEMPORARYCHECKBOXUNCHECKED}"
+
 
 def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
     # remove:
@@ -311,6 +324,16 @@ def nimbus_note_streamline_tables(soup: bs4.BeautifulSoup):
                     col.decompose()  # first and second column
 
 
+def nimbus_strip_images(soup: bs4.BeautifulSoup):
+    # Strip all inline SVGs, since they add icons that are not visible in the original document.
+    for svg in soup.find_all("svg"):
+        svg.decompose()
+
+    # Strip file size information.
+    for file_size in soup.find_all("span", class_="file-size"):
+        file_size.decompose()
+
+
 def notion_streamline_lists(soup: bs4.BeautifulSoup):
     # Checklists are unnumbered lists with special classes.
     for list_ in soup.find_all("ul", class_="to-do-list"):
@@ -336,6 +359,21 @@ def remove_bold_header(soup: bs4.BeautifulSoup):
     for bold in find_all_bold(soup):
         for header in bold.find_all(HTML_HEADER_RE):
             header.unwrap()
+
+
+def remove_duplicated_links(soup: bs4.BeautifulSoup):
+    # They are linked twice. We only want one link.
+    # image links
+    for img in soup.find_all("img"):
+        img_src = img.attrs.get("src")
+        if img.parent.attrs.get("href", "") == img_src:
+            img.parent.unwrap()
+
+    # web links
+    for link in soup.find_all("a", href=True):
+        link_url = link.attrs.get("href", "")
+        for sublink in link.find_all("a", href=link_url):
+            sublink.unwrap()
 
 
 def remove_empty_elements(soup: bs4.BeautifulSoup):

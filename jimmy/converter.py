@@ -163,7 +163,7 @@ class DefaultConverter(BaseConverter):
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
-    def handle_markdown_links(self, body: str, path) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_markdown_links(self, body: str, path: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):

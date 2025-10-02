@@ -16,7 +16,15 @@ source_app: Turtl
 3. Convert to Markdown. Example: `jimmy-linux cli turtl-backup.json --format turtl`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 - Spaces are converted to folders.
 - Boards are converted to subfolders of the corresponding space.

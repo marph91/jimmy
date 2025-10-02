@@ -17,6 +17,16 @@ source_app: FuseBase and Nimbus Note
 3. Convert to Markdown. Example: `jimmy-linux cli nimbus_note/Example/ --format nimbus_note`
 4. [Import to your app](../import_instructions.md)
 
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
+
 ## Known Limitations
 
 - Comments and Tags aren't included in the exports.

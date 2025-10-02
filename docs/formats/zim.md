@@ -15,7 +15,15 @@ source_app: Zim Wiki
 2. Convert to Markdown. Example: `jimmy-linux cli zim/folder --format zim`
 3. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
+
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 Zim does a good job in [exporting to Markdown](https://zim-wiki.org/manual/Help/Export.html). If the built-in export is fine for you, you don't need to use Jimmy.
 

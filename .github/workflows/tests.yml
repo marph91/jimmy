@@ -22,12 +22,14 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - name: Install pip dependencies
-        run: pip install -r requirements/requirements-dev.txt
+      - name: Install dependencies
+        run: |
+          pip install -r requirements/requirements-dev.txt
+          python download_binaries.py
       - name: install optional system depencencies
         run: sudo apt install -y asciidoctor
       - name: Run tests
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
           PYTHONPATH: jimmy
-        run: pytest --capture=no
+        run: pytest --capture=no --numprocesses=auto

@@ -16,11 +16,15 @@ source_app: Cacher
 3. Convert to Markdown. Example: `jimmy-linux cli cacher-export-202406182304.json --format cacher`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Cacher labels are converted to tags.
-- Cacher snippets are converted to folders.
-- Cacher files are converted to Markdown notes.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ⬜ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 

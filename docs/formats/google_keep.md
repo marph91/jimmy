@@ -18,11 +18,15 @@ source_format: Google Keep notes
     2. `jimmy-linux cli takeout-20240401T160556Z-001.tgz --format google_keep`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Each note is converted to a Markdown file.
-- Links, attachments and tags are preserved. 
-- Annotations are appended at the end of a note.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ⬜ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 

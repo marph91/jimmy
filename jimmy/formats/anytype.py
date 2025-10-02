@@ -17,7 +17,6 @@ class Converter(converter.BaseConverter):
         pass
 
     def convert(self, file_or_folder: Path):
-        # TODO: fix duplicated nested output folder
         intermediate_markdown_folder = common.get_temp_folder() / self.output_folder
 
         anytype_converter = AnytypeConverter(self.root_path, intermediate_markdown_folder)
@@ -26,4 +25,7 @@ class Converter(converter.BaseConverter):
         # read the markdown again to respect settings like a custom resource folder
         markdown_converter = converter.DefaultConverter(self._config)
         markdown_converter.root_notebook = self.root_notebook
-        markdown_converter.convert(intermediate_markdown_folder)
+        # Iterate over intermediate output instead of passing it directly
+        # to "convert()" to prevent duplicated root folder.
+        for item in sorted(intermediate_markdown_folder.iterdir()):
+            markdown_converter.convert(item)

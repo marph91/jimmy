@@ -17,11 +17,15 @@ source_app: Day One
 3. Convert to Markdown. Example: `jimmy-linux cli Export-Tagebuch.zip --format day_one`
 4. [Import to your app](../import_instructions.md)
 
-## Import Structure
+## Compatibility
 
-- Each day is converted to a notebook.
-- Entries are converted to notes and grouped into the corresponding notebook of that day.
-- Referenced Audios, PDF, photos and videos are imported as resources.
+| Feature | Supported? | Remark |
+| --- | :---: | --- |
+| Attachments / Images / Resources | ✅ | |
+| Labels / Tags | ✅ | |
+| Note Links | ✅ | |
+| Notebook / Folder Hierarchy | ✅ | |
+| Rich Text | ✅ | |
 
 ## Known Limitations
 

@@ -11,7 +11,7 @@ from PyInstaller.utils.hooks import collect_data_files
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
 datas = []
 datas += collect_data_files("anyblock_exporter")
-datas += collect_data_files("pypandoc")
+datas += [("bin", "bin")]  # pandoc and one2html
 datas += ((shutil.which("downdoc"), "files/pydowndoc"),)
 
 
@@ -45,7 +45,7 @@ match os.getenv("RUNNER_MACHINE"):
         system += "-new-glibc"
     case "ubuntu-22.04-arm":
         system += "-" + platform.machine().lower()
-    case "macos-latest" | "macos-13":
+    case "macos-latest" | "macos-15-intel":
         # Differentiate between ARM and Intel based Macs.
         system += "-" + platform.machine().lower()
 executable_name = f"jimmy-{system}"

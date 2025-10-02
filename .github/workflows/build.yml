@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:        
+      - "**"
     paths-ignore:
       - "**.md"
   pull_request:
@@ -25,17 +27,16 @@ jobs:
       matrix:
         # available images: https://github.com/actions/runner-images?tab=readme-ov-file#available-images
         # "macos-latest" to support ARM based MACs
-        # "macos-13" to support Intel based MACs
-        # "ubuntu-latest" just for testing if there is an issue with newer glibc
+        # "macos-15-intel" to support Intel based MACs
         # "ubuntu-22.04" to get the lowest possible glibc version for compatibility
-        os: ["windows-latest", "ubuntu-latest", "ubuntu-22.04", "ubuntu-22.04-arm", "macos-latest", "macos-13"]
-        # build "macos-13" executable only at release
+        os: ["windows-latest", "ubuntu-22.04", "macos-latest", "macos-15-intel"]
+        # build "macos-15-intel" executable only at release
         # https://github.com/orgs/community/discussions/26253?sort=top#discussioncomment-3250989
         is_release:
           - ${{ startsWith(github.ref, 'refs/tags/v') }}
         exclude:
           - is_release: false
-            os: "macos-13"
+            os: "macos-15-intel"
           - is_release: false
             os: "ubuntu-latest"
     steps:
@@ -50,7 +51,9 @@ jobs:
           python-version: "3.13"
       - name: Install dependencies
         # install only the really required modules before the pyinstaller build
-        run: pip install -r requirements/requirements-build.txt
+        run: |
+          pip install -r requirements/requirements-build.txt
+          python download_binaries.py
       - name: Build executables with pyinstaller
         run: |
           python -m PyInstaller jimmy.spec
@@ -83,6 +86,8 @@ jobs:
           ./jimmy* cli ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
           # anytype module
           ./jimmy* cli ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype
+          # onenote conversion with bundled executable
+          ./jimmy* cli ../test/data/test_data/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip --format onenote --stdout-log-level DEBUG
       # - name: Scan for viruses (just for information)
       #   if: runner.os == 'Linux'
       #   run: |

@@ -27,7 +27,8 @@ class EndToEnd(unittest.TestCase):
         console_handler.setFormatter(console_handler_formatter)
         console_handler.setLevel("DEBUG")
         jimmy.main.setup_logging(custom_handlers=[console_handler])
-        # jimmy.main.setup_logging()
+
+        jimmy.main.add_binaries_to_path()
 
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
@@ -152,13 +153,14 @@ class EndToEnd(unittest.TestCase):
             [["cherrytree/test_4/various_sources"]],
             [["cherrytree/test_5/Learning-Resources-Cherry-Tree"]],
             [["cherrytree/test_6/practice"]],
+            [["cherrytree/test_7/ZZZZZZ--table_test.ctd"]],
             [["clipto/test_1_frontmatter/clipto_backup_240401_105154.json"]],
             [["colornote/test_1_frontmatter/colornote-20241014.backup"]],
             [["day_one/test_1_frontmatter/Day.One.zip"]],
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
             [["diaro/test_1_frontmatter/Diaro_20250821.zip"]],
-            [["drafts/test_1_frontmatter/DraftsExport.draftsExport"]],
+            [["drafts/test_1_frontmatter/Drafts-2025-09-21-21-50.draftsExport"]],
             [["dynalist/test_1_frontmatter/dynalist-backup-2024-04-12.zip"]],
             [["evernote/test_1_frontmatter/obsidian-importer"]],
             [["evernote/test_2/joplin"]],
@@ -182,6 +184,8 @@ class EndToEnd(unittest.TestCase):
             [["notion/test_5/67e39a7b-e75e-4dcb-9181-56ce222d3430_Export.zip"]],
             [["notion/test_6/notion-testspace.zip"]],
             [["obsidian/test_1_frontmatter/vault"]],
+            [["onenote/test_1_frontmatter/OneDrive_2025-09-28.zip"]],
+            [["onenote/test_2/onenoters"]],
             # can't test with frontmatter - git doesn't preserve timestamps
             # https://github.com/actions/checkout/issues/364#issuecomment-812618265
             [["qownnotes/test_1/note_folder"]],
