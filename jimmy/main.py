@@ -31,6 +31,11 @@ def add_binaries_to_path():
     if binaries_folder not in os.environ["PATH"]:
         os.environ["PATH"] = binaries_folder + os.pathsep + os.environ["PATH"]
 
+    # Extend the path for "pydowndoc"
+    pydowndoc_bin_folder = str(Path(__file__).parent / "files/pydowndoc")
+    if pydowndoc_bin_folder not in os.environ["PATH"]:
+        os.environ["PATH"] += pydowndoc_bin_folder + os.pathsep + os.environ["PATH"]
+
 
 def setup_logging(custom_handlers: list | None = None):
     LOGGER.handlers.clear()
