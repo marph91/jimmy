@@ -5,8 +5,8 @@ markdown==3.8.2
 platformdirs==4.3.8
 puremagic==1.30
 pydantic==2.11.7
-Pydowndoc==1.3.2
-Pydowndoc-bin==1.0.2.post2004003001
+Pydowndoc==1.4.1
+Pydowndoc-bin==1.0.2.post2005002001
 pypandoc_binary==1.15
 pyparsing==3.2.3
 python-frontmatter==1.1.0
