@@ -56,3 +56,7 @@ jimmy-linux cli path/to/folder
 | Note Links | ✅ | |
 | Notebook / Folder Hierarchy | ✅ | |
 | Rich Text | ✅ | |
+
+## Acknowledgements
+
+The converter is based largely on [Pandoc](https://pandoc.org/). Thanks for developing it!

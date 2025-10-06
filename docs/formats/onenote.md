@@ -28,3 +28,7 @@ source_app: OneNote
 
 - OneNote notebooks and sections are converted to folders.
 - OneNote pages are converted to files.
+
+## Acknowledgements
+
+The converter is based on [one2html](https://github.com/msiemens/one2html) and the single file executable [onenote.rs.exe](https://github.com/marph91/onenote.rs.exe). Thanks for developing it!
