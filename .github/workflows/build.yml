@@ -62,7 +62,9 @@ jobs:
         # release only if there is a release tag
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
-          files: ./dist/jimmy*
+          files: |
+            ./dist/jimmy*
+            ./bin/copyright.pandoc
       - name: Check executable size
         shell: bash
         run: ls -lh ./dist
