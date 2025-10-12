@@ -129,6 +129,80 @@ def link_internal_headings(soup: bs4.BeautifulSoup):
         element.attrs["href"] = "#" + _to_markdown_header_id(linked_element.text)
 
 
+INLINE_FORMATTING_TAGS = [
+    "b",
+    "cite",
+    "code",
+    "del",
+    "em",
+    "i",
+    "ins",
+    "mark",
+    "s",
+    "strike",
+    "strong",
+    "sub",
+    "sup",
+    "tt",
+    "u",
+]
+
+
+def merge_consecutive_formatting(soup: bs4.BeautifulSoup):
+    for inline_formatting_tag in INLINE_FORMATTING_TAGS:
+        for tag in soup.find_all(inline_formatting_tag):
+            # first case: parent element has the tag already
+            if tag.find_parents(inline_formatting_tag):
+                # TODO: move this to a separate function
+                tag.unwrap()  # remove tag, if any parent element has the tag already
+                continue
+
+            # second case: previous element has the same tag
+            if (
+                tag.previous_sibling is not None
+                and tag.previous_sibling.name == inline_formatting_tag
+            ):
+                tag.previous_sibling.append(tag)
+                tag.unwrap()
+
+            # third case: previous element of the parent element has the same tag
+            if len(tuple(itertools.chain(tag.previous_siblings, tag.next_siblings))) > 0:
+                # Apply only if this is the only tag at this level.
+                # Else some additional splitting would be needed.
+                continue
+
+            toplevel_with_siblings = tag
+
+            # find the next parent element with siblings
+            while True:
+                toplevel_with_siblings = toplevel_with_siblings.parent
+                if (
+                    toplevel_with_siblings is None
+                    or len(
+                        tuple(
+                            itertools.chain(
+                                toplevel_with_siblings.previous_siblings,
+                                toplevel_with_siblings.next_siblings,
+                            )
+                        )
+                    )
+                    > 0
+                ):
+                    break
+            if toplevel_with_siblings is None:
+                continue
+
+            # check if it has the same tag
+            if (
+                toplevel_with_siblings.previous_sibling is not None
+                and toplevel_with_siblings.previous_sibling.name == inline_formatting_tag
+            ):
+                # Merge the elements with same formatting and remove the duplicated formatting
+                # afterwards.
+                toplevel_with_siblings.previous_sibling.append(toplevel_with_siblings)
+                tag.unwrap()
+
+
 def merge_single_element_lists(soup: bs4.BeautifulSoup):
     """
     Notion lists and odt lists sometimes contain only one item.
@@ -151,33 +225,16 @@ def merge_single_element_lists(soup: bs4.BeautifulSoup):
 def multiline_markup(soup: bs4.BeautifulSoup):
     for linebreak in soup.find_all(["br", "p"]):
         # https://www.w3schools.com/html/html_formatting.asp
-        match linebreak.parent.name:
-            case (
-                "b"
-                | "cite"
-                | "code"
-                | "del"
-                | "em"
-                # TODO: "font"
-                | "i"
-                | "ins"
-                | "s"
-                | "strike"
-                | "strong"
-                | "sub"
-                | "sup"
-                | "tt"
-                | "u"
+        if linebreak.parent.name in INLINE_FORMATTING_TAGS:
+            # wrap all siblings
+            for linebreak_sibling in itertools.chain(
+                linebreak.previous_siblings, linebreak.next_siblings
             ):
-                # wrap all siblings
-                for linebreak_sibling in itertools.chain(
-                    linebreak.previous_siblings, linebreak.next_siblings
-                ):
-                    if linebreak_sibling.name not in ("br", "p"):
-                        linebreak_sibling.wrap(soup.new_tag(linebreak.parent.name))
-                linebreak.parent.unwrap()
-            case "h1" | "h2" | "h3" | "h4" | "h5" | "h6":
-                linebreak.decompose()
+                if linebreak_sibling.name not in ("br", "p"):
+                    linebreak_sibling.wrap(soup.new_tag(linebreak.parent.name))
+            linebreak.parent.unwrap()
+        elif linebreak.parent.name in ("h1", "h2", "h3", "h4", "h5", "h6"):
+            linebreak.decompose()
 
 
 def nimbus_note_add_mark(soup: bs4.BeautifulSoup):
