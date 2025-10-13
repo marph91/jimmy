@@ -22,7 +22,7 @@ pp.ParserElement.set_default_whitespace_chars("")
 # - pp.ParserElement.enable_packrat() -> seems to be even slower
 # - use regex instead of chaining
 multiline_quote_re = re.compile(r"<<<\n([\S\s]*?)\n<<<(.*)")
-link_re = re.compile(r"\[(ext|img)?.*\[(.*)\]\]")
+link_re = re.compile(r"\[(ext|img)?.*?\[(.*?)\]\]")
 list_re = re.compile(r"^([*#>]+) ", re.MULTILINE)
 table_row_re = re.compile(r"\|(.*?)\|([kchf])?\n")
 
