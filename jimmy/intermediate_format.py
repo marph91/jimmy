@@ -10,6 +10,7 @@ import re
 
 import frontmatter
 import pydantic
+import yaml
 
 from jimmy import common
 
@@ -191,7 +192,7 @@ class Note:
                             # See: https://github.com/laurent22/joplin/issues/11179
                             metadata["tags"] = sorted(tag.title.lower() for tag in self.tags)
                 post = frontmatter.Post(self.body, **metadata)
-                self.body = frontmatter.dumps(post)
+                self.body = frontmatter.dumps(post, Dumper=yaml.Dumper)
             case "obsidian":
                 # frontmatter format:
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
