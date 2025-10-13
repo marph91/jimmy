@@ -177,6 +177,10 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     # ruff: noqa: E501
     # doctest has too long lines
     r"""
+    TODO:
+    get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
+    get_markdown_links('<<list "[Plug](tiddlywiki://Plug) -[dr.of](tiddlywiki://dr.of)">>')
+
     >>> get_markdown_links("![](image.png)")
     [MarkdownLink(text='', url='image.png', title='', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")

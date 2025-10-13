@@ -216,10 +216,12 @@ class EndToEnd(unittest.TestCase):
             [["textbundle/test_4/Textbundle Example v1.textbundle"]],
             [["textbundle/test_5/Textbundle Example v2.textbundle"]],
             [["textbundle/test_6/multiple_files"]],
+            # a subset of test_1 is in test_5
             # [["tiddlywiki/test_1/tiddlers.json"]],
-            [["tiddlywiki/test_2_frontmatter/Deserializers.tid"]],
+            [["tiddlywiki/test_2_frontmatter/deserializers"]],
             [["tiddlywiki/test_3/Plugins.tid"]],
             [["tiddlywiki/test_4/html_folder"]],
+            [["tiddlywiki/test_5/tiddlers.json"]],
             [["tomboy_ng/test_1_frontmatter/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["turtl/test_1_frontmatter/turtl-backup.json"]],

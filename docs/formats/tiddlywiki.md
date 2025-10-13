@@ -13,7 +13,7 @@ source_app: TiddlyWiki
 
 1. Export as described [at the website](https://tiddlywiki.com/#How%20to%20export%20tiddlers)
     1. Choose "JSON file" if you want to export the complete wiki
-    2. Choose "TID text file" if you want to export a single tiddler only. Resources and internal links won't be converted in this case.
+    2. Choose "TID text file" if you want to export a single tiddler only. Resources won't be converted in this case.
 2. [Install Jimmy](../index.md#installation)
 3. Convert to Markdown. Examples:
     1. `jimmy-linux cli tiddlers.json --format tiddlywiki`
@@ -27,7 +27,7 @@ source_app: TiddlyWiki
 | --- | :---: | --- |
 | Attachments / Images / Resources | ✅ | |
 | Labels / Tags | ✅ | |
-| Note Links | ⬜ | |
+| Note Links | ✅ | |
 | Notebook / Folder Hierarchy | ✅ | |
 | Rich Text | ✅ | |
 

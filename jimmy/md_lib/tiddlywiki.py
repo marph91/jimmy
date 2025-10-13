@@ -75,9 +75,14 @@ def link():
         try:
             title, url = content.split("|", maxsplit=1)
         except ValueError:
-            title = ""
+            title = content
             url = content
-        return f"{prefix}[{title}]({url})"
+
+        md_link = jimmy.md_lib.common.MarkdownLink(url=url)
+        if type_ == "ext" or prefix or md_link.is_web_link or md_link.is_mail_link:
+            return f"{prefix}[{title}]({url})"
+        # guess that it's a wikilink
+        return f"{prefix}[{title}](tiddlywiki://{url})"
 
     return pp.Regex(link_re, as_group_list=True).set_parse_action(to_md)
 
@@ -170,23 +175,25 @@ def wikitext_to_md(wikitext: str) -> str:
     >>> wikitext_to_md("----\n---")
     '---\n---'
     >>> wikitext_to_md("[img[Motovun Jack.jpg]]")
-    '![](Motovun Jack.jpg)'
+    '![Motovun Jack.jpg](Motovun Jack.jpg)'
     >>> wikitext_to_md("[img[https://tiddlywiki.com/favicon.ico]]")
-    '![](https://tiddlywiki.com/favicon.ico)'
+    '![https://tiddlywiki.com/favicon.ico](https://tiddlywiki.com/favicon.ico)'
     >>> wikitext_to_md("[img[An explanatory tooltip|Motovun Jack.jpg]]")
     '![An explanatory tooltip](Motovun Jack.jpg)'
     >>> wikitext_to_md("abc [img[a|b.jpg]] def")
     'abc ![a](b.jpg) def'
     >>> wikitext_to_md("[img width=32 class='tc-image' [Motovun Jack.jpg]]")
-    '![](Motovun Jack.jpg)'
+    '![Motovun Jack.jpg](Motovun Jack.jpg)'
     >>> wikitext_to_md("link to [[Tiddler Title]]")
-    'link to [](Tiddler Title)'
+    'link to [Tiddler Title](tiddlywiki://Tiddler Title)'
     >>> wikitext_to_md("[[Displayed Link Title|Tiddler Title]]")
-    '[Displayed Link Title](Tiddler Title)'
+    '[Displayed Link Title](tiddlywiki://Tiddler Title)'
     >>> wikitext_to_md("abc [[TW5|https://tiddlywiki.com/]]")
     'abc [TW5](https://tiddlywiki.com/)'
     >>> wikitext_to_md("[[Mail me|mailto:me@where.net]] def")
     '[Mail me](mailto:me@where.net) def'
+    >>> wikitext_to_md("[[mailto:me@where.net]] def")
+    '[mailto:me@where.net](mailto:me@where.net) def'
     >>> wikitext_to_md("[[Open file|file:///c:/users/me/index.html]]")
     '[Open file](file:///c:/users/me/index.html)'
     >>> wikitext_to_md("[ext[Open file|index.html]]")
@@ -197,6 +204,10 @@ def wikitext_to_md(wikitext: str) -> str:
     '[Open file](../README.md) def'
     >>> wikitext_to_md("[ext[Open file|c:\\users\\me\\index.html]]")
     '[Open file](c:\\users\\me\\index.html)'
+    >>> wikitext_to_md("[ext[https://www.bvb.de/]]")
+    '[https://www.bvb.de/](https://www.bvb.de/)'
+    >>> wikitext_to_md("text1 [[title 1|link 1]] text2 [[link2]] text3")
+    'text1 [title 1](tiddlywiki://link 1) text2 [link2](tiddlywiki://link2) text3'
     >>> wikitext_to_md("* First item\n* Second item\n** Subitem\n* Third list item")
     '* First item\n* Second item\n    * Subitem\n* Third list item'
     >>> wikitext_to_md("# Step 1\n# Step 2\n## Step2.1\n# Step 3")

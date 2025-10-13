@@ -140,6 +140,15 @@ class Converter(converter.BaseConverter):
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
+    def handle_markdown_links(self, body: str) -> imf.NoteLinks:
+        note_links = []
+        for link in jimmy.md_lib.common.get_markdown_links(body):
+            if link.url.startswith("tiddlywiki://"):
+                # internal link
+                linked_note_id = link.url[len("tiddlywiki://") :]
+                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
+        return note_links
+
     def convert_json(self, file_or_folder: Path):
         input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
         for tiddler in input_json:
@@ -180,6 +189,8 @@ class Converter(converter.BaseConverter):
                 # Tags don't have a separate id. Just use the name as id.
                 tags=[imf.Tag(tag) for tag in split_tags(tiddler.get("tags", ""))],
                 resources=resources,
+                note_links=self.handle_markdown_links(body),
+                original_id=title,
             )
             if "created" in tiddler:
                 note_imf.created = tiddlywiki_to_datetime(tiddler["created"])
@@ -206,14 +217,17 @@ class Converter(converter.BaseConverter):
         title = metadata["title"]
         self.logger.debug(f'Converting note "{title}"')
 
+        body = wikitext_html_to_md(body_wikitext)
         note_imf = imf.Note(
             title,
-            wikitext_html_to_md(body_wikitext),
+            body,
             author=metadata.get("creator"),
             source_application=self.format,
             tags=[imf.Tag(tag) for tag in split_tags(metadata.get("tags", ""))],
             created=tiddlywiki_to_datetime(metadata["created"]),
             updated=tiddlywiki_to_datetime(metadata["modified"]),
+            note_links=self.handle_markdown_links(body),
+            original_id=title,
         )
         self.root_notebook.child_notes.append(note_imf)
 
