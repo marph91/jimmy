@@ -167,7 +167,12 @@ class LinkExtractor(Treeprocessor):
 class LinkExtractorExtension(Extension):
     def extendMarkdown(self, md):  # noqa: N802
         link_extension = LinkExtractor(md)
+        # priority:
+        # https://python-markdown.github.io/reference/markdown/treeprocessors/#markdown.treeprocessors.build_treeprocessors
         md.treeprocessors.register(link_extension, "link_extension", 15)
+        # deregister default, but unneeded treeprocessors
+        md.treeprocessors.deregister("prettify")
+        md.treeprocessors.deregister("unescape")
 
 
 MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
@@ -175,12 +180,15 @@ MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
 
 def get_markdown_links(text: str) -> list[MarkdownLink]:
     # ruff: noqa: E501
+    # pylint: disable=line-too-long
     # doctest has too long lines
     r"""
-    TODO:
-    get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
-    get_markdown_links('<<list "[Plug](tiddlywiki://Plug) -[dr.of](tiddlywiki://dr.of)">>')
-
+    >>> get_markdown_links('```\n[link](:/custom)\n```')
+    []
+    >>> get_markdown_links('`[link](:/custom)`')
+    []
+    >>> get_markdown_links('[link](url://with spaces)')
+    [MarkdownLink(text='link', url='url://with spaces', title='', is_image=False)]
     >>> get_markdown_links("![](image.png)")
     [MarkdownLink(text='', url='image.png', title='', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")
@@ -202,6 +210,16 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     [MarkdownLink(text='red\\_500x500.png', url='', title='', is_image=False)]
     >>> get_markdown_links('[\\<weblink\\>]()')
     [MarkdownLink(text='\\<weblink\\>', url='', title='', is_image=False)]
+
+    # TODO:
+    # >>> get_markdown_links('[`link`](:/custom)')
+    # [MarkdownLink(text='`link`', url=':/custom', title='', is_image=False)]
+    # >>> get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
+    # [MarkdownLink(text='<DIV>.tiddler file format', url='tiddlywiki://TiddlerFiles',
+    #  title='', is_image=False)]
+    # >>> get_markdown_links('<<list "[Plug](Plug) -[dr.of](dr.of)">>')  # doctest: +NORMALIZE_WHITESPACE
+    # [MarkdownLink(text='Plug', url='Plug', title='', is_image=False),
+    #  MarkdownLink(text='dr.of', url='dr.of', title='', is_image=False)]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member
