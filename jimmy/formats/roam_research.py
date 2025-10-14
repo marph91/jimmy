@@ -54,14 +54,14 @@ class Converter(converter.BaseConverter):
 
         note_imf = imf.Note(
             title,
-            created=common.timestamp_to_datetime(
-                page.get("create-time", page["edit-time"]) // (10**3)
-            ),
-            updated=common.timestamp_to_datetime(page["edit-time"] // (10**3)),
             original_id=page["uid"],
             source_application=self.format,
             # TODO: are there resources?
         )
+        if (created_time := page.get("create-time")) is not None:
+            note_imf.created = common.timestamp_to_datetime(created_time // (10**3))
+        if (updated_time := page.get("edit-time")) is not None:
+            note_imf.updated = common.timestamp_to_datetime(updated_time // (10**3))
 
         body_roam, block_ids = self.parse_children(page.get("children", []))
 
