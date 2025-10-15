@@ -2,6 +2,7 @@
 
 import logging
 import re
+import urllib.parse
 
 import pyparsing as pp
 
@@ -79,6 +80,16 @@ def link():
             url = content
 
         md_link = jimmy.md_lib.common.MarkdownLink(url=url)
+
+        # wrap files with special characters in angle brackets
+        if (
+            type_ == "ext"
+            and not md_link.is_web_link
+            and not md_link.is_mail_link
+            and urllib.parse.quote(url) != url
+        ):
+            url = f"<{url}>"
+
         if type_ == "ext" or prefix or md_link.is_web_link or md_link.is_mail_link:
             return f"{prefix}[{title}]({url})"
         # guess that it's a wikilink
@@ -202,8 +213,10 @@ def wikitext_to_md(wikitext: str) -> str:
     'abc [Open file](./index.html)'
     >>> wikitext_to_md("[ext[Open file|../README.md]] def")
     '[Open file](../README.md) def'
+    >>> wikitext_to_md("[ext[Open file|../README Space.md]] def")
+    '[Open file](<../README Space.md>) def'
     >>> wikitext_to_md("[ext[Open file|c:\\users\\me\\index.html]]")
-    '[Open file](c:\\users\\me\\index.html)'
+    '[Open file](<c:\\users\\me\\index.html>)'
     >>> wikitext_to_md("[ext[https://www.bvb.de/]]")
     '[https://www.bvb.de/](https://www.bvb.de/)'
     >>> wikitext_to_md("text1 [[title 1|link 1]] text2 [[link2]] text3")
