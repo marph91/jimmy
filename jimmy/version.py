@@ -1,3 +1,3 @@
 """Contains the current version of Jimmy."""
 
-VERSION = "1.1.2"
+VERSION = "1.1.3"
