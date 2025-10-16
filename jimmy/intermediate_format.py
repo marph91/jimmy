@@ -7,6 +7,7 @@ import datetime as dt
 import logging
 from pathlib import Path
 import re
+import string
 
 import frontmatter
 import pydantic
@@ -113,6 +114,23 @@ class Tag:
         return self.original_id or self.title
 
 
+class NoteFormatter(string.Formatter):
+    def get_value(self, key: int | str, args, kwargs):
+        match key:
+            case "note_links" | "resources" | "tags":
+                return [item.title for item in kwargs.get(key, []) if item.title.strip()]
+            case _:
+                if (value := kwargs.get(key)) is not None:
+                    return value
+                # Insert "null", since the template is primarily intended for yaml.
+                return "null"
+
+    def format_field(self, value, format_spec):
+        if value == "null":
+            return "null"  # don't try to format yaml null value
+        return super().format_field(value, format_spec)
+
+
 @pydantic.dataclasses.dataclass
 class Note:
     """Represents a note."""
@@ -156,19 +174,17 @@ class Note:
     def apply_template(self, template: str):
         available_variables = self.custom_metadata
         for field in dataclasses.fields(Note):
-            if field.name in ("note_links", "resources", "tags"):
-                available_variables[field.name] = [
-                    tag.title for tag in getattr(self, field.name) if tag.title.strip()
-                ]
-            else:
-                if (value := getattr(self, field.name)) is not None:
-                    available_variables[field.name] = value
-                else:
-                    available_variables[field.name] = "null"  # yaml format
+            available_variables[field.name] = getattr(self, field.name)
         try:
-            self.body = template.format(**available_variables)
+            self.body = NoteFormatter().format(template, **available_variables)
         except KeyError as exc:
-            LOGGER.warning(f"Metadata is not available ({exc}). Ignoring template.")
+            LOGGER.warning(
+                f'Note "{self.title}": Metadata is not available ({exc}). Ignoring template.'
+            )
+        except ValueError as exc:
+            LOGGER.warning(
+                f'Note "{self.title}": Unable to format metadata ({exc}). Ignoring template.'
+            )
 
     def apply_frontmatter(self, frontmatter_: str):
         match frontmatter_:
