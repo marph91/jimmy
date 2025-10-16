@@ -10,6 +10,7 @@ import logging
 from pathlib import Path
 import pkgutil
 import random
+import re
 import tarfile
 import tempfile
 import time
@@ -230,6 +231,66 @@ def is_image(file_: Path) -> bool:
         return puremagic.from_file(file_, mime=True).startswith("image/")
     except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
         return False
+
+
+PASCAL_CASE_RE = re.compile("^(?:[A-Z][a-z]+)+$")
+
+
+def is_pascal_case(value: str) -> bool:
+    """
+    https://stackoverflow.com/a/10182901/7410886
+
+    >>> is_pascal_case("camel")
+    False
+    >>> is_pascal_case("camelCase")
+    False
+    >>> is_pascal_case("CamelCase")
+    True
+    >>> is_pascal_case("CAMelCAse")
+    False
+    >>> is_pascal_case("CAMELCASE")
+    False
+    >>> is_pascal_case("camelcase")
+    False
+    >>> is_pascal_case("Camelcase")
+    True
+    >>> is_pascal_case("Case")
+    True
+    >>> is_pascal_case("camel_case")
+    False
+    >>> is_pascal_case("snake-case")
+    False
+    >>> is_pascal_case("Some words")
+    False
+    >>> is_pascal_case("~HelloThere")
+    False
+
+    # TODO: non-ascii
+    # >>> is_pascal_case("Привет")
+    # True
+    # >>> is_pascal_case("ПриветЛол")
+    # True
+    # >>> is_pascal_case("Привет, я Лол.")
+    # False
+    """
+    return bool(PASCAL_CASE_RE.match(value))
+
+
+def to_pascal_case(value: str) -> str:
+    """
+    https://stackoverflow.com/a/8347192/7410886
+
+    >>> to_pascal_case("abc")
+    'Abc'
+    >>> to_pascal_case("make IT pascal CaSe")
+    'MakeItPascalCase'
+    >>> to_pascal_case("PascalCase")
+    'PascalCase'
+    """
+    # TODO: How to handle punctuation?
+    if is_pascal_case(value):
+        return value
+    return value.title().replace(" ", "")
 
 
 def md5_hash(file_: Path | str) -> str | None:

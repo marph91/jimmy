@@ -140,6 +140,8 @@ class Converter(converter.BaseConverter):
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
 
+        self.pascalcase_title_note_id_map = {}
+
     def handle_markdown_links(self, body: str) -> imf.NoteLinks:
         note_links = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
@@ -154,6 +156,8 @@ class Converter(converter.BaseConverter):
         for tiddler in input_json:
             title = tiddler["title"]
             self.logger.debug(f'Converting note "{title}"')
+
+            self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
 
             resources = []
             mime = tiddler.get("type", "")
@@ -217,6 +221,8 @@ class Converter(converter.BaseConverter):
         title = metadata["title"]
         self.logger.debug(f'Converting note "{title}"')
 
+        self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
+
         body = wikitext_html_to_md(body_wikitext)
         note_imf = imf.Note(
             title,
@@ -231,6 +237,31 @@ class Converter(converter.BaseConverter):
         )
         self.root_notebook.child_notes.append(note_imf)
 
+    def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
+        # Replace all words that are in PascalCase and matching to a note title by links.
+        if notebook is None:
+            notebook = self.root_notebook
+        for note in notebook.child_notes:
+            pascal_case_links = set()
+            new_note_body_list = []
+            for word in note.body.split(" "):
+                if common.is_pascal_case(word) and word in self.pascalcase_title_note_id_map:
+                    pascal_case_links.add(word)
+                    new_note_body_list.append(f"[{word}](tiddlywiki://{word})")
+                else:
+                    new_note_body_list.append(word)
+            for link in pascal_case_links:
+                note.note_links.append(
+                    imf.NoteLink(
+                        f"[{link}](tiddlywiki://{link})",
+                        self.pascalcase_title_note_id_map[link],
+                        link,
+                    )
+                )
+            note.body = " ".join(new_note_body_list)
+        for child_notebook in notebook.child_notebooks:
+            self.handle_pascal_case_links(child_notebook)
+
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix == ".json":
             self.convert_json(file_or_folder)
@@ -239,3 +270,7 @@ class Converter(converter.BaseConverter):
         else:  # folder of .tid
             for tid_file in sorted(file_or_folder.glob("*.tid")):
                 self.convert_note(tid_file)
+
+        # second pass: handle PascalCase links
+        # https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html
+        self.handle_pascal_case_links()

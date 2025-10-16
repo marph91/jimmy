@@ -27,7 +27,7 @@ source_app: TiddlyWiki
 | --- | :---: | --- |
 | Attachments / Images / Resources | ✅ | |
 | Labels / Tags | ✅ | |
-| Note Links | ✅ | PascalCase links are not converted |
+| Note Links | ✅ | Including [PascalCase links](https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html) |
 | Notebook / Folder Hierarchy | ✅ | |
 | Rich Text | ✅ | |
 
