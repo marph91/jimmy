@@ -238,18 +238,26 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
-        # Replace all words that are in PascalCase and matching to a note title by links.
+        """
+        Replace all words that are in PascalCase and matching to a note title by links.
+
+        TiddlyWiki implementation:
+        https://github.com/TiddlyWiki/TiddlyWiki5/blob/61619c07c810108601cd08634928b3f91d0ed269/plugins/tiddlywiki/tw2parser/wikitextrules.js#L25-L30
+        """
         if notebook is None:
             notebook = self.root_notebook
         for note in notebook.child_notes:
             pascal_case_links = set()
-            new_note_body_list = []
-            for word in note.body.split(" "):
-                if common.is_pascal_case(word) and word in self.pascalcase_title_note_id_map:
-                    pascal_case_links.add(word)
-                    new_note_body_list.append(f"[{word}](tiddlywiki://{word})")
-                else:
-                    new_note_body_list.append(word)
+            new_note_body_lines = []
+            for line in note.body.split("\n"):
+                new_line = []
+                for word in line.split(" "):
+                    if common.is_pascal_case(word) and word in self.pascalcase_title_note_id_map:
+                        pascal_case_links.add(word)
+                        new_line.append(f"[{word}](tiddlywiki://{word})")
+                    else:
+                        new_line.append(word)
+                new_note_body_lines.append(" ".join(new_line))
             for link in pascal_case_links:
                 note.note_links.append(
                     imf.NoteLink(
@@ -258,7 +266,7 @@ class Converter(converter.BaseConverter):
                         link,
                     )
                 )
-            note.body = " ".join(new_note_body_list)
+            note.body = "\n".join(new_note_body_lines)
         for child_notebook in notebook.child_notebooks:
             self.handle_pascal_case_links(child_notebook)
 
