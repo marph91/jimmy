@@ -237,12 +237,18 @@ class Converter(converter.BaseConverter):
         )
         self.root_notebook.child_notes.append(note_imf)
 
+    @staticmethod
+    def count_upper_case_letters(word: str) -> int:
+        return sum(1 for character in word if character.isupper())
+
     def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
         """
         Replace all words that are in PascalCase and matching to a note title by links.
 
         TiddlyWiki implementation:
         https://github.com/TiddlyWiki/TiddlyWiki5/blob/61619c07c810108601cd08634928b3f91d0ed269/plugins/tiddlywiki/tw2parser/wikitextrules.js#L25-L30
+        Simplified: "(?:(?:[A-Z]+[a-z]+[A-Z][A-Za-z]*)|(?:[A-Z]{2,}[a-z]+))"
+        I.e. single words like Camel are not linked.
         """
         if notebook is None:
             notebook = self.root_notebook
@@ -252,7 +258,11 @@ class Converter(converter.BaseConverter):
             for line in note.body.split("\n"):
                 new_line = []
                 for word in line.split(" "):
-                    if common.is_pascal_case(word) and word in self.pascalcase_title_note_id_map:
+                    if (
+                        common.is_pascal_case(word)
+                        and self.count_upper_case_letters(word) > 1
+                        and word in self.pascalcase_title_note_id_map
+                    ):
                         pascal_case_links.add(word)
                         new_line.append(f"[{word}](tiddlywiki://{word})")
                     else:
