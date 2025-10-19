@@ -4,6 +4,7 @@ import dataclasses
 import logging
 from pathlib import Path
 import re
+import xml.etree.ElementTree as ET
 
 from bs4 import BeautifulSoup
 import markdown
@@ -159,6 +160,13 @@ class LinkExtractor(Treeprocessor):
                 url = title  # don't add a title if there is no url
                 title = ""
             text = "" if link.text is None else link.text
+            # Convert any remaining HTML nodes back to Markdown.
+            # This might alter the original link text.
+            text += markup_to_markdown(
+                "".join(
+                    ET.tostring(child, encoding="unicode", method="html") for child in list(link)
+                )
+            )
             self.md.links.append(
                 MarkdownLink(self.unescape(text), self.unescape(url), self.unescape(title))
             )
@@ -183,6 +191,9 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     # pylint: disable=line-too-long
     # doctest has too long lines
     r"""
+    >>> import logging
+    >>> logging.getLogger().setLevel("INFO")
+    >>> jimmy.main.add_binaries_to_path()  # hack to provide pandoc
     >>> get_markdown_links('```\n[link](:/custom)\n```')
     []
     >>> get_markdown_links('`[link](:/custom)`')
@@ -210,10 +221,12 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     [MarkdownLink(text='red\\_500x500.png', url='', title='', is_image=False)]
     >>> get_markdown_links('[\\<weblink\\>]()')
     [MarkdownLink(text='\\<weblink\\>', url='', title='', is_image=False)]
+    >>> get_markdown_links('[foo `bar` baz](:/custom)')
+    [MarkdownLink(text='foo `bar` baz', url=':/custom', title='', is_image=False)]
+    >>> get_markdown_links('[foo **`nested` bar** *baz* pow](:/custom)')
+    [MarkdownLink(text='foo **`nested` bar** *baz* pow', url=':/custom', title='', is_image=False)]
 
     # TODO:
-    # >>> get_markdown_links('[`link`](:/custom)')
-    # [MarkdownLink(text='`link`', url=':/custom', title='', is_image=False)]
     # >>> get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
     # [MarkdownLink(text='<DIV>.tiddler file format', url='tiddlywiki://TiddlerFiles',
     #  title='', is_image=False)]
