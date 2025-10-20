@@ -11,6 +11,7 @@ from pathlib import Path
 import pkgutil
 import random
 import re
+import string
 import tarfile
 import tempfile
 import time
@@ -286,10 +287,23 @@ def to_pascal_case(value: str) -> str:
     'MakeItPascalCase'
     >>> to_pascal_case("PascalCase")
     'PascalCase'
+    >>> to_pascal_case("camelCase")
+    'Camelcase'
+    >>> to_pascal_case("snake_case")
+    'SnakeCase'
+    >>> to_pascal_case("kebab-case")
+    'KebabCase'
+    >>> to_pascal_case("PascalCase).")
+    'PascalCase'
+    >>> to_pascal_case("PascalCase,")
+    'PascalCase'
     """
     # TODO: How to handle punctuation?
+    value = value.strip(string.punctuation)
     if is_pascal_case(value):
         return value
+    for punctuation in string.punctuation:
+        value = value.replace(punctuation, " ")
     return value.title().replace(" ", "")
 
 

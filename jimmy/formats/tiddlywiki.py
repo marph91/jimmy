@@ -5,6 +5,7 @@ from html.parser import HTMLParser
 import logging
 import json
 from pathlib import Path
+import string
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
@@ -131,6 +132,39 @@ def split_tags(tag_string: str) -> list[str]:
     return final_tags
 
 
+def count_upper_case_letters(word: str) -> int:
+    """
+    >>> count_upper_case_letters("PascalCase")
+    2
+    >>> count_upper_case_letters("Pascalcase")
+    1
+    >>> count_upper_case_letters("")
+    0
+    """
+    return sum(1 for character in word if character.isupper())
+
+
+def is_escaped_link(word: str) -> bool:
+    """
+    >>> is_escaped_link("JavaScript")
+    False
+    >>> is_escaped_link("JavaScript~")
+    False
+    >>> is_escaped_link("~JavaScript")
+    True
+    >>> is_escaped_link("(~JavaScript")
+    True
+    >>> is_escaped_link("~(JavaScript")
+    True
+    """
+    for character in word:
+        if character == "~":
+            return True
+        if character in string.ascii_letters:
+            return False
+    return False
+
+
 class Converter(converter.BaseConverter):
     accepted_extensions = [".json", ".tid"]
     accept_folder = True
@@ -237,10 +271,6 @@ class Converter(converter.BaseConverter):
         )
         self.root_notebook.child_notes.append(note_imf)
 
-    @staticmethod
-    def count_upper_case_letters(word: str) -> int:
-        return sum(1 for character in word if character.isupper())
-
     def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
         """
         Replace all words that are in PascalCase and matching to a note title by links.
@@ -258,13 +288,22 @@ class Converter(converter.BaseConverter):
             for line in note.body.split("\n"):
                 new_line = []
                 for word in line.split(" "):
+                    if is_escaped_link(word):
+                        new_line.append(word)
+                        continue  # escaped link
+                    word_no_punctuation = word.strip(string.punctuation)
                     if (
-                        common.is_pascal_case(word)
-                        and self.count_upper_case_letters(word) > 1
-                        and word in self.pascalcase_title_note_id_map
+                        common.is_pascal_case(word_no_punctuation)
+                        and count_upper_case_letters(word_no_punctuation) > 1
+                        and word_no_punctuation in self.pascalcase_title_note_id_map
                     ):
-                        pascal_case_links.add(word)
-                        new_line.append(f"[{word}](tiddlywiki://{word})")
+                        pascal_case_links.add(word_no_punctuation)
+                        new_line.append(
+                            word.replace(
+                                word_no_punctuation,
+                                f"[{word_no_punctuation}](tiddlywiki://{word_no_punctuation})",
+                            )
+                        )
                     else:
                         new_line.append(word)
                 new_note_body_lines.append(" ".join(new_line))
