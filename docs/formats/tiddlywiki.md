@@ -26,7 +26,7 @@ source_app: TiddlyWiki
 | Feature | Supported? | Remark |
 | --- | :---: | --- |
 | Attachments / Images / Resources | ✅ | |
-| Labels / Tags | ✅ | |
+| Labels / Tags | ✅ | Tags are added as links in the first line and additionally to the metadata. |
 | Note Links | ✅ | Including [PascalCase links](https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html) |
 | Notebook / Folder Hierarchy | ✅ | |
 | Rich Text | ✅ | |

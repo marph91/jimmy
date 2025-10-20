@@ -176,6 +176,17 @@ class Converter(converter.BaseConverter):
 
         self.pascalcase_title_note_id_map = {}
 
+    @staticmethod
+    def add_tags_to_body(note: imf.Note):
+        """In Tiddlywiki, tags are links. This function replicates this behavior."""
+        if note.tags:
+            tags_md = []
+            for tag in note.tags:
+                tag_link = f"[{tag.title}]({tag.title})"
+                tags_md.append(tag_link)
+                note.note_links.append(imf.NoteLink(tag_link, tag.title, tag.title))
+            note.body = ", ".join(tags_md) + "\n\n" + note.body
+
     def handle_markdown_links(self, body: str) -> imf.NoteLinks:
         note_links = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
@@ -236,6 +247,7 @@ class Converter(converter.BaseConverter):
                 note_imf.updated = tiddlywiki_to_datetime(tiddler["modified"])
             if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
                 continue  # skip notes with special tags
+            self.add_tags_to_body(note_imf)
             self.root_notebook.child_notes.append(note_imf)
 
     @common.catch_all_exceptions
@@ -269,6 +281,7 @@ class Converter(converter.BaseConverter):
             note_links=self.handle_markdown_links(body),
             original_id=title,
         )
+        self.add_tags_to_body(note_imf)
         self.root_notebook.child_notes.append(note_imf)
 
     def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
