@@ -222,6 +222,7 @@ class EndToEnd(unittest.TestCase):
             [["tiddlywiki/test_3/Plugins.tid"]],
             [["tiddlywiki/test_4/html_folder"]],
             [["tiddlywiki/test_5/tiddlers.json"]],
+            [["tiddlywiki/test_6/daniel-spurious-alerts.json"]],
             [["tomboy_ng/test_1_frontmatter/gnote"]],
             [["tomboy_ng/test_2/tomboy-ng"]],
             [["turtl/test_1_frontmatter/turtl-backup.json"]],

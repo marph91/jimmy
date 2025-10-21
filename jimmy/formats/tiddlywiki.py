@@ -169,6 +169,10 @@ class Converter(converter.BaseConverter):
     accepted_extensions = [".json", ".tid"]
     accept_folder = True
 
+    ############################################################
+    # common functions
+    ############################################################
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder
@@ -195,94 +199,6 @@ class Converter(converter.BaseConverter):
                 linked_note_id = link.url[len("tiddlywiki://") :]
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
         return note_links
-
-    def convert_json(self, file_or_folder: Path):
-        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
-        for tiddler in input_json:
-            title = tiddler["title"]
-            self.logger.debug(f'Converting note "{title}"')
-
-            self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
-
-            resources = []
-            mime = tiddler.get("type", "")
-            if mime == "image/svg+xml":
-                continue  # TODO
-            if mime.startswith("image/") or mime == "application/pdf" or mime == "audio/mp3":
-                if (text_base64 := tiddler.get("text")) is not None:
-                    # Use the original filename if possible.
-                    resource_title = tiddler.get("alt-text")
-                    temp_filename = self.resource_folder / (
-                        common.unique_title() if resource_title is None else resource_title
-                    )
-                    temp_filename = common.write_base64(temp_filename, text_base64)
-                    body = f"![{temp_filename.name}]({temp_filename})"
-                    resources.append(imf.Resource(temp_filename, body, resource_title))
-                elif (source := tiddler.get("source")) is not None:
-                    body = f"![{title}]({source})"
-                elif (uri := tiddler.get("_canonical_uri")) is not None:
-                    body = f"[{title}]({uri})"
-                else:
-                    body = wikitext_html_to_md(tiddler.get("text", ""))
-                    self.logger.warning(f"Unhandled attachment type {mime}")
-            elif mime == "application/json":
-                body = "```\n" + tiddler.get("text", "") + "\n```"
-            else:
-                body = wikitext_html_to_md(tiddler.get("text", ""))
-
-            note_imf = imf.Note(
-                title,
-                body,
-                author=tiddler.get("creator"),
-                source_application=self.format,
-                # Tags don't have a separate id. Just use the name as id.
-                tags=[imf.Tag(tag) for tag in split_tags(tiddler.get("tags", ""))],
-                resources=resources,
-                note_links=self.handle_markdown_links(body),
-                original_id=title,
-            )
-            if "created" in tiddler:
-                note_imf.created = tiddlywiki_to_datetime(tiddler["created"])
-            if "modified" in tiddler:
-                note_imf.updated = tiddlywiki_to_datetime(tiddler["modified"])
-            if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
-                continue  # skip notes with special tags
-            self.add_tags_to_body(note_imf)
-            self.root_notebook.child_notes.append(note_imf)
-
-    @common.catch_all_exceptions
-    def convert_note(self, file_or_folder: Path):
-        tiddler = file_or_folder.read_text(encoding="utf-8")
-        try:
-            metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)
-        except ValueError:
-            metadata_raw = ""
-            body_wikitext = tiddler
-
-        metadata = {}
-        for line in metadata_raw.split("\n"):
-            key, value = line.split(": ", 1)
-            metadata[key] = value
-
-        title = metadata["title"]
-        self.logger.debug(f'Converting note "{title}"')
-
-        self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
-
-        body = wikitext_html_to_md(body_wikitext)
-        note_imf = imf.Note(
-            title,
-            body,
-            author=metadata.get("creator"),
-            source_application=self.format,
-            tags=[imf.Tag(tag) for tag in split_tags(metadata.get("tags", ""))],
-            created=tiddlywiki_to_datetime(metadata["created"]),
-            updated=tiddlywiki_to_datetime(metadata["modified"]),
-            note_links=self.handle_markdown_links(body),
-            original_id=title,
-        )
-        self.add_tags_to_body(note_imf)
-        self.root_notebook.child_notes.append(note_imf)
 
     def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
         """
@@ -331,6 +247,106 @@ class Converter(converter.BaseConverter):
             note.body = "\n".join(new_note_body_lines)
         for child_notebook in notebook.child_notebooks:
             self.handle_pascal_case_links(child_notebook)
+
+    ############################################################
+    # .json conversion
+    ############################################################
+
+    @common.catch_all_exceptions
+    def convert_note_json(self, tiddler):
+        title = tiddler["title"]
+        self.logger.debug(f'Converting note "{title}"')
+
+        self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
+
+        resources = []
+        mime = tiddler.get("type", "")
+        if mime == "image/svg+xml":
+            return  # TODO
+        if mime.startswith("image/") or mime == "application/pdf" or mime == "audio/mp3":
+            if (text_base64 := tiddler.get("text")) is not None:
+                # Use the original filename if possible.
+                resource_title = tiddler.get("alt-text")
+                temp_filename = self.resource_folder / (
+                    common.unique_title() if resource_title is None else resource_title
+                )
+                temp_filename = common.write_base64(temp_filename, text_base64)
+                body = f"![{temp_filename.name}]({temp_filename})"
+                resources.append(imf.Resource(temp_filename, body, resource_title))
+            elif (source := tiddler.get("source")) is not None:
+                body = f"![{title}]({source})"
+            elif (uri := tiddler.get("_canonical_uri")) is not None:
+                body = f"[{title}]({uri})"
+            else:
+                body = wikitext_html_to_md(tiddler.get("text", ""))
+                self.logger.warning(f"Unhandled attachment type {mime}")
+        elif mime == "application/json":
+            body = "```\n" + tiddler.get("text", "") + "\n```"
+        else:
+            body = wikitext_html_to_md(tiddler.get("text", ""))
+
+        note_imf = imf.Note(
+            title,
+            body,
+            author=tiddler.get("creator"),
+            source_application=self.format,
+            # Tags don't have a separate id. Just use the name as id.
+            tags=[imf.Tag(tag) for tag in split_tags(tiddler.get("tags", ""))],
+            resources=resources,
+            note_links=self.handle_markdown_links(body),
+            original_id=title,
+        )
+        if "created" in tiddler:
+            note_imf.created = tiddlywiki_to_datetime(tiddler["created"])
+        if "modified" in tiddler:
+            note_imf.updated = tiddlywiki_to_datetime(tiddler["modified"])
+        if any(t.reference_id.startswith("$:/tags/") for t in note_imf.tags):
+            return  # skip notes with special tags
+        self.add_tags_to_body(note_imf)
+        self.root_notebook.child_notes.append(note_imf)
+
+    def convert_json(self, file_or_folder: Path):
+        input_json = json.loads(file_or_folder.read_text(encoding="utf-8"))
+        for tiddler in input_json:
+            self.convert_note_json(tiddler)
+
+    ############################################################
+    # .tid conversion
+    ############################################################
+
+    @common.catch_all_exceptions
+    def convert_note(self, file_or_folder: Path):
+        tiddler = file_or_folder.read_text(encoding="utf-8")
+        try:
+            metadata_raw, body_wikitext = tiddler.split("\n\n", maxsplit=1)
+        except ValueError:
+            metadata_raw = ""
+            body_wikitext = tiddler
+
+        metadata = {}
+        for line in metadata_raw.split("\n"):
+            key, value = line.split(": ", 1)
+            metadata[key] = value
+
+        title = metadata["title"]
+        self.logger.debug(f'Converting note "{title}"')
+
+        self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
+
+        body = wikitext_html_to_md(body_wikitext)
+        note_imf = imf.Note(
+            title,
+            body,
+            author=metadata.get("creator"),
+            source_application=self.format,
+            tags=[imf.Tag(tag) for tag in split_tags(metadata.get("tags", ""))],
+            created=tiddlywiki_to_datetime(metadata["created"]),
+            updated=tiddlywiki_to_datetime(metadata["modified"]),
+            note_links=self.handle_markdown_links(body),
+            original_id=title,
+        )
+        self.add_tags_to_body(note_imf)
+        self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix == ".json":
