@@ -158,6 +158,11 @@ def table():
                 table_md.header_rows.append(cells)
             else:
                 table_md.data_rows.append(cells)
+
+        # If there is no header, convert the first data row to a header row.
+        if not table_md.header_rows and table_md.data_rows:
+            table_md.header_rows.append(table_md.data_rows.pop(0))
+
         return table_md.create_md() + "\n"
 
     return pp.Regex(table_row_re, as_group_list=True)[1, ...].set_parse_action(to_md)
