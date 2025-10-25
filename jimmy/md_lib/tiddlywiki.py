@@ -64,15 +64,16 @@ def horizontal_line():
 
 def link():
     def to_md(_, t):  # noqa
-        type_, content = t[0]
-        match type_:
-            case "img":
-                prefix = "!"
-            case "ext" | None:
-                prefix = ""
-            case _:
-                LOGGER.debug(f"Unknown link type: {type_}")
-                return content
+        extended, content = t[0]
+        is_external = extended is not None and extended.startswith("ext")
+        is_image = extended is not None and extended.startswith("img")
+        if extended is None or is_external:
+            prefix = ""
+        elif is_image:
+            prefix = "!"
+        else:
+            LOGGER.debug(f"Unknown link extended: {extended}")
+            return content
         try:
             title, url = content.split("|", maxsplit=1)
         except ValueError:
@@ -83,14 +84,14 @@ def link():
 
         # wrap files with special characters in angle brackets
         if (
-            type_ == "ext"
+            is_external
             and not md_link.is_web_link
             and not md_link.is_mail_link
             and urllib.parse.quote(url) != url
         ):
             url = f"<{url}>"
 
-        if type_ == "ext" or prefix or md_link.is_web_link or md_link.is_mail_link:
+        if is_external or is_image or md_link.is_web_link or md_link.is_mail_link:
             return f"{prefix}[{title}]({url})"
         # guess that it's a wikilink
         return f"{prefix}[{title}](tiddlywiki://{url})"
@@ -239,15 +240,15 @@ def wikitext_to_md(wikitext: str) -> str:
     >>> wikitext_to_md("|!Cell1 |!Cell2 |\n|Cell3 |Cell4 |\n")
     '| Cell1 | Cell2 |\n| --- | --- |\n| Cell3 | Cell4 |\n'
     >>> wikitext_to_md("|C1 |C2 |C3 |\n|C4 |C5 |<|\n|C6 |~|C7 |\n|>|C8 |C9 |\n")
-    '| C1 | C2 | C3 |\n| C4 | C5 |  |\n| C6 |  | C7 |\n|  | C8 | C9 |\n'
+    '| C1 | C2 | C3 |\n| --- | --- | --- |\n| C4 | C5 |  |\n| C6 |  | C7 |\n|  | C8 | C9 |\n'
     >>> wikitext_to_md("|^t l |^t c |^ t r|\n|m l |m c | m r|\n|,b l |, b c |,b r|\n")
-    '| t l | t c | t r |\n| m l | m c | m r |\n| b l | b c | b r |\n'
+    '| t l | t c | t r |\n| --- | --- | --- |\n| m l | m c | m r |\n| b l | b c | b r |\n'
     >>> wikitext_to_md("|cls|k\n|caption |c\n|C1 |C2|\n|C3|C4 |\n|H1|H2|h\n|F1|F2|f\n")
     'caption\n\n| H1 | H2 |\n| --- | --- |\n| C1 | C2 |\n| C3 | C4 |\n| F1 | F2 |\n'
     >>> wikitext_to_md("- ''modifier''\n- __underlined__")
     '- **modifier**\n- ++underlined++'
     >>> wikitext_to_md("|C1 |''modifier''|\n")
-    '| C1 | **modifier** |\n'
+    '| C1 | **modifier** |\n| --- | --- |\n'
     """
     wikitext_markup = (
         # basic formatting:
