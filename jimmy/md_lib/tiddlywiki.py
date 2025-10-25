@@ -23,7 +23,7 @@ pp.ParserElement.set_default_whitespace_chars("")
 # - pp.ParserElement.enable_packrat() -> seems to be even slower
 # - use regex instead of chaining
 multiline_quote_re = re.compile(r"<<<\n([\S\s]*?)\n<<<(.*)")
-link_re = re.compile(r"\[(ext|img)?.*?\[(.*?)\]\]")
+link_re = re.compile(r"\[(ext|img.*?)?\[(.*?)\]\]")
 list_re = re.compile(r"^([*#>]+) ", re.MULTILINE)
 table_row_re = re.compile(r"\|(.*?)\|([kchf])?\n")
 
@@ -221,6 +221,8 @@ def wikitext_to_md(wikitext: str) -> str:
     '[https://www.bvb.de/](https://www.bvb.de/)'
     >>> wikitext_to_md("text1 [[title 1|link 1]] text2 [[link2]] text3")
     'text1 [title 1](tiddlywiki://link 1) text2 [link2](tiddlywiki://link2) text3'
+    >>> wikitext_to_md("`[]`, [[Links|Links]], [[Filters|Filters]]")
+    '`[]`, [Links](tiddlywiki://Links), [Filters](tiddlywiki://Filters)'
     >>> wikitext_to_md("* First item\n* Second item\n** Subitem\n* Third list item")
     '* First item\n* Second item\n    * Subitem\n* Third list item'
     >>> wikitext_to_md("# Step 1\n# Step 2\n## Step2.1\n# Step 3")
