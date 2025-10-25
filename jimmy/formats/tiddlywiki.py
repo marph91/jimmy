@@ -14,6 +14,168 @@ import jimmy.md_lib.tiddlywiki
 LOGGER = logging.getLogger("jimmy")
 
 
+# https://developer.mozilla.org/en-US/docs/Glossary/Void_element
+HTML_VOID_ELEMENTS = (
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+)
+
+# https://tiddlywiki.com/static/Variables.html
+# https://tiddlywiki.com/static/Core%2520Variables.html
+TIDDLYWIKI_CORE_VARIABLES = (
+    "actionTiddler",
+    "actionTiddlerList",
+    "currentTab",
+    "currentTiddler",
+    "modifier",
+    "namespace",
+    "storyTiddler",
+    "thisTiddler",
+    "transclusion",
+    "tv-history-list",
+    "tv-show-missing-links",
+    "tv-story-list",
+    "tv-tiddler-preview",
+    "tv-adjust-heading-level",
+    "tv-auto-open-on-import",
+    "tv-config-static",
+    "tv-config-toolbar-class",
+    "tv-config-toolbar-icons",
+    "tv-config-toolbar-text",
+    "tv-filter-export-link",
+    "tv-get-export-image-link",
+    "tv-get-export-link",
+    "tv-get-export-path",
+    "tv-wikilink-template",
+    "tv-wikilink-tooltip",
+    "tv-wikilinks",
+)
+# https://tiddlywiki.com/static/Core%2520Widgets.html
+TIDDLYWIKI_CORE_WIDGETS = (
+    "action-confirm",
+    "action-createtiddler",
+    "action-deletefield",
+    "action-deletetiddler",
+    "action-listops",
+    "action-log",
+    "action-navigate",
+    "action-popup",
+    "action-sendmessage",
+    "action-setfield",
+    "action-setmultiplefields",
+    "ActionWidget Execution Modes",
+    "ActionWidgets",
+    "browse",
+    # "button",  # TODO: button is a valid HTML tag, too
+    "checkbox",
+    "codeblock",
+    "count",
+    "data",
+    "diff-text",
+    "draggable",
+    "droppable",
+    "dropzone",
+    "edit-bitmap",
+    "edit-text",
+    "edit",
+    "encrypt",
+    "entity",
+    "error",
+    "EventCatcherWidget",
+    "fieldmangler",
+    "fields",
+    "fill",
+    "genesis",
+    "image",
+    "importvariables",
+    "jsontiddler",
+    "keyboard",
+    "let",
+    "linkcatcher",
+    "link",
+    "list",
+    "LogWidget",
+    "macrocall",
+    "MessageCatcherWidget",
+    "MessageHandlerWidgets",
+    "navigator",
+    "parameters",
+    "password",
+    "vars",
+    "radio",
+    "range",
+    "reveal",
+    "scrollable",
+    "select",
+    "setmultiplevariables",
+    "setvariable",
+    "set",
+    "slot",
+    "testcase",
+    "text",
+    "tiddler",
+    "transclude",
+    "TriggeringWidgets",
+    "vars",
+    "view",
+    "wikify",
+)
+# https://tiddlywiki.com/static/Core%2520Macros.html
+TIDDLYWIKI_CORE_MACROS = (
+    "changecount",
+    "colour",
+    "colour-picker",
+    "contrastcolour",
+    "copy-to-clipboard",
+    "csvtiddlers",
+    "datauri",
+    "dumpvariables",
+    "image-picker",
+    "jsontiddler",
+    "jsontiddlers",
+    "keyboard-driven-input",
+    "lingo",
+    "list-links",
+    "list-links-draggable",
+    "list-tagged-draggable",
+    "list-thumbnails",
+    "Macros",
+    "makedatauri",
+    "now",
+    "qualify",
+    "resolvepath",
+    "show-filter-count",
+    "Stylesheet Macros",
+    "Table-of-Contents Macros",
+    "tabs",
+    "tag",
+    "tag-picker",
+    "tag-pill",
+    "thumbnail",
+    "timeline",
+    "translink",
+    "tree",
+    "unusedtitle",
+    "version",
+)
+TIDDLYWIKI_CORE_ELEMENTS = tuple(
+    element.lower()
+    for element in TIDDLYWIKI_CORE_VARIABLES + TIDDLYWIKI_CORE_WIDGETS + TIDDLYWIKI_CORE_MACROS
+)
+
+
 class MarkdownHtmlSeparator(HTMLParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,35 +184,36 @@ class MarkdownHtmlSeparator(HTMLParser):
         self.html = []
 
     def handle_starttag(self, tag, attrs):
-        # ignore void elements: https://developer.mozilla.org/en-US/docs/Glossary/Void_element
-        if tag not in (
-            "area",
-            "base",
-            "br",
-            "col",
-            "embed",
-            "hr",
-            "img",
-            "input",
-            "link",
-            "meta",
-            "param",
-            "source",
-            "track",
-            "wbr",
-        ):
-            self.active_html_tags.append(tag)
+        # collect attributes
         attributes_html = []
         for key, value in attrs:
-            attributes_html.append(f' {key}="{value}"')
+            # TODO: case is lost
+            if value is None:
+                attributes_html.append(f" {key}")
+            else:
+                attributes_html.append(f' {key}="{value}"')
         attributes_html_string = "".join(attributes_html)
+
+        if tag in TIDDLYWIKI_CORE_ELEMENTS:  # both are lower case
+            # keep as-is
+            self.md.append(f"<{tag}{attributes_html_string}>")
+            return
+
+        # ignore void elements
+        if tag not in HTML_VOID_ELEMENTS:
+            self.active_html_tags.append(tag)
         self.html.append(f"<{tag}{attributes_html_string}>")
 
     def handle_endtag(self, tag):
-        if not self.active_html_tags:
+        if tag in HTML_VOID_ELEMENTS:
+            self.html.append(f"</{tag}>")
+        elif not self.active_html_tags:
             LOGGER.debug(f'Unexpected closing tag "{tag}"')
         elif (opening_tag := self.active_html_tags.pop(-1)) != tag:
-            LOGGER.warning(f'Closing tag "{tag}" doesn\'t match opening tag "{opening_tag}"')
+            LOGGER.warning(
+                f'Closing tag "{tag}" doesn\'t match opening tag "{opening_tag}" '
+                "Returning plain wikitext."
+            )
             raise ValueError()
         else:
             self.html.append(f"</{tag}>")
@@ -73,7 +236,10 @@ class MarkdownHtmlSeparator(HTMLParser):
 
     def get_md(self) -> str:
         if self.active_html_tags:
-            LOGGER.debug(f"Unexpected open tags: {' '.join(self.active_html_tags)}")
+            LOGGER.warning(
+                f"Unexpected open tags: {' '.join(self.active_html_tags)}. "
+                "Returning plain wikitext."
+            )
             raise ValueError()
         self.handle_remaining_html()
         return "".join(self.md)
