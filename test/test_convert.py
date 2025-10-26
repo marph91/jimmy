@@ -208,6 +208,7 @@ class EndToEnd(unittest.TestCase):
             [["synology_note_station/test_3_frontmatter/notestation-test-books.nsx"]],
             [["synology_note_station/test_4/test.nsx"]],
             [["synology_note_station/test_5/20241005_184010_8701_demouser.nsx"]],
+            [["synology_note_station/test_8/20251026_153652_10216_abalakov.nsx"]],
             # can't test with frontmatter - git doesn't preserve timestamps
             # https://github.com/actions/checkout/issues/364#issuecomment-812618265
             [["textbundle/test_1/example.textpack"]],

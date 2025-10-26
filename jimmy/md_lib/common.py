@@ -361,6 +361,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     jimmy.md_lib.html_filter.remove_duplicated_links(soup)
     jimmy.md_lib.html_filter.streamline_tables(soup)
     jimmy.md_lib.html_filter.underline(soup)
+    jimmy.md_lib.html_filter.strikethrough(soup)
     jimmy.md_lib.html_filter.whitespace_in_math(soup)
     # final cleanup
     jimmy.md_lib.html_filter.multiline_markup(soup)

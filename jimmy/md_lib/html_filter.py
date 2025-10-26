@@ -18,6 +18,22 @@ LOGGER = logging.getLogger("jimmy")
 HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
 
+def extract_styles(tag) -> dict[str, str]:
+    styles: dict[str, str] = {}
+    for style_str in tag.get("style", "").split(";"):
+        if not style_str:
+            return styles
+        style_str_split = style_str.split(":", maxsplit=1)
+        match len(style_str_split):
+            case 1:
+                key = style_str_split[0]
+                value = ""
+            case 2:
+                key, value = style_str_split
+        styles[key.strip()] = value.strip()
+    return styles
+
+
 def wrap_content(soup, element, tag: str):
     """Wrap the content of an element."""
     new_element = soup.new_tag(tag)
@@ -406,7 +422,7 @@ def remove_bold_header(soup: bs4.BeautifulSoup):
     # Remove overlap of bold and header. Keep the outer element.
     def find_all_bold(parent):
         return parent.find_all(["b", "strong"]) + parent.find_all(
-            style=lambda value: value is not None and "font-weight: bold" in value
+            lambda tag: "bold" in extract_styles(tag).get("font-weight", "")
         )
 
     for header in soup.find_all(HTML_HEADER_RE):
@@ -470,6 +486,26 @@ def replace_special_characters(soup: bs4.BeautifulSoup):
         element.replace_with(nested_soup)
 
 
+def strikethrough(soup: bs4.BeautifulSoup):
+    """
+    >>> soup = bs4.BeautifulSoup(
+    ...    '<span style="text-decoration: line-through">striketrough</span>', "html.parser")
+    >>> strikethrough(soup)
+    >>> soup
+    <s><span style="text-decoration: line-through">striketrough</span></s>
+    """
+
+    # support strikethrough by the style attributes
+    def find_strikethrough_style(tag):
+        styles = extract_styles(tag)
+        return "line-through" in styles.get("text-decoration", "") or "line-through" in styles.get(
+            "text-decoration-line", ""
+        )
+
+    for strikethrough_element in soup.find_all(find_strikethrough_style):
+        strikethrough_element.wrap(soup.new_tag("s"))
+
+
 def synology_note_station_fix_checklists(soup: bs4.BeautifulSoup):
     # In the original nsx data, the checklists are plain div lists.
     # The indentation is stored in the divs "padding-left" attribute (multiple of 30 px).
@@ -488,14 +524,9 @@ def synology_note_station_fix_checklists(soup: bs4.BeautifulSoup):
         input_child = list_item.find("input")
 
         # parse the list level (f. e. "padding-left: 30px" is level 1)
-        level = 0
-        for style in list_item.get("style", "").split(";"):
-            if not style:
-                continue
-            key, value = style.split(":", maxsplit=1)
-            if key.strip() == "padding-left":
-                level = int("".join([char for char in value if char.isdigit()])) // 30
-                break
+        styles = extract_styles(list_item)
+        padding_left = styles.get("padding-left", "0")
+        level = int("".join([char for char in padding_left if char.isdigit()])) // 30
 
         potential_list = list_item.previous_sibling
         if potential_list is not None and potential_list.name == "ul":
@@ -647,6 +678,30 @@ def streamline_tables(soup: bs4.BeautifulSoup):
 
 
 def underline(soup: bs4.BeautifulSoup):
+    """
+    >>> soup = bs4.BeautifulSoup(
+    ...    '<span style="text-decoration:underline">underline</span>', "html.parser")
+    >>> underline(soup)
+    >>> soup
+    ++<span style="text-decoration:underline">underline</span>++
+
+    >>> soup = bs4.BeautifulSoup('<u>underline</u>', "html.parser")
+    >>> underline(soup)
+    >>> soup
+    ++underline++
+    """
+
+    # support underline by the style attributes
+    def find_underline_style(tag):
+        styles = extract_styles(tag)
+        return "underline" in styles.get("text-decoration", "") or "underline" in styles.get(
+            "text-decoration-line", ""
+        )
+
+    for underlined in soup.find_all(find_underline_style):
+        underlined.insert_before(soup.new_string("++"))
+        underlined.insert_after(soup.new_string("++"))
+
     # Underlining seems to be converted to italic by Pandoc.
     # Joplin supports the "++insert++"" syntax, but it seems to be not widely used.
     # Use HTML for underlining.
