@@ -470,6 +470,69 @@ def replace_special_characters(soup: bs4.BeautifulSoup):
         element.replace_with(nested_soup)
 
 
+def synology_note_station_fix_checklists(soup: bs4.BeautifulSoup):
+    # In the original nsx data, the checklists are plain div lists.
+    # The indentation is stored in the divs "padding-left" attribute (multiple of 30 px).
+    # The state is stored in the child divs attribute "syno-notestation-editor-checkbox-checked".
+    def list_item_filter(tag):
+        if tag.name != "div":
+            return False
+        first_child = next(tag.children, None)
+        return (
+            first_child is not None
+            and first_child.name == "input"
+            and "syno-notestation-editor-checkbox" in first_child.get("class", [])
+        )
+
+    for list_item in soup.find_all(list_item_filter):
+        input_child = list_item.find("input")
+
+        # parse the list level (f. e. "padding-left: 30px" is level 1)
+        level = 0
+        for style in list_item.get("style", "").split(";"):
+            if not style:
+                continue
+            key, value = style.split(":", maxsplit=1)
+            if key.strip() == "padding-left":
+                level = int("".join([char for char in value if char.isdigit()])) // 30
+                break
+
+        potential_list = list_item.previous_sibling
+        if potential_list is not None and potential_list.name == "ul":
+            # parent item can be
+            # - a list (new item for existing list: ul -> li)
+            # - a list item (new item in new list level: li -> ul)
+            list_with_item = None
+            parent_item = potential_list
+            # find existing list and go down the levels
+            for loop_level in range(level):
+                if (new_parent_item := parent_item.find("ul")) is None:
+                    # new list in last list item
+                    parent_item = parent_item.find_all("li")[-1]
+                    if loop_level == level - 1:
+                        list_with_item = soup.new_tag("ul")
+                        list_item.wrap(list_with_item)
+                    break
+                parent_item = new_parent_item
+
+            if list_with_item is None:
+                parent_item.append(list_item)
+            else:
+                parent_item.append(list_with_item)
+        else:
+            # create new list
+            list_item.wrap(soup.new_tag("ul"))
+        list_item.name = "li"
+
+        # make the child a checkbox
+        new_attrs = {"type": "checkbox"}
+        if "syno-notestation-editor-checkbox-checked" in input_child.get("class", []):
+            new_attrs["checked"] = ""  # checkbox is checked
+        input_child.attrs = new_attrs
+        # remove parent attributes
+        list_item.attrs = {}
+
+
 def synology_note_station_fix_img_src(soup: bs4.BeautifulSoup):
     # In the original nsx data, the "src" is stored in the
     # "ref" attribute. Move it where it belongs.

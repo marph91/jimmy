@@ -136,7 +136,10 @@ class Converter(converter.BaseConverter):
         if (content_html := note.get("content")) is not None:
             content_markdown = jimmy.md_lib.common.markup_to_markdown(
                 content_html,
-                custom_filter=[jimmy.md_lib.html_filter.synology_note_station_fix_img_src],
+                custom_filter=[
+                    jimmy.md_lib.html_filter.synology_note_station_fix_checklists,
+                    jimmy.md_lib.html_filter.synology_note_station_fix_img_src,
+                ],
             )
             # note title only needed for debug message
             body, resources_referenced, note_links = self.handle_markdown_links(
