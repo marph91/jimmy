@@ -513,53 +513,58 @@ def synology_note_station_fix_checklists(soup: bs4.BeautifulSoup):
     def list_item_filter(tag):
         if tag.name != "div":
             return False
+        input_tags = tag.find_all("input", class_="syno-notestation-editor-checkbox")
         first_child = next(tag.children, None)
-        return (
-            first_child is not None
-            and first_child.name == "input"
-            and "syno-notestation-editor-checkbox" in first_child.get("class", [])
-        )
+        return len(input_tags) == 1 and first_child is not None and first_child.name != "div"
 
     for list_item in soup.find_all(list_item_filter):
         input_child = list_item.find("input")
+
+        # find or create parent list
+        if list_item.previous_sibling is not None and list_item.previous_sibling.name == "ul":
+            list_item.previous_sibling.append(list_item)
+        else:
+            list_item.wrap(soup.new_tag("ul"))
 
         # parse the list level (f. e. "padding-left: 30px" is level 1)
         styles = extract_styles(list_item)
         padding_left = styles.get("padding-left", "0")
         level = int("".join([char for char in padding_left if char.isdigit()])) // 30
 
-        potential_list = list_item.previous_sibling
-        if potential_list is not None and potential_list.name == "ul":
-            # parent item can be
-            # - a list (new item for existing list: ul -> li)
-            # - a list item (new item in new list level: li -> ul)
-            list_with_item = None
-            parent_item = potential_list
-            # find existing list and go down the levels
-            for loop_level in range(level):
-                if (new_parent_item := parent_item.find("ul")) is None:
-                    # new list in last list item
-                    parent_item = parent_item.find_all("li")[-1]
-                    if loop_level == level - 1:
-                        list_with_item = soup.new_tag("ul")
-                        list_item.wrap(list_with_item)
-                    break
-                parent_item = new_parent_item
+        # parent item can be
+        # - a list (new item for existing list: ul -> li)
+        # - a list item (new item in new list level: li -> ul)
+        list_with_item = None
+        parent_item = list_item.parent
+        # go down as many levels as needed
+        for loop_level in range(level):
+            if (new_parent_item := parent_item.find("ul")) is None:
+                # new list in last list item
+                new_parent_item = next(reversed(parent_item.find_all("li")), None)
+                if new_parent_item is None:
+                    new_parent_item = parent_item  # fallback
+                if loop_level == level - 1:
+                    list_with_item = soup.new_tag("ul")
+                    list_item.wrap(list_with_item)
+                break
+            parent_item = new_parent_item
 
-            if list_with_item is None:
-                parent_item.append(list_item)
-            else:
-                parent_item.append(list_with_item)
+        if list_with_item is None:
+            parent_item.append(list_item)
         else:
-            # create new list
-            list_item.wrap(soup.new_tag("ul"))
-        list_item.name = "li"
+            parent_item.append(list_with_item)
 
-        # make the child a checkbox
+        # Move input element directly after "li". This is needed to convert to a checkbox.
+        list_item.name = "li"
+        while input_child.parent.name != "li":
+            input_child.parent.parent.insert(0, input_child)
+
+        # make the input child a checkbox
         new_attrs = {"type": "checkbox"}
         if "syno-notestation-editor-checkbox-checked" in input_child.get("class", []):
             new_attrs["checked"] = ""  # checkbox is checked
         input_child.attrs = new_attrs
+
         # remove parent attributes
         list_item.attrs = {}
 
