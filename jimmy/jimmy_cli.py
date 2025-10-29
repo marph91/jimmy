@@ -3,6 +3,7 @@
 import argparse
 import datetime
 import logging
+import multiprocessing
 from pathlib import Path
 
 from rich.logging import RichHandler
@@ -49,6 +50,10 @@ def relative_path(path: str | Path | None) -> Path | None:
 
 
 def main():
+    # Resolve issues with multiprocessing and pyinstaller in the smoke tests.
+    # See https://github.com/pyinstaller/pyinstaller/issues/4865.
+    multiprocessing.freeze_support()
+
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="interface")
     subparsers.default = "tui"
