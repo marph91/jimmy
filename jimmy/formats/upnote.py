@@ -125,7 +125,7 @@ class Converter(converter.BaseConverter):
             match backup_dict["type"]:
                 case "notebooks":
                     id_ = backup_dict["data"]["id"]
-                    if (parent_notebook_id := backup_dict["data"]["parent"]) == "":
+                    if (parent_notebook_id := backup_dict["data"]["parent"]) in ("", None):
                         parent_notebook = self.root_notebook
                     else:
                         parent_notebook = self.notebook_id_map[parent_notebook_id]
