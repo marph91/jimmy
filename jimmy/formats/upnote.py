@@ -80,7 +80,18 @@ class Converter(converter.BaseConverter):
             if note_upnote["data"].get(tag_name, False):
                 note_imf.tags.append(imf.Tag(f"upnote-{tag_name}"))
 
-        parent_notebook = self.notebook_id_map[self.note_id_notebook_id_map[id_]]
+        # determine parent notebook
+        if (parent_notebook_id := self.note_id_notebook_id_map.get(id_)) is None:
+            self.logger.warning(f"Note ID not found ({id_}). Adding note to root notebook.")
+            parent_notebook = self.root_notebook
+        elif (potential_parent_notebook := self.notebook_id_map.get(parent_notebook_id)) is None:
+            self.logger.warning(
+                f"Parent notebook ID not found ({parent_notebook_id}). "
+                "Adding note to root notebook."
+            )
+            parent_notebook = self.root_notebook
+        else:
+            parent_notebook = potential_parent_notebook
         parent_notebook.child_notes.append(note_imf)
 
     def convert_backup(self, backup_file: Path):
