@@ -14,6 +14,7 @@ class Converter(converter.BaseConverter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.file_id_name_map = {}
         self.notebook_id_map = {}
         self.note_id_notebook_id_map = {}
         self.tag_id_map = {}
@@ -29,6 +30,9 @@ class Converter(converter.BaseConverter):
                 # resource
                 if resource_folder.is_dir():
                     filename = Path(urllib.parse.urlparse(link.url).path).name
+                    # TODO: Sometimes upnote uses the id. Try to resolve the filename.
+                    # if (new_filename := self.file_id_name_map.get(filename)):
+                    #     filename = new_filename
                     resources.append(imf.Resource(resource_folder / filename, str(link), link.text))
                 continue
             if link.is_web_link or link.is_mail_link:
@@ -114,6 +118,11 @@ class Converter(converter.BaseConverter):
         # first iteration parse all notebooks and tags
         for backup_dict in backup_dicts:
             match backup_dict["type"]:
+                case "files":
+                    # example ID: '2e80e4b0-f9e4-49f8-a6ac-4c3051f208fe__png'
+                    file_id = backup_dict["data"]["id"].replace("__", ".")
+                    file_name = backup_dict["data"]["name"]
+                    self.file_id_name_map[file_id] = file_name
                 case "notebooks":
                     id_ = backup_dict["data"]["id"]
                     notebook_imf = imf.Notebook(
@@ -123,7 +132,15 @@ class Converter(converter.BaseConverter):
                         original_id=id_,
                     )
                     self.notebook_id_map[id_] = notebook_imf
+                case "lists":
+                    if (id_ := backup_dict["data"]["id"]).startswith("notebooks_"):
+                        # 1 notebook to N notes mapping
+                        notebook_id = id_[len("notebooks_") :]
+                        # note IDs are json encoded
+                        for note_id in json.loads(backup_dict["data"]["content"]):
+                            self.note_id_notebook_id_map[note_id] = notebook_id
                 case "organizers":
+                    # 1 notebook to 1 note mapping
                     note_id = backup_dict["data"]["noteId"]
                     notebook_id = backup_dict["data"]["notebookId"]
                     self.note_id_notebook_id_map[note_id] = notebook_id
@@ -141,7 +158,7 @@ class Converter(converter.BaseConverter):
                     else:
                         parent_notebook = self.notebook_id_map[parent_notebook_id]
                     parent_notebook.child_notebooks.append(self.notebook_id_map[id_])
-                case "filters" | "lists" | "organizers" | "tags":
+                case "filters" | "files" | "lists" | "organizers" | "tags":
                     pass  # handled already or unused
                 case "notes":
                     self.convert_note(backup_dict, resource_folder)
