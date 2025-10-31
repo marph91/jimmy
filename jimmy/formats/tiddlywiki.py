@@ -256,7 +256,9 @@ def wikitext_html_to_md(wikitext_html: str) -> str:
     try:
         parser.feed(md_html)
         return parser.get_md()
-    except ValueError:
+    except ValueError as exc:
+        if str(exc):
+            LOGGER.error(f"HTML conversion error: {exc}")
         return md_html
 
 
