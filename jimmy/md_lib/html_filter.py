@@ -486,13 +486,37 @@ def replace_special_characters(soup: bs4.BeautifulSoup):
         element.replace_with(nested_soup)
 
 
+def split_leading_trailing_whitespace(value: str) -> tuple[str, str, str]:
+    r"""
+    >>> split_leading_trailing_whitespace("")
+    ('', '', '')
+    >>> split_leading_trailing_whitespace("foo")
+    ('', 'foo', '')
+    >>> split_leading_trailing_whitespace(" foo")
+    (' ', 'foo', '')
+    >>> split_leading_trailing_whitespace("foo ")
+    ('', 'foo', ' ')
+    >>> split_leading_trailing_whitespace(" foo bar ")
+    (' ', 'foo bar', ' ')
+    >>> split_leading_trailing_whitespace("\t foo bar\xa0 ")
+    ('\t ', 'foo bar', '\xa0 ')
+    """
+    leading_whitespace_stop = len(value) - len(value.lstrip())
+    trailing_whitespace_start = len(value.rstrip())
+    return (
+        value[:leading_whitespace_stop],
+        value[leading_whitespace_stop:trailing_whitespace_start],
+        value[trailing_whitespace_start:],
+    )
+
+
 def strikethrough(soup: bs4.BeautifulSoup):
     """
     >>> soup = bs4.BeautifulSoup(
     ...    '<span style="text-decoration: line-through">striketrough</span>', "html.parser")
     >>> strikethrough(soup)
     >>> soup
-    <s><span style="text-decoration: line-through">striketrough</span></s>
+    <span style="text-decoration: line-through"><s>striketrough</s></span>
     """
 
     # support strikethrough by the style attributes
@@ -503,7 +527,7 @@ def strikethrough(soup: bs4.BeautifulSoup):
         )
 
     for strikethrough_element in soup.find_all(find_strikethrough_style):
-        strikethrough_element.wrap(soup.new_tag("s"))
+        wrap_content(soup, strikethrough_element, "s")
 
 
 def synology_note_station_fix_checklists(soup: bs4.BeautifulSoup):
@@ -715,6 +739,43 @@ def underline(soup: bs4.BeautifulSoup):
         underlined.insert_before(soup.new_string("++"))
         underlined.insert_after(soup.new_string("++"))
         underlined.unwrap()
+
+
+def unwrap_inline_whitespace(soup: bs4.BeautifulSoup):
+    """
+    >>> soup = bs4.BeautifulSoup('<b> foo</b>', "html.parser")
+    >>> unwrap_inline_whitespace(soup)
+    >>> soup
+     <b>foo</b>
+
+    # TODO: nested markup with whitespace
+    >>> soup = bs4.BeautifulSoup('<b><i> foo </i></b>', "html.parser")
+    >>> unwrap_inline_whitespace(soup)
+    >>> soup
+    <b> <i>foo</i> </b>
+    """
+    def find_tags_with_leading_trailing_whitespace(tag):
+        # there should only be a single string as child
+        children = list(tag.children)
+        if len(children) != 1 or not isinstance(children[0], bs4.element.NavigableString):
+            return False
+        return (
+            tag.name in INLINE_FORMATTING_TAGS
+            and tag.string is not None
+            and "\n" not in tag.string
+            and tag.string != tag.string.strip()
+        )
+
+    whitespace_elements = soup.find_all(find_tags_with_leading_trailing_whitespace)
+    for whitespace_element in whitespace_elements:
+        leading_whitespace, new_text, trailing_whitespace = split_leading_trailing_whitespace(
+            whitespace_element.string
+        )
+        if leading_whitespace and whitespace_element.parent is not None:
+            whitespace_element.insert_before(soup.new_string(leading_whitespace))
+        if trailing_whitespace and whitespace_element.parent is not None:
+            whitespace_element.insert_after(soup.new_string(trailing_whitespace))
+        whitespace_element.string = new_text
 
 
 def upnote_add_formula(soup: bs4.BeautifulSoup):

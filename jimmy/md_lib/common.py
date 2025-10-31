@@ -365,6 +365,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     jimmy.md_lib.html_filter.whitespace_in_math(soup)
     # final cleanup
     jimmy.md_lib.html_filter.multiline_markup(soup)
+    jimmy.md_lib.html_filter.unwrap_inline_whitespace(soup)
     # jimmy.md_lib.html_filter.remove_empty_elements(soup)
     text_html_filtered = str(soup)
 
