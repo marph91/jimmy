@@ -174,7 +174,7 @@ class FilesystemWriter:
         """Append all resources that are not linked in the note (yet)"""
         assert note.path is not None
         unlinked_resources = ["", "", "## Unlinked Resources", ""]
-        for resource in resources:
+        for resource in sorted(resources, key=lambda r: r.filename):
             assert resource.path is not None
             resource_title = (
                 resource.title if resource.title not in [None, ""] else resource.filename.name
