@@ -449,28 +449,33 @@ def remove_duplicated_links(soup: bs4.BeautifulSoup):
             sublink.unwrap()
 
 
-def remove_empty_elements(soup: bs4.BeautifulSoup):
-    # Remove empty elements.
-    # TODO: not activated - too many false positives
-    def is_empty(element):
-        return (
-            len(element.get_text(strip=True)) == 0
-            and not element.contents
-            and not element.is_empty_element
-            # exclude:
-            # - usually self-closing tags, but sometimes not
-            # - images and links
-            and element.name not in ("a", "br", "img", "input", "svg")
+def remove_empty_markup(soup: bs4.BeautifulSoup):
+    """
+    >>> soup = bs4.BeautifulSoup('<b>\t</b>', "html.parser")
+    >>> remove_empty_markup(soup)
+    >>> soup
+    <BLANKLINE>
+
+    >>> soup = bs4.BeautifulSoup('<b></b>', "html.parser")
+    >>> remove_empty_markup(soup)
+    >>> soup
+    <BLANKLINE>
+    """
+
+    def find_empty_markup(tag):
+        # there should only be a single string as child
+        children = list(tag.children)
+        if len(children) == 1 and not isinstance(children[0], bs4.element.NavigableString):
+            return False
+        if len(children) > 1:
+            return False
+        return tag.name in INLINE_FORMATTING_TAGS and (
+            tag.string is None or "\n" not in tag.string and not tag.string.strip()
         )
 
-    def remove_if_empty(element):
-        if is_empty(element):
-            parent = element.parent
-            element.unwrap()  # unwrap to preserve spaces
-            remove_if_empty(parent)
-
-    for element in soup.find_all():
-        remove_if_empty(element)
+    empty_elements = soup.find_all(find_empty_markup)
+    for empty_element in empty_elements:
+        empty_element.unwrap()  # unwrap to preserve spaces
 
 
 def replace_special_characters(soup: bs4.BeautifulSoup):
@@ -754,6 +759,7 @@ def unwrap_inline_whitespace(soup: bs4.BeautifulSoup):
     >>> soup
     <b> <i>foo</i> </b>
     """
+
     def find_tags_with_leading_trailing_whitespace(tag):
         # there should only be a single string as child
         children = list(tag.children)
