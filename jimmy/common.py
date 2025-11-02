@@ -1,6 +1,7 @@
 """Common functions."""
 
 import base64
+from collections.abc import Callable
 import datetime as dt
 import difflib
 import gzip
@@ -15,7 +16,7 @@ import string
 import tarfile
 import tempfile
 import time
-from typing import Any, Callable, TypeVar, cast
+from typing import Any, TypeVar, cast
 import uuid
 import zipfile
 

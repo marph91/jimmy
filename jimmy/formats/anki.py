@@ -46,7 +46,9 @@ class Converter(converter.BaseConverter):
 
         (created, original_id, model_id, updated, tags, data) = db_row
         model = models[str(model_id)]
-        template_replacements = dict(zip([f["name"] for f in model["flds"]], data.split("\x1f")))
+        template_replacements = dict(
+            zip([f["name"] for f in model["flds"]], data.split("\x1f"), strict=True)
+        )
 
         # TODO: Templates are too complex for pandoc conversion.
         # Just take the replacements for now.
