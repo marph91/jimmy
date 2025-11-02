@@ -29,6 +29,8 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
+          cache: "pip"
+          cache-dependency-path: "requirements/requirements*.txt"
       - name: Install pip dependencies
         run: pip install -r requirements/requirements-docs.txt
       # TODO: remove temporary workaround
