@@ -52,6 +52,10 @@ class Converter(converter.BaseConverter):
         title = note_upnote["data"]["title"]
         self.logger.debug(f'Converting note "{title}"')
 
+        if note_upnote["data"].get("trashed", False) or note_upnote["data"].get("deleted", False):
+            self.logger.debug("Skipping trashed or deleted note.")
+            return
+
         if note_upnote["data"].get("isTemplate", False):
             self.logger.debug("Skipping template.")
             return
