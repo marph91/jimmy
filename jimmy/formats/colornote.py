@@ -97,9 +97,16 @@ class Converter(converter.BaseConverter):
         if plaintext is None:
             return
 
-        # TODO: Meaning of plaintext[:16]? Looks similar to the iv.
         plaintext_stream = io.BytesIO(plaintext)
-        plaintext_stream.read(16)
+
+        # search for '{"_id":'
+        # TODO: Meaning of the bytes before? Looks similar to the iv.
+        first_note_index = plaintext.find(bytearray.fromhex("7b225f6964223a"))
+        if first_note_index == -1:
+            self.logger.error("Couldn't find start position of the first note.")
+            return
+
+        plaintext_stream.read(first_note_index - 4)
         while chunk_length_bytes := plaintext_stream.read(4):
             # parse binary colornote format
             # 4 bytes: chunk length
