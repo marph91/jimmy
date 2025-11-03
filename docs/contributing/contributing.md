@@ -8,6 +8,7 @@ description: This page describes how to contribute to Jimmy.
     - [Joplin forum](https://discourse.joplinapp.org/t/jimmy-a-joplin-import-tool/38503)
     - [Obsidian Forum](https://forum.obsidian.md/t/jimmy-convert-your-notes-to-markdown/88685)
 - Report a bug or request a new feature at [GitHub](https://github.com/marph91/jimmy/issues/new/choose)
+- Send an <a href="&#109;&#97;&#105;&#108;&#116;&#111;&colon;&#109;&#97;&#114;&#116;&#105;&#110;&period;&#100;&commat;&#97;&#110;&#100;&#105;&#120;&period;&#100;&#101;">email</a> (might be filtered by my spam filter)
 
 ## As non-programmer
 
