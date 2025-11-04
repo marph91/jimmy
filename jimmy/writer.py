@@ -200,7 +200,9 @@ class FilesystemWriter:
         resource.path = common.get_unique_path(resource.path, source_file)
         # TODO: done for each resource in each note
         resource.path.parent.mkdir(exist_ok=True, parents=True)
-        shutil.copy(source_file, resource.path)
+        # Copy only the file content to avoid permission issues, like
+        # https://github.com/marph91/jimmy/issues/59#issuecomment-3481986717
+        shutil.copyfile(source_file, resource.path)
 
     def update_note_links(self, note: imf.Note, note_link: imf.NoteLink):
         """Replace the original ID of notes with their path in the filesystem."""
