@@ -9,8 +9,6 @@ from jimmy.md_lib.roam_research import roam_to_md
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json"]  # TODO: json or zip?
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.block_id_page_id_map = {}

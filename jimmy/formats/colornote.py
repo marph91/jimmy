@@ -15,8 +15,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".backup"]
-
     def __init__(self, config):
         super().__init__(config)
         self.password = config.password

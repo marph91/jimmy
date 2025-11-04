@@ -14,8 +14,6 @@ def get_text(element, default: str | None = None) -> str | None:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".xml"]
-
     @common.catch_all_exceptions
     def convert_note(self, item, parent_notebook: imf.Notebook, namespaces):
         title = get_text(item.find("title"), default=common.unique_title())

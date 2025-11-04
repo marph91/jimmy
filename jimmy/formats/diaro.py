@@ -15,8 +15,6 @@ def get_text(element, default: str | None = None) -> str | None:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attachments = defaultdict(list)

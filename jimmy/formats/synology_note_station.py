@@ -24,8 +24,6 @@ class Attachment:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".nsx"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.available_resources = []

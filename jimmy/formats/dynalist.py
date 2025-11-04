@@ -23,8 +23,6 @@ def handle_markdown_links(body: str, root_folder: Path) -> imf.NoteLinks:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     @common.catch_all_exceptions
     def convert_note(self, item: Path, parent: imf.Notebook):
         # We get a zip with opml and txt. Only advantage of opml over txt is

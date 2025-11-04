@@ -7,9 +7,6 @@ from jimmy import common, converter, intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".note"]
-    accept_folder = True
-
     def parse_content(self, node):
         note_links = []
 

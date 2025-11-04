@@ -8,7 +8,7 @@ from pathlib import Path
 
 from rich.logging import RichHandler
 
-import jimmy.common
+import jimmy.variables
 import jimmy.main
 import jimmy.jimmy_tui
 
@@ -69,7 +69,7 @@ def main():
     # specific formats that need a special handling
     parser_cli.add_argument(
         "--format",
-        choices=jimmy.common.get_available_formats(),
+        choices=jimmy.variables.FORMAT_REGISTRY,
         help="The source format.",
     )
     parser_cli.add_argument(

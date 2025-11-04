@@ -11,8 +11,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.id_path_map = {".": "."}

@@ -197,9 +197,6 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".ctd"]
-    accept_folder = True
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.bookmarked_nodes = []

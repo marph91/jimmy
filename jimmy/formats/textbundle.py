@@ -10,9 +10,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".textbundle", ".textpack"]
-    accept_folder = True
-
     def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):

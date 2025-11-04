@@ -16,7 +16,7 @@ from jimmy import (
     filters,
     writer,
     intermediate_format as imf,
-    version,
+    variables,
 )
 
 
@@ -110,7 +110,7 @@ def get_pandoc_version() -> str:
 
 
 def run_conversion(config) -> common.Stats:
-    LOGGER.info(f"Jimmy {version.VERSION} (Pandoc {get_pandoc_version()})")
+    LOGGER.info(f"Jimmy {variables.VERSION} (Pandoc {get_pandoc_version()})")
     LOGGER.debug(f"Using pandoc from: {shutil.which('pandoc')}")
     LOGGER.debug(f"{config=}")
     inputs_str = " ".join(map(str, config.input))

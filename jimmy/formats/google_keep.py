@@ -8,8 +8,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".tgz", ".zip"]
-
     @common.catch_all_exceptions
     def convert_note(self, file_: Path):
         note_keep = json.loads(file_.read_text(encoding="utf-8"))

@@ -204,8 +204,6 @@ class SuperToMarkdown:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.note_id_tag_map = defaultdict(list)

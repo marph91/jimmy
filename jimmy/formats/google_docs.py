@@ -7,8 +7,6 @@ from jimmy.converter import DefaultConverter
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".tgz", ".zip"]
-
     def convert_note(self):
         pass
 

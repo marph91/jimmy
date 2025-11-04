@@ -9,16 +9,19 @@ from xml.etree import ElementTree as ET
 import frontmatter
 
 from jimmy import common, intermediate_format as imf
+import jimmy.variables
 import jimmy.md_lib.common
 import jimmy.md_lib.eml
 
 
 class BaseConverter(abc.ABC):
-    accepted_extensions: list[str] | None = None
-    accept_folder = False
-
     def __init__(self, config, *_args, **_kwargs):
         self._config = config
+
+        accepted_inputs = jimmy.variables.FORMAT_REGISTRY.get(config.format)
+        self.accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
+        self.accept_folder = accepted_inputs["accept_folder"]  # type: ignore[index]
+
         self.logger = logging.getLogger("jimmy")
         self.format = "Jimmy" if config.format is None else config.format
         self.frontmatter = config.frontmatter
@@ -155,9 +158,6 @@ def decode_strange_ascii(ascii_: str) -> str:
 
 
 class DefaultConverter(BaseConverter):
-    accepted_extensions = ["*"]
-    accept_folder = True
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder

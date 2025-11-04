@@ -11,9 +11,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-    accept_folder = True
-
     def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):

@@ -16,9 +16,6 @@ import jimmy.md_lib.evernote
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".enex"]
-    accept_folder = True
-
     def __init__(self, config):
         super().__init__(config)
         self.password = config.password

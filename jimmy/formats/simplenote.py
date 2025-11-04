@@ -21,8 +21,6 @@ def extract_tags_from_body(body: str) -> tuple[str, list[str]]:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     @common.catch_all_exceptions
     def convert_note(self, note_simplenote):
         # title is the first line

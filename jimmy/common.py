@@ -6,10 +6,8 @@ import datetime as dt
 import difflib
 import gzip
 import hashlib
-import importlib
 import logging
 from pathlib import Path
-import pkgutil
 import random
 import re
 import string
@@ -22,8 +20,6 @@ import zipfile
 
 import puremagic
 import pydantic
-
-import jimmy.formats
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -181,19 +177,6 @@ def write_base64(path: Path, base64_str: str) -> Path:
     path = get_unique_path(path, content)
     path.write_bytes(content)
     return path
-
-
-def get_available_formats() -> dict:
-    formats_dict = {}
-    for module in pkgutil.iter_modules(jimmy.formats.__path__):
-        module_ = importlib.import_module(f"jimmy.formats.{module.name}")
-        accepted_extensions = module_.Converter.accepted_extensions
-        accept_folder = module_.Converter.accept_folder
-        formats_dict[module.name] = {
-            "accepted_extensions": accepted_extensions,
-            "accept_folder": accept_folder,
-        }
-    return formats_dict
 
 
 def guess_suffix(file_: Path) -> str:

@@ -21,8 +21,6 @@ def timestamp_to_date_str(timestamp_s: float | int) -> str:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     def convert_note(self):
         pass  # TODO
 

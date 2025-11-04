@@ -10,8 +10,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-
     def prepare_input(self, input_: Path) -> Path:
         unzipped_input = common.extract_zip(input_)
         # There is always one subfolder that contains all data.

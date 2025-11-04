@@ -334,9 +334,6 @@ def is_escaped_link(word: str) -> bool:
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json", ".tid"]
-    accept_folder = True
-
     ############################################################
     # common functions
     ############################################################

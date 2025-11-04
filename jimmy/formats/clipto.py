@@ -7,8 +7,6 @@ from jimmy import common, converter, intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json"]
-
     @common.catch_all_exceptions
     def convert_note(self, note_clipto: dict, tags: imf.Tags):
         title = note_clipto["title"]

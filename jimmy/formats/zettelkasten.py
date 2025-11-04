@@ -10,8 +10,6 @@ from jimmy.md_lib.zettelkasten import bbcode_to_md
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zkn3"]
-
     def parse_attributes(self, zettel: ET.Element, note_imf: imf.Note):
         for key, value in zettel.attrib.items():
             match key:

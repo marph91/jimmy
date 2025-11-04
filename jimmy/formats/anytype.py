@@ -10,9 +10,6 @@ from jimmy import common, converter  # pylint: disable=wrong-import-position
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-    accept_folder = True
-
     def convert_note(self):
         pass
 

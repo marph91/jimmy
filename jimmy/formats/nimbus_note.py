@@ -11,9 +11,6 @@ import jimmy.md_lib.html_filter
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".zip"]
-    accept_folder = True
-
     def __init__(self, config):
         super().__init__(config)
         self._input_note_index = 0

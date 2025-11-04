@@ -8,8 +8,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder

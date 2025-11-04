@@ -35,8 +35,6 @@ def get_sounds(body: str) -> list[tuple[str, str]]:
 # TODO
 # pylint: disable=too-many-arguments,too-many-positional-arguments
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".apkg"]
-
     @common.catch_all_exceptions
     def convert_note(self, note_index, db_row, models, media_dict, note_deck_id_map):
         # TODO: Anki doesn't have note names. Find a robust note name.

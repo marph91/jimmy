@@ -48,8 +48,6 @@ def handle_markdown_links(
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".jex"]
-
     @common.catch_all_exceptions
     def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
         title, body = jimmy.md_lib.common.split_title_from_body(markdown, h1=False)

@@ -18,7 +18,7 @@ from textual.worker import Worker, WorkerState
 from textual_fspicker import FileOpen, FileSave, Filters, SelectDirectory
 from textual_fspicker.file_dialog import FileFilter
 
-import jimmy.common
+import jimmy.variables
 import jimmy.main
 
 
@@ -202,7 +202,7 @@ class JimmyApp(App):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.available_formats = jimmy.common.get_available_formats()
+        self.available_formats = jimmy.variables.FORMAT_REGISTRY
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         self.output_folder = Path().cwd() / f"{now} - Jimmy Import"
 
@@ -224,7 +224,7 @@ class JimmyApp(App):
     def compose(self) -> ComposeResult:
         hg = HorizontalGroup(
             Select(
-                (("Default", None),) + tuple((f,) * 2 for f in self.available_formats),
+                tuple((("Default" if f is None else f), f) for f in self.available_formats),
                 allow_blank=False,
                 value=None,
                 id="select_format",
@@ -275,11 +275,12 @@ class JimmyApp(App):
             self.file_dialog_extensions = None
             return
 
-        format_ = event.value
+        format_ = str(event.value)
         accepted_inputs = self.available_formats[format_]
 
         # file
-        if (accepted_extensions := accepted_inputs["accepted_extensions"]) is None:
+        accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
+        if accepted_extensions is None:
             file_dialog.disabled = True
         else:
             file_dialog.disabled = False
@@ -293,7 +294,7 @@ class JimmyApp(App):
                 ),
             )
         # folder
-        folder_dialog.disabled = not accepted_inputs["accept_folder"]
+        folder_dialog.disabled = not accepted_inputs["accept_folder"]  # type: ignore[index]
 
     def add_input(self, selected_input: Path | None):
         if selected_input is not None:

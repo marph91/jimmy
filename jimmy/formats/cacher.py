@@ -9,8 +9,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".json"]
-
     @common.catch_all_exceptions
     def convert_note(self, file_: dict, notebook: imf.Notebook, tags: imf.Tags):
         if file_["filetype"] != "markdown":

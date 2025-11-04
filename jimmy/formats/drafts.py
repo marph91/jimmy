@@ -15,8 +15,6 @@ DRAFTS_LINK_RE = re.compile(
 
 
 class Converter(converter.BaseConverter):
-    accepted_extensions = [".draftsexport"]
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.note_id_title_map = {}
