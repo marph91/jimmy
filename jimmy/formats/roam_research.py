@@ -76,15 +76,8 @@ class Converter(converter.BaseConverter):
 
         self.root_notebook.child_notes.append(note_imf)
 
-    def add_note_links(self, root_notebook: imf.Notebook | None = None):
-        # TODO: helper function for getting all notes?
-        if root_notebook is None:
-            root_notebook = self.root_notebook
-
-        for notebook in root_notebook.child_notebooks:
-            self.add_note_links(notebook)
-
-        for note in root_notebook.child_notes:
+    def add_note_links(self):
+        for note in self.root_notebook.get_all_child_notes():
             for link in jimmy.md_lib.common.get_markdown_links(note.body):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
 import dataclasses
 import datetime as dt
 import logging
@@ -246,6 +247,16 @@ class Notebook:
 
     def is_empty(self) -> bool:
         return not self.child_notebooks and not self.child_notes
+
+    def get_all_child_notebooks(self) -> Generator[Notebook]:
+        yield from self.child_notebooks
+        for notebook in self.child_notebooks:
+            yield from notebook.get_all_child_notebooks()
+
+    def get_all_child_notes(self) -> Generator[Note]:
+        yield from self.child_notes
+        for notebook in self.child_notebooks:
+            yield from notebook.get_all_child_notes()
 
 
 # some type definitions for convenience

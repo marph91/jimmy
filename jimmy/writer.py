@@ -272,12 +272,16 @@ class FilesystemWriter:
         self.stats.tags += len(note.tags)
 
     @common.catch_all_exceptions
-    def write_notebook(self, notebook: imf.Notebook):
-        assert notebook.path is not None
-        notebook.path.mkdir(exist_ok=True, parents=True)
+    def write_notebook(self, root_notebook: imf.Notebook):
+        assert root_notebook.path is not None
+        root_notebook.path.mkdir(exist_ok=True, parents=True)
         self.stats.notebooks += 1
-        for note in notebook.child_notes:
-            self.write_note(note)
-        for child_notebook in notebook.child_notebooks:
-            self.write_notebook(child_notebook)
+        # write all notebooks
+        for child_notebook in root_notebook.get_all_child_notebooks():
+            assert child_notebook.path is not None
+            child_notebook.path.mkdir(exist_ok=True, parents=True)
+            self.stats.notebooks += 1
+        # write all notes
+        for child_note in root_notebook.get_all_child_notes():
+            self.write_note(child_note)
         return self.stats

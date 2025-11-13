@@ -365,7 +365,7 @@ class Converter(converter.BaseConverter):
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
         return note_links
 
-    def handle_pascal_case_links(self, notebook: imf.Notebook | None = None):
+    def handle_pascal_case_links(self):
         """
         Replace all words that are in PascalCase and matching to a note title by links.
 
@@ -374,9 +374,7 @@ class Converter(converter.BaseConverter):
         Simplified: "(?:(?:[A-Z]+[a-z]+[A-Z][A-Za-z]*)|(?:[A-Z]{2,}[a-z]+))"
         I.e. single words like Camel are not linked.
         """
-        if notebook is None:
-            notebook = self.root_notebook
-        for note in notebook.child_notes:
+        for note in self.root_notebook.get_all_child_notes():
             pascal_case_links = set()
             new_note_body_lines = []
             for line in note.body.split("\n"):
@@ -410,8 +408,6 @@ class Converter(converter.BaseConverter):
                     )
                 )
             note.body = "\n".join(new_note_body_lines)
-        for child_notebook in notebook.child_notebooks:
-            self.handle_pascal_case_links(child_notebook)
 
     ############################################################
     # .json conversion

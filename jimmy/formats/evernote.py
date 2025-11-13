@@ -58,15 +58,11 @@ class Converter(converter.BaseConverter):
                 resources.append(imf.Resource(temp_filename, str(link), link.text))
         return resources, note_links
 
-    def link_notes_by_title(self, root_notebook: imf.Notebook | None = None):
-        if root_notebook is None:
-            root_notebook = self.root_notebook
-        for note in root_notebook.child_notes:
+    def link_notes_by_title(self):
+        for note in self.root_notebook.get_all_child_notes():
             resources, note_links = self.handle_markdown_links(note.body)
             note.resources.extend(resources)
             note.note_links.extend(note_links)
-        for notebook in root_notebook.child_notebooks:
-            self.link_notes_by_title(notebook)
 
     @common.catch_all_exceptions
     def convert_note(self, note, parent_notebook: imf.Notebook):

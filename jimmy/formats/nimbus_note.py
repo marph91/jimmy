@@ -132,14 +132,12 @@ class Converter(converter.BaseConverter):
             elif item.suffix == ".zip":
                 self.convert_note(item, parent)
 
-    def improve_note_links(self, parent_notebook: imf.Notebook):
-        for note in parent_notebook.child_notes:
+    def improve_note_links(self):
+        for note in self.root_notebook.get_all_child_notes():
             for note_link in note.note_links:
                 best_match_id = common.get_best_match(note_link.original_id, self.note_title_map)
                 if best_match_id is not None:
                     note_link.original_id = best_match_id
-        for notebook in parent_notebook.child_notebooks:
-            self.improve_note_links(notebook)
 
     def convert(self, file_or_folder: Path):
         if file_or_folder.suffix == ".zip":
@@ -148,7 +146,7 @@ class Converter(converter.BaseConverter):
             self.convert_folder(file_or_folder, self.root_notebook)
 
         # second pass: fix odd note links
-        self.improve_note_links(self.root_notebook)
+        self.improve_note_links()
 
         # Don't export empty notebooks
         self.remove_empty_notebooks()
