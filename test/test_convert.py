@@ -36,8 +36,10 @@ class EndToEnd(unittest.TestCase):
         # mock a argparse namespace
         # https://stackoverflow.com/a/51197422/7410886
         test_name = unittest.TestCase.id(self)
-        if "colornote" in test_name:
+        if "colornote/test_1" in test_name:
             password = "1234"
+        elif "colornote/test_3" in test_name:
+            password = "0000"
         elif "evernote" in test_name:
             password = "password"
         else:
@@ -249,6 +251,7 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
+            [["colornote/test_3_encrypted/colornote-bak.backup"]],
             [["google_keep/test_3_encrypted/takeout-20250123T101543Z-001.zip"]],
             [["nimbus_note/test_3_encrypted/ORIG-7-probl"]],
             [["synology_note_station/test_6_encrypted/test8.nsx"]],
