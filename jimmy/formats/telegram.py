@@ -7,8 +7,6 @@ from jimmy import common, converter, intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):
-    accept_folder = True
-
     @common.catch_all_exceptions
     def convert_note(self, chat):
         title = chat["name"]

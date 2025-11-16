@@ -10,8 +10,6 @@ import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    accept_folder = True
-
     def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []

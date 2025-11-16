@@ -335,7 +335,7 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
                     "class", []
                 ):
                     input_element.attrs["checked"] = ""  # checkbox is checked
-                item.attrs.pop("data-checked")
+                item.attrs.pop("data-checked", None)
                 item.insert(0, input_element)
 
             indent_int = get_indentation_level(item)
@@ -812,7 +812,7 @@ def upnote_streamline_checklists(soup: bs4.BeautifulSoup):
             input_element = soup.new_tag("input", type="checkbox")
             if item.attrs.get("data-checked", "false") == "true":
                 input_element.attrs["checked"] = ""  # checkbox is checked
-            item.attrs.pop("data-checked")
+            item.attrs.pop("data-checked", None)
             item.insert(0, input_element)
 
             if "checklist" not in list_.get("class", []):

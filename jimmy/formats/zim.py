@@ -8,8 +8,6 @@ from jimmy.md_lib.zim import zim_to_md
 
 
 class Converter(converter.BaseConverter):
-    accept_folder = True
-
     def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # https://zim-wiki.org/manual/Help/Links.html
         note_links = []

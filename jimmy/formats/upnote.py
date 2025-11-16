@@ -10,8 +10,6 @@ import jimmy.md_lib.html_filter
 
 
 class Converter(converter.BaseConverter):
-    accept_folder = True
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.file_id_name_map = {}
