@@ -335,6 +335,7 @@ def nimbus_note_streamline_lists(soup: bs4.BeautifulSoup):
                     "class", []
                 ):
                     input_element.attrs["checked"] = ""  # checkbox is checked
+                item.attrs.pop("data-checked")
                 item.insert(0, input_element)
 
             indent_int = get_indentation_level(item)
@@ -799,15 +800,29 @@ def upnote_add_highlight(soup: bs4.BeautifulSoup):
 
 
 def upnote_streamline_checklists(soup: bs4.BeautifulSoup):
+    """
+    >>> soup = bs4.BeautifulSoup(
+    ...     '<ul><li data-checked="false"><div>Budget?</div></li></ul>', "html.parser")
+    >>> upnote_streamline_checklists(soup)
+    >>> soup
+    <ul class="checklist"><li><input type="checkbox"/>Budget?</li></ul>
+    """
     for list_ in soup.find_all("ul"):
         for item in list_.find_all("li", attrs={"data-checked": True}):
             input_element = soup.new_tag("input", type="checkbox")
             if item.attrs.get("data-checked", "false") == "true":
                 input_element.attrs["checked"] = ""  # checkbox is checked
+            item.attrs.pop("data-checked")
             item.insert(0, input_element)
 
             if "checklist" not in list_.get("class", []):
                 list_["class"] = ["checklist"]  # drop the other classes
+
+            # remove tags that would cause the checklist to not render properly
+            tags_to_remove = ["div", "pre", "span"]
+            for tag in tags_to_remove:
+                for element in item.find_all(tag):
+                    element.unwrap()
 
 
 def whitespace_in_math(soup: bs4.BeautifulSoup):
