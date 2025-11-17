@@ -60,6 +60,9 @@ a = Analysis(
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
+    # Optimization of the exe has almost no effect. Just apply it at analysis.
+    # https://pyinstaller.org/en/stable/feature-notes.html#optimization-setting-in-the-spec-file
+    optimize=2,
 )
 pyz = PYZ(a.pure)
 
