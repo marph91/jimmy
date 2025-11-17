@@ -52,12 +52,17 @@ jobs:
           cache: "pip"
           cache-dependency-path: "requirements/requirements*.txt"
       - name: Install dependencies
+        shell: bash
         # install only the really required modules before the pyinstaller build
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           pip install -r requirements/requirements-build.txt
           python download_binaries.py
       - name: Build executables with pyinstaller
+        shell: bash
         run: |
+          source .venv/bin/activate
           python -m PyInstaller jimmy.spec
       - name: Release
         uses: softprops/action-gh-release@v2
