@@ -74,22 +74,22 @@ jobs:
         working-directory: ./dist  # run in a different directory to make sure that the paths are working
         run: |
           # pandoc and asciidoc converter
-          ./jimmy* cli ../test/data/test_data/default_format/arbitrary_folder
+          ./jimmy* cli ../test/data/test_data/default_format/arbitrary_folder --stdout-log-level DEBUG
           # filters and frontmatter module
           ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian
           ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --exclude-tags "*"
           ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --include-notes-with-tags "*"
           ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian --include-notes "Second sample note" "Sample note"
           # textbundle converter called from bear converter
-          ./jimmy* cli ../test/data/test_data/bear/test_1_frontmatter/backup.bear2bk --format bear
+          ./jimmy* cli ../test/data/test_data/bear/test_1_frontmatter/backup.bear2bk --format bear --stdout-log-level DEBUG
           # cryptography module
-          ./jimmy* cli ../test/data/test_data/colornote/test_1_frontmatter/colornote-20241014.backup --format colornote --password 1234
+          ./jimmy* cli ../test/data/test_data/colornote/test_1_frontmatter/colornote-20241014.backup --format colornote --password 1234 --stdout-log-level DEBUG
           # sqlite3 module
-          ./jimmy* cli ../test/data/test_data/qownnotes/test_1/note_folder --format qownnotes
+          ./jimmy* cli ../test/data/test_data/qownnotes/test_1/note_folder --format qownnotes --stdout-log-level DEBUG
           # pyyaml module
-          ./jimmy* cli ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook
+          ./jimmy* cli ../test/data/test_data/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip --format rednotebook --stdout-log-level DEBUG
           # anytype module
-          ./jimmy* cli ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype
+          ./jimmy* cli ../test/data/test_data/anytype/test_1/Anytype.20241112.175339.64 --format anytype --stdout-log-level DEBUG
           # onenote conversion with bundled executable
           ./jimmy* cli ../test/data/test_data/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip --format onenote --stdout-log-level DEBUG
       # - name: Scan for viruses (just for information)
