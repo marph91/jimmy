@@ -66,6 +66,28 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+
+def sort_by_size(files):
+    files_with_sizes = []
+    for file_ in files:
+        if Path(file_[1]).is_file():
+            files_with_sizes.append((Path(file_[1]).stat().st_size / 2**20, file_[1]))
+        else:
+            files_with_sizes.append((0.0, file_[1]))
+    return tuple(reversed(sorted(files_with_sizes)))
+
+
+print("-" * 100)
+for file_ in sort_by_size(a.scripts):
+    print(file_)
+print("-" * 100)
+for file_ in sort_by_size(a.binaries):
+    print(file_)
+print("-" * 100)
+for file_ in sort_by_size(a.datas):
+    print(file_)
+print("-" * 100)
+
 exe = EXE(
     pyz,
     a.scripts,
