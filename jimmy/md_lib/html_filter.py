@@ -639,6 +639,13 @@ def streamline_tables(soup: bs4.BeautifulSoup):
         for nested_table in table.find_all("table"):
             nested_table.unwrap()  # TODO: revisit
 
+        # Remove hidden cells, since they are respected by Pandoc.
+        # For example Nimbus Note adds them when colspan or rowspan > 1.
+        # But colspan and rowspan is respected by Pandoc, too. This results
+        # in many unwanted cells.
+        for hidden_cell in table.find_all("td", attrs={"hidden": True}):
+            hidden_cell.decompose()
+
         # Remove all divs, since they cause pandoc to fail converting the table.
         # https://stackoverflow.com/a/32064299/7410886
         # Convert code blocks to inline code by removing the "pre" tag.
