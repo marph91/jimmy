@@ -10,7 +10,6 @@ from rich.logging import RichHandler
 
 import jimmy.variables
 import jimmy.main
-import jimmy.jimmy_tui
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -149,7 +148,10 @@ def main():
             parser.print_help()
             return
         case "tui":
-            jimmy.jimmy_tui.main()
+            # import TUI only when needed
+            from jimmy import jimmy_tui  # pylint: disable=import-outside-toplevel
+
+            jimmy_tui.main()
             return
 
     if config.output_folder is None:
