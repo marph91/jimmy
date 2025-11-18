@@ -4,7 +4,6 @@ cryptography==46.0.3
 markdown==3.8.2
 platformdirs==4.5.0
 puremagic==1.30
-pydantic==2.12.3
 pypandoc==1.15
 pyparsing==3.2.5
 python-frontmatter==1.1.0

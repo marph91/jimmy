@@ -61,8 +61,8 @@ class Converter(converter.BaseConverter):
         id_ = note_upnote["data"]["id"]
         note_imf = imf.Note(
             title,
-            created=note_upnote["data"]["createdAt"],
-            updated=note_upnote["data"]["updatedAt"],
+            created=common.timestamp_to_datetime(note_upnote["data"]["createdAt"] // 10**3),
+            updated=common.timestamp_to_datetime(note_upnote["data"]["updatedAt"] // 10**3),
             original_id=id_,
             source_application=self.format,
         )

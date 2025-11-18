@@ -60,7 +60,8 @@ class Converter(converter.BaseConverter):
             title,
             tags=[imf.Tag(t) for t in note["tags"]],
             original_id=note["id"],
-            created=note["mod"],
+            created=common.timestamp_to_datetime(note["mod"]),
+            updated=common.timestamp_to_datetime(note["mod"]),
         )
         match note["type"]:
             case "file" | "image" | "link" | "text":

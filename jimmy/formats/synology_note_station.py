@@ -6,14 +6,12 @@ import json
 from pathlib import Path
 from urllib.parse import urlparse
 
-import pydantic
-
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
 import jimmy.md_lib.html_filter
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Attachment:
     """Represents a Note Station attachment."""
 

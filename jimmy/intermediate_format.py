@@ -11,7 +11,6 @@ import re
 import string
 
 import frontmatter
-import pydantic
 import yaml
 
 from jimmy import common
@@ -46,7 +45,7 @@ def normalize_obsidian_tag(tag: str) -> str:
     return valid_char_tag
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class NoteLink:
     """Represents an internal link from one note to another note."""
 
@@ -58,7 +57,7 @@ class NoteLink:
     title: str
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Resource:
     """Represents a resource."""
 
@@ -97,7 +96,7 @@ class Resource:
         return hash(self.original_text)
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Tag:
     """Represents a tag."""
 
@@ -132,7 +131,7 @@ class NoteFormatter(string.Formatter):
         return super().format_field(value, format_spec)
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Note:
     """Represents a note."""
 
@@ -231,7 +230,7 @@ class Note:
                 LOGGER.debug(f'Ignoring unknown frontmatter "{frontmatter_}"')
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Notebook:
     """Represents a notebook and its children."""
 

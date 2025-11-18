@@ -2,6 +2,7 @@
 
 import base64
 from collections.abc import Callable
+import dataclasses
 import datetime as dt
 import difflib
 import gzip
@@ -19,7 +20,6 @@ import uuid
 import zipfile
 
 import puremagic
-import pydantic
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -356,7 +356,7 @@ class CounterMock:  # pylint: disable=too-few-public-methods
         pass
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class Stats:  # pylint: disable=too-few-public-methods
     notebooks: int = 0
     notes: int = 0

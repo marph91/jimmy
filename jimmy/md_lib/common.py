@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 import markdown
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
-import pydantic
 import pypandoc
 
 import jimmy.md_lib.html_filter
@@ -44,7 +43,7 @@ def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
     return title, body
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class MarkdownTable:
     """Construct a Markdown table from lists."""
 
@@ -90,7 +89,7 @@ web_schemes = [
 ]
 
 
-@pydantic.dataclasses.dataclass
+@dataclasses.dataclass
 class MarkdownLink:
     """
     Represents a markdown link:
