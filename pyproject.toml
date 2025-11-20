@@ -126,5 +126,5 @@ select = [
 # use pytest to include unittests and doctests:
 # https://stackoverflow.com/questions/43463273/python-m-doctest-ignores-files-with-same-names-in-different-directories
 [tool.pytest.ini_options]
-addopts = "--log-level DEBUG --verbose --doctest-modules --doctest-continue-on-failure"
+addopts = "--log-level DEBUG --verbose --doctest-modules --doctest-continue-on-failure --durations=5 --durations-min=10"
 testpaths = ["jimmy", "test/*.py"]
