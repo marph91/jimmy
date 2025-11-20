@@ -698,11 +698,14 @@ def streamline_tables(soup: bs4.BeautifulSoup):
             simplify_list(list_)
 
         for row_index, row in enumerate(table.find_all("tr")):
-            for td in row.find_all("td"):
-                # tables seem to be headerless always
-                # make first row to header
-                if row_index == 0:
-                    td.name = "th"
+            if row_index == 0:
+                header_cells = row.find_all("td")
+                if any(int(cell.attrs.get("rowspan", "1")) > 1 for cell in header_cells):
+                    break  # don't convert cells over multiple rows to header cells
+                for cell in header_cells:
+                    # tables seem to be headerless always
+                    # make first row to header
+                    cell.name = "th"
 
         # headers are not supported - convert to bold
         for header in table.find_all(HTML_HEADER_RE):
