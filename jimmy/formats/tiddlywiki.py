@@ -424,7 +424,19 @@ class Converter(converter.BaseConverter):
         mime = tiddler.get("type", "")
         if mime == "image/svg+xml":
             return  # TODO
-        if mime.startswith("image/") or mime == "application/pdf" or mime == "audio/mp3":
+        if mime.startswith("image/") and (uri := tiddler.get("_canonical_uri", "")):
+            # external image
+            # https://tiddlywiki.com/static/ExternalImages.html
+            if uri.startswith("file:"):
+                uri = uri[len("file:") :]
+            uri = Path(uri)
+            if not uri.is_absolute():
+                # best guess is to look relative to the import file
+                uri = self.root_path.parent / uri
+            md_image = f"![]({uri})"
+            body = md_image
+            resources.append(imf.Resource(uri, md_image, title))
+        elif mime.startswith("image/") or mime == "application/pdf" or mime == "audio/mp3":
             if (text_base64 := tiddler.get("text")) is not None:
                 # Use the original filename if possible.
                 resource_title = tiddler.get("alt-text")
