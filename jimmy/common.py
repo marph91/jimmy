@@ -206,8 +206,14 @@ def is_image(file_: Path) -> bool:
     False
     >>> is_image(Path("non/existing.txt"))
     False
+    >>> is_image(Path("non/existing.png"))
+    True
     """
-    if file_.suffix == ".svm":
+    # shortcut for known extensions
+    # https://stackoverflow.com/a/57409327/7410886
+    if file_.suffix.lower().endswith(
+        (".avif", ".bmp", ".gif", ".jpg", ".jpeg", ".png", ".svg", ".svm", ".tiff", ".webp")
+    ):
         # TODO: Convert ".svm" (StarView Metafile) to a more common format?
         return True
     try:
