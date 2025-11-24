@@ -3,14 +3,14 @@
 import itertools
 import json
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
 
 
 class Converter(converter.BaseConverter):
-    def handle_markdown_links(self, body: str) -> imf.Resources:
+    def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link or link.url.startswith("bear://"):
@@ -19,11 +19,15 @@ class Converter(converter.BaseConverter):
                 continue  # foot note (is working in Joplin without modification)
             # resource
             resource_path = self.root_path / unquote(link.url)
-            if not resource_path.is_file():
-                self.logger.warning(f"Couldn't find resource {resource_path}")
-                continue
-            resources.append(imf.Resource(resource_path, str(link), link.text))
-        return resources
+            if resource_path.is_file():
+                resources.append(imf.Resource(resource_path, str(link), link.text))
+            else:
+                if not urlparse(link.url).scheme:
+                    body = body.replace(
+                        f"{'!' * link.is_image}[{link.text}]({link.url})",
+                        f"{'!' * link.is_image}[{link.text}](https://{link.url})",
+                    )
+        return body, resources
 
     def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
         note_links = []
@@ -35,11 +39,11 @@ class Converter(converter.BaseConverter):
             note_links.append(imf.NoteLink(original_text, url, description or url))
         return note_links
 
-    def handle_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_links(self, body: str) -> tuple[str, imf.Resources, imf.NoteLinks]:
         # It seems like Bear uses wikilinks only for note links.
         wikilink_note_links = self.handle_wikilink_links(body)
-        markdown_resources = self.handle_markdown_links(body)
-        return markdown_resources, wikilink_note_links
+        body, markdown_resources = self.handle_markdown_links(body)
+        return body, markdown_resources, wikilink_note_links
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent_notebook: imf.Notebook, metadata: dict):
@@ -66,7 +70,7 @@ class Converter(converter.BaseConverter):
         note_imf.tags = [
             imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#"])
         ]
-        note_imf.resources, note_imf.note_links = self.handle_links(note_imf.body)
+        note_imf.body, note_imf.resources, note_imf.note_links = self.handle_links(note_imf.body)
 
         # handle bear specific metadata
         if (bear_metadata := metadata.get("net.shinyfrog.bear")) is not None:
