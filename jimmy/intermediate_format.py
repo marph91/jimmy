@@ -56,6 +56,9 @@ class NoteLink:
     # [title_or_original_id](:/original_id)
     title: str
 
+    def __hash__(self):
+        return hash(self.original_text)
+
 
 @dataclasses.dataclass
 class Resource:

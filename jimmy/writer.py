@@ -254,7 +254,7 @@ class FilesystemWriter:
         if unlinked_resources:
             self.append_resource_links(note, unlinked_resources)
 
-        for note_link in note.note_links:
+        for note_link in dict.fromkeys(note.note_links):
             self.update_note_links(note, note_link)
             self.stats.note_links += 1
         # Remove any void links. For example "[](abc)" or "[ ](abc)".
