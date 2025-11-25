@@ -67,13 +67,6 @@ def link():
         extended, content = t[0]
         is_external = extended is not None and extended.startswith("ext")
         is_image = extended is not None and extended.startswith("img")
-        if extended is None or is_external:
-            prefix = ""
-        elif is_image:
-            prefix = "!"
-        else:
-            LOGGER.debug(f"Unknown link extended: {extended}")
-            return content
         try:
             title, url = content.split("|", maxsplit=1)
         except ValueError:
@@ -92,9 +85,9 @@ def link():
             url = f"<{url}>"
 
         if is_external or is_image or md_link.is_web_link or md_link.is_mail_link:
-            return f"{prefix}[{title}]({url})"
+            return jimmy.md_lib.common.make_link(title, url, is_image=is_image)
         # guess that it's a wikilink
-        return f"{prefix}[{title}](tiddlywiki://{url})"
+        return jimmy.md_lib.common.make_link(title, f"tiddlywiki://{url}", is_image=is_image)
 
     return pp.Regex(link_re, as_group_list=True).set_parse_action(to_md)
 

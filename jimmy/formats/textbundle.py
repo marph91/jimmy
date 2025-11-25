@@ -24,8 +24,10 @@ class Converter(converter.BaseConverter):
             else:
                 if not urlparse(link.url).scheme:
                     body = body.replace(
-                        f"{'!' * link.is_image}[{link.text}]({link.url})",
-                        f"{'!' * link.is_image}[{link.text}](https://{link.url})",
+                        jimmy.md_lib.common.make_link(link.text, link.url, is_image=link.is_image),
+                        jimmy.md_lib.common.make_link(
+                            link.text, f"https://{link.url}", is_image=link.is_image
+                        ),
                     )
         return body, resources
 

@@ -86,7 +86,7 @@ class Converter(converter.BaseConverter):
         if (file_data := file_map.get(note["id"])) is not None:
             filename = self.resource_folder / note["file"]["name"]
             filename = common.write_base64(filename, file_data)
-            file_md = f"[{note['file']['name']}]({filename})"
+            file_md = jimmy.md_lib.common.make_link(note["file"]["name"], str(filename))
             note_imf.body += f"\n\n{file_md}"
         # else:
         #     self.logger.debug(f"Couldn't find file with id {note["id"]}")

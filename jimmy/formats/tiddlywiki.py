@@ -351,7 +351,7 @@ class Converter(converter.BaseConverter):
         if note.tags:
             tags_md = []
             for tag in note.tags:
-                tag_link = f"[{tag.title}]({tag.title})"
+                tag_link = jimmy.md_lib.common.make_link(tag.title, tag.title)
                 tags_md.append(tag_link)
                 note.note_links.append(imf.NoteLink(tag_link, tag.title, tag.title))
             note.body = ", ".join(tags_md) + "\n\n" + note.body
@@ -444,12 +444,14 @@ class Converter(converter.BaseConverter):
                     common.unique_title() if resource_title is None else resource_title
                 )
                 temp_filename = common.write_base64(temp_filename, text_base64)
-                body = f"![{temp_filename.name}]({temp_filename})"
+                body = jimmy.md_lib.common.make_link(
+                    temp_filename.name, str(temp_filename), is_image=True
+                )
                 resources.append(imf.Resource(temp_filename, body, resource_title))
             elif (source := tiddler.get("source")) is not None:
-                body = f"![{title}]({source})"
+                body = jimmy.md_lib.common.make_link(title, source, is_image=True)
             elif (uri := tiddler.get("_canonical_uri")) is not None:
-                body = f"[{title}]({uri})"
+                body = jimmy.md_lib.common.make_link(title, uri)
             else:
                 body = wikitext_html_to_md(tiddler.get("text", ""))
                 self.logger.warning(f"Unhandled attachment type {mime}")

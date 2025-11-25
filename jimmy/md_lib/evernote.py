@@ -141,7 +141,11 @@ class EnexToMarkdown:
                 self.active_formatting["italic"] = self.global_level
             case "img":
                 if (url := attrib.get("src")) is not None:
-                    self.md.append(f"![{attrib.get('title', attrib.get('alt', ''))}]({url})")
+                    self.md.append(
+                        jimmy.md_lib.common.make_link(
+                            attrib.get("title", attrib.get("alt", "")), url, is_image=True
+                        )
+                    )
             case "p":
                 self.add_newlines(2)
             case "s":
@@ -310,7 +314,7 @@ class EnexToMarkdown:
                     #     pass
                     else:
                         # normal link
-                        self.md.append(f"[{title}]({url})")
+                        self.md.append(jimmy.md_lib.common.make_link(title, url))
                     if append := self.active_link.get("append"):
                         self.md.extend(append)
                     self.active_link = {}
@@ -324,7 +328,11 @@ class EnexToMarkdown:
                 self.encryption = None
             case "en-media":
                 title = self.active_resource.get("title", self.active_link.get("alt", ""))
-                self.md.append(f"![{title}]({self.active_resource['hash']})")
+                self.md.append(
+                    jimmy.md_lib.common.make_link(
+                        title, self.active_resource["hash"], is_image=True
+                    )
+                )
                 self.hashes.append(self.active_resource["hash"])
                 self.active_resource = {}
 

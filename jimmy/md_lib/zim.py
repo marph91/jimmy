@@ -76,7 +76,7 @@ def image(resource_path: Path):
     def to_md(_, t):  # noqa
         image_path = Path(t[0].split("?")[0])  # strip queries like "?width=600px"
         image_path_resolved = resolve_resource(resource_path, image_path)
-        return f"![{image_path.name}]({image_path_resolved})"
+        return jimmy.md_lib.common.make_link(image_path.name, image_path_resolved, is_image=True)
 
     return pp.QuotedString("{{", endQuoteChar="}}").set_parse_action(to_md)
 
@@ -97,7 +97,7 @@ def link(resource_path: Path):
         elif "/" in url:
             # Links containing a '/' are considered links to external files
             url = resolve_resource(resource_path, Path(url))
-        return f"[{title}]({url})"
+        return jimmy.md_lib.common.make_link(title, url)
 
     return pp.QuotedString("[[", endQuoteChar="]]").set_parse_action(to_md)
 

@@ -63,7 +63,7 @@ def list_():
 
 def image():
     def to_md(_, t):  # noqa
-        return f"![{t[0]}]({t[0]})"
+        return jimmy.md_lib.common.make_link(t[0], t[0], is_image=True)
 
     return pp.QuotedString("[img]", end_quote_char="[/img]").set_parse_action(to_md)
 

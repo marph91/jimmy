@@ -7,6 +7,7 @@ import shutil
 import urllib.parse
 
 from jimmy import common, intermediate_format as imf
+import jimmy.md_lib.common
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -150,11 +151,15 @@ class FilesystemWriter:
         assert note.path is not None
         assert resource.path is not None
         resource_title = (
-            resource.title if resource.title not in [None, ""] else resource.filename.name
+            resource.title
+            if resource.title is not None and resource.title != ""
+            else resource.filename.name
         )
 
         relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-        resource_markdown = f"{'!' * resource.is_image}[{resource_title}]({relative_path})"
+        resource_markdown = jimmy.md_lib.common.make_link(
+            resource_title, relative_path, is_image=resource.is_image
+        )
         if resource.original_text is None:
             return False
         # replace existing link
@@ -177,11 +182,16 @@ class FilesystemWriter:
         for resource in sorted(resources, key=lambda r: r.filename):
             assert resource.path is not None
             resource_title = (
-                resource.title if resource.title not in [None, ""] else resource.filename.name
+                resource.title
+                if resource.title is not None and resource.title != ""
+                else resource.filename.name
             )
 
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-            resource_markdown = f"- {'!' * resource.is_image}[{resource_title}]({relative_path})"
+            md_link = jimmy.md_lib.common.make_link(
+                resource_title, relative_path, is_image=resource.is_image
+            )
+            resource_markdown = f"- {md_link}"
             unlinked_resources.append(resource_markdown)
 
         note.body += "\n".join(unlinked_resources)
@@ -235,7 +245,9 @@ class FilesystemWriter:
             return
 
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
-        note.body = note.body.replace(note_link.original_text, f"[{link_title}]({relative_path})")
+        note.body = note.body.replace(
+            note_link.original_text, jimmy.md_lib.common.make_link(link_title, relative_path)
+        )
 
     @common.catch_all_exceptions
     def write_note(self, note: imf.Note):

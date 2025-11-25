@@ -115,12 +115,12 @@ def convert_rich_text(rich_text, heading_on_line: bool):
                     if rich_text.text == url:
                         md_content = f"<{md_content}>"
                     else:
-                        md_content = f"[{md_content}]({url})"
+                        md_content = jimmy.md_lib.common.make_link(md_content, url)
                 elif url.startswith("node "):
                     # internal node links
                     url = url.lstrip("node ")
                     text = md_content
-                    md_content = f"[{text}]({url})"
+                    md_content = jimmy.md_lib.common.make_link(text, url)
                     # Split the note ID from the optional title. It can look like:
                     # "36 h2-3" or just "36".
                     # TODO: Anchors are not supported.
@@ -128,7 +128,7 @@ def convert_rich_text(rich_text, heading_on_line: bool):
                     note_links.append(imf.NoteLink(md_content, original_id, text))
                 else:
                     # ?
-                    md_content = f"[{md_content}]({url})"
+                    md_content = jimmy.md_lib.common.make_link(md_content, url)
             case "scale":
                 match attrib_value:
                     case "sup":
@@ -191,7 +191,9 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     temp_filename = common.write_base64(temp_filename, node.text)
 
     # assemble the markdown
-    resource_md = f"![{temp_filename.name}]({temp_filename})"
+    resource_md = jimmy.md_lib.common.make_link(
+        temp_filename.name, str(temp_filename), is_image=True
+    )
     resource_imf = imf.Resource(temp_filename, resource_md, temp_filename.name)
     return resource_md, resource_imf
 

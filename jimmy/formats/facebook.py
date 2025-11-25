@@ -12,10 +12,6 @@ def fix_encoding_error(input_str: str) -> str:
     return input_str.encode("latin1").decode("utf8")
 
 
-def create_markdown_link(is_image: bool, title: str, uri: str) -> str:
-    return f"{'!' * is_image}[{title}]({uri})"
-
-
 def timestamp_to_date_str(timestamp_s: float | int) -> str:
     return common.timestamp_to_datetime(timestamp_s).strftime("%Y-%m-%d")
 
@@ -53,10 +49,10 @@ class Converter(converter.BaseConverter):
                             post_body += f"\n\n<{post_attachment_value['url']}>"
                         case "media":
                             media_uri = post_attachment_value["uri"]
-                            post_body += create_markdown_link(
-                                common.is_image(self.root_path / media_uri),
+                            post_body += jimmy.md_lib.common.make_link(
                                 post_attachment_value.get("title", ""),
                                 media_uri,
+                                is_image=common.is_image(self.root_path / media_uri),
                             )
                         case "place":
                             common.try_transfer_dicts(

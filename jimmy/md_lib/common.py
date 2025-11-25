@@ -18,6 +18,10 @@ import jimmy.md_lib.html_filter
 LOGGER = logging.getLogger("jimmy")
 
 
+def make_link(text: str, url: str, is_image: bool = False, title: str = "") -> str:
+    return f"{'!' * is_image}[{text}]({url}{title})"
+
+
 def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
     r"""
     >>> split_title_from_body("# heading\n\n b")
@@ -113,18 +117,16 @@ class MarkdownLink:
         return self.url.startswith("mailto:")
 
     def __str__(self) -> str:
-        prefix = "!" if self.is_image else ""
         title = "" if not self.title else f' "{self.title}"'
-        return f"{prefix}[{self.text}]({self.url}{title})"
+        return make_link(self.text, self.url, is_image=self.is_image, title=title)
 
     def reformat(self) -> str:
         if not self.url:
             return f"<{self.text}>"
         if self.is_web_link and self.text == self.url:
             return f"<{self.url}>"
-        prefix = "!" if self.is_image else ""
         title = "" if not self.title else f' "{self.title}"'
-        return f"{prefix}[{self.text}]({self.url}{title})"
+        return make_link(self.text, self.url, is_image=self.is_image, title=title)
 
 
 class LinkExtractor(Treeprocessor):

@@ -95,7 +95,7 @@ class Converter(converter.BaseConverter):
                     # after the initial note content is parsed.
                     sequences = []
                     for note_id in item.text.split(","):
-                        text = f"[{note_id}]({note_id})"
+                        text = jimmy.md_lib.common.make_link(note_id, note_id)
                         sequences.append(text)
                         note_imf.note_links.append(imf.NoteLink(text, note_id, note_id))
                     note_imf.body += "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"
