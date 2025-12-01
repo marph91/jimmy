@@ -41,7 +41,7 @@ if __name__ == "__main__":
     targetfolder = (Path(__file__).parent / "bin").resolve()
     targetfolder.mkdir(exist_ok=True)
     try:
-        download_pandoc(version="3.8.2", targetfolder=targetfolder)
+        download_pandoc(version="3.8.3", targetfolder=targetfolder)
     except Exception:
         print("pandoc download failed")
     try:
