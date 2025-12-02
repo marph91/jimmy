@@ -75,7 +75,9 @@ class Converter(converter.BaseConverter):
                 )
                 comment_content = get_text(comment.find("wp:comment_content", namespaces))
                 if comment_content is not None:
-                    comment_content_md = jimmy.md_lib.common.markup_to_markdown(comment_content)
+                    comment_content_md = jimmy.md_lib.common.markup_to_markdown(
+                        comment_content, standalone=False
+                    )
                     comments_md.extend(["", f"**{comment_author}**: {comment_content_md}"])
             note_imf.body += "\n".join(comments_md)
 

@@ -166,7 +166,8 @@ class LinkExtractor(Treeprocessor):
             text += markup_to_markdown(
                 "".join(
                     ET.tostring(child, encoding="unicode", method="html") for child in list(link)
-                )
+                ),
+                standalone=False,
             )
             self.md.links.append(
                 MarkdownLink(self.unescape(text), self.unescape(url), self.unescape(title))
@@ -390,27 +391,37 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
 
 
 def markup_to_markdown(
+    # pylint: disable=too-many-arguments,too-many-positional-arguments
     text: bytes | str,
     format_: str = "html",
     resource_folder: Path = Path("tmp_media"),
+    standalone: bool = True,
     custom_filter: list | None = None,
+    extra_args: list | None = None,
 ) -> str:
     # Route everything through this function to get a single path of truth.
     if format_.startswith("html"):
         text_html = text
     else:
+        if extra_args is None:
+            extra_args = []
+        extra_args.extend(
+            [
+                # somehow the temp folder is needed to create the resources properly
+                f"--extract-media={resource_folder}",
+                # don't create artificial line breaks
+                "--wrap=preserve",
+            ]
+        )
+        if standalone:
+            extra_args.append("--standalone")
         # reader: x -> HTML
         text_html = pypandoc.convert_text(
             text,
             INTERMEDIATE_FORMAT,
             format=format_,
             sandbox=True,
-            extra_args=[
-                # somehow the temp folder is needed to create the resources properly
-                f"--extract-media={resource_folder}",
-                # don't create artificial line breaks
-                "--wrap=preserve",
-            ],
+            extra_args=extra_args,
         )
 
     # HTML filter: HTML -> filter -> HTML

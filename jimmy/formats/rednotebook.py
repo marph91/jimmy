@@ -46,7 +46,8 @@ class Converter(converter.BaseConverter):
         # TODO: Could be done with https://pypi.org/project/txt2tags/
         # TODO: links are converted, but not correctly
         # TODO: underline is converted to italic "*"
-        body = jimmy.md_lib.common.markup_to_markdown(data["text"], format_="t2t")
+        # TODO: "standalone" yields errors
+        body = jimmy.md_lib.common.markup_to_markdown(data["text"], format_="t2t", standalone=False)
         body, resources = self.handle_markdown_links(body)
         note_imf = imf.Note(
             title,

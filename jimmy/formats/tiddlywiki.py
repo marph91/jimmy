@@ -231,7 +231,9 @@ class MarkdownHtmlSeparator(HTMLParser):
 
     def handle_remaining_html(self):
         if self.html:
-            self.md.append(jimmy.md_lib.common.markup_to_markdown("".join(self.html)))
+            self.md.append(
+                jimmy.md_lib.common.markup_to_markdown("".join(self.html), standalone=False)
+            )
             self.html = []
 
     def get_md(self) -> str:

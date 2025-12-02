@@ -25,7 +25,7 @@ def decode_payload(part) -> str:
 def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
     mime = part.get_content_type()
     if mime == "text/html":
-        return [jimmy.md_lib.common.markup_to_markdown(decode_payload(part))], []
+        return [jimmy.md_lib.common.markup_to_markdown(decode_payload(part), standalone=False)], []
     if mime in ("text/markdown", "text/plain"):
         return [decode_payload(part)], []
     if any(mime.startswith(t) for t in ("audio/", "image/", "application/", "text/")):
