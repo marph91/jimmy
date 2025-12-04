@@ -73,7 +73,7 @@ jobs:
       - name: Smoke test
         working-directory: ./dist  # run in a different directory to make sure that the paths are working
         run: |
-          # pandoc and asciidoc converter
+          # default pandoc converter
           ./jimmy* cli ../test/data/test_data/default_format/arbitrary_folder --stdout-log-level DEBUG
           # filters and frontmatter module
           ./jimmy* cli ../test/data/test_data/obsidian/test_1_frontmatter --format obsidian

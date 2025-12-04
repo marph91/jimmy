@@ -28,8 +28,6 @@ jobs:
         run: |
           pip install -r requirements/requirements-dev.txt
           python download_binaries.py
-      - name: install optional system depencencies
-        run: sudo apt install -y asciidoctor
       - name: Run tests
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
