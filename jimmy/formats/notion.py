@@ -99,7 +99,9 @@ class Converter(converter.BaseConverter):
         if item.suffix.lower() == ".html":
             # html, else markdown
             body = jimmy.md_lib.common.markup_to_markdown(
-                body, custom_filter=[jimmy.md_lib.html_filter.notion_streamline_lists]
+                body,
+                pwd=item.parent,
+                custom_filter=[jimmy.md_lib.html_filter.notion_streamline_lists],
             )
         _, body = jimmy.md_lib.common.split_title_from_body(body)
 

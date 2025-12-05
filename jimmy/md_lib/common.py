@@ -393,8 +393,9 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
 def markup_to_markdown(
     # pylint: disable=too-many-arguments,too-many-positional-arguments
     text: bytes | str,
+    pwd: Path | None = None,  # input
     format_: str = "html",
-    resource_folder: Path = Path("tmp_media"),
+    resource_folder: Path = Path("tmp_media"),  # output
     standalone: bool = True,
     custom_filter: list | None = None,
     extra_args: list | None = None,
@@ -420,8 +421,14 @@ def markup_to_markdown(
             text,
             INTERMEDIATE_FORMAT,
             format=format_,
-            sandbox=True,
+            # Don't use sandbox to preserve linked files, like in asciidoc.
+            # sandbox=True,
             extra_args=extra_args,
+            # Resource path didn't work. Use pwd instead.
+            # https://pandoc.org/MANUAL.html#reader-options
+            # separator = ";" if platform.system().lower() == "windows" else ":"
+            # extra_args.append(f"--resource-path={resource_path}")
+            cworkdir=pwd,
         )
 
     # HTML filter: HTML -> filter -> HTML

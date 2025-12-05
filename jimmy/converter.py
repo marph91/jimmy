@@ -202,6 +202,7 @@ class DefaultConverter(BaseConverter):
             case "adoc" | "asciidoc" | "asciidoctor":
                 note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
+                    pwd=file_.parent,
                     format_="asciidoc",
                     resource_folder=self.resource_folder,
                     # Technically, the first line is the document title and gets
@@ -247,6 +248,7 @@ class DefaultConverter(BaseConverter):
                 # binary format, supported by pandoc
                 note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                     file_.read_bytes(),
+                    pwd=file_.parent,
                     format_=format_,
                     resource_folder=self.resource_folder,
                 )
@@ -257,6 +259,7 @@ class DefaultConverter(BaseConverter):
                     case "endnote" | "mediawiki" | "opml":  # TODO: endnotexml and opml example
                         note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
+                            pwd=file_.parent,
                             format_=root_tag,
                             resource_folder=self.resource_folder,
                         )
@@ -264,6 +267,7 @@ class DefaultConverter(BaseConverter):
                     # case "book":
                     #     note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                     #         file_.read_text(encoding="utf-8"),
+                    #         pwd=file_.parent,
                     #         format_="docbook",
                     #         resource_folder=self.resource_folder,
                     #     )
@@ -273,6 +277,7 @@ class DefaultConverter(BaseConverter):
                 pandoc_format = jimmy.md_lib.common.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
                 note_imf.body = jimmy.md_lib.common.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
+                    pwd=file_.parent,
                     format_=pandoc_format,
                     resource_folder=self.resource_folder,
                 )

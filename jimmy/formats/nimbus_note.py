@@ -100,6 +100,7 @@ class Converter(converter.BaseConverter):
 
         note_imf.body = jimmy.md_lib.common.markup_to_markdown(
             note_html,
+            pwd=temp_folder_note,
             custom_filter=[
                 jimmy.md_lib.html_filter.nimbus_note_add_mark,
                 jimmy.md_lib.html_filter.nimbus_note_add_note_links,

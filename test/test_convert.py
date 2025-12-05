@@ -291,7 +291,8 @@ class EndToEnd(unittest.TestCase):
             ["single_file", ["default_format/arbitrary_folder/plaintext.txt"]],
             ["multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2],
             ["markdown_file", ["default_format/arbitrary_folder/sample.md"]],
-            ["asciidoc", ["default_format/asciidoc"]],
+            ["asciidoc_contrib", ["default_format/asciidoc_contrib"]],
+            ["asciidoc_core", ["default_format/asciidoc_core"]],
             # TODO: bbcode
             ["eml", ["default_format/eml"]],
             ["html", ["default_format/html"]],

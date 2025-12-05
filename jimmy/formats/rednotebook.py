@@ -3,6 +3,7 @@
 import datetime
 from pathlib import Path
 from urllib.parse import urlparse
+import re
 
 import yaml
 
@@ -10,11 +11,15 @@ from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
 
 
+WRONG_QUOTATION_RE = re.compile(r'""(.*?)""\.(.*?)\]')
+
+
 class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
         for link in jimmy.md_lib.common.get_markdown_links(body):
-            # Links are usually enclosed with double quotation marks.
+            # Links are usually enclosed with double quotation marks
+            # (unparsed text: https://rednotebook.app/help.html#toc37).
             # They get removed in some cases when parsing. Add them again
             # to get the original string.
             if not link.url.startswith("%22%22"):
@@ -47,6 +52,11 @@ class Converter(converter.BaseConverter):
         # TODO: links are converted, but not correctly
         # TODO: underline is converted to italic "*"
         # TODO: "standalone" yields errors
+
+        # TODO
+        # def fix_quotation_marks(match: re.Match):
+        #     return f'""{match.group(1)}.{match.group(2)}""]'
+        # body_preprocessed = WRONG_QUOTATION_RE.sub(fix_quotation_marks, data["text"])
         body = jimmy.md_lib.common.markup_to_markdown(data["text"], format_="t2t", standalone=False)
         body, resources = self.handle_markdown_links(body)
         note_imf = imf.Note(

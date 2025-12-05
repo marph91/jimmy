@@ -70,7 +70,7 @@ class Converter(converter.BaseConverter):
 
         # convert the note body to Markdown
         if soup.body is not None:
-            note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup))
+            note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup), pwd=file_.parent)
 
             # resources and internal links
             note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body)

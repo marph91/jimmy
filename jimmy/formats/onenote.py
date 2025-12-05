@@ -72,7 +72,7 @@ class Converter(converter.BaseConverter):
         self.extract_metadata(soup)
 
         # TODO: Strip title and extract date. This could be done in one2html already.
-        note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup))
+        note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup), pwd=page.parent)
 
         note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body, page)
 
