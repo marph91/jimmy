@@ -317,28 +317,28 @@ PANDOC_INPUT_FORMAT_MAP = {
 # fmt: off
 INTERMEDIATE_FORMAT = "html"
 PANDOC_OUTPUT_FORMAT = (
-    # https://pandoc.org/chunkedhtml-demo/8.22-markdown-variants.html
+    # https://pandoc.org/MANUAL.html#markdown-variants
     # Don't use "commonmark_x". There is too much noise.
     "markdown_strict"
-    # https://pandoc.org/demo/example33/8.11-backslash-escapes.html#all-symbols-escapable
+    # https://pandoc.org/MANUAL.html#extension-all_symbols_escapable
     "+all_symbols_escapable"
-    # https://pandoc.org/chunkedhtml-demo/8.5-verbatim-code-blocks.html#extension-backtick_code_blocks
+    # https://pandoc.org/MANUAL.html#extension-backtick_code_blocks
     "+backtick_code_blocks"
-    # https://pandoc.org/chunkedhtml-demo/8.21-non-default-extensions.html#extension-mark
+    # https://pandoc.org/MANUAL.html#extension-mark
     "+mark"
-    # https://pandoc.org/chunkedhtml-demo/8.9-tables.html#extension-pipe_tables
+    # https://pandoc.org/MANUAL.html#extension-pipe_tables
     "+pipe_tables"
-    # https://pandoc.org/demo/example33/8.3-headings.html#extension-space_in_atx_header
+    # https://pandoc.org/MANUAL.html#extension-space_in_atx_header
     "+space_in_atx_header"
-    # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-strikeout
+    # https://pandoc.org/MANUAL.html#extension-strikeout
     "+strikeout"
-    # https://pandoc.org/chunkedhtml-demo/8.12-inline-formatting.html#extension-superscript-subscript
+    # https://pandoc.org/MANUAL.html#extension-superscript-subscript
     "+superscript+subscript"
-    # https://pandoc.org/chunkedhtml-demo/8.7-lists.html#extension-task_lists
+    # https://pandoc.org/MANUAL.html#extension-task_lists
     "+task_lists"
-    # https://pandoc.org/chunkedhtml-demo/8.13-math.html#extension-tex_math_dollars
+    # https://pandoc.org/MANUAL.html#extension-tex_math_dollars
     "+tex_math_dollars"
-    # https://pandoc.org/chunkedhtml-demo/8.14-raw-html.html#extension-raw_html
+    # https://pandoc.org/MANUAL.html#extension-raw_html
     "-raw_html"
 )
 # fmt:on
@@ -412,6 +412,9 @@ def markup_to_markdown(
                 f"--extract-media={resource_folder}",
                 # don't create artificial line breaks
                 "--wrap=preserve",
+                # mathml seems cover the widest range of formulas
+                # https://pandoc.org/MANUAL.html#math-rendering-in-html
+                "--mathml",
             ]
         )
         if standalone:
