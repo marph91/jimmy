@@ -27,7 +27,7 @@ FORMAT_REGISTRY = {
     "nimbus_note": {"accepted_extensions": [".zip"], "accept_folder": True},
     "notion": {"accepted_extensions": [".zip"], "accept_folder": False},
     "obsidian": {"accepted_extensions": None, "accept_folder": True},
-    "onenote": {"accepted_extensions": [".zip"], "accept_folder": True},
+    # "onenote": {"accepted_extensions": [".zip"], "accept_folder": True},
     "qownnotes": {"accepted_extensions": None, "accept_folder": True},
     "rednotebook": {"accepted_extensions": [".zip"], "accept_folder": True},
     "roam_research": {"accepted_extensions": [".json"], "accept_folder": False},

@@ -44,7 +44,7 @@ if __name__ == "__main__":
         download_pandoc(version="3.8.3", targetfolder=targetfolder)
     except Exception:
         print("pandoc download failed")
-    try:
-        download_one2html(targetfolder=targetfolder)
-    except Exception:
-        print("one2html download failed")
+    # try:
+    #     download_one2html(targetfolder=targetfolder)
+    # except Exception:
+    #     print("one2html download failed")
