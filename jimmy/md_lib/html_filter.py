@@ -68,7 +68,24 @@ def highlighting(soup: bs4.BeautifulSoup):
 
 
 def iframes_to_links(soup: bs4.BeautifulSoup):
-    """Convert iframes to simple links."""
+    """
+    Convert iframes to simple links.
+
+    >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de"></iframe>', "html.parser")
+    >>> iframes_to_links(soup)
+    >>> soup
+    <a href="https://kicker.de">https://kicker.de</a>
+
+    >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de">&nbsp;</iframe>', "html.parser")
+    >>> iframes_to_links(soup)
+    >>> soup
+    <a href="https://kicker.de">https://kicker.de</a>
+
+    >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de">link</iframe>', "html.parser")
+    >>> iframes_to_links(soup)
+    >>> soup
+    <a href="https://kicker.de">link</a>
+    """
     for iframe in soup.find_all("iframe"):
         if not iframe.attrs.get("src", ""):
             iframe.decompose()
