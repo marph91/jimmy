@@ -22,6 +22,30 @@ def make_link(text: str, url: str, is_image: bool = False, title: str = "") -> s
     return f"{'!' * is_image}[{text}]({url}{title})"
 
 
+def split_leading_trailing_whitespace(value: str) -> tuple[str, str, str]:
+    r"""
+    >>> split_leading_trailing_whitespace("")
+    ('', '', '')
+    >>> split_leading_trailing_whitespace("foo")
+    ('', 'foo', '')
+    >>> split_leading_trailing_whitespace("  foo")
+    ('  ', 'foo', '')
+    >>> split_leading_trailing_whitespace("foo ")
+    ('', 'foo', ' ')
+    >>> split_leading_trailing_whitespace(" foo bar ")
+    (' ', 'foo bar', ' ')
+    >>> split_leading_trailing_whitespace("\t foo bar\xa0 ")
+    ('\t ', 'foo bar', '\xa0 ')
+    """
+    leading_whitespace_stop = len(value) - len(value.lstrip())
+    trailing_whitespace_start = len(value.rstrip())
+    return (
+        value[:leading_whitespace_stop],
+        value[leading_whitespace_stop:trailing_whitespace_start],
+        value[trailing_whitespace_start:],
+    )
+
+
 def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
     r"""
     >>> split_title_from_body("# heading\n\n b")

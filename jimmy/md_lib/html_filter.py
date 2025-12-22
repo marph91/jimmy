@@ -14,6 +14,8 @@ import urllib.parse
 
 import bs4
 
+import jimmy.md_lib.common
+
 LOGGER = logging.getLogger("jimmy")
 HTML_HEADER_RE = re.compile(r"^h[1-6]$")
 
@@ -509,30 +511,6 @@ def replace_special_characters(soup: bs4.BeautifulSoup):
         element.replace_with(nested_soup)
 
 
-def split_leading_trailing_whitespace(value: str) -> tuple[str, str, str]:
-    r"""
-    >>> split_leading_trailing_whitespace("")
-    ('', '', '')
-    >>> split_leading_trailing_whitespace("foo")
-    ('', 'foo', '')
-    >>> split_leading_trailing_whitespace(" foo")
-    (' ', 'foo', '')
-    >>> split_leading_trailing_whitespace("foo ")
-    ('', 'foo', ' ')
-    >>> split_leading_trailing_whitespace(" foo bar ")
-    (' ', 'foo bar', ' ')
-    >>> split_leading_trailing_whitespace("\t foo bar\xa0 ")
-    ('\t ', 'foo bar', '\xa0 ')
-    """
-    leading_whitespace_stop = len(value) - len(value.lstrip())
-    trailing_whitespace_start = len(value.rstrip())
-    return (
-        value[:leading_whitespace_stop],
-        value[leading_whitespace_stop:trailing_whitespace_start],
-        value[trailing_whitespace_start:],
-    )
-
-
 def strikethrough(soup: bs4.BeautifulSoup):
     """
     >>> soup = bs4.BeautifulSoup(
@@ -802,8 +780,8 @@ def unwrap_inline_whitespace(soup: bs4.BeautifulSoup):
 
     whitespace_elements = soup.find_all(find_tags_with_leading_trailing_whitespace)
     for whitespace_element in whitespace_elements:
-        leading_whitespace, new_text, trailing_whitespace = split_leading_trailing_whitespace(
-            whitespace_element.string
+        leading_whitespace, new_text, trailing_whitespace = (
+            jimmy.md_lib.common.split_leading_trailing_whitespace(whitespace_element.string)
         )
         if leading_whitespace and whitespace_element.parent is not None:
             whitespace_element.insert_before(soup.new_string(leading_whitespace))

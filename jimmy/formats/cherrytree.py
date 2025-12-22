@@ -93,7 +93,9 @@ def convert_rich_text(rich_text, heading_on_line: bool):
     note_links = []
 
     # formatting needs to be applied directly to the string without spaces
-    leading, md_content, trailing = separate_whitespace(rich_text.text)
+    leading, md_content, trailing = jimmy.md_lib.common.split_leading_trailing_whitespace(
+        rich_text.text
+    )
     for attrib, attrib_value in rich_text.attrib.items():
         match attrib:
             case "background" | "foreground" | "justification":
