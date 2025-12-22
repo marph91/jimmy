@@ -8,6 +8,7 @@ from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
+import jimmy.md_lib.tables
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -91,7 +92,7 @@ class SuperToMarkdown:
 
     def parse_table(self, block: dict):
         md_before = self.md
-        table = jimmy.md_lib.common.MarkdownTable()
+        table = jimmy.md_lib.tables.MarkdownTable()
         for row in block["children"]:
             # assert row["type"] == "tablerow"
             row_cells = []
@@ -120,7 +121,7 @@ class SuperToMarkdown:
         skip_children = False
         match block["type"]:
             case "autolink" | "link":
-                link = jimmy.md_lib.common.MarkdownLink(
+                link = jimmy.md_lib.links.MarkdownLink(
                     block["children"][0].get("text", ""),
                     block.get("url", ""),
                     "" if (title := block.get("title")) is None else title,

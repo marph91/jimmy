@@ -6,7 +6,8 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -18,7 +19,7 @@ class Converter(converter.BaseConverter):
     def handle_markdown_links(self, note_body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
-        for link in jimmy.md_lib.common.get_markdown_links(note_body):
+        for link in jimmy.md_lib.links.get_markdown_links(note_body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("zohonotebook://"):
@@ -70,7 +71,7 @@ class Converter(converter.BaseConverter):
 
         # convert the note body to Markdown
         if soup.body is not None:
-            note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup), pwd=file_.parent)
+            note_imf.body = jimmy.md_lib.convert.markup_to_markdown(str(soup), pwd=file_.parent)
 
             # resources and internal links
             note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body)

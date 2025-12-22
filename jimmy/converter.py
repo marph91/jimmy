@@ -10,7 +10,9 @@ import frontmatter
 from jimmy import common, intermediate_format as imf
 import jimmy.variables
 import jimmy.md_lib.common
+import jimmy.md_lib.convert
 import jimmy.md_lib.eml
+import jimmy.md_lib.links
 
 
 class BaseConverter(abc.ABC):
@@ -165,7 +167,7 @@ class DefaultConverter(BaseConverter):
     def handle_markdown_links(self, body: str, path: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             # TODO: fix the source issue not the symptoms
             if "\x02amp\x03" in str(link):
                 self.logger.warning(f'Trying to repair corrupted link "{link}".')
@@ -200,7 +202,7 @@ class DefaultConverter(BaseConverter):
         format_ = file_.suffix.lower()[1:]
         match format_:
             case "adoc" | "asciidoc" | "asciidoctor":
-                note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_="asciidoc",
@@ -246,7 +248,7 @@ class DefaultConverter(BaseConverter):
                 note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":
                 # binary format, supported by pandoc
-                note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_bytes(),
                     pwd=file_.parent,
                     format_=format_,
@@ -257,7 +259,7 @@ class DefaultConverter(BaseConverter):
                 root_tag = root.tag.rpartition("}")[-1]  # strip namespace
                 match root_tag:
                     case "endnote" | "mediawiki" | "opml":  # TODO: endnotexml and opml example
-                        note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+                        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
                             pwd=file_.parent,
                             format_=root_tag,
@@ -265,7 +267,7 @@ class DefaultConverter(BaseConverter):
                         )
                     # TODO: docbook
                     # case "book":
-                    #     note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+                    #     note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     #         file_.read_text(encoding="utf-8"),
                     #         pwd=file_.parent,
                     #         format_="docbook",
@@ -274,8 +276,8 @@ class DefaultConverter(BaseConverter):
                     case _:
                         note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
-                pandoc_format = jimmy.md_lib.common.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
-                note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+                pandoc_format = jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_=pandoc_format,

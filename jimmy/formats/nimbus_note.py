@@ -6,8 +6,9 @@ from urllib.parse import unquote
 from bs4 import BeautifulSoup
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
 import jimmy.md_lib.html_filter
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -22,7 +23,7 @@ class Converter(converter.BaseConverter):
     ) -> tuple[str, imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(note_body):
+        for link in jimmy.md_lib.links.get_markdown_links(note_body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             # speciality of nimbus note: duplicated https
@@ -53,7 +54,7 @@ class Converter(converter.BaseConverter):
                 resources.append(
                     imf.Resource(
                         temp_filename,
-                        jimmy.md_lib.common.make_link(link.text, link.url, is_image=link.is_image),
+                        jimmy.md_lib.links.make_link(link.text, link.url, is_image=link.is_image),
                         temp_filename.name,
                     )
                 )
@@ -98,7 +99,7 @@ class Converter(converter.BaseConverter):
 
         note_imf = imf.Note(title, source_application=self.format, original_id=title)
 
-        note_imf.body = jimmy.md_lib.common.markup_to_markdown(
+        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
             note_html,
             pwd=temp_folder_note,
             custom_filter=[

@@ -32,7 +32,7 @@ class Converter(converter.BaseConverter):
     def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
         # https://docs.getdrafts.com/docs/drafts/cross-linking#wiki-style-cross-linking-drafts
         note_links = []
-        for _, url, _ in jimmy.md_lib.common.get_wikilink_links(body):
+        for _, url, _ in jimmy.md_lib.links.get_wikilink_links(body):
             original_text = f"[[{url}]]"
             if url.startswith("d:"):
                 best_match_id = common.get_best_match(url[2:], self.note_id_title_map)

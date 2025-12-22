@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -38,7 +38,7 @@ class Converter(converter.BaseConverter):
         # TODO
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = path / link.url
@@ -86,7 +86,7 @@ class Converter(converter.BaseConverter):
         if (file_data := file_map.get(note["id"])) is not None:
             filename = self.resource_folder / note["file"]["name"]
             filename = common.write_base64(filename, file_data)
-            file_md = jimmy.md_lib.common.make_link(note["file"]["name"], str(filename))
+            file_md = jimmy.md_lib.links.make_link(note["file"]["name"], str(filename))
             note_imf.body += f"\n\n{file_md}"
         # else:
         #     self.logger.debug(f"Couldn't find file with id {note["id"]}")

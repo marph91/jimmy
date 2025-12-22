@@ -7,7 +7,9 @@ from urllib.parse import unquote
 import zipfile
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
@@ -47,7 +49,7 @@ class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str, item: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             unquoted_url = unquote(link.url)
@@ -98,12 +100,12 @@ class Converter(converter.BaseConverter):
         body = item.read_text(encoding="utf-8")
         if item.suffix.lower() == ".html":
             # html, else markdown
-            body = jimmy.md_lib.common.markup_to_markdown(
+            body = jimmy.md_lib.convert.markup_to_markdown(
                 body,
                 pwd=item.parent,
                 custom_filter=[jimmy.md_lib.html_filter.notion_streamline_lists],
             )
-        _, body = jimmy.md_lib.common.split_title_from_body(body)
+        _, body = jimmy.md_lib.text.split_title_from_body(body)
 
         # find links
         resources, note_links = self.handle_markdown_links(body, item)

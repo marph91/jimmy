@@ -4,7 +4,8 @@ import re
 
 import pyparsing as pp
 
-import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 
 # Prevent spaces, tabs and newlines from being stripped.
@@ -63,7 +64,7 @@ def list_():
 
 def image():
     def to_md(_, t):  # noqa
-        return jimmy.md_lib.common.make_link(t[0], t[0], is_image=True)
+        return jimmy.md_lib.links.make_link(t[0], t[0], is_image=True)
 
     return pp.QuotedString("[img]", end_quote_char="[/img]").set_parse_action(to_md)
 
@@ -80,7 +81,7 @@ def table():
     def to_md(_, t):  # noqa
         _, caption, content = t[0]
 
-        table_md = jimmy.md_lib.common.MarkdownTable()
+        table_md = jimmy.md_lib.tables.MarkdownTable()
         if caption is not None:
             table_md.caption = caption
 

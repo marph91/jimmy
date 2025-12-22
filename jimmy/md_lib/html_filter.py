@@ -14,7 +14,7 @@ import urllib.parse
 
 import bs4
 
-import jimmy.md_lib.common
+import jimmy.md_lib.text
 
 LOGGER = logging.getLogger("jimmy")
 HTML_HEADER_RE = re.compile(r"^h[1-6]$")
@@ -781,7 +781,7 @@ def unwrap_inline_whitespace(soup: bs4.BeautifulSoup):
     whitespace_elements = soup.find_all(find_tags_with_leading_trailing_whitespace)
     for whitespace_element in whitespace_elements:
         leading_whitespace, new_text, trailing_whitespace = (
-            jimmy.md_lib.common.split_leading_trailing_whitespace(whitespace_element.string)
+            jimmy.md_lib.text.split_leading_trailing_whitespace(whitespace_element.string)
         )
         if leading_whitespace and whitespace_element.parent is not None:
             whitespace_element.insert_before(soup.new_string(leading_whitespace))

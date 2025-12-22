@@ -51,7 +51,7 @@ class Converter(converter.BaseConverter):
         # only internal links
         # https://www.colornote.com/faq-question/how-can-i-link-a-note-with-another-note/
         note_links = []
-        for _, url, description in jimmy.md_lib.common.get_wikilink_links(body):
+        for _, url, description in jimmy.md_lib.links.get_wikilink_links(body):
             note_links.append(imf.NoteLink(f"[[{url}]]", url, description or url))
         return note_links
 

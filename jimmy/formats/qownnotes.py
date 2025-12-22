@@ -7,7 +7,7 @@ import sqlite3
 from urllib.parse import unquote
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 QOWNNOTE_LINK_RE = re.compile(r"<(.*?.md)>")
@@ -33,7 +33,7 @@ class Converter(converter.BaseConverter):
         # markdown style links
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES):

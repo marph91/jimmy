@@ -7,6 +7,8 @@ import urllib.parse
 import pyparsing as pp
 
 import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -73,7 +75,7 @@ def link():
             title = content
             url = content
 
-        md_link = jimmy.md_lib.common.MarkdownLink(url=url)
+        md_link = jimmy.md_lib.links.MarkdownLink(url=url)
 
         # wrap files with special characters in angle brackets
         if (
@@ -85,9 +87,9 @@ def link():
             url = f"<{url}>"
 
         if is_external or is_image or md_link.is_web_link or md_link.is_mail_link:
-            return jimmy.md_lib.common.make_link(title, url, is_image=is_image)
+            return jimmy.md_lib.links.make_link(title, url, is_image=is_image)
         # guess that it's a wikilink
-        return jimmy.md_lib.common.make_link(title, f"tiddlywiki://{url}", is_image=is_image)
+        return jimmy.md_lib.links.make_link(title, f"tiddlywiki://{url}", is_image=is_image)
 
     return pp.Regex(link_re, as_group_list=True).set_parse_action(to_md)
 
@@ -122,7 +124,7 @@ def table():
         return text
 
     def to_md(_, t):  # noqa
-        table_md = jimmy.md_lib.common.MarkdownTable()
+        table_md = jimmy.md_lib.tables.MarkdownTable()
         for row in t:
             content, control = row
 

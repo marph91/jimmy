@@ -7,7 +7,7 @@ import shutil
 import urllib.parse
 
 from jimmy import common, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -157,7 +157,7 @@ class FilesystemWriter:
         )
 
         relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-        resource_markdown = jimmy.md_lib.common.make_link(
+        resource_markdown = jimmy.md_lib.links.make_link(
             resource_title, relative_path, is_image=resource.is_image
         )
         if resource.original_text is None:
@@ -188,7 +188,7 @@ class FilesystemWriter:
             )
 
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-            md_link = jimmy.md_lib.common.make_link(
+            md_link = jimmy.md_lib.links.make_link(
                 resource_title, relative_path, is_image=resource.is_image
             )
             resource_markdown = f"- {md_link}"
@@ -246,7 +246,7 @@ class FilesystemWriter:
 
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
         note.body = note.body.replace(
-            note_link.original_text, jimmy.md_lib.common.make_link(link_title, relative_path)
+            note_link.original_text, jimmy.md_lib.links.make_link(link_title, relative_path)
         )
 
     @common.catch_all_exceptions

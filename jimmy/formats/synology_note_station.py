@@ -7,8 +7,9 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
 import jimmy.md_lib.html_filter
+import jimmy.md_lib.links
 
 
 @dataclasses.dataclass
@@ -38,7 +39,7 @@ class Converter(converter.BaseConverter):
     ) -> tuple[str, imf.Resources, imf.NoteLinks]:
         resources = []
         note_links = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
 
@@ -130,7 +131,7 @@ class Converter(converter.BaseConverter):
 
         note_links: imf.NoteLinks = []
         if (content_html := note.get("content")) is not None:
-            content_markdown = jimmy.md_lib.common.markup_to_markdown(
+            content_markdown = jimmy.md_lib.convert.markup_to_markdown(
                 content_html,
                 custom_filter=[
                     jimmy.md_lib.html_filter.synology_note_station_fix_checklists,

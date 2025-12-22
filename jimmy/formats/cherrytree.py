@@ -7,17 +7,18 @@ import re
 import xml.etree.ElementTree as ET  # noqa: N817
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
+import jimmy.md_lib.text
 
 
 LOGGER = logging.getLogger("jimmy")
 
 LIST_RE = re.compile(r"^([^\S\r\n]*)(\d+)?(☐|☑|☒|•|◇|▪|▸|→|⇒|\)|-|>){1}", re.MULTILINE)
-WHITESPACE_RE = re.compile(r"^(\s*)(.+?)(\s*)$")
 
 
 def convert_table(node):
-    table_md = jimmy.md_lib.common.MarkdownTable()
+    table_md = jimmy.md_lib.tables.MarkdownTable()
     for row_index, row in enumerate(node):
         assert row.tag == "row"
         columns = []
@@ -75,15 +76,6 @@ def fix_inline_formatting(md_content: str) -> str:
     return md_content
 
 
-def separate_whitespace(string: str) -> tuple[str, str, str]:
-    # TODO: doctest
-    match_ = WHITESPACE_RE.match(string)
-    if match_ is None:
-        return ("", string, "")
-    # TODO: check types
-    return match_.groups(default="")  # type: ignore[return-value]
-
-
 def convert_rich_text(rich_text, heading_on_line: bool):
     if rich_text.text is None:
         return "", [], False
@@ -93,7 +85,7 @@ def convert_rich_text(rich_text, heading_on_line: bool):
     note_links = []
 
     # formatting needs to be applied directly to the string without spaces
-    leading, md_content, trailing = jimmy.md_lib.common.split_leading_trailing_whitespace(
+    leading, md_content, trailing = jimmy.md_lib.text.split_leading_trailing_whitespace(
         rich_text.text
     )
     for attrib, attrib_value in rich_text.attrib.items():
@@ -117,12 +109,12 @@ def convert_rich_text(rich_text, heading_on_line: bool):
                     if rich_text.text == url:
                         md_content = f"<{md_content}>"
                     else:
-                        md_content = jimmy.md_lib.common.make_link(md_content, url)
+                        md_content = jimmy.md_lib.links.make_link(md_content, url)
                 elif url.startswith("node "):
                     # internal node links
                     url = url.lstrip("node ")
                     text = md_content
-                    md_content = jimmy.md_lib.common.make_link(text, url)
+                    md_content = jimmy.md_lib.links.make_link(text, url)
                     # Split the note ID from the optional title. It can look like:
                     # "36 h2-3" or just "36".
                     # TODO: Anchors are not supported.
@@ -130,7 +122,7 @@ def convert_rich_text(rich_text, heading_on_line: bool):
                     note_links.append(imf.NoteLink(md_content, original_id, text))
                 else:
                     # ?
-                    md_content = jimmy.md_lib.common.make_link(md_content, url)
+                    md_content = jimmy.md_lib.links.make_link(md_content, url)
             case "scale":
                 match attrib_value:
                     case "sup":
@@ -193,7 +185,7 @@ def convert_png(node, resource_folder) -> tuple[str, imf.Resource]:
     temp_filename = common.write_base64(temp_filename, node.text)
 
     # assemble the markdown
-    resource_md = jimmy.md_lib.common.make_link(
+    resource_md = jimmy.md_lib.links.make_link(
         temp_filename.name, str(temp_filename), is_image=True
     )
     resource_imf = imf.Resource(temp_filename, resource_md, temp_filename.name)

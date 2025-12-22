@@ -3,7 +3,8 @@
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tags
 from jimmy.md_lib.zim import zim_to_md
 
 
@@ -12,7 +13,7 @@ class Converter(converter.BaseConverter):
         # https://zim-wiki.org/manual/Help/Links.html
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("#"):
@@ -73,7 +74,7 @@ class Converter(converter.BaseConverter):
 
         # tags: https://zim-wiki.org/manual/Help/Tags.html
         # TODO: exclude invalid characters
-        imf_note.tags = [imf.Tag(tag) for tag in jimmy.md_lib.common.get_inline_tags(body, ["@"])]
+        imf_note.tags = [imf.Tag(tag) for tag in jimmy.md_lib.tags.get_inline_tags(body, ["@"])]
 
         parent.child_notes.append(imf_note)
 

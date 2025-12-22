@@ -7,13 +7,15 @@ import frontmatter
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tags
 
 
 class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES):
@@ -32,7 +34,7 @@ class Converter(converter.BaseConverter):
         # https://help.obsidian.md/Linking+notes+and+files/Internal+links
         note_links = []
         resources = []
-        for file_prefix, url, description in jimmy.md_lib.common.get_wikilink_links(body):
+        for file_prefix, url, description in jimmy.md_lib.links.get_wikilink_links(body):
             alias = "" if description.strip() == "" else f"|{description}"
             original_text = f"{file_prefix}[[{url}{alias}]]"
             if file_prefix:
@@ -67,7 +69,7 @@ class Converter(converter.BaseConverter):
         resources, note_links = self.handle_links(body)
 
         # https://help.obsidian.md/Editing+and+formatting/Tags
-        inline_tags = jimmy.md_lib.common.get_inline_tags(body, ["#"])
+        inline_tags = jimmy.md_lib.tags.get_inline_tags(body, ["#"])
 
         # frontmatter tags
         # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties

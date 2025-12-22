@@ -30,6 +30,7 @@ FORMAT_REGISTRY = {
     # "onenote": {"accepted_extensions": [".zip"], "accept_folder": True},
     "qownnotes": {"accepted_extensions": None, "accept_folder": True},
     "rednotebook": {"accepted_extensions": [".zip"], "accept_folder": True},
+    "reflect": {"accepted_extensions": [".json"], "accept_folder": False},
     "roam_research": {"accepted_extensions": [".json"], "accept_folder": False},
     "simplenote": {"accepted_extensions": [".zip"], "accept_folder": False},
     "standard_notes": {"accepted_extensions": [".zip"], "accept_folder": False},

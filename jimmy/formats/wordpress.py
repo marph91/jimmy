@@ -4,7 +4,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
 
 
 def get_text(element, default: str | None = None) -> str | None:
@@ -55,7 +55,7 @@ class Converter(converter.BaseConverter):
 
         content = get_text(item.find("content:encoded", namespaces))
         if content is not None:
-            note_imf.body = jimmy.md_lib.common.markup_to_markdown(content)
+            note_imf.body = jimmy.md_lib.convert.markup_to_markdown(content)
         for attachment in item.findall("wp:attachment_url", namespaces):
             attachment_text = get_text(attachment)
             if attachment_text is None:
@@ -75,7 +75,7 @@ class Converter(converter.BaseConverter):
                 )
                 comment_content = get_text(comment.find("wp:comment_content", namespaces))
                 if comment_content is not None:
-                    comment_content_md = jimmy.md_lib.common.markup_to_markdown(
+                    comment_content_md = jimmy.md_lib.convert.markup_to_markdown(
                         comment_content, standalone=False
                     )
                     comments_md.extend(["", f"**{comment_author}**: {comment_content_md}"])

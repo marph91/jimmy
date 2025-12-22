@@ -4,8 +4,9 @@ import json
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 from jimmy.md_lib.roam_research import roam_to_md
+import jimmy.md_lib.tags
 
 
 class Converter(converter.BaseConverter):
@@ -71,14 +72,14 @@ class Converter(converter.BaseConverter):
         body_md = roam_to_md("\n".join(body_roam))
         note_imf.body = body_md
 
-        inline_tags = jimmy.md_lib.common.get_inline_tags(note_imf.body, ["#"])
+        inline_tags = jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
         note_imf.tags = [imf.Tag(tag) for tag in inline_tags]
 
         self.root_notebook.child_notes.append(note_imf)
 
     def add_note_links(self):
         for note in self.root_notebook.get_all_child_notes():
-            for link in jimmy.md_lib.common.get_markdown_links(note.body):
+            for link in jimmy.md_lib.links.get_markdown_links(note.body):
                 if link.is_web_link or link.is_mail_link:
                     continue  # keep the original links
                 if link.url.startswith("roam-page://"):

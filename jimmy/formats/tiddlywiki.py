@@ -8,7 +8,8 @@ from pathlib import Path
 import string
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
+import jimmy.md_lib.links
 import jimmy.md_lib.tiddlywiki
 
 LOGGER = logging.getLogger("jimmy")
@@ -232,7 +233,7 @@ class MarkdownHtmlSeparator(HTMLParser):
     def handle_remaining_html(self):
         if self.html:
             self.md.append(
-                jimmy.md_lib.common.markup_to_markdown("".join(self.html), standalone=False)
+                jimmy.md_lib.convert.markup_to_markdown("".join(self.html), standalone=False)
             )
             self.html = []
 
@@ -353,14 +354,14 @@ class Converter(converter.BaseConverter):
         if note.tags:
             tags_md = []
             for tag in note.tags:
-                tag_link = jimmy.md_lib.common.make_link(tag.title, tag.title)
+                tag_link = jimmy.md_lib.links.make_link(tag.title, tag.title)
                 tags_md.append(tag_link)
                 note.note_links.append(imf.NoteLink(tag_link, tag.title, tag.title))
             note.body = ", ".join(tags_md) + "\n\n" + note.body
 
     def handle_markdown_links(self, body: str) -> imf.NoteLinks:
         note_links = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.url.startswith("tiddlywiki://"):
                 # internal link
                 linked_note_id = link.url[len("tiddlywiki://") :]
@@ -446,14 +447,14 @@ class Converter(converter.BaseConverter):
                     common.unique_title() if resource_title is None else resource_title
                 )
                 temp_filename = common.write_base64(temp_filename, text_base64)
-                body = jimmy.md_lib.common.make_link(
+                body = jimmy.md_lib.links.make_link(
                     temp_filename.name, str(temp_filename), is_image=True
                 )
                 resources.append(imf.Resource(temp_filename, body, resource_title))
             elif (source := tiddler.get("source")) is not None:
-                body = jimmy.md_lib.common.make_link(title, source, is_image=True)
+                body = jimmy.md_lib.links.make_link(title, source, is_image=True)
             elif (uri := tiddler.get("_canonical_uri")) is not None:
-                body = jimmy.md_lib.common.make_link(title, uri)
+                body = jimmy.md_lib.links.make_link(title, uri)
             else:
                 body = wikitext_html_to_md(tiddler.get("text", ""))
                 self.logger.warning(f"Unhandled attachment type {mime}")

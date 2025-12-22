@@ -8,7 +8,8 @@ from urllib.parse import parse_qs, unquote, urlparse
 from bs4 import BeautifulSoup
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.convert
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -22,7 +23,7 @@ class Converter(converter.BaseConverter):
     ) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in jimmy.md_lib.common.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             link_url = unquote(link.url)
             if link_url.startswith("https://onedrive.live.com/"):
                 # internal link
@@ -72,7 +73,7 @@ class Converter(converter.BaseConverter):
         self.extract_metadata(soup)
 
         # TODO: Strip title and extract date. This could be done in one2html already.
-        note_imf.body = jimmy.md_lib.common.markup_to_markdown(str(soup), pwd=page.parent)
+        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(str(soup), pwd=page.parent)
 
         note_imf.resources, note_imf.note_links = self.handle_markdown_links(note_imf.body, page)
 

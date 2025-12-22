@@ -6,7 +6,8 @@ import math
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 
 class ItemType(enum.IntEnum):
@@ -34,7 +35,7 @@ def handle_markdown_links(
 ) -> tuple[imf.Resources, imf.NoteLinks]:
     note_links = []
     resources = []
-    for link in jimmy.md_lib.common.get_markdown_links(body):
+    for link in jimmy.md_lib.links.get_markdown_links(body):
         if link.is_web_link or link.is_mail_link:
             continue  # keep the original links
         resource_path = resource_id_filename_map.get(link.url[2:])
@@ -50,7 +51,7 @@ def handle_markdown_links(
 class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
-        title, body = jimmy.md_lib.common.split_title_from_body(markdown, h1=False)
+        title, body = jimmy.md_lib.text.split_title_from_body(markdown, h1=False)
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title.strip(),

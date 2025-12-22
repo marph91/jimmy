@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -25,7 +25,7 @@ class Converter(converter.BaseConverter):
             if (file_ := message.get("file")) is not None:
                 if content:
                     content += "\n"
-                file_md = jimmy.md_lib.common.make_link(
+                file_md = jimmy.md_lib.links.make_link(
                     message.get("file_name", ""), str(self.root_path / file_), is_image=True
                 )
                 note_imf.resources.append(
