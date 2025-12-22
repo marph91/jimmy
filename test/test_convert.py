@@ -193,6 +193,7 @@ class EndToEnd(unittest.TestCase):
             [["qownnotes/test_1/note_folder"]],
             [["rednotebook/test_1_frontmatter/data"]],
             [["rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip"]],
+            [["reflect/test_1_frontmatter/reflect-ssawczyn-test-20251219-2329-v1.0.json"]],
             [["roam_research/test_1_frontmatter/small-test-graph.json"]],
             [["roam_research/test_2/help-graph.json"]],
             [["roam_research/test_3/roam-to-git-demo-2025-04-15-12-05-52.json"]],
