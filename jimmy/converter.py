@@ -284,9 +284,13 @@ class DefaultConverter(BaseConverter):
                     resource_folder=self.resource_folder,
                 )
 
-        resources, note_links = self.handle_markdown_links(note_imf.body, file_.parent)
-        note_imf.resources = resources
-        note_imf.note_links = note_links
+        inline_tags = jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
+        note_imf.tags.extend([imf.Tag(tag) for tag in inline_tags])
+
+        note_imf.resources, note_imf.note_links = self.handle_markdown_links(
+            note_imf.body, file_.parent
+        )
+
         parent.child_notes.append(note_imf)
 
     def convert_file_or_folder(self, file_or_folder: Path, parent: imf.Notebook):

@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 DRAFTS_LINK_RE = re.compile(
@@ -29,21 +29,21 @@ class Converter(converter.BaseConverter):
             note_links.append(imf.NoteLink(original_text, id_, ""))
         return note_links
 
-    def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
+    def handle_markdown_links(self, body: str) -> imf.NoteLinks:
         # https://docs.getdrafts.com/docs/drafts/cross-linking#wiki-style-cross-linking-drafts
         note_links = []
-        for _, url, _ in jimmy.md_lib.links.get_wikilink_links(body):
-            original_text = f"[[{url}]]"
-            if url.startswith("d:"):
-                best_match_id = common.get_best_match(url[2:], self.note_id_title_map)
+        for link in jimmy.md_lib.links.get_markdown_links(body):
+            original_text = str(link)
+            if link.url.startswith("d:"):
+                best_match_id = common.get_best_match(link.url[2:], self.note_id_title_map)
                 if best_match_id is not None:
                     note_links.append(imf.NoteLink(original_text, best_match_id, ""))
-            elif url.startswith("u:"):  # id
-                note_links.append(imf.NoteLink(original_text, url[2:], ""))
-            elif url.startswith("w:") or url.startswith("s:"):
+            elif link.url.startswith("u:"):  # id
+                note_links.append(imf.NoteLink(original_text, link.url[2:], ""))
+            elif link.url.startswith("w:") or link.url.startswith("s:"):
                 pass  # TODO: How to handle workspaces and search?
             else:  # no prefix
-                best_match_id = common.get_best_match(url, self.note_id_title_map)
+                best_match_id = common.get_best_match(link.url, self.note_id_title_map)
                 if best_match_id is not None:
                     note_links.append(imf.NoteLink(original_text, best_match_id, ""))
         return note_links
@@ -79,9 +79,9 @@ class Converter(converter.BaseConverter):
             original_id=draft["uuid"],
         )
 
-        wikilink_note_links = self.handle_wikilink_links(note_imf.body)
+        markdown_note_links = self.handle_markdown_links(note_imf.body)
         draft_note_links = self.handle_drafts_links(note_imf.body)
-        note_imf.note_links = wikilink_note_links + draft_note_links
+        note_imf.note_links = markdown_note_links + draft_note_links
 
         if draft.get("flagged", False):
             note_imf.tags.append(imf.Tag("drafts-flagged"))

@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives import padding
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.colornote
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -47,12 +47,12 @@ class Converter(converter.BaseConverter):
             self.logger.debug(exc, exc_info=True)
             return None
 
-    def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
+    def handle_links(self, body: str) -> imf.NoteLinks:
         # only internal links
         # https://www.colornote.com/faq-question/how-can-i-link-a-note-with-another-note/
         note_links = []
-        for _, url, description in jimmy.md_lib.links.get_wikilink_links(body):
-            note_links.append(imf.NoteLink(f"[[{url}]]", url, description or url))
+        for link in jimmy.md_lib.links.get_markdown_links(body):
+            note_links.append(imf.NoteLink(str(link), link.url, link.text or link.url))
         return note_links
 
     @common.catch_all_exceptions
@@ -81,7 +81,7 @@ class Converter(converter.BaseConverter):
             note_imf.longitude = longitude
         if note_json["space"] == 16:
             note_imf.tags.append(imf.Tag("colornote-archived"))
-        note_imf.note_links = self.handle_wikilink_links(note_imf.body)
+        note_imf.note_links = self.handle_links(note_imf.body)
 
         self.root_notebook.child_notes.append(note_imf)
 

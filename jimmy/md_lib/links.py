@@ -5,6 +5,7 @@ import re
 import xml.etree.ElementTree as ET
 
 import markdown
+from markdown.inlinepatterns import InlineProcessor
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
 
@@ -13,7 +14,15 @@ import jimmy.md_lib.convert
 
 
 def make_link(text: str, url: str, is_image: bool = False, title: str = "") -> str:
+    """Make a standard Markdown link."""
+    title = "" if not title else f' "{title}"'
     return f"{'!' * is_image}[{text}]({url}{title})"
+
+
+def make_wikilink(text: str, url: str, is_embedded: bool = False) -> str:
+    """Make a wikilink."""
+    text = text if text.strip() == "" else f"|{text}"
+    return f"{'!' * is_embedded}[[{url}{text}]]"
 
 
 @dataclasses.dataclass
@@ -30,6 +39,8 @@ class MarkdownLink:
     url: str = ""
     title: str = ""
     is_image: bool = False
+    is_wikilink: bool = False
+    is_embedded: bool = False
 
     @property
     def is_web_link(self) -> bool:
@@ -41,17 +52,61 @@ class MarkdownLink:
     def is_mail_link(self) -> bool:
         return self.url.startswith("mailto:")
 
+    def __repr__(self) -> str:
+        kws = [
+            f"{key}={value!r}"
+            for key, value in self.__dict__.items()
+            if key not in ("is_wikilink", "is_embedded")
+        ]
+        return f"{type(self).__name__}({', '.join(kws)})"
+
     def __str__(self) -> str:
-        title = "" if not self.title else f' "{self.title}"'
-        return make_link(self.text, self.url, is_image=self.is_image, title=title)
+        if self.is_wikilink:
+            return make_wikilink(self.text, self.url, self.is_embedded)
+        return make_link(self.text, self.url, is_image=self.is_image, title=self.title)
 
     def reformat(self) -> str:
         if not self.url:
             return f"<{self.text}>"
         if self.is_web_link and self.text == self.url:
             return f"<{self.url}>"
-        title = "" if not self.title else f' "{self.title}"'
-        return make_link(self.text, self.url, is_image=self.is_image, title=title)
+        return make_link(self.text, self.url, is_image=self.is_image, title=self.title)
+
+
+class WikiLinkExtension(Extension):
+    """Add inline processor to Markdown."""
+
+    def extendMarkdown(self, md):  # noqa: N802
+        self.md = md  # pylint: disable=attribute-defined-outside-init
+
+        # append to end of inline patterns
+        wikilink_re = r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]"
+        wikilink_extension = WikiLinksInlineProcessor(wikilink_re)
+        wikilink_extension.md = md
+        md.inlinePatterns.register(wikilink_extension, "wikilink", 75)
+
+
+class WikiLinksInlineProcessor(InlineProcessor):
+    """
+    Build link from `wikilink`.
+    Based on
+    https://github.com/Python-Markdown/markdown/blob/89112c293f7b399ae8808f3a06306f46601e9684/markdown/extensions/wikilinks.py
+    """
+
+    def handleMatch(  # type: ignore[override]  # noqa: N802
+        self, m: re.Match[str], data: str
+    ) -> tuple[ET.Element, int, int]:
+        # "!" means embedding. It gets converted to a usual link later.
+        # https://help.obsidian.md/embeds
+        embedded, url, description = m.groups()
+        a = ET.Element("a")
+        if description is not None and description.strip():
+            a.text = description
+        a.set("href", url)
+        a.set("wikilink", "")
+        if embedded:
+            a.set("embedded", "")
+        return a, m.start(0), m.end(0)
 
 
 class LinkExtractor(Treeprocessor):
@@ -95,7 +150,13 @@ class LinkExtractor(Treeprocessor):
                 standalone=False,
             )
             self.md.links.append(
-                MarkdownLink(self.unescape(text), self.unescape(url), self.unescape(title))
+                MarkdownLink(
+                    self.unescape(text),
+                    self.unescape(url),
+                    self.unescape(title),
+                    is_wikilink=link.get("wikilink") is not None,
+                    is_embedded=link.get("embedded") is not None,
+                )
             )
 
 
@@ -110,7 +171,7 @@ class LinkExtractorExtension(Extension):
         md.treeprocessors.deregister("unescape")
 
 
-MD = markdown.Markdown(extensions=[LinkExtractorExtension()])
+MD = markdown.Markdown(extensions=[WikiLinkExtension(), LinkExtractorExtension()])
 
 
 def get_markdown_links(text: str) -> list[MarkdownLink]:
@@ -118,6 +179,8 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     # pylint: disable=line-too-long
     # doctest has too long lines
     r"""
+    Get standard Markdown links and wikilinks.
+
     >>> import logging
     >>> logging.getLogger().setLevel("INFO")
     >>> jimmy.main.add_binaries_to_path()  # hack to provide pandoc
@@ -127,6 +190,10 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     []
     >>> get_markdown_links('[link](url://with spaces)')
     [MarkdownLink(text='link', url='url://with spaces', title='', is_image=False)]
+
+    # bracketed URLs are handled later in a fallback
+    >>> get_markdown_links('[link](<./with spaces.md>)')
+    [MarkdownLink(text='link', url='./with spaces.md', title='', is_image=False)]
     >>> get_markdown_links("![](image.png)")
     [MarkdownLink(text='', url='image.png', title='', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")
@@ -153,6 +220,23 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     >>> get_markdown_links('[foo **`nested` bar** *baz* pow](:/custom)')
     [MarkdownLink(text='foo **`nested` bar** *baz* pow', url=':/custom', title='', is_image=False)]
 
+    # wikilinks
+    >>> get_markdown_links('```\n[[link]]\n```')
+    []
+    >>> get_markdown_links('`[[link]]`')
+    []
+    >>> get_markdown_links('![[link]]')
+    [MarkdownLink(text='', url='link', title='', is_image=False)]
+    >>> get_markdown_links('[[image.png]]')
+    [MarkdownLink(text='', url='image.png', title='', is_image=False)]
+    >>> get_markdown_links("[[multiple]] [[links]]") # doctest: +NORMALIZE_WHITESPACE
+    [MarkdownLink(text='', url='multiple', title='', is_image=False),
+     MarkdownLink(text='', url='links', title='', is_image=False)]
+    >>> get_markdown_links('[[internal|Example Title]]')
+    [MarkdownLink(text='Example Title', url='internal', title='', is_image=False)]
+    >>> get_markdown_links('[[#internal]]')
+    [MarkdownLink(text='', url='#internal', title='', is_image=False)]
+
     # TODO:
     # >>> get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
     # [MarkdownLink(text='<DIV>.tiddler file format', url='tiddlywiki://TiddlerFiles',
@@ -175,10 +259,3 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     except AttributeError:
         md_links = []
     return md_images + md_links
-
-
-WIKILINK_LINK_REGEX = re.compile(r"(!)?\[\[(.+?)(?:\|(.+?))?\]\]")
-
-
-def get_wikilink_links(text: str) -> list:
-    return WIKILINK_LINK_REGEX.findall(text)

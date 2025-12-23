@@ -12,13 +12,19 @@ import jimmy.md_lib.tags
 
 
 class Converter(converter.BaseConverter):
-    def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
+    def handle_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
+        # https://help.obsidian.md/Linking+notes+and+files/Internal+links
+        # Resources can be anywhere:
+        # https://help.obsidian.md/Editing+and+formatting/Attachments#Change+default+attachment+location
         note_links = []
         resources = []
         for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES):
+            if (
+                any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES)
+                or not Path(link.url).suffix
+            ):
                 # internal link
                 linked_note_id = Path(unquote(link.url)).stem
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
@@ -29,34 +35,6 @@ class Converter(converter.BaseConverter):
                     continue
                 resources.append(imf.Resource(resource_path, str(link), link.text))
         return resources, note_links
-
-    def handle_wikilink_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
-        # https://help.obsidian.md/Linking+notes+and+files/Internal+links
-        note_links = []
-        resources = []
-        for file_prefix, url, description in jimmy.md_lib.links.get_wikilink_links(body):
-            alias = "" if description.strip() == "" else f"|{description}"
-            original_text = f"{file_prefix}[[{url}{alias}]]"
-            if file_prefix:
-                # resource
-                resource_path = common.find_file_recursively(self.root_path, url)
-                if resource_path is None:
-                    continue
-                resources.append(imf.Resource(resource_path, original_text, description or url))
-            else:
-                # internal link
-                note_links.append(imf.NoteLink(original_text, url, description or url))
-        return resources, note_links
-
-    def handle_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
-        # Resources can be anywhere:
-        # https://help.obsidian.md/Editing+and+formatting/Attachments#Change+default+attachment+location
-        wikilink_resources, wikilink_note_links = self.handle_wikilink_links(body)
-        markdown_resources, markdown_note_links = self.handle_markdown_links(body)
-        return (
-            wikilink_resources + markdown_resources,
-            wikilink_note_links + markdown_note_links,
-        )
 
     @common.catch_all_exceptions
     def convert_note(self, item: Path, parent: imf.Notebook):

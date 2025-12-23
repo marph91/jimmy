@@ -6,49 +6,42 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
 import jimmy.md_lib.links
 import jimmy.md_lib.tags
 import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
-    def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
+    def handle_links(self, body: str) -> tuple[str, imf.Resources, imf.NoteLinks]:
+        note_links = []
         resources = []
         for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link or link.url.startswith("bear://"):
                 continue  # keep the original links
             if link.text.startswith("^"):
                 continue  # foot note (is working in Joplin without modification)
-            # resource
-            resource_path = self.root_path / unquote(link.url)
-            if resource_path.is_file():
-                resources.append(imf.Resource(resource_path, str(link), link.text))
+
+            # all wikilinks seem to be note links
+            if link.is_wikilink:
+                # strip sub-note links, like links to headings
+                url = link.url.split("/", 1)[0].strip()
+                note_links.append(imf.NoteLink(str(link), url, link.text or url))
             else:
-                if not urlparse(link.url).scheme:
-                    body = body.replace(
-                        jimmy.md_lib.links.make_link(link.text, link.url, is_image=link.is_image),
-                        jimmy.md_lib.links.make_link(
-                            link.text, f"https://{link.url}", is_image=link.is_image
-                        ),
-                    )
-        return body, resources
-
-    def handle_wikilink_links(self, body: str) -> imf.NoteLinks:
-        note_links = []
-        for file_prefix, url, description in jimmy.md_lib.links.get_wikilink_links(body):
-            alias = "" if description.strip() == "" else f"|{description}"
-            original_text = f"{file_prefix}[[{url}{alias}]]"
-            # strip sub-note links, like links to headings
-            url = url.split("/", 1)[0].strip()
-            note_links.append(imf.NoteLink(original_text, url, description or url))
-        return note_links
-
-    def handle_links(self, body: str) -> tuple[str, imf.Resources, imf.NoteLinks]:
-        # It seems like Bear uses wikilinks only for note links.
-        wikilink_note_links = self.handle_wikilink_links(body)
-        body, markdown_resources = self.handle_markdown_links(body)
-        return body, markdown_resources, wikilink_note_links
+                # resource
+                resource_path = self.root_path / unquote(link.url)
+                if resource_path.is_file():
+                    resources.append(imf.Resource(resource_path, str(link), link.text))
+                else:
+                    if not urlparse(link.url).scheme:
+                        body = body.replace(
+                            jimmy.md_lib.links.make_link(
+                                link.text, link.url, is_image=link.is_image
+                            ),
+                            jimmy.md_lib.links.make_link(
+                                link.text, f"https://{link.url}", is_image=link.is_image
+                            ),
+                        )
+        return body, resources, note_links
 
     @common.catch_all_exceptions
     def convert_note(self, file_: Path, parent_notebook: imf.Notebook, metadata: dict):
