@@ -22,6 +22,7 @@ class Converter(converter.BaseConverter):
         # read the markdown again to respect settings like a custom resource folder
         markdown_converter = converter.DefaultConverter(self._config)
         markdown_converter.root_notebook = self.root_notebook
+        markdown_converter.root_path = intermediate_markdown_folder
         # Iterate over intermediate output instead of passing it directly
         # to "convert()" to prevent duplicated root folder.
         for item in sorted(intermediate_markdown_folder.iterdir()):
