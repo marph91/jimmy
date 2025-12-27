@@ -1,4 +1,4 @@
-"""Common functions."""
+"""Common functions for converting notes, related to the filesystem and metadata."""
 
 import base64
 from collections.abc import Callable
@@ -31,6 +31,7 @@ LOGGER = logging.getLogger("jimmy")
 
 
 MARKDOWN_SUFFIXES = (".md", ".mdown", ".markdown")
+MARKDOWN_LINK_SUFFIXES = MARKDOWN_SUFFIXES + ("",)
 F = TypeVar("F", bound=Callable[..., Any])
 
 

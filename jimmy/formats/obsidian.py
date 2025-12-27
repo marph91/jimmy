@@ -21,10 +21,7 @@ class Converter(converter.BaseConverter):
         for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
-            if (
-                any(link.url.endswith(md_suffix) for md_suffix in common.MARKDOWN_SUFFIXES)
-                or not Path(link.url).suffix
-            ):
+            if Path(link.url).suffix in common.MARKDOWN_LINK_SUFFIXES:
                 # internal link
                 linked_note_id = Path(unquote(link.url)).stem
                 note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))

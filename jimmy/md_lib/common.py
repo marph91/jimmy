@@ -1,4 +1,4 @@
-"""Common Markdown functions."""
+"""Common functions for the conversion to Markdown."""
 
 import re
 
