@@ -48,3 +48,53 @@ def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
         title = ""
         body = markdown_
     return title, body
+
+
+def to_markdown_header_id(text: str) -> str:
+    """
+    Convert any (header) text to a Markdown header ID.
+    See: https://pandoc.org/MANUAL.html#extension-auto_identifiers
+    Slightly adapted to work in Firefox and VSCode.
+
+    >>> to_markdown_header_id("Heading identifiers in HTML")
+    'heading-identifiers-in-html'
+    >>> to_markdown_header_id("Maître d'hôtel")
+    'maître-dhôtel'
+    >>> to_markdown_header_id("*Dogs*?--in *my* house?")
+    'dogs--in-my-house'
+    >>> to_markdown_header_id("[HTML], [S5], or [RTF]?")
+    'html-s5-or-rtf'
+    >>> to_markdown_header_id("3. Applications")
+    '3-applications'
+    >>> to_markdown_header_id("4-х актная  структура выступления (монолога)")
+    '4-х-актная-структура-выступления-монолога'
+    >>> to_markdown_header_id("")
+    ''
+    >>> to_markdown_header_id(" ")
+    'section'
+    """
+    if not text:
+        return text
+    # Reduce consecutive whitespaces.
+    text = " ".join(text.split())
+    # Remove all non-alphanumeric characters, except underscores, hyphens, and periods.
+    text = "".join(
+        [character for character in text if (character.isalnum() or character in (" ", "_", "-"))]
+    )
+    # Replace all spaces and newlines with hyphens.
+    text = text.replace(" ", "-").replace("\n", "-")
+    # Convert all alphabetic characters to lowercase.
+    text = text.lower()
+    # Remove everything up to the first letter (identifiers may not begin with a number
+    # or punctuation mark).
+    new_text = []
+    found_first_letter = False
+    for character in text:
+        if character.isalnum() or found_first_letter:
+            new_text.append(character)
+            found_first_letter = True
+    text = "".join(new_text)
+    # If nothing is left after this, use the identifier section.
+    if not text:
+        text = "section"
+    return text
