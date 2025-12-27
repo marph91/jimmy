@@ -13,16 +13,25 @@ import jimmy.md_lib.common
 import jimmy.md_lib.convert
 
 
-def make_link(text: str, url: str, is_image: bool = False, title: str = "") -> str:
+def make_link(
+    text: str, url: str, fragment: str = "", is_image: bool = False, title: str = ""
+) -> str:
     """Make a standard Markdown link."""
     title = "" if not title else f' "{title}"'
-    return f"{'!' * is_image}[{text}]({url}{title})"
+    fragment = "#" + fragment if fragment else ""
+    if url.startswith("<") and url.endswith(">"):
+        # include the fragment inside the brackets
+        complete_url = f"{url[:-1]}{fragment}{url[-1:]}"
+    else:
+        complete_url = f"{url}{fragment}"
+    return f"{'!' * is_image}[{text}]({complete_url}{title})"
 
 
-def make_wikilink(text: str, url: str, is_embedded: bool = False) -> str:
+def make_wikilink(text: str, url: str, is_embedded: bool = False, fragment: str = "") -> str:
     """Make a wikilink."""
     text = text if text.strip() == "" else f"|{text}"
-    return f"{'!' * is_embedded}[[{url}{text}]]"
+    fragment = "#" + fragment if fragment else ""
+    return f"{'!' * is_embedded}[[{url}{fragment}{text}]]"
 
 
 @dataclasses.dataclass
@@ -31,13 +40,26 @@ class MarkdownLink:
     Represents a markdown link:
     - link: https://www.markdownguide.org/basic-syntax/#links
     - image: https://www.markdownguide.org/basic-syntax/#images-1
-    """
 
-    # TODO: doctest
+    Links can contain a fragment: https://spec.commonmark.org/0.31.2/#example-501
+    In Markdown, it's usually a heading.
+
+    Formats could be:
+    - [text](url)
+    - ![text](url)
+    - [text](<url>)
+    - [text](url "title")
+    - [text](url#fragment)
+    - [[url#fragment]]
+    - ![[url]]
+    - [[url|text]]
+    - [[url#fragment|text]]
+    """
 
     text: str = ""
     url: str = ""
     title: str = ""
+    fragment: str = ""
     is_image: bool = False
     is_wikilink: bool = False
     is_embedded: bool = False
@@ -56,21 +78,25 @@ class MarkdownLink:
         kws = [
             f"{key}={value!r}"
             for key, value in self.__dict__.items()
-            if key not in ("is_wikilink", "is_embedded")
+            if key not in ("fragment", "is_image", "is_wikilink", "is_embedded") or value
         ]
         return f"{type(self).__name__}({', '.join(kws)})"
 
     def __str__(self) -> str:
         if self.is_wikilink:
-            return make_wikilink(self.text, self.url, self.is_embedded)
-        return make_link(self.text, self.url, is_image=self.is_image, title=self.title)
+            return make_wikilink(self.text, self.url, self.is_embedded, fragment=self.fragment)
+        return make_link(
+            self.text, self.url, is_image=self.is_image, title=self.title, fragment=self.fragment
+        )
 
     def reformat(self) -> str:
         if not self.url:
             return f"<{self.text}>"
         if self.is_web_link and self.text == self.url:
             return f"<{self.url}>"
-        return make_link(self.text, self.url, is_image=self.is_image, title=self.title)
+        return make_link(
+            self.text, self.url, is_image=self.is_image, title=self.title, fragment=self.fragment
+        )
 
 
 class WikiLinkExtension(Extension):
@@ -107,6 +133,24 @@ class WikiLinksInlineProcessor(InlineProcessor):
         if embedded:
             a.set("embedded", "")
         return a, m.start(0), m.end(0)
+
+
+def split_url_fragment(url: str) -> tuple[str, ...]:
+    """
+    Split a fragment from an URL. Usually the URL is a path to a note and the fragment
+    is a heading ID, like `./path/to/my_note.md#heading`.
+    """
+    url_splitted = url.split("#", 1)
+    match len(url_splitted):
+        case 0:
+            url = ""
+            fragment = ""
+        case 1:
+            url = url_splitted[0]
+            fragment = ""
+        case 2:
+            url, fragment = url_splitted
+    return url, fragment
 
 
 class LinkExtractor(Treeprocessor):
@@ -149,11 +193,13 @@ class LinkExtractor(Treeprocessor):
                 ),
                 standalone=False,
             )
+            url, fragment = split_url_fragment(self.unescape(url))
             self.md.links.append(
                 MarkdownLink(
                     self.unescape(text),
-                    self.unescape(url),
+                    url,
                     self.unescape(title),
+                    fragment=fragment,
                     is_wikilink=link.get("wikilink") is not None,
                     is_embedded=link.get("embedded") is not None,
                 )
@@ -189,36 +235,38 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     >>> get_markdown_links('`[link](:/custom)`')
     []
     >>> get_markdown_links('[link](url://with spaces)')
-    [MarkdownLink(text='link', url='url://with spaces', title='', is_image=False)]
+    [MarkdownLink(text='link', url='url://with spaces', title='')]
+    >>> get_markdown_links('[link](url#fragment)')
+    [MarkdownLink(text='link', url='url', title='', fragment='fragment')]
 
     # bracketed URLs are handled later in a fallback
     >>> get_markdown_links('[link](<./with spaces.md>)')
-    [MarkdownLink(text='link', url='./with spaces.md', title='', is_image=False)]
+    [MarkdownLink(text='link', url='./with spaces.md', title='')]
     >>> get_markdown_links("![](image.png)")
     [MarkdownLink(text='', url='image.png', title='', is_image=True)]
     >>> get_markdown_links("![abc](image (1).png)")
     [MarkdownLink(text='abc', url='image (1).png', title='', is_image=True)]
     >>> get_markdown_links("[mul](tiple) [links](...)") # doctest: +NORMALIZE_WHITESPACE
-    [MarkdownLink(text='mul', url='tiple', title='', is_image=False),
-     MarkdownLink(text='links', url='...', title='', is_image=False)]
+    [MarkdownLink(text='mul', url='tiple', title=''),
+     MarkdownLink(text='links', url='...', title='')]
     >>> get_markdown_links("![desc \\[reference\\]](Image.png){#fig:leanCycle}")
     [MarkdownLink(text='desc \\[reference\\]', url='Image.png', title='', is_image=True)]
     >>> get_markdown_links('[link](internal "Example Title")')
-    [MarkdownLink(text='link', url='internal', title='Example Title', is_image=False)]
+    [MarkdownLink(text='link', url='internal', title='Example Title')]
     >>> get_markdown_links('[link](#internal)')
-    [MarkdownLink(text='link', url='#internal', title='', is_image=False)]
+    [MarkdownLink(text='link', url='', title='', fragment='internal')]
     >>> get_markdown_links('[link](:/custom)')
-    [MarkdownLink(text='link', url=':/custom', title='', is_image=False)]
+    [MarkdownLink(text='link', url=':/custom', title='')]
     >>> get_markdown_links('[weblink](https://duckduckgo.com)')
-    [MarkdownLink(text='weblink', url='https://duckduckgo.com', title='', is_image=False)]
+    [MarkdownLink(text='weblink', url='https://duckduckgo.com', title='')]
     >>> get_markdown_links('[red\\_500x500.png]()')
-    [MarkdownLink(text='red\\_500x500.png', url='', title='', is_image=False)]
+    [MarkdownLink(text='red\\_500x500.png', url='', title='')]
     >>> get_markdown_links('[\\<weblink\\>]()')
-    [MarkdownLink(text='\\<weblink\\>', url='', title='', is_image=False)]
+    [MarkdownLink(text='\\<weblink\\>', url='', title='')]
     >>> get_markdown_links('[foo `bar` baz](:/custom)')
-    [MarkdownLink(text='foo `bar` baz', url=':/custom', title='', is_image=False)]
+    [MarkdownLink(text='foo `bar` baz', url=':/custom', title='')]
     >>> get_markdown_links('[foo **`nested` bar** *baz* pow](:/custom)')
-    [MarkdownLink(text='foo **`nested` bar** *baz* pow', url=':/custom', title='', is_image=False)]
+    [MarkdownLink(text='foo **`nested` bar** *baz* pow', url=':/custom', title='')]
 
     # wikilinks
     >>> get_markdown_links('```\n[[link]]\n```')
@@ -226,24 +274,26 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     >>> get_markdown_links('`[[link]]`')
     []
     >>> get_markdown_links('![[link]]')
-    [MarkdownLink(text='', url='link', title='', is_image=False)]
+    [MarkdownLink(text='', url='link', title='', is_wikilink=True, is_embedded=True)]
     >>> get_markdown_links('[[image.png]]')
-    [MarkdownLink(text='', url='image.png', title='', is_image=False)]
+    [MarkdownLink(text='', url='image.png', title='', is_wikilink=True)]
+    >>> get_markdown_links('[[url#fragment|tit le]]')
+    [MarkdownLink(text='tit le', url='url', title='', fragment='fragment', is_wikilink=True)]
     >>> get_markdown_links("[[multiple]] [[links]]") # doctest: +NORMALIZE_WHITESPACE
-    [MarkdownLink(text='', url='multiple', title='', is_image=False),
-     MarkdownLink(text='', url='links', title='', is_image=False)]
+    [MarkdownLink(text='', url='multiple', title='', is_wikilink=True),
+     MarkdownLink(text='', url='links', title='', is_wikilink=True)]
     >>> get_markdown_links('[[internal|Example Title]]')
-    [MarkdownLink(text='Example Title', url='internal', title='', is_image=False)]
+    [MarkdownLink(text='Example Title', url='internal', title='', is_wikilink=True)]
     >>> get_markdown_links('[[#internal]]')
-    [MarkdownLink(text='', url='#internal', title='', is_image=False)]
+    [MarkdownLink(text='', url='', title='', fragment='internal', is_wikilink=True)]
 
     # TODO:
     # >>> get_markdown_links('[<DIV>.tiddler file format](tiddlywiki://TiddlerFiles)')
     # [MarkdownLink(text='<DIV>.tiddler file format', url='tiddlywiki://TiddlerFiles',
-    #  title='', is_image=False)]
+    #  title='')]
     # >>> get_markdown_links('<<list "[Plug](Plug) -[dr.of](dr.of)">>')  # doctest: +NORMALIZE_WHITESPACE
-    # [MarkdownLink(text='Plug', url='Plug', title='', is_image=False),
-    #  MarkdownLink(text='dr.of', url='dr.of', title='', is_image=False)]
+    # [MarkdownLink(text='Plug', url='Plug', title=''),
+    #  MarkdownLink(text='dr.of', url='dr.of', title='')]
     """
     # Based on: https://stackoverflow.com/a/29280824/7410886
     # pylint: disable=no-member

@@ -24,7 +24,15 @@ class Converter(converter.BaseConverter):
             if Path(link.url).suffix in common.MARKDOWN_LINK_SUFFIXES:
                 # internal link
                 linked_note_id = Path(unquote(link.url)).stem
-                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
+                note_links.append(
+                    imf.NoteLink(
+                        str(link),
+                        linked_note_id,
+                        link.text,
+                        fragment=link.fragment,
+                        title=link.title,
+                    )
+                )
             else:
                 # resource
                 resource_path = common.find_file_recursively(self.root_path, link.url)

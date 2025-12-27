@@ -16,6 +16,7 @@ import tarfile
 import tempfile
 import time
 from typing import Any, TypeVar, cast
+from urllib.parse import unquote
 import uuid
 import zipfile
 
@@ -461,9 +462,18 @@ def extract_zip(
     return temp_folder
 
 
-def find_file_recursively(root_folder: Path, url: str) -> Path | None:
+def find_file_recursively(
+    root_folder: Path, url: str, try_suffixes: tuple[str, ...] | None = None
+) -> Path | None:
+    url = unquote(url)  # TODO: Is it ok to do this for all urls?
     potential_matches = sorted(root_folder.rglob(url))
     if not potential_matches:
+        if try_suffixes is not None:
+            # try additional suffixes if there was no exact match
+            for suffix in try_suffixes:
+                potential_matches = sorted(root_folder.rglob(Path(url).with_suffix(suffix).name))
+                if len(potential_matches) == 1:
+                    return potential_matches[0]
         LOGGER.debug(f"Couldn't find match for resource {url}")
         return None
     if len(potential_matches) > 1:

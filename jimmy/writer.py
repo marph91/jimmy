@@ -7,6 +7,7 @@ import shutil
 import urllib.parse
 
 from jimmy import common, intermediate_format as imf
+import jimmy.md_lib.text
 import jimmy.md_lib.links
 
 
@@ -224,13 +225,26 @@ class FilesystemWriter:
 
         new_path = self.note_id_map.get(note_link.original_id)
 
-        # find the best note title
-        if note_link.title not in [None, ""]:
-            link_title = note_link.title
+        # find the best note text
+        if note_link.text not in [None, ""]:
+            link_text = note_link.text
         elif new_path is not None:
-            link_title = new_path.stem
+            link_text = new_path.stem
         else:
-            link_title = note_link.original_id
+            link_text = note_link.original_id
+
+        if not note_link.original_id and note_link.fragment:
+            # internal link to heading
+            note.body = note.body.replace(
+                note_link.original_text,
+                jimmy.md_lib.links.make_link(
+                    link_text or note_link.fragment,
+                    "",
+                    fragment=jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
+                    title=note_link.title,
+                ),
+            )
+            return
 
         if new_path is None:
             LOGGER.debug(
@@ -240,13 +254,19 @@ class FilesystemWriter:
             )
             # Replace at least with the original ID as fallback.
             note.body = note.body.replace(
-                note_link.original_text, f"[{link_title}](broken-link {note_link.original_id})"
+                note_link.original_text, f"[{link_text}](broken-link {note_link.original_id})"
             )
             return
 
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
         note.body = note.body.replace(
-            note_link.original_text, jimmy.md_lib.links.make_link(link_title, relative_path)
+            note_link.original_text,
+            jimmy.md_lib.links.make_link(
+                link_text,
+                relative_path,
+                fragment=jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
+                title=note_link.title,
+            ),
         )
 
     @common.catch_all_exceptions

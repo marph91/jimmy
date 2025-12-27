@@ -56,7 +56,15 @@ class Converter(converter.BaseConverter):
             if Path(link.url).suffix in common.MARKDOWN_SUFFIXES + (".html",):
                 # internal link
                 _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
-                note_links.append(imf.NoteLink(str(link), linked_note_id, link.text))
+                note_links.append(
+                    imf.NoteLink(
+                        str(link),
+                        linked_note_id,
+                        link.text,
+                        fragment=link.fragment,
+                        title=link.title,
+                    )
+                )
             elif (item.parent / unquoted_url).is_file():
                 # resource
                 resources.append(imf.Resource(item.parent / unquoted_url, str(link), link.text))

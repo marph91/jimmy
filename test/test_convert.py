@@ -291,6 +291,7 @@ class EndToEnd(unittest.TestCase):
             ["multiple_folders", ["default_format/arbitrary_folder"] * 2],
             ["single_file", ["default_format/arbitrary_folder/plaintext.txt"]],
             ["multiple_files", ["default_format/arbitrary_folder/plaintext.txt"] * 2],
+            ["markdown", ["default_format/markdown"]],
             ["markdown_file", ["default_format/arbitrary_folder/sample.md"]],
             ["asciidoc_contrib", ["default_format/asciidoc_contrib"]],
             ["asciidoc_core", ["default_format/asciidoc_core"]],

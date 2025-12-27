@@ -178,14 +178,50 @@ class DefaultConverter(BaseConverter):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = path / link.url
-            if resource_path.is_file():
+            if not link.url and link.fragment:
+                # internal link to heading
+                note_links.append(
+                    imf.NoteLink(str(link), "", link.text, fragment=link.fragment, title=link.title)
+                )
+            elif resource_path.is_file():
                 # TODO: How to distinguish notes from resources properly?
-                if resource_path.suffix not in common.MARKDOWN_SUFFIXES:
+                if resource_path.suffix in common.MARKDOWN_LINK_SUFFIXES:
+                    # internal link
+                    note_links.append(
+                        imf.NoteLink(
+                            str(link),
+                            resource_path.stem,
+                            link.text,
+                            fragment=link.fragment,
+                            title=link.title,
+                        )
+                    )
+                else:
                     # resource
                     resources.append(imf.Resource(resource_path, str(link), link.text))
-                else:
+            elif (
+                recursive_resource_path := common.find_file_recursively(
+                    self.root_path, Path(link.url).name, try_suffixes=common.MARKDOWN_SUFFIXES
+                )
+            ) is not None:
+                # try to find linked note or resource anywhere in the note tree
+                if resource_path.suffix in common.MARKDOWN_LINK_SUFFIXES:
                     # internal link
-                    note_links.append(imf.NoteLink(str(link), Path(link.url).stem, link.text))
+                    note_links.append(
+                        imf.NoteLink(
+                            str(link),
+                            recursive_resource_path.stem,
+                            link.text,
+                            fragment=link.fragment,
+                            title=link.title,
+                        )
+                    )
+                else:
+                    # resource
+                    resources.append(imf.Resource(recursive_resource_path, str(link), link.text))
+            # TODO
+            # else:
+            #     self.logger.debug(f"Unhandled link: {link}")
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -196,7 +232,7 @@ class DefaultConverter(BaseConverter):
             self.logger.debug("Skipping image")
             return
 
-        note_imf = imf.Note(file_.stem, source_application="jimmy")
+        note_imf = imf.Note(file_.stem, source_application="jimmy", original_id=file_.stem)
         note_imf.time_from_file(file_)
 
         format_ = file_.suffix.lower()[1:]

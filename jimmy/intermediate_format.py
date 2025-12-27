@@ -53,8 +53,10 @@ class NoteLink:
     original_text: str
     # For convenience. Should be included in "original_text", too.
     original_id: str
-    # [title_or_original_id](:/original_id)
-    title: str
+    # [text_or_original_id](:/original_id#fragment "title")
+    text: str
+    fragment: str = ""
+    title: str = ""
 
     def __hash__(self):
         return hash(self.original_text)
@@ -120,7 +122,9 @@ class Tag:
 class NoteFormatter(string.Formatter):
     def get_value(self, key: int | str, args, kwargs):
         match key:
-            case "note_links" | "resources" | "tags":
+            case "note_links":
+                return [item.text for item in kwargs.get(key, []) if item.text.strip()]
+            case "resources" | "tags":
                 return [item.title for item in kwargs.get(key, []) if item.title.strip()]
             case _:
                 if (value := kwargs.get(key)) is not None:
