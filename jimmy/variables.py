@@ -1,7 +1,7 @@
 """Contains global variables."""
 
 # current version of jimmy
-VERSION = "1.1.13"
+VERSION = "1.1.14"
 
 # all available formats and their allowed inputs
 # use a registry to avoid importing all (including many unneeded) modules
