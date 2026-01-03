@@ -3,6 +3,7 @@
 from collections import defaultdict
 import enum
 import math
+import mimetypes
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
@@ -110,9 +111,15 @@ class Converter(converter.BaseConverter):
                 )
             elif type_ == ItemType.RESOURCE:
                 # TODO: some metadata is lost
-                filename = Path(metadata_json["id"]).with_suffix(
-                    "." + metadata_json["file_extension"]
-                )
+                if suffix_ext := metadata_json.get("file_extension"):
+                    guessed_suffix = "." + suffix_ext
+                elif (
+                    suffix_mime := mimetypes.guess_extension(metadata_json.get("mime", ""))
+                ) is not None:
+                    guessed_suffix = suffix_mime
+                else:
+                    guessed_suffix = ""
+                filename = Path(metadata_json["id"]).with_suffix(guessed_suffix)
                 resource_id_filename_map[metadata_json["id"]] = (
                     self.root_path / "resources" / filename
                 )
@@ -138,6 +145,7 @@ class Converter(converter.BaseConverter):
         available_tags,
         note_tag_id_map,
     ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+        self.logger.info("Assign tags, resources and internal links")
         for parent_id, note in parent_id_note_map:
             # assign tags
             assert note.original_id is not None
@@ -167,6 +175,7 @@ class Converter(converter.BaseConverter):
             parent_notebook.child_notes.append(note)
 
         # span the notebook tree
+        self.logger.info("Create the notebook tree")
         for parent_id, notebook in parent_id_notebook_map:
             if parent_id:
                 for _, parent_notebook in parent_id_notebook_map:
