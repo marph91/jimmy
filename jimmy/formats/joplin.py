@@ -31,25 +31,27 @@ class ItemType(enum.IntEnum):
     COMMAND = 16
 
 
-def handle_markdown_links(
-    body: str, resource_id_filename_map: dict
-) -> tuple[imf.Resources, imf.NoteLinks]:
-    note_links = []
-    resources = []
-    for link in jimmy.md_lib.links.get_markdown_links(body):
-        if link.is_web_link or link.is_mail_link:
-            continue  # keep the original links
-        resource_path = resource_id_filename_map.get(link.url[2:])
-        if resource_path is None:
-            # internal link
-            note_links.append(imf.NoteLink(str(link), link.url[2:], link.text))
-        else:
-            # resource
-            resources.append(imf.Resource(resource_path, str(link), link.text))
-    return resources, note_links
-
-
 class Converter(converter.BaseConverter):
+    def handle_markdown_links(
+        self, body: str, resource_id_filename_map: dict
+    ) -> tuple[imf.Resources, imf.NoteLinks]:
+        note_links = []
+        resources = []
+        for link in jimmy.md_lib.links.get_markdown_links(body):
+            if link.is_web_link or link.is_mail_link:
+                continue  # keep the original links
+            # https://joplinapp.org/api/references/rest_api/#creating-a-note-with-a-specific-id
+            if link.url[:2] != ":/" or len(link.url[2:]) != 32:
+                self.logger.debug(f"Unexpected link URL: {link.url}")
+            resource_path = resource_id_filename_map.get(link.url[2:])
+            if resource_path is None:
+                # internal link
+                note_links.append(imf.NoteLink(str(link), link.url[2:], link.text))
+            else:
+                # resource
+                resources.append(imf.Resource(resource_path, str(link), link.text))
+        return resources, note_links
+
     @common.catch_all_exceptions
     def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
         title, body = jimmy.md_lib.text.split_title_from_body(markdown, h1=False)
@@ -155,7 +157,7 @@ class Converter(converter.BaseConverter):
                         note.tags.append(tag)
                         break
             # resources and internal links
-            resources, note_links = handle_markdown_links(note.body, resource_id_filename_map)
+            resources, note_links = self.handle_markdown_links(note.body, resource_id_filename_map)
             note.resources = resources
             note.note_links = note_links
             # assign to parent notebook
