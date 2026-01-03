@@ -151,10 +151,20 @@ class Converter(converter.BaseConverter):
             note.resources = resources
             note.note_links = note_links
             # assign to parent notebook
-            for _, notebook in parent_id_notebook_map:
-                if notebook.original_id == parent_id:
-                    notebook.child_notes.append(note)
-                    break
+            parent_notebook = None
+            if parent_id is None:
+                parent_notebook = self.root_notebook
+            else:
+                for _, notebook in parent_id_notebook_map:
+                    if notebook.original_id == parent_id:
+                        parent_notebook = notebook
+                        break
+            if parent_notebook is None:
+                self.logger.warning(
+                    f'"{note.title}": Could not find parent notebook. Assigning to root notebook.'
+                )
+                parent_notebook = self.root_notebook
+            parent_notebook.child_notes.append(note)
 
         # span the notebook tree
         for parent_id, notebook in parent_id_notebook_map:
