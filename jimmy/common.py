@@ -80,6 +80,16 @@ def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     'unnamed_...'
     >>> safe_path("g" * 50, max_name_length=4)
     'gggg'
+    >>> safe_path("g" * 20 + ".png", max_name_length=10)
+    'gggggg.png'
+    >>> safe_path("g" * 20 + ".png", max_name_length=30)
+    'gggggggggggggggggggg.png'
+    >>> safe_path("g" * 20 + ".", max_name_length=4)
+    'gggg'
+    >>> safe_path("08.06.2014 16:58:55")
+    '08.06.2014 16_58_55'
+    >>> safe_path("2.2.3 Sharing of mp3 files", max_name_length=10)
+    '2.2.3 Shar'
     """
     safe_name = path if isinstance(path, str) else path.name
     if safe_name == "":
@@ -116,8 +126,17 @@ def safe_path(path: Path | str, max_name_length: int = 50) -> Path | str:
     if safe_name in forbidden_names:
         safe_name += "_"
 
-    # Limit filename length: https://serverfault.com/a/9548
-    safe_name = safe_name[:max_name_length]
+    if (diff := len(safe_name) - max_name_length) > 0:
+        # Keep the extension.
+        stem = Path(safe_name).stem
+        suffix = Path(safe_name).suffix
+
+        # Limit filename length: https://serverfault.com/a/9548
+        safe_name = (
+            stem[:-diff] + suffix
+            if suffix and suffix != "." and len(suffix) < 10
+            else safe_name[:-diff]
+        )
 
     return safe_name if isinstance(path, str) else path.with_name(safe_name)
 
