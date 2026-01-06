@@ -32,9 +32,12 @@ Markdown files can be imported to Notion as described [on the website](https://w
 
 ## Notesnook
 
-1. Go to the [Notesnook Importer website](https://importer.notesnook.com/).
-2. Select `Markdown`
-3. Follow the instructions on the page.
+1. Create a zip archive of the root folder.
+2. In Notesnook, go to `Settings → Notesnook Importer`
+3. Select `Markdown`
+4. Select the zip file for import
+
+Details are on [Notesnook's help page](https://help.notesnook.com/importing-notes/import-notes-from-markdown-files).
 
 !!! note
     Attachments are only allowed if you have a pro account. See <https://notesnook.com/pricing/>.
