@@ -29,15 +29,19 @@ class Converter(converter.BaseConverter):
             for json_key_name, actual_map in resource_id_filename_maps.items():
                 folder_name = "pdfs" if json_key_name == "pdfAttachments" else json_key_name
                 for resource in entry.get(json_key_name, []):
-                    potential_matches = list(
-                        (self.root_path / folder_name).glob(f"{resource['md5']}.*")
-                    )
+                    if (md5 := resource.get("md5")) is None:
+                        self.logger.warning(
+                            f"Couldn't find md5 checksum for {folder_name} with "
+                            f"ID {resource.get('identifier')}. Skipping resource."
+                        )
+                        continue
+                    potential_matches = list((self.root_path / folder_name).glob(f"{md5}.*"))
                     if len(potential_matches) == 0:
-                        self.logger.warning(f"Couldn't find {folder_name} {resource['md5']}")
+                        self.logger.warning(f"Couldn't find {folder_name} with md5 checksum {md5}")
                     elif len(potential_matches) == 1:
                         actual_map[resource["identifier"]] = Path(potential_matches[0])
                     else:
-                        self.logger.debug(f"Ambiguous {folder_name} {resource['md5']}")
+                        self.logger.debug(f"Ambiguous {folder_name} with md5 checksum {md5}")
                         actual_map[resource["identifier"]] = Path(potential_matches[0])
 
         return resource_id_filename_maps
@@ -50,7 +54,7 @@ class Converter(converter.BaseConverter):
 
         def handle_resource(original_id: str, type_: str):
             if original_id not in resource_id_filename_map[type_]:
-                self.logger.debug(f"Couldn't find audio with id {original_id}")
+                self.logger.debug(f"Couldn't find {type_} with id {original_id}")
                 return
             source_path = self.root_path / type_ / resource_id_filename_map[type_][original_id]
             if not source_path.is_file():
@@ -157,6 +161,7 @@ class Converter(converter.BaseConverter):
 
             self.note_names_per_journal = []
             input_json = json.loads(journal.read_text(encoding="utf-8"))
+            self.logger.info(f"Day One version: {input_json['metadata'].get('version')}")
             resource_id_filename_map = self.get_resource_maps(input_json["entries"])
             for entry in input_json["entries"]:
                 # TODO: attach non-referenced photos, videos, audios, pdfAttachments?
