@@ -9,10 +9,10 @@ import frontmatter
 
 from jimmy import common, intermediate_format as imf
 import jimmy.variables
-import jimmy.md_lib.common
 import jimmy.md_lib.convert
 import jimmy.md_lib.eml
 import jimmy.md_lib.links
+import jimmy.md_lib.tags
 
 
 class BaseConverter(abc.ABC):

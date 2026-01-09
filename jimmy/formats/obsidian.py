@@ -6,7 +6,6 @@ from urllib.parse import unquote
 import frontmatter
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
 import jimmy.md_lib.links
 import jimmy.md_lib.tags
 

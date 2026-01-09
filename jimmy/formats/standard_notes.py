@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.common
+import jimmy.md_lib.links
 import jimmy.md_lib.tables
 
 LOGGER = logging.getLogger("jimmy")
