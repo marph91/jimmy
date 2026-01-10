@@ -1,6 +1,7 @@
 """Convert Joplin notes to the intermediate format."""
 
 from collections import defaultdict
+import dataclasses
 import enum
 import math
 import mimetypes
@@ -31,6 +32,12 @@ class ItemType(enum.IntEnum):
     COMMAND = 16
 
 
+@dataclasses.dataclass
+class JexRessource:
+    source_path: Path
+    target_name: str
+
+
 class Converter(converter.BaseConverter):
     def handle_markdown_links(
         self, body: str, resource_id_filename_map: dict
@@ -43,13 +50,20 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/api/references/rest_api/#creating-a-note-with-a-specific-id
             if link.url[:2] != ":/" or len(link.url[2:]) != 32:
                 self.logger.debug(f"Unexpected link URL: {link.url}")
-            resource_path = resource_id_filename_map.get(link.url[2:])
-            if resource_path is None:
+            resource_jex = resource_id_filename_map.get(link.url[2:])
+            if resource_jex is None:
                 # internal link
                 note_links.append(imf.NoteLink(str(link), link.url[2:], link.text))
             else:
                 # resource
-                resources.append(imf.Resource(resource_path, str(link), link.text))
+                resources.append(
+                    imf.Resource(
+                        resource_jex.source_path,
+                        str(link),
+                        link.text,
+                        target_name=resource_jex.target_name,
+                    )
+                )
         return resources, note_links
 
     @common.catch_all_exceptions
@@ -88,9 +102,9 @@ class Converter(converter.BaseConverter):
         for file_ in sorted(self.root_path.rglob("*.md")):
             markdown_raw = file_.read_text(encoding="utf-8")
             try:
-                markdown, metadata_raw = markdown_raw.rsplit("\n\n", 1)
+                text, metadata_raw = markdown_raw.rsplit("\n\n", 1)
             except ValueError:
-                markdown = ""
+                text = ""
                 metadata_raw = markdown_raw
             metadata_json = {}
             for line in metadata_raw.split("\n"):
@@ -103,12 +117,12 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                self.convert_note(markdown, metadata_json, parent_id_note_map)
+                self.convert_note(text, metadata_json, parent_id_note_map)
             elif type_ == ItemType.FOLDER:
                 parent_id_notebook_map.append(
                     (
                         metadata_json["parent_id"],
-                        imf.Notebook(markdown.strip(), original_id=metadata_json["id"]),
+                        imf.Notebook(text.strip(), original_id=metadata_json["id"]),
                     )
                 )
             elif type_ == ItemType.RESOURCE:
@@ -122,11 +136,11 @@ class Converter(converter.BaseConverter):
                 else:
                     guessed_suffix = ""
                 filename = Path(metadata_json["id"]).with_suffix(guessed_suffix)
-                resource_id_filename_map[metadata_json["id"]] = (
-                    self.root_path / "resources" / filename
+                resource_id_filename_map[metadata_json["id"]] = JexRessource(
+                    self.root_path / "resources" / filename, text
                 )
             elif type_ == ItemType.TAG:
-                available_tags.append(imf.Tag(markdown.strip(), original_id=metadata_json["id"]))
+                available_tags.append(imf.Tag(text.strip(), original_id=metadata_json["id"]))
             elif type_ == ItemType.NOTE_TAG:
                 note_tag_id_map[metadata_json["note_id"]].append(metadata_json["tag_id"])
             else:

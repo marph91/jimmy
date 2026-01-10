@@ -72,6 +72,8 @@ class Resource:
     original_text: str | None = None
     # [title_or_filename](:/resource_id)
     title: str | None = None
+    # Specify a `target_name` if the final resource name differs from `filename`.
+    target_name: str | None = None
 
     # internal data
     is_image: bool = dataclasses.field(init=False)

@@ -66,6 +66,9 @@ class PathDeterminer:
         # determine new resource path
         assert self.root_path is not None
         assert note.path is not None
+        safe_target_name = common.safe_path(
+            resource.target_name or resource.filename.name, self.max_name_length
+        )
         if self.global_resource_folder is None:
             if self.local_image_folder is not None and resource.is_image:
                 target_folder = self.local_image_folder
@@ -73,16 +76,10 @@ class PathDeterminer:
                 target_folder = self.local_resource_folder
             # local resources (next to the markdown files)
             resource_folder = note.path.parent / target_folder
-            resource.path = resource_folder / common.safe_path(
-                resource.filename.name, self.max_name_length
-            )
+            resource.path = resource_folder / safe_target_name
         else:
             # global resource folder
-            resource.path = (
-                self.root_path
-                / self.global_resource_folder
-                / common.safe_path(resource.filename.name, self.max_name_length)
-            )
+            resource.path = self.root_path / self.global_resource_folder / safe_target_name
         # add extension if possible
         assert resource.path is not None
         if resource.path.suffix == "":

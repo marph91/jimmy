@@ -174,6 +174,7 @@ class EndToEnd(unittest.TestCase):
             [["google_keep/test_4/takeout2.zip"]],
             [["joplin/test_1_frontmatter/29_04_2024.jex"]],
             [["joplin/test_2/2024-08-09 Bänderdehnung_-riss Sprunggelenk - Bernd.jex"]],
+            [["joplin/test_3/Was ist Flexicharger_ - TUXEDO Computers.jex"]],
             [["jrnl/test_1_frontmatter/myjournal.json"]],
             # [["nimbus_note/test_1/nimbus-export.zip"]],
             [["nimbus_note/test_2_frontmatter/Demo Workspace"]],
