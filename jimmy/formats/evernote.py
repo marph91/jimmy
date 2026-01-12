@@ -17,12 +17,12 @@ import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
-    def __init__(self, config):
+    def __init__(self, config: common.Config):
         super().__init__(config)
         self.password = config.password
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
-        self.note_id_title_map = {}
+        self.note_id_title_map: dict[str, str] = {}
 
     def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         # resources and other links are mostly handled already
@@ -70,14 +70,15 @@ class Converter(converter.BaseConverter):
         title = note.find("title")
         title = common.unique_title() if title is None or title.text is None else title.text.strip()
         self.logger.debug(f'Converting note "{title}"')
+        # The ids are not exported. We can only try to match
+        # against the title later. A unique ID is still required.
+        original_id = str(uuid.uuid4())
         note_imf = imf.Note(
             title,
-            # The ids are not exported. We can only try to match
-            # against the title later. A unique ID is still required.
-            original_id=str(uuid.uuid4()),
+            original_id=original_id,
             source_application=self.format,
         )
-        self.note_id_title_map[note_imf.original_id] = note_imf.title
+        self.note_id_title_map[original_id] = note_imf.title
 
         hashes: list[str] = []
         tasks = collections.defaultdict(list)

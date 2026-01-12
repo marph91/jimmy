@@ -12,11 +12,11 @@ import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
-    def __init__(self, config):
+    def __init__(self, config: common.Config):
         super().__init__(config)
         self._input_note_index = 0
         self.temp_folder = common.get_temp_folder()
-        self.note_title_map = {}
+        self.note_title_map: dict[str, str] = {}
 
     def handle_markdown_links(
         self, note_body: str, root_folder: Path

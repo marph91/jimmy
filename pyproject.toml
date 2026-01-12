@@ -16,7 +16,6 @@ keywords = ["markdown", "notes", "joplin", "obsidian"]
 classifiers = [
     "Environment :: Console",
     "Framework :: MkDocs",
-    "Framework :: Pydantic",
     "Framework :: Pytest",
     "Intended Audience :: End Users/Desktop",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

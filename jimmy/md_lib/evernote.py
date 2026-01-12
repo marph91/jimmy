@@ -53,7 +53,7 @@ def decrypt(base64_data: str, password: bytes) -> str | None:
 class EnexToMarkdown:
     """https://docs.python.org/3/library/xml.etree.elementtree.html#xmlparser-objects"""
 
-    def __init__(self, password: str):
+    def __init__(self, password: str | None):
         self.password = password
 
         self.global_level = 0
@@ -438,6 +438,10 @@ class EnexToMarkdown:
             data = data.lstrip()
 
         if self.encryption is not None:
+            if self.password is None:
+                self.md.extend([data, "\n"])
+                LOGGER.warning("Could not decrypt. Password not set.")
+                return
             # https://help.evernote.com/hc/en-us/articles/208314128-What-type-of-encryption-does-Evernote-use
             # https://soundly.me/decoding-the-Evernote-en-crypt-field-payload/
             if self.encryption["cipher"] != "AES" or self.encryption["length"] != "128":

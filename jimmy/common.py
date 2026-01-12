@@ -31,6 +31,34 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
+@dataclasses.dataclass
+class Config:
+    interface: str = "tui"
+    input: list[Path] = dataclasses.field(default_factory=list)
+    format: str | None = None
+    password: str | None = None
+    frontmatter: str | None = None
+    template_file: Path | None = None
+    # output folder
+    output_folder: Path = Path("jimmy_output")
+    global_resource_folder: Path | None = None
+    local_resource_folder: Path | None = Path(".")
+    local_image_folder: Path | None = None
+    max_name_length: int = 50
+    print_tree: bool = False
+    # filter
+    exclude_notes: list[str] | None = None
+    exclude_notes_with_tags: list[str] | None = None
+    exclude_tags: list[str] | None = None
+    include_notes: list[str] | None = None
+    include_notes_with_tags: list[str] | None = None
+    include_tags: list[str] | None = None
+    # logging
+    log_file: Path | None = None
+    no_stdout_log: bool = False
+    stdout_log_level: str = "INFO"
+
+
 MARKDOWN_SUFFIXES = (".md", ".mdown", ".markdown")
 MARKDOWN_LINK_SUFFIXES = MARKDOWN_SUFFIXES + ("",)
 F = TypeVar("F", bound=Callable[..., Any])

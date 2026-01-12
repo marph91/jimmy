@@ -8,6 +8,7 @@ from pathlib import Path
 
 from rich.logging import RichHandler
 
+import jimmy.common
 import jimmy.variables
 import jimmy.main
 
@@ -139,7 +140,8 @@ def main():
     filters.add_argument("--exclude-tags", nargs="+", help="Exclude tags.")
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
-    config = parser.parse_args()
+    config_namespace = parser.parse_args()
+    config = jimmy.common.Config(**vars(config_namespace))
 
     jimmy.main.add_binaries_to_path()
 

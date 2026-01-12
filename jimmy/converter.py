@@ -16,7 +16,7 @@ import jimmy.md_lib.tags
 
 
 class BaseConverter(abc.ABC):
-    def __init__(self, config, *_args, **_kwargs):
+    def __init__(self, config: common.Config, *_args, **_kwargs):
         self._config = config
 
         accepted_inputs = jimmy.variables.FORMAT_REGISTRY.get(config.format)

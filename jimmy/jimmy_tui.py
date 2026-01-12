@@ -3,7 +3,6 @@
 import datetime
 import logging
 from pathlib import Path
-import types
 import webbrowser
 
 from rich.logging import RichHandler
@@ -18,6 +17,7 @@ from textual.worker import Worker, WorkerState
 from textual_fspicker import FileOpen, FileSave, Filters, SelectDirectory
 from textual_fspicker.file_dialog import FileFilter
 
+import jimmy.common
 import jimmy.variables
 import jimmy.main
 
@@ -338,34 +338,19 @@ class JimmyApp(App):
                     callback=self.select_output_folder,
                 )
             case "start_conversion":
-                config = types.SimpleNamespace(
-                    password=None,
-                    frontmatter=None,
-                    template_file=None,
-                    global_resource_folder=None,
-                    local_resource_folder=Path("."),
-                    local_image_folder=None,
-                    max_name_length=50,
-                    print_tree=False,
-                    exclude_notes=None,
-                    exclude_notes_with_tags=None,
-                    exclude_tags=None,
-                    include_notes=None,
-                    include_notes_with_tags=None,
-                    include_tags=None,
-                )
-
-                config.format = self.query_one("#select_format").selection
-
                 table = self.query_one(DataTable)
                 inputs = [Path(cell) for cell in table.get_column("inputs")]
-                config.input = inputs
 
                 if inputs == []:
                     self.push_screen(SelectInputScreen())
                     return
 
-                config.output_folder = self.output_folder
+                config = jimmy.common.Config(
+                    "tui",
+                    inputs,
+                    self.query_one("#select_format").selection,
+                    output_folder=self.output_folder,
+                )
 
                 self.logging_console.clear()
                 self.conversion_worker = self.run_worker(

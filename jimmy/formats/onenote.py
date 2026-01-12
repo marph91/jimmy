@@ -13,7 +13,7 @@ import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
-    def __init__(self, config):
+    def __init__(self, config: common.Config):
         super().__init__(config)
         self._input_note_index = 0
         self.temp_folder = common.get_temp_folder()

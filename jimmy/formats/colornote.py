@@ -15,7 +15,7 @@ import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
-    def __init__(self, config):
+    def __init__(self, config: common.Config):
         super().__init__(config)
         self.password = config.password
 
@@ -86,6 +86,10 @@ class Converter(converter.BaseConverter):
         self.root_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
+        if self.password is None:
+            self.password = "0000"
+            self.logger.warning("No password given. Trying with default password '0000'.")
+
         ciphertext = file_or_folder.read_bytes()
 
         self.parse_metadata(ciphertext[:28])

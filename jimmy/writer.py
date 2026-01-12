@@ -41,7 +41,7 @@ class PathDeterminer:
     Create a note ID - path map for linking notes in the next pass.
     """
 
-    def __init__(self, config):
+    def __init__(self, config: common.Config):
         self.root_path = None
         self.max_name_length = config.max_name_length
         self.global_resource_folder = (
@@ -51,7 +51,7 @@ class PathDeterminer:
         )
         self.local_resource_folder = (
             config.local_resource_folder
-            if config.local_resource_folder == Path(".")
+            if config.local_resource_folder == Path(".") or config.local_resource_folder is None
             else Path(common.safe_path(config.local_resource_folder, self.max_name_length))
         )
         self.local_image_folder = (
@@ -92,7 +92,7 @@ class PathDeterminer:
     def determine_paths(self, notebook: imf.Notebook):
         assert notebook.path is not None
         if self.root_path is None:
-            self.root_path = notebook.path
+            self.root_path = notebook.path  # type: ignore[assignment]
         for note in notebook.child_notes:
             note.path = notebook.path / common.safe_path(note.title, self.max_name_length)
             # Don't overwrite existing suffices.
