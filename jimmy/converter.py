@@ -65,10 +65,6 @@ class BaseConverter(abc.ABC):
         """Main conversion function."""
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
-            index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
-            output_folder = self.output_folder.with_name(self.output_folder.name + index_suffix)
-            self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
-            self.root_path = self.prepare_input(file_or_folder)
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
@@ -76,6 +72,11 @@ class BaseConverter(abc.ABC):
             if not self.has_valid_format(file_or_folder):
                 self.logger.error("Input file has invalid format.")
                 continue
+
+            index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
+            output_folder = self.output_folder.with_name(self.output_folder.name + index_suffix)
+            self.root_notebook = imf.Notebook(output_folder.name, path=output_folder)
+            self.root_path = self.prepare_input(file_or_folder)
             self.convert(file_or_folder)
             self.apply_postprocessing(self.root_notebook)
             notebooks.append(self.root_notebook)
