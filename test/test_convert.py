@@ -38,8 +38,9 @@ class EndToEnd(unittest.TestCase):
         test_name = unittest.TestCase.id(self)
         if "colornote/test_1" in test_name:
             password = "1234"
-        elif "colornote/test_3" in test_name:
-            password = "0000"
+        # password "0000" is set inside the colornote converter
+        # elif "colornote/test_3" in test_name:
+        #     password = "0000"
         elif "evernote" in test_name:
             password = "password"
         else:
