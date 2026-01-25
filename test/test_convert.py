@@ -303,6 +303,7 @@ class EndToEnd(unittest.TestCase):
             ["html", ["default_format/html"]],
             ["latex", ["default_format/latex"]],
             ["mediawiki", ["default_format/mediawiki"]],
+            ["mhtml", ["default_format/mhtml"]],
             ["odt", ["default_format/odt"]],
             ["samsung_notes", ["default_format/samsung_notes"]],
             ["txt2tags", ["default_format/txt2tags-2"]],

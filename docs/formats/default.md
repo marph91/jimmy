@@ -29,6 +29,7 @@ The default conversion covers the following formats:
     - There is a [built-in Joplin plugin](https://joplinapp.org/help/apps/markdown/#markdown-plugins) that can be activated in the settings.
     - There is a [Obsidian plugin](https://github.com/Darakah/obsidian-fountain).
 - Markdown ([CommonMark](https://commonmark.org/))
+- [MHTML](https://en.wikipedia.org/wiki/MHTML)
 - TXT
 
 ## Instructions

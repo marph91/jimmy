@@ -251,7 +251,7 @@ class DefaultConverter(BaseConverter):
                     # to create a standalone document and shift the heading level.
                     extra_args=["--shift-heading-level-by=1"],
                 )
-            case "eml":
+            case "eml" | "mht" | "mhtml":
                 note_imf = jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder)
                 parent.child_notes.append(note_imf)
                 return  # don't use the common conversion
