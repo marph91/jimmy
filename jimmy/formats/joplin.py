@@ -39,9 +39,16 @@ class JexRessource:
 
 
 class Converter(converter.BaseConverter):
-    def handle_markdown_links(
-        self, body: str, resource_id_filename_map: dict
-    ) -> tuple[imf.Resources, imf.NoteLinks]:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.parent_id_note_map = []
+        self.notebook_id_notebook_map = {}
+        self.parent_id_notebooks_map = defaultdict(list)
+        self.resource_id_filename_map = {}
+        self.tag_id_tag_map = {}
+        self.note_tag_id_map = defaultdict(list)
+
+    def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
         for link in jimmy.md_lib.links.get_markdown_links(body):
@@ -50,7 +57,7 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/api/references/rest_api/#creating-a-note-with-a-specific-id
             if link.url[:2] != ":/" or len(link.url[2:]) != 32:
                 self.logger.debug(f"Unexpected link URL: {link.url}")
-            resource_jex = resource_id_filename_map.get(link.url[2:])
+            resource_jex = self.resource_id_filename_map.get(link.url[2:])
             if resource_jex is None:
                 # internal link
                 note_links.append(imf.NoteLink(str(link), link.url[2:], link.text))
@@ -67,7 +74,7 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_note(self, markdown: str, metadata_json: dict, parent_id_note_map):
+    def convert_note(self, markdown: str, metadata_json: dict):
         title, body = jimmy.md_lib.text.split_title_from_body(markdown, h1=False)
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
@@ -91,14 +98,9 @@ class Converter(converter.BaseConverter):
             if (val := metadata_json.get(key)) is not None and val != "0":
                 note_imf.custom_metadata[key] = common.timestamp_to_datetime(float(val) / 1000)
 
-        parent_id_note_map.append((metadata_json["parent_id"], note_imf))
+        self.parent_id_note_map.append((metadata_json["parent_id"], note_imf))
 
     def parse_data(self):
-        parent_id_note_map: list = []
-        parent_id_notebook_map = []
-        resource_id_filename_map = {}
-        available_tags = []
-        note_tag_id_map = defaultdict(list)
         for file_ in sorted(self.root_path.rglob("*.md")):
             markdown_raw = file_.read_text(encoding="utf-8")
             try:
@@ -117,14 +119,11 @@ class Converter(converter.BaseConverter):
             # https://joplinapp.org/help/api/references/rest_api/#item-type-ids
             type_ = ItemType(int(metadata_json["type_"]))
             if type_ == ItemType.NOTE:
-                self.convert_note(text, metadata_json, parent_id_note_map)
+                self.convert_note(text, metadata_json)
             elif type_ == ItemType.FOLDER:
-                parent_id_notebook_map.append(
-                    (
-                        metadata_json["parent_id"],
-                        imf.Notebook(text.strip(), original_id=metadata_json["id"]),
-                    )
-                )
+                notebook_imf = imf.Notebook(text.strip(), original_id=metadata_json["id"])
+                self.notebook_id_notebook_map[metadata_json["id"]] = notebook_imf
+                self.parent_id_notebooks_map[metadata_json["parent_id"]].append(notebook_imf)
             elif type_ == ItemType.RESOURCE:
                 # TODO: some metadata is lost
                 if suffix_ext := metadata_json.get("file_extension"):
@@ -136,71 +135,50 @@ class Converter(converter.BaseConverter):
                 else:
                     guessed_suffix = ""
                 filename = Path(metadata_json["id"]).with_suffix(guessed_suffix)
-                resource_id_filename_map[metadata_json["id"]] = JexRessource(
+                self.resource_id_filename_map[metadata_json["id"]] = JexRessource(
                     self.root_path / "resources" / filename, text
                 )
             elif type_ == ItemType.TAG:
-                available_tags.append(imf.Tag(text.strip(), original_id=metadata_json["id"]))
+                self.tag_id_tag_map[metadata_json["id"]] = imf.Tag(
+                    text.strip(), original_id=metadata_json["id"]
+                )
             elif type_ == ItemType.NOTE_TAG:
-                note_tag_id_map[metadata_json["note_id"]].append(metadata_json["tag_id"])
+                self.note_tag_id_map[metadata_json["note_id"]].append(metadata_json["tag_id"])
             else:
                 self.logger.debug(f"Ignoring note type {type_}")
-        return (
-            parent_id_note_map,
-            parent_id_notebook_map,
-            resource_id_filename_map,
-            available_tags,
-            note_tag_id_map,
-        )
 
-    def convert_data(
-        self,
-        parent_id_note_map,
-        parent_id_notebook_map,
-        resource_id_filename_map,
-        available_tags,
-        note_tag_id_map,
-    ):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    def convert_data(self):
         self.logger.info("Assign tags, resources and internal links")
-        for parent_id, note in parent_id_note_map:
+        for parent_id, note in self.parent_id_note_map:
             # assign tags
             assert note.original_id is not None
-            for tag_id in note_tag_id_map.get(note.original_id, []):
-                for tag in available_tags:
-                    if tag.original_id == tag_id:
-                        note.tags.append(tag)
-                        break
+            for tag_id in self.note_tag_id_map.get(note.original_id, []):
+                if (tag := self.tag_id_tag_map.get(tag_id)) is not None:
+                    note.tags.append(tag)
+
             # resources and internal links
-            resources, note_links = self.handle_markdown_links(note.body, resource_id_filename_map)
+            resources, note_links = self.handle_markdown_links(note.body)
             note.resources = resources
             note.note_links = note_links
+
             # assign to parent notebook
-            parent_notebook = None
-            if parent_id is None:
-                parent_notebook = self.root_notebook
+            if (parent_notebook := self.notebook_id_notebook_map.get(parent_id)) is not None:
+                parent_notebook.child_notes.append(note)
             else:
-                for _, notebook in parent_id_notebook_map:
-                    if notebook.original_id == parent_id:
-                        parent_notebook = notebook
-                        break
-            if parent_notebook is None:
                 self.logger.warning(
                     f'"{note.title}": Could not find parent notebook. Assigning to root notebook.'
                 )
-                parent_notebook = self.root_notebook
-            parent_notebook.child_notes.append(note)
+                self.root_notebook.child_notes.append(note)
 
         # span the notebook tree
         self.logger.info("Create the notebook tree")
-        for parent_id, notebook in parent_id_notebook_map:
-            if parent_id:
-                for _, parent_notebook in parent_id_notebook_map:
-                    if parent_notebook.original_id == parent_id:
-                        parent_notebook.child_notebooks.append(notebook)
-                        break
+        for parent_id, notebooks in self.parent_id_notebooks_map.items():
+            # find the parent notebook for each notebook
+            if (parent_notebook := self.notebook_id_notebook_map.get(parent_id)) is not None:
+                parent_notebook.child_notebooks.extend(notebooks)
             else:
-                self.root_notebook.child_notebooks.append(notebook)
+                self.root_notebook.child_notebooks.extend(notebooks)
 
     def convert(self, file_or_folder: Path):
-        data = self.parse_data()
-        self.convert_data(*data)
+        self.parse_data()
+        self.convert_data()
