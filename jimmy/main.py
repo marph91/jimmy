@@ -55,6 +55,7 @@ def setup_logging(custom_handlers: list | None = None):
             # "markdown_it",
             "pypandoc",
             "python-markdown",
+            "urllib3",
             "watchdog",
         )
     ]

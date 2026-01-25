@@ -154,6 +154,10 @@ def split_url_fragment(url: str) -> tuple[str, ...]:
 
 
 class LinkExtractor(Treeprocessor):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.pandoc = jimmy.md_lib.convert.MarkupConverter()
+
     # We need to unescape manually. Reference: "UnescapeTreeprocessor"
     # https://github.com/Python-Markdown/markdown/blob/3.6/markdown/treeprocessors.py#L454
     RE = re.compile(rf"{markdown.util.STX}(\d+){markdown.util.ETX}")
@@ -187,7 +191,7 @@ class LinkExtractor(Treeprocessor):
             text = "" if link.text is None else link.text
             # Convert any remaining HTML nodes back to Markdown.
             # This might alter the original link text.
-            text += jimmy.md_lib.convert.markup_to_markdown(
+            text += self.pandoc.markup_to_markdown(
                 "".join(
                     ET.tostring(child, encoding="unicode", method="html") for child in list(link)
                 ),

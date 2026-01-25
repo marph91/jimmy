@@ -4,7 +4,6 @@ from pathlib import Path
 import json
 
 from jimmy import common, converter, intermediate_format as imf
-import jimmy.md_lib.convert
 
 
 class Converter(converter.BaseConverter):
@@ -39,7 +38,7 @@ class Converter(converter.BaseConverter):
         if "textContent" in note_keep:
             note_imf.body = note_keep["textContent"]
         elif (body_html := note_keep.get("textContentHtml")) is not None:
-            note_imf.body = jimmy.md_lib.convert.markup_to_markdown(body_html, pwd=file_.parent)
+            note_imf.body = self.pandoc.markup_to_markdown(body_html, pwd=file_.parent)
         elif (body_list := note_keep.get("listContent")) is not None:
             # task list
             list_items_md = []

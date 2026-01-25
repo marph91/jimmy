@@ -131,7 +131,7 @@ class Converter(converter.BaseConverter):
 
         note_links: imf.NoteLinks = []
         if (content_html := note.get("content")) is not None:
-            content_markdown = jimmy.md_lib.convert.markup_to_markdown(
+            content_markdown = self.pandoc.markup_to_markdown(
                 content_html,
                 custom_filter=[
                     jimmy.md_lib.html_filter.synology_note_station_fix_checklists,

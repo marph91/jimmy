@@ -68,7 +68,7 @@ class Converter(converter.BaseConverter):
             source_application=self.format,
         )
 
-        note_body = jimmy.md_lib.convert.markup_to_markdown(
+        note_body = self.pandoc.markup_to_markdown(
             note_upnote["data"]["html"],
             custom_filter=[
                 jimmy.md_lib.html_filter.upnote_add_formula,

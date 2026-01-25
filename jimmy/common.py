@@ -31,6 +31,13 @@ LOGGER = logging.getLogger("jimmy")
 ###########################################################
 
 
+def get_binaries_folder() -> Path:
+    # Extend the path here, since it's needed for CLI and TUI.
+    # Search for the local/pyinstaller binaries first.
+    # https://pyinstaller.org/en/stable/runtime-information.html#using-file
+    return Path(__file__).parent.parent / "bin"
+
+
 @dataclasses.dataclass
 class Config:
     interface: str = "tui"
