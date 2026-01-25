@@ -15,11 +15,13 @@ LOGGER = logging.getLogger("jimmy")
 
 
 def decode_payload(part) -> str:
+    content = part.get_payload(decode=True)
+    charset = part.get_content_charset("utf-8")
     try:
-        return part.get_content()
+        return content.decode(charset)
     except (LookupError, UnicodeDecodeError):
-        # try to work around invalid encodings by trying with "utf-8"
-        return part.get_payload(decode=True).decode("utf-8")
+        # last resort: just decode as utf-8
+        return content.decode("utf-8", errors="ignore")
 
 
 def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
