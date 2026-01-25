@@ -178,8 +178,9 @@ TIDDLYWIKI_CORE_ELEMENTS = tuple(
 
 
 class MarkdownHtmlSeparator(HTMLParser):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, pandoc, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.pandoc = pandoc
         self.active_html_tags = []
         self.md = []
         self.html = []
@@ -232,9 +233,7 @@ class MarkdownHtmlSeparator(HTMLParser):
 
     def handle_remaining_html(self):
         if self.html:
-            self.md.append(
-                jimmy.md_lib.convert.markup_to_markdown("".join(self.html), standalone=False)
-            )
+            self.md.append(self.pandoc.markup_to_markdown("".join(self.html), standalone=False))
             self.html = []
 
     def get_md(self) -> str:
@@ -248,14 +247,17 @@ class MarkdownHtmlSeparator(HTMLParser):
         return "".join(self.md)
 
 
-def wikitext_html_to_md(wikitext_html: str) -> str:
+def wikitext_html_to_md(wikitext_html: str, pandoc) -> str:
     # convert wikitext + HTML to markdown + HTML
+    if not wikitext_html.strip():
+        return wikitext_html
+
     # TODO: slow
     md_html = jimmy.md_lib.tiddlywiki.wikitext_to_md(wikitext_html)
 
     # convert remaining HTML to markdown
     # Wikitext can contain HTML: https://tiddlywiki.com/#HTML%20in%20WikiText
-    parser = MarkdownHtmlSeparator()
+    parser = MarkdownHtmlSeparator(pandoc)
     try:
         parser.feed(md_html)
         return parser.get_md()
@@ -456,12 +458,12 @@ class Converter(converter.BaseConverter):
             elif (uri := tiddler.get("_canonical_uri")) is not None:
                 body = jimmy.md_lib.links.make_link(title, uri)
             else:
-                body = wikitext_html_to_md(tiddler.get("text", ""))
+                body = wikitext_html_to_md(tiddler.get("text", ""), self.pandoc)
                 self.logger.warning(f"Unhandled attachment type {mime}")
         elif mime == "application/json":
             body = "```\n" + tiddler.get("text", "") + "\n```"
         else:
-            body = wikitext_html_to_md(tiddler.get("text", ""))
+            body = wikitext_html_to_md(tiddler.get("text", ""), self.pandoc)
 
         note_imf = imf.Note(
             title,
@@ -511,7 +513,7 @@ class Converter(converter.BaseConverter):
 
         self.pascalcase_title_note_id_map[common.to_pascal_case(title)] = title
 
-        body = wikitext_html_to_md(body_wikitext)
+        body = wikitext_html_to_md(body_wikitext, self.pandoc)
         note_imf = imf.Note(
             title,
             body,

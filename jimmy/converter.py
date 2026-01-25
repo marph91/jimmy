@@ -19,6 +19,8 @@ class BaseConverter(abc.ABC):
     def __init__(self, config: common.Config, *_args, **_kwargs):
         self._config = config
 
+        self.pandoc = jimmy.md_lib.convert.MarkupConverter()
+
         accepted_inputs = jimmy.variables.FORMAT_REGISTRY.get(config.format)
         self.accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
         self.accept_folder = accepted_inputs["accept_folder"]  # type: ignore[index]
@@ -239,7 +241,7 @@ class DefaultConverter(BaseConverter):
         format_ = file_.suffix.lower()[1:]
         match format_:
             case "adoc" | "asciidoc" | "asciidoctor":
-                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = self.pandoc.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_="asciidoc",
@@ -252,7 +254,7 @@ class DefaultConverter(BaseConverter):
                     extra_args=["--shift-heading-level-by=1"],
                 )
             case "eml" | "mht" | "mhtml":
-                note_imf = jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder)
+                note_imf = jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder, self.pandoc)
                 parent.child_notes.append(note_imf)
                 return  # don't use the common conversion
             case "fountain":
@@ -285,7 +287,7 @@ class DefaultConverter(BaseConverter):
                 note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":
                 # binary format, supported by pandoc
-                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = self.pandoc.markup_to_markdown(
                     file_.read_bytes(),
                     pwd=file_.parent,
                     format_=format_,
@@ -296,7 +298,7 @@ class DefaultConverter(BaseConverter):
                 root_tag = root.tag.rpartition("}")[-1]  # strip namespace
                 match root_tag:
                     case "endnote" | "mediawiki" | "opml":  # TODO: endnotexml and opml example
-                        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+                        note_imf.body = self.pandoc.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
                             pwd=file_.parent,
                             format_=root_tag,
@@ -304,7 +306,7 @@ class DefaultConverter(BaseConverter):
                         )
                     # TODO: docbook
                     # case "book":
-                    #     note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+                    #     note_imf.body = self.pandoc.markup_to_markdown(
                     #         file_.read_text(encoding="utf-8"),
                     #         pwd=file_.parent,
                     #         format_="docbook",
@@ -314,7 +316,7 @@ class DefaultConverter(BaseConverter):
                         note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
                 pandoc_format = jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
-                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = self.pandoc.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_=pandoc_format,

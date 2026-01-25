@@ -8,7 +8,6 @@ from pathlib import Path
 
 from jimmy import common
 from jimmy import intermediate_format as imf
-import jimmy.md_lib.convert
 
 
 LOGGER = logging.getLogger("jimmy")
@@ -24,10 +23,10 @@ def decode_payload(part) -> str:
         return content.decode("utf-8", errors="ignore")
 
 
-def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
+def handle_part(part, attachment_folder: Path, pandoc) -> tuple[list[str], imf.Resources]:
     mime = part.get_content_type()
     if mime == "text/html":
-        return [jimmy.md_lib.convert.markup_to_markdown(decode_payload(part), standalone=False)], []
+        return [pandoc.markup_to_markdown(decode_payload(part), standalone=False)], []
     if mime in ("text/markdown", "text/plain"):
         return [decode_payload(part)], []
     if any(mime.startswith(t) for t in ("audio/", "image/", "application/", "text/")):
@@ -47,7 +46,7 @@ def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources
     return [], []
 
 
-def parse_message(message, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
+def parse_message(message, attachment_folder: Path, pandoc) -> tuple[list[str], imf.Resources]:
     body = []
     resources = []
     if message.is_multipart():
@@ -57,7 +56,7 @@ def parse_message(message, attachment_folder: Path) -> tuple[list[str], imf.Reso
             # choose the best payload: text is easy to process
             best_payload = message.get_body(preferencelist=("plain", "html"))
             if best_payload is not None:
-                part_body, part_resources = handle_part(best_payload, attachment_folder)
+                part_body, part_resources = handle_part(best_payload, attachment_folder, pandoc)
                 body.extend(part_body)
                 resources.extend(part_resources)
             else:
@@ -65,17 +64,17 @@ def parse_message(message, attachment_folder: Path) -> tuple[list[str], imf.Reso
         else:
             # iterate over all available payloads
             for payload in payloads:
-                part_body, part_resources = parse_message(payload, attachment_folder)
+                part_body, part_resources = parse_message(payload, attachment_folder, pandoc)
                 body.extend(part_body)
                 resources.extend(part_resources)
     else:
-        part_body, part_resources = handle_part(message, attachment_folder)
+        part_body, part_resources = handle_part(message, attachment_folder, pandoc)
         body.extend(part_body)
         resources.extend(part_resources)
     return body, resources
 
 
-def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
+def eml_to_note(file_: Path, attachment_folder: Path, pandoc) -> imf.Note:
     # decode the header by using the default policy
     # https://stackoverflow.com/a/55210089/7410886
     message = email.message_from_bytes(
@@ -108,7 +107,7 @@ def eml_to_note(file_: Path, attachment_folder: Path) -> imf.Note:
     note_imf.created = date
     note_imf.updated = date
 
-    body, resources = parse_message(message, attachment_folder)
+    body, resources = parse_message(message, attachment_folder, pandoc)
     note_imf.body = "\n".join(body)
     note_imf.resources = resources
 

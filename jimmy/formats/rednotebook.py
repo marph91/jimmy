@@ -58,9 +58,7 @@ class Converter(converter.BaseConverter):
         # def fix_quotation_marks(match: re.Match):
         #     return f'""{match.group(1)}.{match.group(2)}""]'
         # body_preprocessed = WRONG_QUOTATION_RE.sub(fix_quotation_marks, data["text"])
-        body = jimmy.md_lib.convert.markup_to_markdown(
-            data["text"], format_="t2t", standalone=False
-        )
+        body = self.pandoc.markup_to_markdown(data["text"], format_="t2t", standalone=False)
         body, resources = self.handle_markdown_links(body)
         note_imf = imf.Note(
             title,

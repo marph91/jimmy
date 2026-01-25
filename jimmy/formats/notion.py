@@ -106,7 +106,7 @@ class Converter(converter.BaseConverter):
         body = item.read_text(encoding="utf-8")
         if item.suffix.lower() == ".html":
             # html, else markdown
-            body = jimmy.md_lib.convert.markup_to_markdown(
+            body = self.pandoc.markup_to_markdown(
                 body,
                 pwd=item.parent,
                 custom_filter=[jimmy.md_lib.html_filter.notion_streamline_lists],

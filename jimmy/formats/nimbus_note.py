@@ -99,7 +99,7 @@ class Converter(converter.BaseConverter):
 
         note_imf = imf.Note(title, source_application=self.format, original_id=title)
 
-        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
+        note_imf.body = self.pandoc.markup_to_markdown(
             note_html,
             pwd=temp_folder_note,
             custom_filter=[
