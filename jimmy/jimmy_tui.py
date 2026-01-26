@@ -6,10 +6,11 @@ from pathlib import Path
 import webbrowser
 
 from rich.logging import RichHandler
+from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, HorizontalGroup
-from textual.screen import ModalScreen
+from textual.screen import ModalScreen, Screen
 from textual.widget import Widget
 from textual.widgets import Button, DataTable, Footer, Label, RichLog, Select
 from textual.worker import Worker, WorkerState
@@ -150,6 +151,35 @@ class SelectInputScreen(ModalScreen):
         self.app.pop_screen()
 
 
+class SettingsScreen(Screen):
+    """Screen advanced settings."""
+    BINDINGS = [
+        Binding(key="escape", action="app.pop_screen", description="Back", show=False),
+        Binding(key="q", action="app.pop_screen", description="Back"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        print("bbb")
+        hg = HorizontalGroup(
+            Label("Frontmatter:"),
+            Select(
+                [("None", None), ("Joplin", "joplin"), ("Obsidian", "obsidian"), ("QOwnNotes", "qownnotes")],
+                id="frontmatter_setting",
+                value=None,
+            ),classes="border",)
+        hg.border_title = "Input Format"
+        yield hg
+        yield Footer(show_command_palette=False)
+        self.screen.post_message(events.ScreenResume())
+
+    def check_action(
+        self, action: str, parameters: tuple[object, ...]
+    ) -> bool | None:
+        """Check if an action may run."""
+        print("aaa", action)
+        return None#action == "app.pop_screen"
+
+
 class LoggingConsole(RichLog):
     file = False
     console: Widget
@@ -163,13 +193,14 @@ class LoggingConsole(RichLog):
 
 
 class JimmyApp(App):
-    SCREENS = {"help_screen": HelpScreen}
+    SCREENS = {"help_screen": HelpScreen, "settings_screen": SettingsScreen}
     BINDINGS = [
         Binding(key="escape", action="quit", description="Quit", show=False),
         Binding(key="q", action="quit", description="Quit"),
         Binding(key="c", action="copy_log", description="Copy Log"),
         Binding(key="s", action="save_log", description="Save Log"),
         Binding(key="h", action="push_screen('help_screen')", description="Help"),
+        Binding(key="o", action="push_screen('settings_screen')", description="Settings"),
     ]
     CSS = """
     .border {
@@ -227,7 +258,7 @@ class JimmyApp(App):
                 tuple((("Default" if f is None else f), f) for f in self.available_formats),
                 allow_blank=False,
                 value=None,
-                id="select_format",
+                id="format_setting",
             ),
             classes="border",
         )
@@ -264,37 +295,39 @@ class JimmyApp(App):
         table.add_column("Inputs", key="inputs")
 
     def on_select_changed(self, event: Select.Changed):
-        if isinstance(event.select, FileFilter):
-            return  # only handle options from format select
-        file_dialog = self.query_one("#select_input_file")
-        folder_dialog = self.query_one("#select_input_folder")
-        # from select_format
-        if event.value is None or event.value == Select.BLANK:
-            file_dialog.disabled = False
-            folder_dialog.disabled = False
-            self.file_dialog_extensions = None
-            return
+        match event.select.id:
+            case "remove_input":
+                if isinstance(event.select, FileFilter):
+                    return  # only handle options from format select
+                file_dialog = self.query_one("#select_input_file")
+                folder_dialog = self.query_one("#select_input_folder")
+                # from format_setting
+                if event.value is None or event.value == Select.BLANK:
+                    file_dialog.disabled = False
+                    folder_dialog.disabled = False
+                    self.file_dialog_extensions = None
+                    return
 
-        format_ = str(event.value)
-        accepted_inputs = self.available_formats[format_]
+                format_ = str(event.value)
+                accepted_inputs = self.available_formats[format_]
 
-        # file
-        accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
-        if accepted_extensions is None:
-            file_dialog.disabled = True
-        else:
-            file_dialog.disabled = False
-            self.file_dialog_extensions = Filters(
-                (
-                    f"{format_} ({','.join(accepted_extensions)})",
-                    lambda p: any(
-                        p.suffix.lower() == accepted_extension
-                        for accepted_extension in accepted_extensions
-                    ),
-                ),
-            )
-        # folder
-        folder_dialog.disabled = not accepted_inputs["accept_folder"]  # type: ignore[index]
+                # file
+                accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
+                if accepted_extensions is None:
+                    file_dialog.disabled = True
+                else:
+                    file_dialog.disabled = False
+                    self.file_dialog_extensions = Filters(
+                        (
+                            f"{format_} ({','.join(accepted_extensions)})",
+                            lambda p: any(
+                                p.suffix.lower() == accepted_extension
+                                for accepted_extension in accepted_extensions
+                            ),
+                        ),
+                    )
+                # folder
+                folder_dialog.disabled = not accepted_inputs["accept_folder"]  # type: ignore[index]
 
     def add_input(self, selected_input: Path | None):
         if selected_input is not None:
@@ -348,8 +381,31 @@ class JimmyApp(App):
                 config = jimmy.common.Config(
                     "tui",
                     inputs,
-                    self.query_one("#select_format").selection,
+                    self.query_one("#format_setting").selection,
+                    self.query_one("#password_setting").selection,
+                    self.query_one("#frontmatter_setting").selection,
+                    # template_file
+
+                    # output folder
                     output_folder=self.output_folder,
+                    # global_resource_folder: Path | None = None
+                    # local_resource_folder: Path | None = Path(".")
+                    # local_image_folder
+                    # max_name_length
+                    # print_tree
+
+                    # filter
+                    # exclude_notes: list[str] | None = None
+                    # exclude_notes_with_tags: list[str] | None = None
+                    # exclude_tags: list[str] | None = None
+                    # include_notes: list[str] | None = None
+                    # include_notes_with_tags: list[str] | None = None
+                    # include_tags: list[str] | None = None
+
+                    # logging
+                    # log_file: Path | None = None
+                    # no_stdout_log: bool = False
+                    # stdout_log_level: str = "INFO"
                 )
 
                 self.logging_console.clear()
