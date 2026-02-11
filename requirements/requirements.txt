@@ -1,6 +1,6 @@
 anyblock_exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744
 beautifulsoup4==4.14.3
-cryptography==46.0.3
+cryptography==46.0.5
 markdown==3.8.2
 platformdirs==4.5.1
 puremagic==1.30
