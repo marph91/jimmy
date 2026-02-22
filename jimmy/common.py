@@ -406,11 +406,6 @@ def get_best_match(title: str, note_id_title_map: dict) -> str | None:
 ###########################################################
 
 
-class CounterMock:  # pylint: disable=too-few-public-methods
-    def update(self, *_):
-        pass
-
-
 @dataclasses.dataclass
 class Stats:  # pylint: disable=too-few-public-methods
     notebooks: int = 0

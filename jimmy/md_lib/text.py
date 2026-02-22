@@ -35,6 +35,8 @@ def split_title_from_body(markdown_: str, h1: bool = True) -> tuple[str, str]:
     ('heading', 'b')
     >>> split_title_from_body("😄\n\n# heading")
     ('', '😄\n\n# heading')
+    >>> split_title_from_body("heading\nb", h1=False)
+    ('heading', 'b')
     """
     if markdown_.startswith("# ") or not h1:
         try:
