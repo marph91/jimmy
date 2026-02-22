@@ -14,11 +14,10 @@ from jimmy import (
     common,
     converter,
     filters,
-    writer,
     intermediate_format as imf,
     variables,
+    writer,
 )
-
 
 LOGGER = logging.getLogger("jimmy")
 

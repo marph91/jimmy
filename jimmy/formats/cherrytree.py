@@ -11,7 +11,6 @@ import jimmy.md_lib.links
 import jimmy.md_lib.tables
 import jimmy.md_lib.text
 
-
 LOGGER = logging.getLogger("jimmy")
 
 LIST_RE = re.compile(r"^([^\S\r\n]*)(\d+)?(☐|☑|☒|•|◇|▪|▸|→|⇒|\)|-|>){1}", re.MULTILINE)

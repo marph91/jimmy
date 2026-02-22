@@ -8,11 +8,11 @@ from xml.etree import ElementTree as ET
 import frontmatter
 
 from jimmy import common, intermediate_format as imf
-import jimmy.variables
 import jimmy.md_lib.convert
 import jimmy.md_lib.eml
 import jimmy.md_lib.links
 import jimmy.md_lib.tags
+import jimmy.variables
 
 
 class BaseConverter(abc.ABC):

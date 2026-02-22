@@ -6,10 +6,8 @@ import email.policy
 import logging
 from pathlib import Path
 
-from jimmy import common
-from jimmy import intermediate_format as imf
+from jimmy import common, intermediate_format as imf
 import jimmy.md_lib.convert
-
 
 LOGGER = logging.getLogger("jimmy")
 

@@ -7,9 +7,8 @@ import shutil
 import urllib.parse
 
 from jimmy import common, intermediate_format as imf
-import jimmy.md_lib.text
 import jimmy.md_lib.links
-
+import jimmy.md_lib.text
 
 LOGGER = logging.getLogger("jimmy")
 

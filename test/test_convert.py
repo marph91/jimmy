@@ -2,13 +2,13 @@ import difflib
 import filecmp
 import os
 from pathlib import Path
-import py7zr
-from types import SimpleNamespace
 import random
 import shutil
+from types import SimpleNamespace
 import unittest
 
 from parameterized import parameterized
+import py7zr
 
 import jimmy.main
 
@@ -20,6 +20,7 @@ def name_func(testcase_func, param_num, param):
 class EndToEnd(unittest.TestCase):
     def setUp(self):
         import logging
+
         from rich.logging import RichHandler
 
         console_handler_formatter = logging.Formatter("%(message)s")

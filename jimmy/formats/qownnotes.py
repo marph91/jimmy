@@ -9,7 +9,6 @@ from urllib.parse import unquote
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.links
 
-
 QOWNNOTE_LINK_RE = re.compile(r"<(.*?.md)>")
 
 

@@ -1,8 +1,8 @@
 """Convert cacher notes to the intermediate format."""
 
 from collections import defaultdict
-from pathlib import Path
 import json
+from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.text

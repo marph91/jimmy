@@ -1,7 +1,7 @@
 """Convert jrnl notes to the intermediate format."""
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf
 

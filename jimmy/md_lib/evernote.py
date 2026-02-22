@@ -7,12 +7,11 @@ import hmac
 import logging
 import xml.etree.ElementTree as ET  # noqa: N817
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 import jimmy.md_lib.links
 import jimmy.md_lib.tables
-
 
 LOGGER = logging.getLogger("jimmy")
 

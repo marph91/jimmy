@@ -8,7 +8,6 @@ import pyparsing as pp
 import jimmy.md_lib.common
 import jimmy.md_lib.links
 
-
 # Prevent spaces, tabs and newlines from being stripped.
 pp.ParserElement.set_default_whitespace_chars("")
 

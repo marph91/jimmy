@@ -2,15 +2,14 @@
 
 import datetime
 from pathlib import Path
-from urllib.parse import urlparse
 import re
+from urllib.parse import urlparse
 
 import yaml
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.convert
 import jimmy.md_lib.links
-
 
 WRONG_QUOTATION_RE = re.compile(r'""(.*?)""\.(.*?)\]')
 

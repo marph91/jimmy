@@ -4,7 +4,6 @@ import re
 
 import pyparsing as pp
 
-
 any_link_re = re.compile(r"{{\[\[\S+\]\]: (\S+)}}")
 
 

@@ -13,13 +13,12 @@ from textual.screen import ModalScreen
 from textual.widget import Widget
 from textual.widgets import Button, DataTable, Footer, Label, RichLog, Select
 from textual.worker import Worker, WorkerState
-
 from textual_fspicker import FileOpen, FileSave, Filters, SelectDirectory
 from textual_fspicker.file_dialog import FileFilter
 
 import jimmy.common
-import jimmy.variables
 import jimmy.main
+import jimmy.variables
 
 
 class CustomButton(Button):

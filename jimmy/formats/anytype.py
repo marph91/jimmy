@@ -6,6 +6,7 @@ from pathlib import Path
 os.environ["TQDM_DISABLE"] = "1"  # disable tqdm progress bars in anytype
 
 from anyblock_exporter import AnytypeConverter  # pylint: disable=import-error,wrong-import-position
+
 from jimmy import common, converter  # pylint: disable=wrong-import-position
 
 

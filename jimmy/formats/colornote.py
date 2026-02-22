@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 import struct
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.colornote

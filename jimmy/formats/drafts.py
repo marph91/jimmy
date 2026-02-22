@@ -7,7 +7,6 @@ import re
 from jimmy import common, converter, intermediate_format as imf
 import jimmy.md_lib.links
 
-
 DRAFTS_LINK_RE = re.compile(
     r"(drafts:\/\/open\?uuid="
     r"([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}))"

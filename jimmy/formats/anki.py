@@ -1,12 +1,11 @@
 """Convert Anki cards to the intermediate format."""
 
-from pathlib import Path
 import json
+from pathlib import Path
 import re
 import sqlite3
 
 from jimmy import common, converter, intermediate_format as imf
-
 
 IMAGE_RE = re.compile(r"(<img src=\"(.*?)\"(?:>| >| \/>))")
 SOUND_RE = re.compile(r"(\[sound:(.*?)\])")

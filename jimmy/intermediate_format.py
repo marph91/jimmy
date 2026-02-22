@@ -15,7 +15,6 @@ import yaml
 
 from jimmy import common
 
-
 LOGGER = logging.getLogger("jimmy")
 OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
 

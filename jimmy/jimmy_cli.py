@@ -9,8 +9,8 @@ from pathlib import Path
 from rich.logging import RichHandler
 
 import jimmy.common
-import jimmy.variables
 import jimmy.main
+import jimmy.variables
 
 LOGGER = logging.getLogger("jimmy")
 

@@ -8,7 +8,6 @@ import pypandoc
 
 import jimmy.md_lib.html_filter
 
-
 LOGGER = logging.getLogger("jimmy")
 
 

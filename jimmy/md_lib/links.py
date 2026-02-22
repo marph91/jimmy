@@ -5,9 +5,9 @@ import re
 import xml.etree.ElementTree as ET
 
 import markdown
+from markdown.extensions import Extension
 from markdown.inlinepatterns import InlineProcessor
 from markdown.treeprocessors import Treeprocessor
-from markdown.extensions import Extension
 
 import jimmy.md_lib.common
 import jimmy.md_lib.convert

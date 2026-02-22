@@ -22,7 +22,6 @@ import zipfile
 
 import puremagic
 
-
 LOGGER = logging.getLogger("jimmy")
 
 

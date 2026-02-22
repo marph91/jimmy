@@ -2,7 +2,6 @@
 
 import re
 
-
 # https://en.wikipedia.org/wiki/List_of_URI_schemes
 web_schemes = [
     "file",

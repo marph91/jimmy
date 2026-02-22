@@ -2,8 +2,8 @@
 
 from collections import defaultdict
 import enum
-import logging
 import json
+import logging
 from pathlib import Path
 
 from jimmy import common, converter, intermediate_format as imf

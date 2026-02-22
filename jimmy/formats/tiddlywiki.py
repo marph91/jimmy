@@ -2,8 +2,8 @@
 
 import datetime as dt
 from html.parser import HTMLParser
-import logging
 import json
+import logging
 from pathlib import Path
 import string
 

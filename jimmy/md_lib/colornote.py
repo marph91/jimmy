@@ -4,7 +4,6 @@ import re
 
 import pyparsing as pp
 
-
 list_re = re.compile(r"^(\[[ V]\] )", re.MULTILINE)
 
 
