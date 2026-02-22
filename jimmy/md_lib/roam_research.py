@@ -12,7 +12,7 @@ def tag():
     def to_md(_, t):  # noqa
         return "#" + t[0].replace(" ", "-")  # TODO: How to handle whitespaces in tags?
 
-    return pp.QuotedString("#[[", endQuoteChar="]]").set_parse_action(to_md)
+    return pp.QuotedString("#[[", end_quote_char="]]").set_parse_action(to_md)
 
 
 def highlight():
@@ -42,7 +42,7 @@ def roam_internal_function():
     def to_md(_, t):  # noqa
         return "{{[[" + t[0] + "]]}}"  # return the original string, but don't process further
 
-    return pp.QuotedString("{{[[", endQuoteChar="]]}}").set_parse_action(to_md)
+    return pp.QuotedString("{{[[", end_quote_char="]]}}").set_parse_action(to_md)
 
 
 def is_block_id(value: str) -> bool:
@@ -56,7 +56,7 @@ def block_link():
             return f"[{title}](roam-block://{title})"
         return "((" + title + "))"
 
-    return pp.QuotedString("((", endQuoteChar="))").set_parse_action(to_md)
+    return pp.QuotedString("((", end_quote_char="))").set_parse_action(to_md)
 
 
 def block_link_in_md_link():
@@ -66,7 +66,7 @@ def block_link_in_md_link():
             return f"](roam-block://{title})"
         return "](((" + title + ")))"
 
-    return pp.QuotedString("](((", endQuoteChar=")))").set_parse_action(to_md)
+    return pp.QuotedString("](((", end_quote_char=")))").set_parse_action(to_md)
 
 
 def embedded_block():
@@ -74,7 +74,7 @@ def embedded_block():
         title = t[0]
         return f"[{title}](roam-block://{title})"
 
-    return pp.QuotedString("{{[[embed]]: ((", endQuoteChar="))}}").set_parse_action(to_md)
+    return pp.QuotedString("{{[[embed]]: ((", end_quote_char="))}}").set_parse_action(to_md)
 
 
 def page_link():
@@ -82,7 +82,7 @@ def page_link():
         title = t[0]
         return f"[{title}](roam-page://{title})"
 
-    return pp.QuotedString("[[", endQuoteChar="]]").set_parse_action(to_md)
+    return pp.QuotedString("[[", end_quote_char="]]").set_parse_action(to_md)
 
 
 def page_link_in_md_link():
@@ -90,7 +90,7 @@ def page_link_in_md_link():
         title = t[0]
         return f"](roam-page://{title})"
 
-    return pp.QuotedString("]([[", endQuoteChar="]])").set_parse_action(to_md)
+    return pp.QuotedString("]([[", end_quote_char="]])").set_parse_action(to_md)
 
 
 def embedded_mentioned_page():
@@ -99,8 +99,8 @@ def embedded_mentioned_page():
         return f"[{title}](roam-page://{title})"
 
     return (
-        pp.QuotedString("{{[[embed]]: [[", endQuoteChar="]]}}")
-        | pp.QuotedString("{{[[mentions]]: [[", endQuoteChar="]]}}")
+        pp.QuotedString("{{[[embed]]: [[", end_quote_char="]]}}")
+        | pp.QuotedString("{{[[mentions]]: [[", end_quote_char="]]}}")
     ).set_parse_action(to_md)
 
 

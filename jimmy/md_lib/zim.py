@@ -30,14 +30,14 @@ def subscript():
     def to_md(_, t):  # noqa
         return "~" + t[0] + "~"
 
-    return pp.QuotedString("_{", endQuoteChar="}").set_parse_action(to_md)
+    return pp.QuotedString("_{", end_quote_char="}").set_parse_action(to_md)
 
 
 def superscript():
     def to_md(_, t):  # noqa
         return "^" + t[0] + "^"
 
-    return pp.QuotedString("^{", endQuoteChar="}").set_parse_action(to_md)
+    return pp.QuotedString("^{", end_quote_char="}").set_parse_action(to_md)
 
 
 def highlight():
@@ -79,7 +79,7 @@ def image(resource_path: Path):
         image_path_resolved = resolve_resource(resource_path, image_path)
         return jimmy.md_lib.links.make_link(image_path.name, image_path_resolved, is_image=True)
 
-    return pp.QuotedString("{{", endQuoteChar="}}").set_parse_action(to_md)
+    return pp.QuotedString("{{", end_quote_char="}}").set_parse_action(to_md)
 
 
 def link(resource_path: Path):
@@ -100,7 +100,7 @@ def link(resource_path: Path):
             url = resolve_resource(resource_path, Path(url))
         return jimmy.md_lib.links.make_link(title, url)
 
-    return pp.QuotedString("[[", endQuoteChar="]]").set_parse_action(to_md)
+    return pp.QuotedString("[[", end_quote_char="]]").set_parse_action(to_md)
 
 
 def resolve_resource(resource_path: Path, url: Path) -> str:
