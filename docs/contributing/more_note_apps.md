@@ -28,6 +28,7 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [FSNotes](https://fsnot.es/) |     | apple only |
 | [Ghostwriter](https://kde.github.io/ghostwriter/) |     |     |
 | [Goodnotes](https://www.goodnotes.com/) | [doc](https://support.goodnotes.com/hc/en-us/articles/7353742824975-Export-documents-or-pages#export-documents-or-pages-0-0) (goodnotes, PDF, image) | one-week trial |
+| [Help+Manual](https://www.helpandmanual.com/index.html) | [doc](https://www.helpandmanual.com/help/hm_working_project_save.html) | 30-day trial |
 | [Heptabase](https://heptabase.com/) | - [doc](https://wiki.heptabase.com/how-sustainable-is-heptabase) (Markdown) <br>- [script](https://github.com/link-ding/Heptabase-Export) |     |
 | [iaWriter](https://ia.net/writer) | [doc](https://ia.net/writer/support/preview/export-share-print) (Markdown) | two-week trial |
 | [Inkdrop](https://www.inkdrop.app/) |     | 30-day trial |
