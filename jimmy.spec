@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import platform
 
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
 # pypandoc: https://github.com/orgs/pyinstaller/discussions/8387
 datas = []
@@ -27,6 +27,9 @@ def list_python_files(folder):
 
 
 hiddenimports = list_python_files(Path("jimmy/formats"))
+# needed to avoid "ModuleNotFoundError: No module named 'rich._unicode_data.unicode17-0-0"
+# see https://github.com/marph91/jimmy/issues/71
+hiddenimports += collect_submodules("rich")
 
 
 # Generate the executable name based on OS.
