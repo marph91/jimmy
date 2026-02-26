@@ -2,7 +2,7 @@
 
 Free your notes by converting them to Markdown.
 
-:floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe) | [**macOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://hanadigital.github.io/grev/?user=marph91&repo=jimmy)
+:floppy_disk: Download: [**Linux**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux) | [**Windows**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe) | [**macOS**](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64) [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/marph91/jimmy/total)](https://hanadigital.github.io/grev/?owner=marph91&repo=jimmy)
 
 If there is an issue at download or execution, please take a look at the [step-by-step instructions](https://marph91.github.io/jimmy/using_jimmy/).
 
