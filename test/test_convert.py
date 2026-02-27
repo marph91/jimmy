@@ -262,7 +262,10 @@ class EndToEnd(unittest.TestCase):
             [["nimbus_note/test_3_encrypted/ORIG-7-probl"]],
             [["synology_note_station/test_6_encrypted/test8.nsx"]],
             [["synology_note_station/test_7_encrypted/test10.nsx"]],
+            # complete export with multiple chats
             [["telegram/test_1_encrypted/DataExport_2025-03-24"]],
+            # export of a single chat
+            [["telegram/test_2_encrypted/ChatExport_2026-02-27"]],
         ],
         name_func=name_func,
     )

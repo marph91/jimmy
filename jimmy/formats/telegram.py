@@ -46,9 +46,10 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         input_json = json.loads((file_or_folder / "result.json").read_text(encoding="utf-8"))
-        if "chats" not in input_json:
-            self.logger.error('"chats" not found. Is this really a Telegram export?')
-            return
-
-        for chat in input_json["chats"]["list"]:
-            self.convert_note(chat)
+        if (chats := input_json.get("chats")) is not None:
+            self.logger.debug('Found "chats" key. Assuming that this is a complete "DataExport".')
+            for chat in chats["list"]:
+                self.convert_note(chat)
+        else:
+            self.logger.debug('No "chats" key. Assuming that this is a single "ChatExport".')
+            self.convert_note(input_json)
