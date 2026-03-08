@@ -30,32 +30,35 @@ list_re = re.compile(r"^([*#>]+) ", re.MULTILINE)
 table_row_re = re.compile(r"\|(.*?)\|([kchf])?\n")
 
 
+wikitext_markup = pp.Forward()
+
+
 def dash():
-    def to_md(_, t):  # noqa
-        return "–" if len(t) == 2 else "—"
+    def to_md(tokens):
+        return "–" if len(tokens) == 2 else "—"
 
     return pp.Literal("-")[2, 3].set_parse_action(to_md)
 
 
 def heading():
-    def to_md(_, t):  # noqa
-        return "#" * len(t)
+    def to_md(tokens):
+        return "#" * len(tokens)
 
-    return (pp.LineStart() + pp.Literal("!")[1, 6]).set_parse_action(to_md)
+    return (pp.LineStart() + pp.Literal("!")[1, 6] + pp.FollowedBy(" ")).set_parse_action(to_md)
 
 
 def quote(source_tag, target_tag):
     """Conversion of a quoted string. I. e. with the same start and end tags."""
 
-    def to_md(_, t):  # noqa
-        return target_tag + t[0] + target_tag
+    def to_md(tokens):
+        return target_tag + wikitext_markup.transform_string(tokens[0]) + target_tag
 
     return pp.QuotedString(source_tag).set_parse_action(to_md)
 
 
 def italic():
-    def to_md(_, t):  # noqa
-        return "*" + t[0][0] + "*"
+    def to_md(tokens):
+        return "*" + wikitext_markup.transform_string(tokens[0][0]) + "*"
 
     return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(to_md)
 
@@ -65,8 +68,8 @@ def horizontal_line():
 
 
 def link():
-    def to_md(_, t):  # noqa
-        extended, content = t[0]
+    def to_md(tokens):
+        extended, content = tokens[0]
         is_external = extended is not None and extended.startswith("ext")
         is_image = extended is not None and extended.startswith("img")
         try:
@@ -86,6 +89,7 @@ def link():
         ):
             url = f"<{url}>"
 
+        title = wikitext_markup.transform_string(title)
         if is_external or is_image or md_link.is_web_link or md_link.is_mail_link:
             return jimmy.md_lib.links.make_link(title, url, is_image=is_image)
         # guess that it's a wikilink
@@ -95,8 +99,8 @@ def link():
 
 
 def list_():
-    def to_md(_, t):  # noqa
-        match = t[0][0]
+    def to_md(tokens):
+        match = tokens[0][0]
         spaces = (len(match) - 1) * 4
         list_character = {"*": "*", "#": "1.", ">": ">"}[match[-1]]
         return f"{' ' * spaces}{list_character} "
@@ -105,9 +109,12 @@ def list_():
 
 
 def multiline_quote():
-    def to_md(_, t):  # noqa
-        citation = "".join(f"\n> {line}" for line in t[0][0].strip().split("\n"))
-        author = f"\n> *{t[0][1].strip()}*" if t[0][1] else ""
+    def to_md(tokens):
+        citation = "".join(
+            f"\n> {line}"
+            for line in wikitext_markup.transform_string(tokens[0][0]).strip().split("\n")
+        )
+        author = f"\n> *{tokens[0][1].strip()}*" if tokens[0][1] else ""
         return citation + author
 
     return pp.Regex(multiline_quote_re, as_group_list=True).set_parse_action(to_md)
@@ -123,9 +130,9 @@ def table():
             text = text[1:].strip()
         return text
 
-    def to_md(_, t):  # noqa
+    def to_md(tokens):
         table_md = jimmy.md_lib.tables.MarkdownTable()
-        for row in t:
+        for row in tokens:
             content, control = row
 
             # The last row is a pseudo-row with a single control char:
@@ -144,6 +151,7 @@ def table():
                 case _:
                     LOGGER.debug(f"Unknown control: {control}")
 
+            content = wikitext_markup.transform_string(content)
             cells = [clean_cell(c) for c in content.split("|")]
             if all(c.startswith("!") for c in cells):
                 is_header = True
@@ -164,12 +172,49 @@ def table():
     return pp.Regex(table_row_re, as_group_list=True)[1, ...].set_parse_action(to_md)
 
 
+wikitext_markup <<= (
+    # basic formatting:
+    # https://tiddlywiki.com/static/Formatting%2520in%2520WikiText.html
+    quote("''", "**")  # bold
+    | quote("__", "++")  # underline
+    | quote("^^", "^")  # superscript
+    | quote(",,", "~")  # subscript
+    # | quote("~~", "~~")  # strikethrough
+    | quote("@@", "==")  # highlight
+    | italic()
+    # https://tiddlywiki.com/static/Horizontal%2520Rules%2520in%2520WikiText.html
+    | horizontal_line()
+    # inline code and code blocks
+    # https://tiddlywiki.com/static/Code%2520Blocks%2520in%2520WikiText.html
+    # | quote("`", "`")  # code
+    # dashes: https://tiddlywiki.com/static/Dashes%2520in%2520WikiText.html
+    | dash()
+    # blocks - can contain inline markup
+    # headings: https://tiddlywiki.com/static/Headings%2520in%2520WikiText.html
+    | heading()
+    # (external) links: https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html
+    # images: https://tiddlywiki.com/static/Images%2520in%2520WikiText.html
+    | link()
+    # https://tiddlywiki.com/static/Lists%2520in%2520WikiText.html
+    | list_()
+    # block quote:
+    # https://tiddlywiki.com/static/Block%2520Quotes%2520in%2520WikiText.html
+    | multiline_quote()
+    # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
+    | table()
+)
+
+
 def wikitext_to_md(wikitext: str) -> str:
     r"""
     Main tiddlywiki wikitext to Markdown conversion function.
 
     >>> wikitext_to_md("Double single quotes are used for ''bold'' text")
     'Double single quotes are used for **bold** text'
+    >>> wikitext_to_md("!! //italic heading//")
+    '## *italic heading*'
+    >>> wikitext_to_md("''only bold text followed by: //bold and italic text//''")
+    '**only bold text followed by: *bold and italic text***'
     >>> wikitext_to_md("//italic text://")
     '*italic text:*'
     >>> wikitext_to_md("from http://127.0.0.1/MyApp to default http://127.0.0.1/.")
@@ -245,37 +290,4 @@ def wikitext_to_md(wikitext: str) -> str:
     >>> wikitext_to_md("|C1 |''modifier''|\n")
     '| C1 | **modifier** |\n| --- | --- |\n'
     """
-    wikitext_markup = (
-        # basic formatting:
-        # https://tiddlywiki.com/static/Formatting%2520in%2520WikiText.html
-        quote("''", "**")
-        | quote("__", "++")
-        | quote("^^", "^")
-        | quote(",,", "~")
-        # | quote("~~", "~~")
-        | quote("@@", "==")
-        | italic()
-        # https://tiddlywiki.com/static/Horizontal%2520Rules%2520in%2520WikiText.html
-        | horizontal_line()
-        # inline code and code blocks
-        # https://tiddlywiki.com/static/Code%2520Blocks%2520in%2520WikiText.html
-        # | quote("`", "`")
-        # dashes: https://tiddlywiki.com/static/Dashes%2520in%2520WikiText.html
-        | dash()
-        # headings: https://tiddlywiki.com/static/Headings%2520in%2520WikiText.html
-        | heading()
-        # (external) links: https://tiddlywiki.com/static/Linking%2520in%2520WikiText.html
-        # images: https://tiddlywiki.com/static/Images%2520in%2520WikiText.html
-        | link()
-        # https://tiddlywiki.com/static/Lists%2520in%2520WikiText.html
-        | list_()
-    )
-    # TODO: Why does "table" overwrite other rules when executes in the same run?
-    wikitext_complex = (
-        # block quote:
-        # https://tiddlywiki.com/static/Block%2520Quotes%2520in%2520WikiText.html
-        multiline_quote()
-        # https://tiddlywiki.com/static/Tables%2520in%2520WikiText.html
-        | table()
-    )
-    return wikitext_complex.transform_string(wikitext_markup.transform_string(wikitext))
+    return wikitext_markup.transform_string(wikitext)

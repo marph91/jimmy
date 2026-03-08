@@ -7,39 +7,42 @@ import pyparsing as pp
 any_link_re = re.compile(r"{{\[\[\S+\]\]: (\S+)}}")
 
 
+roam_markup = pp.Forward()
+
+
 def tag():
-    def to_md(_, t):  # noqa
-        return "#" + t[0].replace(" ", "-")  # TODO: How to handle whitespaces in tags?
+    def to_md(tokens):
+        return "#" + tokens[0].replace(" ", "-")  # TODO: How to handle whitespaces in tags?
 
     return pp.QuotedString("#[[", end_quote_char="]]").set_parse_action(to_md)
 
 
 def highlight():
-    def to_md(_, t):  # noqa
-        return "==" + t[0] + "=="
+    def to_md(tokens):
+        return "==" + roam_markup.transform_string(tokens[0]) + "=="
 
     return pp.QuotedString("^^").set_parse_action(to_md)
 
 
 def italic():
-    def to_md(_, t):  # noqa
-        return "*" + t[0] + "*"
+    def to_md(tokens):
+        return "*" + roam_markup.transform_string(tokens[0]) + "*"
 
     return pp.QuotedString("__").set_parse_action(to_md)
 
 
 def any_link():
-    def to_md(_, t):  # noqa
-        if t[0][0].startswith("http"):
-            return f"<{t[0][0]}>"
-        return t[0][0]
+    def to_md(tokens):
+        if tokens[0][0].startswith("http"):
+            return f"<{tokens[0][0]}>"
+        return tokens[0][0]
 
     return pp.Regex(any_link_re, as_group_list=True).set_parse_action(to_md)
 
 
 def roam_internal_function():
-    def to_md(_, t):  # noqa
-        return "{{[[" + t[0] + "]]}}"  # return the original string, but don't process further
+    def to_md(tokens):
+        return "{{[[" + tokens[0] + "]]}}"  # return the original string, but don't process further
 
     return pp.QuotedString("{{[[", end_quote_char="]]}}").set_parse_action(to_md)
 
@@ -49,8 +52,8 @@ def is_block_id(value: str) -> bool:
 
 
 def block_link():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         if is_block_id(title):
             return f"[{title}](roam-block://{title})"
         return "((" + title + "))"
@@ -59,8 +62,8 @@ def block_link():
 
 
 def block_link_in_md_link():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         if is_block_id(title):
             return f"](roam-block://{title})"
         return "](((" + title + ")))"
@@ -69,32 +72,32 @@ def block_link_in_md_link():
 
 
 def embedded_block():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         return f"[{title}](roam-block://{title})"
 
     return pp.QuotedString("{{[[embed]]: ((", end_quote_char="))}}").set_parse_action(to_md)
 
 
 def page_link():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         return f"[{title}](roam-page://{title})"
 
     return pp.QuotedString("[[", end_quote_char="]]").set_parse_action(to_md)
 
 
 def page_link_in_md_link():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         return f"](roam-page://{title})"
 
     return pp.QuotedString("]([[", end_quote_char="]])").set_parse_action(to_md)
 
 
 def embedded_mentioned_page():
-    def to_md(_, t):  # noqa
-        title = t[0]
+    def to_md(tokens):
+        title = tokens[0]
         return f"[{title}](roam-page://{title})"
 
     return (
@@ -103,12 +106,29 @@ def embedded_mentioned_page():
     ).set_parse_action(to_md)
 
 
+roam_markup <<= (
+    tag()
+    | highlight()
+    | italic()
+    | embedded_block()
+    | block_link_in_md_link()
+    | block_link()
+    | embedded_mentioned_page()
+    | page_link_in_md_link()
+    | any_link()
+    | roam_internal_function()
+    | page_link()
+)
+
+
 def roam_to_md(roam_text: str) -> str:
     r"""
     Main Roam Research to Markdown conversion function.
 
     >>> roam_to_md("^^highlighted^^")
     '==highlighted=='
+    >>> roam_to_md("__^^highlighted and italic^^ italic only__")
+    '*==highlighted and italic== italic only*'
     >>> roam_to_md("#tag #[[another tag]]")
     '#tag #another-tag'
     >>> roam_to_md("- {{[[TODO]]}} check\n- {{[[DONE]]}} list")
@@ -138,21 +158,6 @@ def roam_to_md(roam_text: str) -> str:
     >>> roam_to_md("{{[[pdf]]: https://some.url/abc.pdf}}")
     '<https://some.url/abc.pdf>'
     """
-
-    roam_markup = (
-        tag()
-        | highlight()
-        | italic()
-        | embedded_block()
-        | block_link_in_md_link()
-        | block_link()
-        | embedded_mentioned_page()
-        | page_link_in_md_link()
-        | any_link()
-        | roam_internal_function()
-        | page_link()
-    )
-
     roam_text = roam_text.replace("{{[[TODO]]}}", "[ ]")
     roam_text = roam_text.replace("{{[[DONE]]}}", "[x]")
     roam_text = roam_text.replace("[[>]]", ">")

@@ -8,8 +8,8 @@ list_re = re.compile(r"^(\[[ V]\] )", re.MULTILINE)
 
 
 def list_():
-    def to_md(_, t):  # noqa
-        match = t[0][0]
+    def to_md(tokens):
+        match = tokens[0][0]
         list_character = {"[ ] ": "- [ ] ", "[V] ": "- [x] "}[match]
         return list_character
 
