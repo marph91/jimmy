@@ -72,7 +72,14 @@ jobs:
         run: ls -lh ./dist
       - name: Setup bats and bats libs
         uses: bats-core/bats-action@4.0.0
+        with:
+          # workaround for macos, see https://github.com/bats-core/bats-action/issues/57#issuecomment-4004063838
+          support-path: "${{ github.workspace }}/tests/bats-support"
+          assert-path: "${{ github.workspace }}/tests/bats-assert"
+          detik-path: "${{ github.workspace }}/tests/bats-detik"
+          file-path: "${{ github.workspace }}/tests/bats-file"
       - name: Smoke test
+        shell: bash
         working-directory: ./test  # run in a different directory to make sure that the paths are working
         run: bats smoke-test.bats
       # - name: Scan for viruses (just for information)
