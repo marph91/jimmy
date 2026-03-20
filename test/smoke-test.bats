@@ -6,7 +6,8 @@ bats_require_minimum_version 1.5.0
 
 JIMMY_EXE="../dist/jimmy*"
 DEFAULT_OUTPUT_FOLDER="$(mktemp -d)/smoke_test_bats_tmp"
-TEST_DATA_DIR=./data/test_data/
+TEST_DATA_DIR=./data/test_data
+REFERENCE_DATA_DIR=./data/reference_data
 
 # setup and teardown
 
@@ -41,10 +42,12 @@ teardown_file() {
 
 @test "default pandoc converter" {
   $JIMMY_EXE cli "$TEST_DATA_DIR/default_format/arbitrary_folder" "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/default_format/single_folder"
 }
 
-@test "frontmatter module" {
-  $JIMMY_EXE cli "$TEST_DATA_DIR/obsidian/test_1_frontmatter" --format obsidian "${JIMMY_ARGS[@]}"
+@test "frontmatter module (parsing and writing)" {
+  $JIMMY_EXE cli "$TEST_DATA_DIR/obsidian/test_1_frontmatter/vault" --format obsidian --frontmatter joplin "${JIMMY_ARGS[@]}"
+  diff --strip-trailing-cr "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/obsidian/test_1_frontmatter"
 }
 
 @test "filter - exclude tags" {
@@ -60,19 +63,23 @@ teardown_file() {
 }
 
 @test "textbundle converter called from bear converter" {
-  $JIMMY_EXE cli "$TEST_DATA_DIR/bear/test_1_frontmatter/backup.bear2bk" --format bear "${JIMMY_ARGS[@]}"
+  $JIMMY_EXE cli "$TEST_DATA_DIR/bear/test_1_frontmatter/backup.bear2bk" --format bear --frontmatter joplin "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/bear/test_1_frontmatter"
 }
 
 @test "cryptography module and password" {
-  $JIMMY_EXE cli "$TEST_DATA_DIR/colornote/test_1_frontmatter/colornote-20241014.backup" --format colornote --password 1234 "${JIMMY_ARGS[@]}"
+  $JIMMY_EXE cli "$TEST_DATA_DIR/colornote/test_1_frontmatter/colornote-20241014.backup" --format colornote --password 1234 --frontmatter joplin "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/colornote/test_1_frontmatter"
 }
 
 @test "sqlite3 module" {
   $JIMMY_EXE cli "$TEST_DATA_DIR/qownnotes/test_1/note_folder" --format qownnotes "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/qownnotes/test_1"
 }
 
 @test "pyyaml module" {
   $JIMMY_EXE cli "$TEST_DATA_DIR/rednotebook/test_2/RedNotebook-Backup-2024-09-15.zip" --format rednotebook "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/rednotebook/test_2"
 }
 
 @test "anytype module" {
