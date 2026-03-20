@@ -61,16 +61,19 @@ class BaseConverter(abc.ABC):
             return True
         return self.accept_folder and input_.is_dir()
 
-    def convert_multiple(self, files_or_folders: list[Path]) -> imf.Notebooks:
+    def convert_multiple(self, files_or_folders: list[Path]) -> tuple[imf.Notebooks, int]:
         """Main conversion function."""
+        errors = 0
         notebooks = []
         for input_index, file_or_folder in enumerate(files_or_folders):
             # Sanity check - do the input files / folders exist?
             if not file_or_folder.exists():
                 self.logger.warning(f"{file_or_folder.resolve()} doesn't exist.")
+                errors += 1
                 continue
             if not self.has_valid_format(file_or_folder):
-                self.logger.error("Input file has invalid format.")
+                self.logger.error(f'Input file "{file_or_folder.name}" has invalid format.')
+                errors += 1
                 continue
 
             index_suffix = "" if len(files_or_folders) == 1 else f" {input_index}"
@@ -80,7 +83,7 @@ class BaseConverter(abc.ABC):
             self.convert(file_or_folder)
             self.apply_postprocessing(self.root_notebook)
             notebooks.append(self.root_notebook)
-        return notebooks
+        return notebooks, errors
 
     @abc.abstractmethod
     def convert_note(self, *args, **kwargs):

@@ -63,7 +63,7 @@ def setup_logging(custom_handlers: list | None = None):
         log.setLevel(logging.WARNING)
 
 
-def convert_all_inputs(config):
+def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
     """
     Convert the input data to an intermediate representation
     that can be used by the writer later.
@@ -82,8 +82,8 @@ def convert_all_inputs(config):
             raise exc  # this is unexpected -> reraise
     # Children are added to the parent node / node tree implicitly.
     # This is an anti-pattern, but works for now.
-    parent = converter_.convert_multiple(config.input)
-    return parent
+    parent, errors = converter_.convert_multiple(config.input)
+    return parent, errors
 
 
 def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
@@ -108,7 +108,7 @@ def get_pandoc_version() -> str:
         return "unknown"
 
 
-def run_conversion(config) -> common.Stats:
+def run_conversion(config) -> tuple[common.Stats, int]:
     LOGGER.info(f"Jimmy {variables.VERSION} (Pandoc {get_pandoc_version()})")
     LOGGER.debug(f"Using pandoc from: {shutil.which('pandoc')}")
     LOGGER.debug(f"{config=}")
@@ -118,8 +118,13 @@ def run_conversion(config) -> common.Stats:
         "Start parsing. This may take some time. "
         'The extended log can be enabled by "--stdout-log-level DEBUG".'
     )
-    root_notebooks = convert_all_inputs(config)
+    root_notebooks, errors = convert_all_inputs(config)
     stats = common.get_import_stats(root_notebooks)
+
+    # return early, if each input errored or there were no notes converted
+    if errors >= len(config.input) or stats.notes == 0:
+        return stats, errors
+
     LOGGER.info(f"Finished parsing: {stats}")
     if config.print_tree:
         print(get_tree(root_notebooks, Tree("Note Tree")))
@@ -179,4 +184,4 @@ def run_conversion(config) -> common.Stats:
         "[/bold]"
     )
 
-    return stats
+    return stats, errors

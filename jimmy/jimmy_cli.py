@@ -5,6 +5,7 @@ import datetime
 import logging
 import multiprocessing
 from pathlib import Path
+import sys
 
 from rich.logging import RichHandler
 
@@ -181,7 +182,13 @@ def main():
         custom_handlers.append(console_handler)
     jimmy.main.setup_logging(custom_handlers=custom_handlers)
 
-    jimmy.main.run_conversion(config)
+    _, errors = jimmy.main.run_conversion(config)
+    if errors:
+        logger = logging.getLogger("jimmy")
+        logger.error("At least one error occured during conversion. Please check the log.")
+        sys.exit(1)
+    else:
+        sys.exit()
 
 
 if __name__ == "__main__":
