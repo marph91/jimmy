@@ -222,7 +222,9 @@ class Note:
                 # https://help.obsidian.md/Editing+and+formatting/Properties#Property+format
                 metadata = {}
                 if self.tags:
-                    metadata["tags"] = [normalize_obsidian_tag(tag.title) for tag in self.tags]
+                    metadata["tags"] = sorted(
+                        normalize_obsidian_tag(tag.title) for tag in self.tags
+                    )
                     post = frontmatter.Post(self.body, **metadata)
                     self.body = frontmatter.dumps(post)
             case "qownnotes":
@@ -231,7 +233,7 @@ class Note:
                 # - https://github.com/qownnotes/scripts/tree/master/yaml-nested-tags
                 if self.tags:
                     post = frontmatter.Post(
-                        self.body, tags=" ".join([tag.title for tag in self.tags])
+                        self.body, tags=" ".join(sorted(tag.title for tag in self.tags))
                     )
                     self.body = frontmatter.dumps(post)
             case _:
