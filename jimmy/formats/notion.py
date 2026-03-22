@@ -15,7 +15,7 @@ import jimmy.md_lib.text
 class Converter(converter.BaseConverter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.id_path_map = {".": "."}
+        self.id_path_map = {".": Path(".")}
 
     def prepare_input(self, input_: Path) -> Path:
         temp_folder = common.get_temp_folder()
@@ -73,7 +73,7 @@ class Converter(converter.BaseConverter):
         return resources, note_links
 
     @common.catch_all_exceptions
-    def convert_note(self, item: Path, relative_parent_path: str, parent_notebook: imf.Notebook):
+    def convert_note(self, item: Path, relative_parent_path: Path, parent_notebook: imf.Notebook):
         if (
             item.is_file()
             and item.suffix.lower() not in common.MARKDOWN_SUFFIXES + (".html",)
@@ -87,10 +87,9 @@ class Converter(converter.BaseConverter):
         # separator is always "/"
         _, id_ = item.stem.rsplit(" ", 1)
         if parent_notebook.original_id != ".":
-            self.id_path_map[id_] = relative_parent_path + "/" + item.name
+            self.id_path_map[id_] = relative_parent_path / item.name
         else:
-            # TODO: check if "./" works on windows
-            self.id_path_map[id_] = item.name
+            self.id_path_map[id_] = Path(item.name)
 
         if item.is_dir():
             child_notebook = imf.Notebook(title, original_id=id_)
