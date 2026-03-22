@@ -21,7 +21,10 @@ class Converter(converter.BaseConverter):
 
     def parse_metadata(self, ciphertext: bytes):
         # TODO: Is the reverse-engineered data correct?
-        # print(ciphertext[:8].decode("utf-8") == "NOTE")
+        # TODO: Why utf-16 is needed here? Else "NOTE" is decoded, but it has a length of 8.
+        # TODO: Could be also "一伀吀䔀", so better skip this check.
+        # if (keyword := ciphertext[:8].decode("utf-16")) != "NOTE":
+        #     self.logger.debug(f'Expected keyword "NOTE", got "{keyword}".')
         major, minor, timestamp, note_count = struct.unpack(">LLQL", ciphertext[8:])
         date = common.timestamp_to_datetime(timestamp / 1000).strftime("%Y-%m-%d %H:%M:%S")
         self.logger.info(

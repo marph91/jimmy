@@ -156,7 +156,7 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
         | checklist()
     )
 
-    # TODO: str.translate() seems to be fastest
+    # str.translate() seems to be fastest, but works only on single characters.
     # https://stackoverflow.com/a/8958372
-    zim_text = zim_text.replace("\t", " " * 4)
+    zim_text = zim_text.expandtabs(4)
     return zim_markup.transform_string(zim_text)

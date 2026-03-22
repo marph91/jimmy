@@ -81,8 +81,6 @@ class Converter(converter.BaseConverter):
             updated=date_,
         )
 
-        # TODO: weather, mood
-
         # location
         if location_data := self.locations.get(get_text(entry.find("location_uid"))):
             note_imf.latitude = location_data["latitude"]

@@ -81,7 +81,7 @@ jobs:
       - name: Smoke test
         shell: bash
         working-directory: ./test  # run in a different directory to make sure that the paths are working
-        run: bats smoke-test.bats
+        run: bats smoke-test.bats --timing
       # - name: Scan for viruses (just for information)
       #   if: runner.os == 'Linux'
       #   run: |

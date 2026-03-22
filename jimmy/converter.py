@@ -95,7 +95,9 @@ class BaseConverter(abc.ABC):
           conversion to crash.
         - Should log the note title to see some progress.
         """
-        # TODO: https://stackoverflow.com/q/19335436/7410886
+        # The "@common.catch_all_exceptions" decorator can't be added here, but instead
+        # needs to be applied at each concrete implementation:
+        # https://stackoverflow.com/q/19335436/7410886
 
     @abc.abstractmethod
     def convert(self, file_or_folder: Path):
@@ -352,7 +354,6 @@ class DefaultConverter(BaseConverter):
                     # Delay processing folders to have a better readable log. I. e.
                     # folder 1 - file 1, file 2, file 3
                     # folder 2 - file 1, file 2, file 3
-                    # TODO: check if there is a better way
                     folders.append(item)
             for folder in folders:
                 self.convert_file_or_folder(folder, new_parent)
