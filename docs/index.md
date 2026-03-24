@@ -58,7 +58,7 @@ If there is an issue at download or execution, please take a look at the [step-b
 - ✅ Open Source
 - ✅ Cross-platform
 - ✅ Standalone (no Docker, Python or Node.js installation required)
-- ❎ No AI
+- ❎ No AI used during conversion
 
 ## Supported Apps
 
