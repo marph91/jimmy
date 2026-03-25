@@ -74,6 +74,10 @@ extra_checks = true
 disable_error_code = "attr-defined"
 [[tool.mypy.overrides]]
 module = [
+    "anyblock_exporter",
+    "frontmatter",
+    "puremagic",
+    "pypandoc",
     "pytodotxt",
     "stage_left",
     "stage_left.types"
