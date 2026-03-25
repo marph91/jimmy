@@ -7,7 +7,7 @@ source_app: Telegram
 ## General Information
 
 - [Website](https://telegram.org/)
-- Typical extension: folder with media files and `result.json` file
+- Typical extension: Folder with media files and `result.json` file
 
 ## Instructions
 

@@ -32,6 +32,7 @@ FORMAT_REGISTRY = {
     "rednotebook": {"accepted_extensions": [".zip"], "accept_folder": True},
     "reflect": {"accepted_extensions": [".json"], "accept_folder": False},
     "roam_research": {"accepted_extensions": [".json"], "accept_folder": False},
+    "signal": {"accepted_extensions": None, "accept_folder": True},
     "simplenote": {"accepted_extensions": [".zip"], "accept_folder": False},
     "standard_notes": {"accepted_extensions": [".zip"], "accept_folder": False},
     "synology_note_station": {"accepted_extensions": [".nsx"], "accept_folder": False},

@@ -32,9 +32,10 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Heptabase](https://heptabase.com/) | - [doc](https://wiki.heptabase.com/how-sustainable-is-heptabase) (Markdown) <br>- [script](https://github.com/link-ding/Heptabase-Export) |     |
 | [iaWriter](https://ia.net/writer) | [doc](https://ia.net/writer/support/preview/export-share-print) (Markdown) | two-week trial |
 | [Inkdrop](https://www.inkdrop.app/) |     | 30-day trial |
+| [journal.cloud](https://journey.cloud/) | [doc](https://support.journey.cloud/categories/import-export-publish) | Paid account needed for zip export |
 | [Journalify](https://www.journalify.com/) |     | Google or Facebook account needed |
 | [Journey.cloud](https://journey.cloud/) | [script](https://github.com/davep/journey2md) | [demo](https://journey.cloud/app/timeline) |
-| [keynote-nf](https://github.com/dpradov/keynote-nf) |     | <https://github.com/marph91/jimmy/issues/3> |
+| [keynote-nf](https://github.com/dpradov/keynote-nf) | [.knf doc](https://github.com/dpradov/keynote-nf/tree/master/doc/kn_fileformat) |     |
 | [~~Laverna~~](https://laverna.cc/) |     | dead |
 | [Lifeograph](https://sourceforge.net/projects/lifeograph/) | [doc](https://lifeograph.sourceforge.net/doku.php) |     |
 | [Linked](https://github.com/lostdesign/linked) |     |     |
@@ -67,11 +68,10 @@ Loose collection of note apps/messengers/wikis/formats that could be implemented
 | [Reor](https://github.com/reorproject/reor) |     |     |
 | [Rightnote](https://www.bauerapps.com/rightnote/) |     | 30-day trial |
 | [Scrivener](https://www.literatureandlatte.com/scrivener/overview) | - [doc](https://www.literatureandlatte.com/how-to-export-scrivener-projects-and-why-you-might-want-to) <br>- [thread](https://github.com/obsidianmd/obsidian-importer/issues/30) | 30-day trial |
-| [Signal](https://signal.org/de/) |     | <https://github.com/marph91/jimmy/issues/8> |
 | [Siyuan](https://github.com/siyuan-note/siyuan) | [doc](https://github.com/siyuan-note/siyuan?tab=readme-ov-file#does-it-support-data-synchronization-through-a-third-party-sync-disk) |     |
 | [Skiff Pages](https://skiff.com/pages) |     | Has joined Notion |
 | [Slite](https://slite.com/) | [doc](https://slite.slite.page/p/GB20MuMNuUTvwM/Backing-Up-Your-Data) (Markdown, paid only) |     |
-| [Stickies](https://www.zhornsoftware.co.uk/stickies/) |     | <https://github.com/marph91/jimmy/issues/4> |
+| [Stickies](https://www.zhornsoftware.co.uk/stickies/) | [doc](https://www.zhornsoftware.co.uk/support/kb.pl?q=00092) | - DB location: `%APPDATA%\stickies\stickies.db`<br>- [Note content seems to be RTF](https://www.zhornsoftware.co.uk/support/kb.pl?q=00094) |
 | [Supernotes](https://supernotes.app/) | [doc](https://help.supernotes.app/en/articles/3068672-printing-exporting#h_f37e2930e4) |     |
 | [Tana](https://tana.inc/) | [thread](https://www.reddit.com/r/TanaInc/comments/13jjiwi/comment/jkgca57/) |     |
 | [Takenote](https://takenote.ai/) | Export via settings to zipped md and json | No tags/metadata? |

@@ -74,15 +74,14 @@ extra_checks = true
 disable_error_code = "attr-defined"
 [[tool.mypy.overrides]]
 module = [
-    "anyblock_exporter",
-    "frontmatter",
-    "puremagic",
-    "pypandoc",
     "pytodotxt",
     "stage_left",
     "stage_left.types"
 ]
 ignore_missing_imports = true
+[[tool.mypy.overrides]]
+module = ["sigexport.*"]
+follow_untyped_imports = true
 
 [tool.pylint]
 disable = [
