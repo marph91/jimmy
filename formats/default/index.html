@@ -5,7 +5,7 @@
     
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="This page describes how to convert from various markup formats to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.">
+  <meta name="description" content="This page describes how to convert from various markup formats and PDF to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.">
   
   
     <link rel="canonical" href="https://marph91.github.io/jimmy/formats/default/">
@@ -21,7 +21,7 @@
   <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.6.12">
 
     
-  <title>How do I convert from various markup formats to Markdown? - Jimmy</title>
+  <title>How do I convert from various markup formats and PDF to Markdown? - Jimmy</title>
 
     
       <link rel="stylesheet" href="../../assets/stylesheets/main.66ac8b77.min.css">
@@ -55,8 +55,8 @@
     
   
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="How do I convert from various markup formats to Markdown? - Jimmy" />
-  <meta property="og:description" content="This page describes how to convert from various markup formats to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian." />
+  <meta property="og:title" content="How do I convert from various markup formats and PDF to Markdown? - Jimmy" />
+  <meta property="og:description" content="This page describes how to convert from various markup formats and PDF to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian." />
   <meta property="og:url" content="https://marph91.github.io/jimmy/formats/default/" />
   <meta property="og:image" content="https://marph91.github.io/jimmy//images/logo2.png" />
   <meta property="og:image:type" content="image/png" />
@@ -78,10 +78,10 @@
       "@type": "Person",
       "name": "Marph"
     },
-    "headline": "How do I convert from various markup formats to Markdown? - Jimmy",
-    "name": "How do I convert from various markup formats to Markdown? - Jimmy",
-    "about": "This page describes how to convert from various markup formats to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
-    "description": "This page describes how to convert from various markup formats to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
+    "headline": "How do I convert from various markup formats and PDF to Markdown? - Jimmy",
+    "name": "How do I convert from various markup formats and PDF to Markdown? - Jimmy",
+    "about": "This page describes how to convert from various markup formats and PDF to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
+    "description": "This page describes how to convert from various markup formats and PDF to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
     "proficiencyLevel": "Beginner",
     "educationalLevel": "intermediate",
     "creativeWorkStatus": "Published",
@@ -89,10 +89,10 @@
     "identifier": "https://marph91.github.io/jimmy/formats/default/",
     "inLanguage": "English",
     "isPartOf": "https://marph91.github.io/jimmy/",
-    "keywords": "various markup formats, Markdown, Joplin, Obsidian, Conversion, Migration, Import, Export",
+    "keywords": "various markup formats and PDF, Markdown, Joplin, Obsidian, Conversion, Migration, Import, Export",
     "license": "https://github.com/marph91/jimmy/blob/77c165a4de9204e6f808348f190fba65bdcd75cd/license",
     "mainEntity": "https://marph91.github.io/jimmy/",
-    "teaches": "This page describes how to convert from various markup formats to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
+    "teaches": "This page describes how to convert from various markup formats and PDF to Markdown using the note conversion tool Jimmy. And how to import to note applications such as Joplin and Obsidian.",
     "timeRequired": "PT10M",
     "typicalAgeRange": "14-"
   }
@@ -1721,6 +1721,7 @@
 </li>
 <li>Markdown (<a href="https://commonmark.org/">CommonMark</a>)</li>
 <li><a href="https://en.wikipedia.org/wiki/MHTML">MHTML</a></li>
+<li><a href="https://en.wikipedia.org/wiki/MHTML">PDF</a></li>
 <li>TXT</li>
 </ul>
 <h2 id="instructions">Instructions<a class="headerlink" href="#instructions" title="Permanent link">&para;</a></h2>
@@ -1731,7 +1732,7 @@
 jimmy-linux<span class="w"> </span>cli<span class="w"> </span>libre_office_document.odt
 
 <span class="c1"># convert multiple files</span>
-jimmy-linux<span class="w"> </span>cli<span class="w"> </span>plaintext.txt<span class="w"> </span>markdown.md
+jimmy-linux<span class="w"> </span>cli<span class="w"> </span>plaintext.txt<span class="w"> </span>markdown.md<span class="w"> </span>document.pdf
 
 <span class="c1"># convert all files in a folder recursively</span>
 jimmy-linux<span class="w"> </span>cli<span class="w"> </span>path/to/folder
@@ -1776,7 +1777,10 @@ jimmy-linux<span class="w"> </span>cli<span class="w"> </span>path/to/folder
 </tbody>
 </table>
 <h2 id="acknowledgements">Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permanent link">&para;</a></h2>
-<p>The converter is based largely on <a href="https://pandoc.org/">Pandoc</a>. Thanks for developing it!</p>
+<ul>
+<li>The markup converters are based largely on <a href="https://pandoc.org/">Pandoc</a>. Thanks for developing it!</li>
+<li>The PDF converter is based on <a href="https://github.com/yfedoseev/pdf_oxide">pdf_oxide</a>. Thanks for developing it!</li>
+</ul>
 
 
 
@@ -1797,7 +1801,7 @@ jimmy-linux<span class="w"> </span>cli<span class="w"> </span>path/to/folder
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 11:47:33 UTC">January 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 4, 2026 10:35:28 UTC">April 4, 2026</span>
   </span>
 
     
