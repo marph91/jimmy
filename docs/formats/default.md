@@ -1,5 +1,5 @@
 ---
-source_app: various markup formats
+source_app: various markup formats and PDF
 ---
 
 # Default Conversion to Markdown
@@ -30,6 +30,7 @@ The default conversion covers the following formats:
     - There is a [Obsidian plugin](https://github.com/Darakah/obsidian-fountain).
 - Markdown ([CommonMark](https://commonmark.org/))
 - [MHTML](https://en.wikipedia.org/wiki/MHTML)
+- [PDF](https://en.wikipedia.org/wiki/MHTML)
 - TXT
 
 ## Instructions
@@ -41,7 +42,7 @@ The default conversion covers the following formats:
 jimmy-linux cli libre_office_document.odt
 
 # convert multiple files
-jimmy-linux cli plaintext.txt markdown.md
+jimmy-linux cli plaintext.txt markdown.md document.pdf
 
 # convert all files in a folder recursively
 jimmy-linux cli path/to/folder
@@ -60,4 +61,5 @@ jimmy-linux cli path/to/folder
 
 ## Acknowledgements
 
-The converter is based largely on [Pandoc](https://pandoc.org/). Thanks for developing it!
+- The markup converters are based largely on [Pandoc](https://pandoc.org/). Thanks for developing it!
+- The PDF converter is based on [pdf_oxide](https://github.com/yfedoseev/pdf_oxide). Thanks for developing it!

@@ -12,6 +12,10 @@ REFERENCE_DATA_DIR=./data/reference_data
 # setup and teardown
 
 setup_file() {
+  if [ ! -f "$JIMMY_EXE" ]; then
+    echo "Jimmy executable not found at $JIMMY_EXE !"
+  fi
+
   mkdir -p "$DEFAULT_OUTPUT_FOLDER"
 }
 
@@ -89,4 +93,9 @@ teardown_file() {
 @test "onenote conversion with bundled executable" {
   skip "onenote disabled for now"
   $JIMMY_EXE cli "$TEST_DATA_DIR/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip" --format onenote "${JIMMY_ARGS[@]}"
+}
+
+@test "pdf_oxyde module" {
+  $JIMMY_EXE cli "$TEST_DATA_DIR/default_format/pdf" "${JIMMY_ARGS[@]}"
+  diff "$TEST_OUTPUT_FOLDER" "$REFERENCE_DATA_DIR/default_format/pdf"
 }

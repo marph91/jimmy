@@ -6,6 +6,7 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 import frontmatter
+import pdf_oxide
 
 from jimmy import common, intermediate_format as imf
 import jimmy.md_lib.convert
@@ -165,10 +166,12 @@ def decode_strange_ascii(ascii_: str) -> str:
 
 
 class DefaultConverter(BaseConverter):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, config: common.Config, *args, **kwargs):
+        super().__init__(config, *args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder
         self.resource_folder = common.get_temp_folder()
+
+        self.password = config.password
 
     def handle_markdown_links(self, body: str, path: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
@@ -286,6 +289,18 @@ class DefaultConverter(BaseConverter):
                             note_imf.tags.extend([imf.Tag(tag) for tag in value])
                         case _:
                             note_imf.custom_metadata[key] = value
+            case "pdf":
+                # https://pdf.oxide.fyi/docs/extraction/markdown
+                # TODO: OCR
+                document = pdf_oxide.PdfDocument(str(file_), password=self.password)
+                # if self.password is not None and not document.authenticate(self.password):
+                #     self.debug("Password set, but not applied.")
+                note_imf.body = document.to_markdown_all(
+                    detect_headings=True,
+                    include_images=True,
+                    image_output_dir=str(self.resource_folder),
+                    embed_images=False,
+                )
             case "txt" | "text":
                 note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":
