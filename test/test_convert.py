@@ -44,6 +44,8 @@ class EndToEnd(unittest.TestCase):
         #     password = "0000"
         elif "evernote" in test_name:
             password = "password"
+        elif "default_format" in test_name and "pdf" in test_name:
+            password = "samplefiles"
         else:
             password = None
 

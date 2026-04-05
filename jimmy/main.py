@@ -52,6 +52,7 @@ def setup_logging(custom_handlers: list | None = None):
             "anyblock_exporter",
             "asyncio",
             # "markdown_it",
+            "pdf_oxide",
             "pypandoc",
             "python-markdown",
             "watchdog",

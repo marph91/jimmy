@@ -1,8 +1,8 @@
 anyblock_exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744
 beautifulsoup4==4.14.3
-cryptography==46.0.5
+cryptography==46.0.6
 markdown==3.10.2
-pdf_oxide==0.3.19
+pdf_oxide==0.3.20
 platformdirs==4.9.4
 puremagic==2.1.1
 pypandoc==1.17
@@ -13,5 +13,5 @@ pyyaml==6.0.3
 rich==14.3.3
 signal-export==3.8.3
 # stage-left==0.2.2
-textual==8.1.1
+textual==8.2.2
 textual-fspicker==1.0.0

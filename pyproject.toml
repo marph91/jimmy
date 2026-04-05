@@ -78,9 +78,9 @@ module = [
     "frontmatter",
     "puremagic",
     "pypandoc",
-    "pytodotxt",
-    "stage_left",
-    "stage_left.types"
+    # "pytodotxt",
+    # "stage_left",
+    # "stage_left.types"
 ]
 ignore_missing_imports = true
 [[tool.mypy.overrides]]
