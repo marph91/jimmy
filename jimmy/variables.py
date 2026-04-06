@@ -1,12 +1,13 @@
 """Contains global variables."""
 
 # current version of jimmy
-VERSION = "1.1.21"
+VERSION = "1.1.22"
 
 # all available formats and their allowed inputs
 # use a registry to avoid importing all (including many unneeded) modules
 FORMAT_REGISTRY = {
     None: {"accepted_extensions": ["*"], "accept_folder": True},  # default format
+    "affine": {"accepted_extensions": [".affine"], "accept_folder": False},
     "anki": {"accepted_extensions": [".apkg"], "accept_folder": False},
     "anytype": {"accepted_extensions": [".zip"], "accept_folder": True},
     "bear": {"accepted_extensions": [".bear2bk"], "accept_folder": False},

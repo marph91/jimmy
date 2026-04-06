@@ -144,6 +144,7 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
+            [["affine/test_1_frontmatter/Demo Workspace.affine"]],
             [["anki/test_1/MEILLEUR_DECK_ANGLAIS_3000.apkg"]],
             [["anki/test_2/Ukrainian_Prepositions_pictsaudio_ENG-UA__UA-ENG.apkg"]],
             [["anki/test_3/Hebrew_Alphabet_with_vowels.apkg"]],
