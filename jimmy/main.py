@@ -61,7 +61,7 @@ def setup_logging(custom_handlers: list | None = None):
     for log in other_loggers:
         log.propagate = False
         log.handlers.clear()
-        log.setLevel(logging.WARNING)
+        log.setLevel(logging.ERROR)
 
 
 def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
