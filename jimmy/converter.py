@@ -6,7 +6,12 @@ from pathlib import Path
 from xml.etree import ElementTree as ET
 
 import frontmatter
-import pdf_oxide
+try:
+    import pdf_oxide
+
+    PDF_OXIDE_AVAILABLE = True
+except ImportError:
+    PDF_OXIDE_AVAILABLE = False
 
 from jimmy import common, intermediate_format as imf
 import jimmy.md_lib.convert
@@ -292,6 +297,12 @@ class DefaultConverter(BaseConverter):
             case "pdf":
                 # https://pdf.oxide.fyi/docs/extraction/markdown
                 # TODO: OCR
+                if not PDF_OXIDE_AVAILABLE:
+                    self.logger.warning(
+                        "pdf_oxide is not available on this platform. "
+                        "PDF conversion is not supported."
+                    )
+                    return []
                 document = pdf_oxide.PdfDocument(str(file_), password=self.password)
                 # if self.password is not None and not document.authenticate(self.password):
                 #     self.debug("Password set, but not applied.")
