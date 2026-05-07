@@ -307,6 +307,7 @@ class EndToEnd(unittest.TestCase):
             ["asciidoc_contrib", ["default_format/asciidoc_contrib"]],
             ["asciidoc_core", ["default_format/asciidoc_core"]],
             # TODO: bbcode
+            ["emacs_org", ["default_format/emacs_org"]],
             ["eml", ["default_format/eml"]],
             ["html", ["default_format/html"]],
             ["latex", ["default_format/latex"]],
