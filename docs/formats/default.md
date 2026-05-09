@@ -15,6 +15,7 @@ The default conversion covers the following formats:
     - [Comma-separated values (CSV)](https://en.wikipedia.org/wiki/Comma-separated_values)
     - [DocBook](https://docbook.org/)
     - [DOCX](https://en.wikipedia.org/wiki/Office_Open_XML)
+    - [Emacs Org Mode](https://orgmode.org/)
     - [electronic publication (EPUB)](https://www.w3.org/community/epub3/)
     - [HyperText Markup Language (HTML)](https://www.w3.org/html/)
     - [Jupyter Notebook](https://jupyter.org/)
