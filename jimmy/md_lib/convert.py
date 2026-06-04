@@ -76,8 +76,6 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     if custom_filter is not None:
         for filter_ in custom_filter:
             filter_(soup)
-    # pre-filter
-    jimmy.md_lib.html_filter.replace_special_characters(soup)
     # main filter
     jimmy.md_lib.html_filter.div_checklists(soup)
     jimmy.md_lib.html_filter.highlighting(soup)

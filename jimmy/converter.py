@@ -321,6 +321,9 @@ class DefaultConverter(BaseConverter):
                             pwd=file_.parent,
                             format_=root_tag,
                             resource_folder=self.resource_folder,
+                            custom_filter=[
+                                jimmy.md_lib.html_filter.replace_special_characters
+                            ]
                         )
                     # TODO: docbook
                     # case "book":
@@ -339,6 +342,9 @@ class DefaultConverter(BaseConverter):
                     pwd=file_.parent,
                     format_=pandoc_format,
                     resource_folder=self.resource_folder,
+                    custom_filter=[
+                        jimmy.md_lib.html_filter.replace_special_characters
+                    ]
                 )
 
         inline_tags = jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
