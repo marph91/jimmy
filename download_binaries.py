@@ -42,9 +42,11 @@ if __name__ == "__main__":
     targetfolder.mkdir(exist_ok=True)
     try:
         download_pandoc(version="3.9.0.2", targetfolder=targetfolder)
-    except Exception:
-        print("pandoc download failed")
+    except Exception as exc:
+        print("pandoc download failed: ", str(exc))
+        exit(1)
     # try:
     #     download_one2html(targetfolder=targetfolder)
-    # except Exception:
-    #     print("one2html download failed")
+    # except Exception as exc:
+    #     print("one2html download failed: ", str(exc))
+    #     exit(1)
