@@ -1,6 +1,7 @@
 """Convert obsidian notes to the intermediate format."""
 
 from pathlib import Path
+import typing
 from urllib.parse import unquote
 
 import frontmatter
@@ -56,7 +57,7 @@ class Converter(converter.BaseConverter):
         # frontmatter tags
         # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties
         metadata, body = frontmatter.parse(body)
-        frontmatter_tags = metadata.get("tags", [])
+        frontmatter_tags = typing.cast(list[str], metadata.get("tags", []))
 
         # aliases seem to be only used in the link description
         # frontmatter_.get("aliases", [])
