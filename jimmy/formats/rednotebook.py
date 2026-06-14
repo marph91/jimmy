@@ -45,6 +45,15 @@ class Converter(converter.BaseConverter):
         return body, resources
 
     @common.catch_all_exceptions
+    def convert_month(self, file_: Path):
+        year, month = file_.stem.split("-", 1)
+        # data is encapsulated in yaml, notes are in txt2tags markup
+        # see: https://rednotebook.app/help.html#toc38
+        note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
+        for day, data in note_dict.items():
+            self.convert_note(data, datetime.date(int(year), int(month), int(day)))
+
+    @common.catch_all_exceptions
     def convert_note(self, data: dict, date: datetime.date):
         title = date.strftime("%Y-%m-%d")
         self.logger.debug(f'Converting note "{title}"')
@@ -78,9 +87,4 @@ class Converter(converter.BaseConverter):
             return
 
         for file_ in sorted(notes):
-            year, month = file_.stem.split("-", 1)
-            # data is encapsulated in yaml, notes are in txt2tags markup
-            # see: https://rednotebook.app/help.html#toc38
-            note_dict = yaml.safe_load(file_.read_text(encoding="utf-8"))
-            for day, data in note_dict.items():
-                self.convert_note(data, datetime.date(int(year), int(month), int(day)))
+            self.convert_month(file_)
