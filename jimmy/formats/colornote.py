@@ -77,6 +77,7 @@ class Converter(converter.BaseConverter):
             updated=common.timestamp_to_datetime(note_json["modified_date"] / 1000),
             source_application=self.format,
             original_id=title,  # not "uuid", because the title is linked
+            custom_metadata={"color_index": note_json["color_index"]},
         )
         if (latitude := note_json.get("latitude", 0)) != 0:
             note_imf.latitude = latitude
