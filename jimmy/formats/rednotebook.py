@@ -14,6 +14,15 @@ import jimmy.md_lib.links
 WRONG_QUOTATION_RE = re.compile(r'""(.*?)""\.(.*?)\]')
 
 
+# This monkeypatching is needed, because sometimes legacy `!!python/unicode` tags are used.
+# See: https://github.com/marph91/jimmy/issues/82
+def construct_unicode(loader, node):
+    return loader.construct_scalar(node)
+
+
+yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/unicode", construct_unicode)
+
+
 class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
