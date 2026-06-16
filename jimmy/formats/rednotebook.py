@@ -84,6 +84,7 @@ class Converter(converter.BaseConverter):
             body,
             source_application=self.format,
             resources=resources,
+            tags=[imf.Tag(tag) for tag in jimmy.md_lib.tags.get_inline_tags(body, ["#"])],
         )
         self.root_notebook.child_notes.append(note_imf)
 
