@@ -29,7 +29,7 @@ jobs:
         # "macos-latest" to support ARM based MACs
         # "macos-15-intel" to support Intel based MACs
         # "ubuntu-22.04" to get the lowest possible glibc version for compatibility
-        os: ["windows-latest", "ubuntu-22.04", "ubuntu-22.04-arm", "macos-latest", "macos-15-intel"]
+        os: ["windows-latest", "ubuntu-latest", "ubuntu-latest-arm", "macos-latest", "macos-15-intel"]
         # build "macos-15-intel" executable only at release
         # https://github.com/orgs/community/discussions/26253?sort=top#discussioncomment-3250989
         is_release:
@@ -37,8 +37,8 @@ jobs:
         exclude:
           - is_release: false
             os: "macos-15-intel"
-          - is_release: false
-            os: "ubuntu-latest"
+          #- is_release: false
+          #  os: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v5
         with:
@@ -52,20 +52,42 @@ jobs:
           cache: "pip"
           cache-dependency-path: "requirements/requirements*.txt"
       - name: Install dependencies
-        # install only the really required modules before the pyinstaller build
+        # install only the really required modules before the nuitka build
         run: |
           pip install -r requirements/requirements-build.txt
           python download_binaries.py
-      - name: Build executables with pyinstaller
+      - name: Build executables with nuitka
+        shell: bash
         run: |
-          python -m PyInstaller jimmy.spec
+          python -m nuitka --version
+          python -m pip list -v
+          python -m nuitka --list-distribution-metadata
+          python -m nuitka --mode=onefile --assume-yes-for-downloads hello_world.py
+          # --onefile-no-compression to avoid "ValueError: compression parameter 'nb_workers' received an illegal value 4; the valid range is [0, 0]"
+          python -m nuitka \
+            --assume-yes-for-downloads \
+            --mode=onefile \
+            --follow-imports \
+            --follow-import-to=jimmy \
+            $(python generate_nuitka_config.py) \
+            --user-package-configuration-file=nuitka-anyblock_exporter.config.yml \
+            --include-data-dir=./bin=bin \
+            --output-filename="$(python obtain_executable_name.py)" \
+            --output-dir=dist \
+            jimmy/jimmy_cli.py
+      #- name: Build Executable
+      #  uses: Nuitka/Nuitka-Action@main
+      #  with:
+      #    nuitka-version: main
+      #    script-name: jimmy/jimmy_cli.py
+      #    mode: app
       - name: Release
         uses: softprops/action-gh-release@v3
         # release only if there is a release tag
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           files: |
-            ./dist/jimmy*
+            ./dist/jimmy-*
             ./bin/copyright.pandoc
       - name: Check executable size
         shell: bash

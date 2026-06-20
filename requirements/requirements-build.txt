@@ -1,4 +1,6 @@
 -r requirements.txt
-pyinstaller==6.21.0
+Nuitka[app] @ git+https://github.com/Nuitka/Nuitka.git@develop
+ordered-set  # Speeds up compilation significantly
+zstandard    # Reduces final EXE size by 30-50%
 hatch==1.17.0
 twine==6.2.0

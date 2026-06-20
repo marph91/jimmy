@@ -1,0 +1,4 @@
+- module-name: "anyblock_exporter"
+  data-files:
+    - patterns:
+        - "config.yaml"

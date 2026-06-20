@@ -4,7 +4,7 @@ bats_require_minimum_version 1.5.0
 
 # environment variables
 
-JIMMY_EXE="../dist/jimmy*"
+JIMMY_EXE="../dist/jimmy-*"
 DEFAULT_OUTPUT_FOLDER="$(mktemp -d)/smoke_test_bats_tmp"
 TEST_DATA_DIR=./data/test_data
 REFERENCE_DATA_DIR=./data/reference_data
