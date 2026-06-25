@@ -62,6 +62,11 @@ def main():
     # TUI parser
     subparsers.add_parser("tui", help="Configure Jimmy in a Terminal User Interface (TUI).")
 
+    # informational output
+    subparsers.add_parser(
+        "list-formats", help="Print all available formats and their extensions as json."
+    )
+
     # CLI parser
     parser_cli = subparsers.add_parser(
         "cli", help="Specify all arguments directly on command line."
@@ -155,6 +160,9 @@ def main():
             from jimmy import jimmy_tui  # pylint: disable=import-outside-toplevel
 
             jimmy_tui.main()
+            return
+        case "list-formats":
+            jimmy.variables.formats_json()
             return
 
     if config.output_folder is None:

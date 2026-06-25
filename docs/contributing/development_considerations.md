@@ -20,7 +20,7 @@ for item in file_or_folder.iterdir():
 
 ## Why pyinstaller and not nuitka?
 
-I did have a bit of experience in setting up pyinstaller. The size of the final executable seems to be [much smaller with pyinstaller](https://github.com/Nuitka/Nuitka/issues/926), too.
+I did have a bit of experience in setting up pyinstaller. Nuitka was tested in [a PoC](https://github.com/marph91/jimmy/pull/85), but didn't show any major benefits.
 
 ## Why is the executable so large?
 

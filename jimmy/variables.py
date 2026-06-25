@@ -1,5 +1,8 @@
 """Contains global variables."""
 
+
+import json
+
 # current version of jimmy
 VERSION = "1.1.23"
 
@@ -48,3 +51,8 @@ FORMAT_REGISTRY = {
     "zim": {"accepted_extensions": None, "accept_folder": True},
     "zoho_notebook": {"accepted_extensions": [".zip"], "accept_folder": False},
 }
+
+
+def formats_json():
+    """List all available formats and their allowed extensions as JSON."""
+    print(json.dumps(FORMAT_REGISTRY, indent=2))
