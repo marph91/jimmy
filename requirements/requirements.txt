@@ -1,6 +1,8 @@
 anyblock_exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744
 beautifulsoup4==4.15.0
-cryptography==49.0.0
+# stay at cryptography 48.0.1, since macOS intel isn't supported anymore from 49.0.0 on.
+# See: https://cryptography.io/en/latest/changelog/#v49-0-0
+cryptography==48.0.1
 markdown==3.10.2
 pdf_oxide==0.3.65
 platformdirs==4.10.0
