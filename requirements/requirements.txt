@@ -4,7 +4,7 @@ beautifulsoup4==4.15.0
 # See: https://cryptography.io/en/latest/changelog/#v49-0-0
 cryptography==48.0.1
 markdown==3.10.2
-pdf_oxide==0.3.65
+pdf_oxide==0.3.69
 platformdirs==4.10.0
 puremagic==2.2.0
 pycrdt==0.14.1
