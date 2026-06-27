@@ -1,6 +1,5 @@
 """Contains global variables."""
 
-
 import json
 
 # current version of jimmy

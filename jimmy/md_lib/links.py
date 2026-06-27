@@ -121,10 +121,20 @@ class WikiLinksInlineProcessor(InlineProcessor):
 
     def handleMatch(  # type: ignore[override]  # noqa: N802
         self, m: re.Match[str], data: str
-    ) -> tuple[ET.Element, int, int]:
+    ) -> tuple[ET.Element[str], int, int]:
         # "!" means embedding. It gets converted to a usual link later.
         # https://help.obsidian.md/embeds
         embedded, url, description = m.groups()
+        # Exclude links that include additional brackets, like [[[link]]].
+        # Could be done at the regex, but the regex would get more unreadable.
+        # These patterns get links in Obsidian and Colornote for example,
+        # but the URL points to a non-existing note.
+        if (
+            url.startswith("[")
+            or (not description and url.endswith("]"))
+            or (description and description.endswith("]"))
+        ):
+            return ET.Element("div", {"text": data}), m.start(0), m.end(0)
         a = ET.Element("a")
         if description is not None and description.strip():
             a.text = description
@@ -272,6 +282,8 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
     >>> get_markdown_links('```\n[[link]]\n```')
     []
     >>> get_markdown_links('`[[link]]`')
+    []
+    >>> get_markdown_links('[[[link]]]')
     []
     >>> get_markdown_links('![[link]]')
     [MarkdownLink(text='', url='link', title='', is_wikilink=True, is_embedded=True)]
