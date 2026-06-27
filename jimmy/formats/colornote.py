@@ -18,6 +18,9 @@ class Converter(converter.BaseConverter):
     def __init__(self, config: common.Config):
         super().__init__(config)
         self.password = config.password
+        self.calendar_notebook = imf.Notebook("Calendar")
+        self.archive_notebook = imf.Notebook("Archive")
+        self.trash_notebook = imf.Notebook("Trash")
 
     def parse_metadata(self, ciphertext: bytes):
         # TODO: Is the reverse-engineered data correct?
@@ -63,11 +66,21 @@ class Converter(converter.BaseConverter):
         # actual conversion
         # TODO: reminder, tags, ...
         title = note_json["title"]
-        if title == "syncable_settings":
+        if title in ("name_master_password", "syncable_settings"):
+            self.logger.debug(f'Skipping note "{title}"')
             # TODO: needed?
             # syncable_settings = json.loads(note_json["note"])
             # print(syncable_settings)
             return
+
+        if title == "" and note_json.get("note", "") == "":
+            self.logger.debug("Skipping empty note")
+            # Not sure why they exist. Couldn't find anything special in metadata.
+            return
+
+        if note_json["folder_id"] == 16:  # calendar notes should have the date as title
+            base_date = common.timestamp_to_datetime(note_json["reminder_base"] / 1000)
+            title = base_date.strftime("%Y-%m-%d")
 
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
@@ -83,11 +96,32 @@ class Converter(converter.BaseConverter):
             note_imf.latitude = latitude
         if (longitude := note_json.get("longitude", 0)) != 0:
             note_imf.longitude = longitude
-        if note_json["space"] == 16:
-            note_imf.tags.append(imf.Tag("colornote-archived"))
         note_imf.note_links = self.handle_links(note_imf.body)
 
-        self.root_notebook.child_notes.append(note_imf)
+        # determine parent notebook (root, calendar, archive or trash)
+        parent_notebook = self.root_notebook
+        match note_json["folder_id"]:
+            case 0:
+                pass
+            case 16:  # calendar
+                parent_notebook = self.calendar_notebook
+            case _:
+                self.logger.debug(f"Unexpected folder_id: {note_json['folder_id']}")
+        match note_json["active_state"]:
+            case 0:
+                pass
+            case 16:  # trash
+                parent_notebook = self.trash_notebook
+            case _:
+                self.logger.debug(f"Unexpected active_state: {note_json['active_state']}")
+        match note_json["space"]:
+            case 0:
+                pass
+            case 16:  # archive
+                parent_notebook = self.archive_notebook
+            case _:
+                self.logger.debug(f"Unexpected space: {note_json['space']}")
+        parent_notebook.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         if self.password is None:
@@ -112,6 +146,10 @@ class Converter(converter.BaseConverter):
             self.logger.error("Couldn't find start position of the first note.")
             return
 
+        self.root_notebook.child_notebooks.extend(
+            [self.calendar_notebook, self.archive_notebook, self.trash_notebook]
+        )
+
         plaintext_stream.read(first_note_index - 4)
         while chunk_length_bytes := plaintext_stream.read(4):
             # parse binary colornote format
@@ -122,3 +160,5 @@ class Converter(converter.BaseConverter):
             note_json = json.loads(chunk_bytes.decode("utf-8"))
 
             self.convert_note(note_json)
+
+        self.remove_empty_notebooks()

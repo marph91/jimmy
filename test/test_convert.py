@@ -164,6 +164,7 @@ class EndToEnd(unittest.TestCase):
             [["clipto/test_1_frontmatter/clipto_backup_240401_105154.json"]],
             [["clipto/test_2/clipto_backup_260222_110537.json"]],
             [["colornote/test_1_frontmatter/colornote-20241014.backup"]],
+            [["colornote/test_4/colornote-20260615.backup"]],
             [["day_one/test_1_frontmatter/Day.One.zip"]],
             [["day_one/test_2/dayone-to-obsidian.zip"]],
             [["day_one/test_3/Export-Tagebuch.zip"]],
