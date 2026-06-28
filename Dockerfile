@@ -21,10 +21,14 @@ COPY jimmy ./jimmy
 # Install jimmy
 COPY pyproject.toml .
 COPY readme.md .
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir -e .
 
-# Create a default output directory
+# Create a default input and output directory
+RUN mkdir -p /data/input
 RUN mkdir -p /data/output
 
+# better readable output
+ENV COLUMNS=300
+
 # Set the entrypoint
-ENTRYPOINT ["jimmy"]
+ENTRYPOINT ["python", "./jimmy/jimmy_cli.py"]
