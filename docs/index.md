@@ -10,7 +10,7 @@ title: Jimmy - Note Conversion Tool
 
 ## Installation
 
-**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe) | [macOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64)**
+**Download Jimmy here: [Linux](https://github.com/marph91/jimmy/releases/latest/download/jimmy-linux) | [Windows](https://github.com/marph91/jimmy/releases/latest/download/jimmy-windows.exe) | [macOS](https://github.com/marph91/jimmy/releases/latest/download/jimmy-darwin-arm64) Docker** (experimental)
 
 ## Use Cases
 
