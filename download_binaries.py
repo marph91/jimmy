@@ -16,9 +16,7 @@ def download_pandoc(targetfolder: Path, version: str):
         case "darwin":
             download_filename = f"pandoc-{version}-{platform.machine().lower()}-macOS.zip"
         case "linux":
-            machine = (
-                "amd64" if platform.machine().lower() == "x86_64" else platform.machine().lower()
-            )
+            machine = {"x86_64": "amd64", "aarch64": "arm64"}[platform.machine().lower()]
             download_filename = f"pandoc-{version}-linux-{machine}.tar.gz"
         case "windows":
             download_filename = f"pandoc-{version}-windows-x86_64.zip"
