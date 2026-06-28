@@ -19,8 +19,8 @@ COPY jimmy ./jimmy
 COPY pyproject.toml readme.md  .
 RUN pip install --no-cache-dir -e .
 
-# better readable output
-ENV COLUMNS=300
+# better readable output, but not too much, since the TUI seems to be fixed to this width
+ENV COLUMNS=160
 
 # Set the entrypoint
 ENTRYPOINT ["python", "./jimmy/jimmy_cli.py"]
