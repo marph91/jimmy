@@ -57,7 +57,8 @@ def main():
 
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="interface")
-    subparsers.default = "tui"
+    # Only default to the TUI if the script is run in an interactive shell.
+    subparsers.default = "tui" if sys.stdout.isatty() else None
 
     # TUI parser
     subparsers.add_parser("tui", help="Configure Jimmy in a Terminal User Interface (TUI).")
