@@ -42,17 +42,20 @@ class BaseConverter(abc.ABC):
 
     def prepare_input(self, input_: Path) -> Path:
         """Prepare the input for further processing. For example extract an archive."""
+        if not input_.suffixes:
+            return input_
+
         # define some generally useful conversions
-        match input_.suffix.lower():
-            case ".bear2bk" | ".textpack":
-                temp_folder = common.extract_zip(input_)
-                return common.get_single_child_folder(temp_folder)
-            case ".jex" | ".tgz" | ".tar.gz":
-                return common.extract_tar(input_)
-            case ".apkg" | ".nsx" | ".zip" | ".zkn3":
-                return common.extract_zip(input_)
-            case _:  # ".textbundle", folder
-                return input_
+        suffixes = [s.lower() for s in input_.suffixes]
+        if suffixes[-1] in (".bear2bk", ".textpack"):
+            temp_folder = common.extract_zip(input_)
+            return common.get_single_child_folder(temp_folder)
+        if suffixes[-1] in (".jex", ".tar", ".tgz") or len(suffixes) > 1 and suffixes[-2] == ".tar":
+            return common.extract_tar(input_)
+        if suffixes[-1] in (".apkg", ".nsx", ".zip", ".zkn3"):
+            return common.extract_zip(input_)
+        # ".textbundle", folder
+        return input_
 
     def has_valid_format(self, input_: Path) -> bool:
         """Check if the input has a valid format."""
