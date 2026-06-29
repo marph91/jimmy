@@ -32,7 +32,11 @@ jobs:
         with:
           context: .
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          tags: "marphux/jimmy:latest"
+          tags: |-
+            ${{ case(startsWith(github.ref, 'refs/tags/v'),
+                format('{0}{1}', 'marphux/jimmy:latest,marphux/jimmy:', github.ref_name),
+                'marphux/jimmy:latest'
+            ) }}
           outputs: type=docker,dest=${{ runner.temp }}/myimage.tar
       - name: Check image size
         # and load the image
