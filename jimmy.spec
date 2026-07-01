@@ -103,7 +103,7 @@ exe = EXE(
     # Strip unneeded libs. Not recommended for windows.
     # https://pyinstaller.org/en/stable/usage.html#cmdoption-s
     strip=platform.system().lower() != "windows",
-    upx=True,
+    upx=False,
     upx_exclude=[],
     runtime_tmpdir=None,
     console=True,
