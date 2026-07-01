@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 import shutil
 
-import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
 from rich.tree import Tree
 
@@ -102,15 +101,8 @@ def get_tree(root_notebooks: imf.Notebooks, root_tree: Tree) -> Tree:
     return root_tree
 
 
-def get_pandoc_version() -> str:
-    try:
-        return pypandoc.get_pandoc_version()
-    except OSError:
-        return "unknown"
-
-
 def run_conversion(config) -> tuple[common.Stats, int]:
-    LOGGER.info(f"Jimmy {variables.VERSION} (Pandoc {get_pandoc_version()})")
+    LOGGER.info(f"Jimmy {variables.VERSION}")
     LOGGER.debug(f"Using pandoc from: {shutil.which('pandoc')}")
     LOGGER.debug(f"{config=}")
     inputs_str = " ".join(map(str, config.input))
