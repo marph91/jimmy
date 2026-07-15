@@ -10,6 +10,10 @@ This page describes how you can import the notes that you just converted to Mark
 
 Open the root folder in the editor.
 
+## FUTO Notes
+
+FUTO Notes can store tags in a ["Header Tag Block"](https://gitlab.futo.org/futo-notes/futo-notes/-/blob/885231efaac35ad5b7aee0f02dcbea693931aecc/docs/markdown-spec.md#header-tag-block). To add this block, you can use the `--frontmatter futo` argument.
+
 ## Joplin
 
 Markdown files can be imported to Joplin as described [on the website](https://joplinapp.org/help/apps/import_export/#importing-from-markdown-files):

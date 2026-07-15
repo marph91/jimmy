@@ -348,6 +348,7 @@ class EndToEnd(unittest.TestCase):
 
     @parameterized.expand(
         [
+            "futo",
             "joplin",
             "obsidian",
             "custom_frontmatter.txt",
@@ -366,7 +367,7 @@ class EndToEnd(unittest.TestCase):
 
         self.config.input = test_data
         self.config.output_folder = test_data_output
-        if template in ("joplin", "obsidian"):
+        if template in ("futo", "joplin", "obsidian"):
             self.config.frontmatter = template
             self.config.template_file = None
         else:

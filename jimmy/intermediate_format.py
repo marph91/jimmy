@@ -19,23 +19,55 @@ LOGGER = logging.getLogger("jimmy")
 OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)
 
 
-def normalize_obsidian_tag(tag: str) -> str:
+def normalize_tag_for_futo(tag: str) -> str:
+    """
+    tag format:
+    https://gitlab.futo.org/futo-notes/futo-notes/-/blob/885231efaac35ad5b7aee0f02dcbea693931aecc/docs/markdown-spec.md#L304
+
+    >>> normalize_tag_for_futo("123")
+    'a123'
+    >>> normalize_tag_for_futo("")
+    ''
+    >>> normalize_tag_for_futo("example#section")
+    'example-section'
+    >>> normalize_tag_for_futo("normalize-futo_tag-123")
+    'normalize-futo_tag-123'
+    >>> normalize_tag_for_futo("status-active")
+    'status-active'
+    >>> normalize_tag_for_futo("a" * 51)
+    'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    """
+    valid_char_tag = ""
+    for index, char in enumerate(tag):
+        if index == 0 and char not in string.ascii_letters:
+            # prefix "a" if the first char isn't an ascii letter ([a-zA-Z])
+            valid_char_tag += "a"
+        if char in string.ascii_letters + string.digits + "_-":
+            valid_char_tag += char
+        else:
+            valid_char_tag += "-"
+        if len(valid_char_tag) == 50:
+            return valid_char_tag
+    return valid_char_tag
+
+
+def normalize_tag_for_obsidian(tag: str) -> str:
     """
     tag format: https://help.obsidian.md/Editing+and+formatting/Tags#Tag+format
 
-    >>> normalize_obsidian_tag("nested/tag")
+    >>> normalize_tag_for_obsidian("nested/tag")
     'nested/tag'
-    >>> normalize_obsidian_tag("kebab-case")
+    >>> normalize_tag_for_obsidian("kebab-case")
     'kebab-case'
-    >>> normalize_obsidian_tag("snake_case")
+    >>> normalize_tag_for_obsidian("snake_case")
     'snake_case'
-    >>> normalize_obsidian_tag("grüße-cześć-привет-你好")
+    >>> normalize_tag_for_obsidian("grüße-cześć-привет-你好")
     'grüße-cześć-привет-你好'
-    >>> normalize_obsidian_tag("mul & tip...le")
+    >>> normalize_tag_for_obsidian("mul & tip...le")
     'mul___tip___le'
-    >>> normalize_obsidian_tag("1984")
+    >>> normalize_tag_for_obsidian("1984")
     '1984_'
-    >>> normalize_obsidian_tag("y1984")
+    >>> normalize_tag_for_obsidian("y1984")
     'y1984'
     """
     valid_char_tag = OBSIDIAN_TAG_REGEX.sub("_", tag)
@@ -196,6 +228,21 @@ class Note:
 
     def apply_frontmatter(self, frontmatter_: str):
         match frontmatter_:
+            case "futo":
+                # https://gitlab.futo.org/futo-notes/futo-notes/-/blob/885231efaac35ad5b7aee0f02dcbea693931aecc/docs/markdown-spec.md#L323
+                # not front matter, but a "Header Tag Block"
+                if self.tags:
+                    self.body = (
+                        " ".join(
+                            sorted(
+                                f"#{normalize_tag_for_futo(tag.title)}"
+                                for tag in self.tags
+                                if tag.title
+                            )
+                        )
+                        + "\n\n"
+                        + self.body
+                    )
             case "joplin":
                 # https://joplinapp.org/help/dev/spec/interop_with_frontmatter/
                 # Arbitrary metadata will be ignored.
@@ -223,7 +270,7 @@ class Note:
                 metadata = {}
                 if self.tags:
                     metadata["tags"] = sorted(
-                        normalize_obsidian_tag(tag.title) for tag in self.tags
+                        normalize_tag_for_obsidian(tag.title) for tag in self.tags
                     )
                     post = frontmatter.Post(self.body, **metadata)
                     self.body = frontmatter.dumps(post)
