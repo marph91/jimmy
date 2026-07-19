@@ -58,10 +58,10 @@ jobs:
         # install only the really required modules before the pyinstaller build
         run: |
           uv sync --group build
-          python download_binaries.py
+          uv run download_binaries.py
       - name: Build executables with pyinstaller
         run: |
-          python -m PyInstaller jimmy.spec
+          uv run pyinstaller jimmy.spec
       - name: Release
         uses: softprops/action-gh-release@v3
         # release only if there is a release tag

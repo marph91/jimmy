@@ -30,9 +30,9 @@ jobs:
       - name: Install dependencies
         run: |
           uv sync --group dev
-          python download_binaries.py
+          uv run download_binaries.py
       - name: Run tests
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
           PYTHONPATH: jimmy
-        run: pytest --capture=no --numprocesses=auto
+        run: uv run pytest --capture=no --numprocesses=auto
