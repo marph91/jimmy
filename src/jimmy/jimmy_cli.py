@@ -1,0 +1,204 @@
+"""CLI for jimmy."""
+
+import argparse
+import datetime
+import logging
+import multiprocessing
+from pathlib import Path
+import sys
+
+from rich.logging import RichHandler
+
+import src.jimmy.common
+import src.jimmy.main
+import src.jimmy.variables
+
+LOGGER = logging.getLogger("jimmy")
+
+
+def relative_path(path: str | Path | None) -> Path | None:
+    """
+    Checks if a path is relative.
+
+    >>> str(relative_path("a"))
+    'a'
+    >>> relative_path("/a")
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Please specify a relative path.
+    >>> str(relative_path("~"))
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Please specify a relative path.
+    >>> relative_path("a/b")
+    Traceback (most recent call last):
+    ...
+    argparse.ArgumentTypeError: Nested paths are not supported.
+    >>> str(relative_path("a/"))
+    'a'
+    >>> str(relative_path("./a"))
+    'a'
+    """
+    if path is None:
+        return None
+    # https://stackoverflow.com/a/37472037
+    path_to_check = Path(path).expanduser()
+    if path_to_check.is_absolute():
+        raise argparse.ArgumentTypeError("Please specify a relative path.")
+    if len(path_to_check.parts) > 1:
+        raise argparse.ArgumentTypeError("Nested paths are not supported.")
+    return path_to_check
+
+
+def main():
+    # Resolve issues with multiprocessing and pyinstaller in the smoke tests.
+    # See https://github.com/pyinstaller/pyinstaller/issues/4865.
+    multiprocessing.freeze_support()
+
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="interface")
+    # Only default to the TUI if the script is run in an interactive shell.
+    subparsers.default = "tui" if sys.stdout.isatty() else None
+
+    # TUI parser
+    subparsers.add_parser("tui", help="Configure Jimmy in a Terminal User Interface (TUI).")
+
+    # informational output
+    subparsers.add_parser(
+        "list-formats", help="Print all available formats and their extensions as json."
+    )
+
+    # CLI parser
+    parser_cli = subparsers.add_parser(
+        "cli", help="Specify all arguments directly on command line."
+    )
+    parser_cli.add_argument("input", type=Path, nargs="+", help="The input file(s) or folder(s).")
+    # specific formats that need a special handling
+    parser_cli.add_argument(
+        "--format",
+        choices=src.jimmy.variables.FORMAT_REGISTRY,
+        help="The source format.",
+    )
+    parser_cli.add_argument(
+        "--password",
+        default="",
+        help="Password to decrypt the input.",
+    )
+    parser_cli.add_argument(
+        "--frontmatter",
+        default=None,
+        choices=(None, "futo", "joplin", "obsidian", "qownnotes"),
+        help="Frontmatter type.",
+    )
+    parser_cli.add_argument(
+        "--template-file",
+        type=Path,
+        help="Path to a template file, applied to the note body.",
+    )
+    parser_cli.add_argument(
+        "--output-folder",
+        type=Path,
+        help="The output folder.",
+    )
+    parser_cli.add_argument(
+        "--global-resource-folder",
+        type=relative_path,
+        help="The resource folder for images, PDF and other data. Relative to the output folder.",
+    )
+    parser_cli.add_argument(
+        "--local-resource-folder",
+        type=relative_path,
+        help="The resource folder for images, PDF and other data. "
+        "Relative to the location of the corresponding note.",
+        default=Path("."),  # next to the note
+    )
+    parser_cli.add_argument(
+        "--local-image-folder",
+        type=relative_path,
+        help="The folder for images. Works only together with "
+        "--local-resource-folder. "
+        "Relative to the location of the corresponding note.",
+    )
+    parser_cli.add_argument(
+        "--max-name-length",
+        default=50,
+        type=int,
+        help="Experimental - Maximum filename length.",
+    )
+    parser_cli.add_argument(
+        "--print-tree",
+        action="store_true",
+        help="Print the parsed note tree in intermediate format.",
+    )
+    parser_cli.add_argument("--log-file", type=Path, help="Path for the log file.")
+    parser_cli.add_argument("--no-stdout-log", action="store_true", help="Don't log to stdout.")
+    parser_cli.add_argument(
+        "--stdout-log-level",
+        default="INFO",
+        choices=logging._nameToLevel.keys(),  # pylint: disable=protected-access
+        help="Create a log file next to the executable.",
+    )
+
+    filters = parser_cli.add_mutually_exclusive_group()
+    filters.add_argument("--exclude-notes", nargs="+", help="Exclude notes by title.")
+    filters.add_argument("--include-notes", nargs="+", help="Include notes by title.")
+    filters.add_argument("--exclude-notes-with-tags", nargs="+", help="Exclude notes with tag.")
+    filters.add_argument("--include-notes-with-tags", nargs="+", help="Include notes with tag.")
+    filters.add_argument("--exclude-tags", nargs="+", help="Exclude tags.")
+    filters.add_argument("--include-tags", nargs="+", help="Include tags.")
+
+    config_namespace = parser.parse_args()
+    config = src.jimmy.common.Config(**vars(config_namespace))
+
+    src.jimmy.main.add_binaries_to_path()
+
+    match config.interface:
+        case None:
+            parser.print_help()
+            return
+        case "tui":
+            # import TUI only when needed
+            from src.jimmy import jimmy_tui  # pylint: disable=import-outside-toplevel
+
+            jimmy_tui.main()
+            return
+        case "list-formats":
+            src.jimmy.variables.formats_json()
+            return
+
+    if config.output_folder is None:
+        # If there is no output folder specified, just put
+        # the output next to the first input.
+        now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+        format_ = "filesystem" if config.format is None else config.format
+        config.output_folder = config.input[0].parent / f"{now} - Jimmy Import from {format_}"
+
+    # setup logging
+    custom_handlers: list[logging.Handler] = []
+    if config.log_file is not None:
+        # log to file
+        file_handler_formatter = logging.Formatter("%(asctime)s [%(levelname)-5.5s]  %(message)s")
+        file_handler = logging.FileHandler(config.log_file, mode="w")
+        file_handler.setFormatter(file_handler_formatter)
+        file_handler.setLevel(logging.DEBUG)
+        custom_handlers.append(file_handler)
+    if not config.no_stdout_log:
+        # log to stdout
+        console_handler_formatter = logging.Formatter("%(message)s")
+        console_handler = RichHandler(markup=True, show_path=False)
+        console_handler.setFormatter(console_handler_formatter)
+        console_handler.setLevel(config.stdout_log_level)
+        custom_handlers.append(console_handler)
+    src.jimmy.main.setup_logging(custom_handlers=custom_handlers)
+
+    _, errors = src.jimmy.main.run_conversion(config)
+    if errors:
+        logger = logging.getLogger("jimmy")
+        logger.error("At least one error occured during conversion. Please check the log.")
+        sys.exit(1)
+    else:
+        sys.exit()
+
+
+if __name__ == "__main__":
+    main()

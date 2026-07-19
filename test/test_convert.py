@@ -10,7 +10,7 @@ import unittest
 from parameterized import parameterized
 import py7zr
 
-import jimmy.main
+import src.jimmy.main
 
 
 def name_func(testcase_func, param_num, param):
@@ -27,9 +27,9 @@ class EndToEnd(unittest.TestCase):
         console_handler = RichHandler(markup=True, show_path=False)
         console_handler.setFormatter(console_handler_formatter)
         console_handler.setLevel("DEBUG")
-        jimmy.main.setup_logging(custom_handlers=[console_handler])
+        src.jimmy.main.setup_logging(custom_handlers=[console_handler])
 
-        jimmy.main.add_binaries_to_path()
+        src.jimmy.main.add_binaries_to_path()
 
         # use the same seed before every test to get reproducible uuids
         random.seed(42)
@@ -134,7 +134,7 @@ class EndToEnd(unittest.TestCase):
         self.config.input = test_data
         self.config.format = test_input.parts[0]
         self.config.output_folder = test_data_output
-        jimmy.main.run_conversion(self.config)
+        src.jimmy.main.run_conversion(self.config)
 
         # Skip only here to catch potential errors during conversion.
         if not reference_data.exists():
@@ -336,7 +336,7 @@ class EndToEnd(unittest.TestCase):
 
         self.config.input = test_data
         self.config.output_folder = test_data_output
-        jimmy.main.run_conversion(self.config)
+        src.jimmy.main.run_conversion(self.config)
 
         if len(test_input) == 1:
             self.assert_dir_trees_equal(test_data_output, reference_data)
@@ -373,7 +373,7 @@ class EndToEnd(unittest.TestCase):
         else:
             self.config.frontmatter = None
             self.config.template_file = (Path("test/data/test_data/template") / template).resolve()
-        jimmy.main.run_conversion(self.config)
+        src.jimmy.main.run_conversion(self.config)
 
         self.assert_dir_trees_equal(test_data_output / Path(template).stem, reference_data)
 
@@ -417,7 +417,7 @@ class EndToEnd(unittest.TestCase):
         self.config.output_folder = test_data_output
         for option, value in folder_options.items():
             setattr(self.config, option, value)
-        jimmy.main.run_conversion(self.config)
+        src.jimmy.main.run_conversion(self.config)
 
         self.assert_dir_trees_equal(test_data_output, reference_data)
         if name == "global_outside":

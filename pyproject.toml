@@ -31,7 +31,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: reStructuredText",
 ]
 [project.scripts]
-jimmy = "jimmy.jimmy_cli:main"
+jimmy = "src.jimmy.jimmy_cli:main"
 [project.urls]
 Homepage = "https://github.com/marph91/jimmy"
 Documentation = "https://marph91.github.io/jimmy"
