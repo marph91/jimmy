@@ -22,11 +22,12 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.14.0"
-          cache: "pip"
-          cache-dependency-path: "requirements/requirements*.txt"
+          # TODO: cache uv?
+          # cache: "pip"
+          # cache-dependency-path: "requirements/requirements*.txt"
       - name: Install dependencies
         run: |
-          pip install -r requirements/requirements-dev.txt
+          uv sync --group dev
           python download_binaries.py
       - name: Run tests
         env:

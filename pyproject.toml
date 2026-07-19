@@ -1,10 +1,6 @@
-[build-system]
-requires = ["hatchling", "hatch-requirements-txt"]
-build-backend = "hatchling.build"
-
 [project]
 name = "jimmy"
-dynamic = ["dependencies", "version"]
+dynamic = ["version"]
 description = "Convert your notes to Markdown"
 authors = [
     {name = "Marph", email = "martin.d@andix.de"},
@@ -18,7 +14,6 @@ classifiers = [
     "Framework :: MkDocs",
     "Framework :: Pytest",
     "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.14",
@@ -30,6 +25,25 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: HTML",
     "Topic :: Text Processing :: Markup :: reStructuredText",
 ]
+requires-python = ">=3.14"
+dependencies = [
+    "anyblock-exporter",
+    "beautifulsoup4==4.15.0",
+    "cryptography==48.0.1",
+    "markdown==3.10.2",
+    "pdf-oxide==0.3.69",
+    "platformdirs==4.10.0",
+    "puremagic==2.2.0",
+    "pycrdt==0.14.1",
+    "pypandoc==1.17",
+    "pyparsing==3.3.2",
+    "python-frontmatter==1.3.0",
+    "pyyaml==6.0.3",
+    "rich==15.0.0",
+    "signal-export==3.8.3",
+    "textual==8.2.7",
+    "textual-fspicker==1.0.1",
+]
 [project.scripts]
 jimmy = "src.jimmy.jimmy_cli:main"
 [project.urls]
@@ -39,20 +53,34 @@ Download = "https://github.com/marph91/jimmy/releases"
 Repository = "https://github.com/marph91/jimmy"
 Issues = "https://github.com/marph91/jimmy/issues"
 
-[tool.hatch.build.targets.sdist]
-exclude = [
-  "/docs",
+[tool.uv.sources]
+anyblock-exporter = { git = "https://github.com/jfcostello/AnyBlock-To-Markdown.git", rev = "af1d744" }
+
+[dependency-groups]
+build = [
+    "hatch==1.17.0",
+    "pyinstaller==6.21.0",
+    "twine==6.2.0",
 ]
-[tool.hatch.build.targets.wheel]
-packages = ["jimmy"]
-
-[tool.hatch.metadata]
-allow-direct-references = true
-[tool.hatch.metadata.hooks.requirements_txt]
-files = ["requirements/requirements.txt"]
-
-[tool.hatch.version]
-path = "jimmy/variables.py"
+dev = [
+    "mypy==2.1.0",
+    "parameterized==0.9.0",
+    "py7zr==1.1.3",
+    "pylint==4.0.6",
+    "pytest==9.1.1",
+    "pytest-sugar==1.1.1",
+    "pytest-xdist==3.8.0",
+    "requests==2.34.2",
+    "ruff==0.15.20",
+    "types-beautifulsoup4==4.12.0.20250516",
+    "types-markdown==3.10.2.20260518",
+    "types-pyyaml==6.0.12.20260518",
+]
+docs = [
+    "mkdocs-git-revision-date-localized-plugin==1.5.3",
+    "mkdocs-material==9.5.18",
+    "mkdocs-open-in-new-tab==1.0.8",
+]
 
 [tool.mypy]
 # almost like strict, but leave out some too strict checks

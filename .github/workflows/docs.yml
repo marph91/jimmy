@@ -29,12 +29,13 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.14.0"
-          cache: "pip"
-          cache-dependency-path: "requirements/requirements*.txt"
-      - name: Install pip dependencies
-        run: pip install -r requirements/requirements-docs.txt
+          # TODO: cache uv?
+          # cache: "pip"
+          # cache-dependency-path: "requirements/requirements*.txt"
+      - name: Install dependencies
+        run: uv sync --group docs
       # TODO: remove temporary workaround
-      - name: Fix mkdocs URLs
-        run: pip install --force-reinstall "click<8.2.2"
+      # - name: Fix mkdocs URLs
+      #   run: pip install --force-reinstall "click<8.2.2"
       - name: Deploy site
         run: mkdocs gh-deploy --force
