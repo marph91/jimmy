@@ -8,6 +8,11 @@ import jimmy.md_lib.convert
 
 
 class Converter(converter.BaseConverter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.archive_notebook = imf.Notebook("Archive")
+        self.trash_notebook = imf.Notebook("Trash")
+
     @common.catch_all_exceptions
     def convert_note(self, file_: Path):
         note_keep = json.loads(file_.read_text(encoding="utf-8"))
@@ -17,7 +22,11 @@ class Converter(converter.BaseConverter):
             title = common.unique_title()
         self.logger.debug(f'Converting note "{title}"')
 
-        note_imf = imf.Note(title, source_application=self.format)
+        note_imf = imf.Note(
+            title,
+            source_application=self.format,
+            custom_metadata={"color": note_keep.get("color", "DEFAULT")},
+        )
 
         note_imf.tags = [
             imf.Tag(label["name"]) for label in note_keep.get("labels", []) if "name" in label
@@ -61,13 +70,26 @@ class Converter(converter.BaseConverter):
             note_imf.created = common.timestamp_to_datetime(value // (10**6))
         if (value := note_keep.get("userEditedTimestampUsec")) is not None:
             note_imf.updated = common.timestamp_to_datetime(value // (10**6))
-        self.root_notebook.child_notes.append(note_imf)
+
+        if note_keep.get("isArchived"):
+            parent = self.archive_notebook
+        elif note_keep.get("isTrashed"):
+            parent = self.trash_notebook
+        else:
+            parent = self.root_notebook
+        parent.child_notes.append(note_imf)
 
     def convert(self, file_or_folder: Path):
         notes = list(self.root_path.rglob("*.json"))
         if len(notes) == 0:
             self.logger.warning("Couldn't find a json file. Is this really a Google Keep export?")
             return
+
+        self.root_notebook.child_notebooks.extend([self.archive_notebook, self.trash_notebook])
+
         # take only the exports in json format
         for note in sorted(notes):
             self.convert_note(note)
+
+        # Don't export empty notebooks
+        self.remove_empty_notebooks()
