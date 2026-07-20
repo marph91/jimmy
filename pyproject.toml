@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling", "hatch-requirements-txt"]
+build-backend = "hatchling.build"
+
 [project]
 name = "jimmy"
 dynamic = ["version"]
@@ -52,6 +56,16 @@ Documentation = "https://marph91.github.io/jimmy"
 Download = "https://github.com/marph91/jimmy/releases"
 Repository = "https://github.com/marph91/jimmy"
 Issues = "https://github.com/marph91/jimmy/issues"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/docs",
+]
+[tool.hatch.build.targets.wheel]
+packages = ["jimmy"]
+
+[tool.hatch.version]
+path = "src/jimmy/variables.py"
 
 [tool.uv.sources]
 anyblock-exporter = { git = "https://github.com/jfcostello/AnyBlock-To-Markdown.git", rev = "af1d744" }
