@@ -31,7 +31,7 @@ classifiers = [
 ]
 requires-python = ">=3.14"
 dependencies = [
-    "anyblock-exporter",
+    "anyblock-exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744",
     "beautifulsoup4==4.15.0",
     "cryptography==48.0.1",
     "markdown==3.10.2",
@@ -59,11 +59,10 @@ Issues = "https://github.com/marph91/jimmy/issues"
 
 [tool.hatch.envs.default]
 installer = "uv"
+[tool.hatch.metadata]
+allow-direct-references = true
 [tool.hatch.version]
 path = "src/jimmy/variables.py"
-
-[tool.uv.sources]
-anyblock-exporter = { git = "https://github.com/jfcostello/AnyBlock-To-Markdown.git", rev = "af1d744" }
 
 [dependency-groups]
 build = [
