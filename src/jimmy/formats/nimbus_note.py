@@ -54,7 +54,9 @@ class Converter(converter.BaseConverter):
                 resources.append(
                     imf.Resource(
                         temp_filename,
-                        jimmy.md_lib.links.make_link(link.text, link.url, is_image=link.is_image),
+                        jimmy.md_lib.links.make_link(
+                            link.text, link.url, is_image=link.is_image
+                        ),
                         temp_filename.name,
                     )
                 )

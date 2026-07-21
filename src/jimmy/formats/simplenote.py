@@ -25,7 +25,9 @@ class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, note_simplenote):
         # title is the first line
-        title, body = jimmy.md_lib.text.split_title_from_body(note_simplenote["content"], h1=False)
+        title, body = jimmy.md_lib.text.split_title_from_body(
+            note_simplenote["content"], h1=False
+        )
         self.logger.debug(f'Converting note "{title}"')
 
         note_imf = imf.Note(

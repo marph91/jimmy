@@ -81,12 +81,14 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
         def to_md(tokens):
             return "*" + zim_markup.transform_string(tokens[0][0]) + "*"
 
-        return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(
-            to_md
-        )
+        return pp.Regex(
+            jimmy.md_lib.common.double_slash_re, as_group_list=True
+        ).set_parse_action(to_md)
 
     def horizontal_line():
-        return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(lambda: "\n---\n")
+        return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(
+            lambda: "\n---\n"
+        )
 
     def heading():
         def to_md(tokens):
@@ -105,7 +107,9 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
         def to_md(tokens):
             image_path = Path(tokens[0].split("?")[0])  # strip queries like "?width=600px"
             image_path_resolved = resolve_resource(resource_path, image_path)
-            return jimmy.md_lib.links.make_link(image_path.name, image_path_resolved, is_image=True)
+            return jimmy.md_lib.links.make_link(
+                image_path.name, image_path_resolved, is_image=True
+            )
 
         return pp.QuotedString("{{", end_quote_char="}}").set_parse_action(to_md)
 

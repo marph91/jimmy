@@ -26,7 +26,7 @@ def add_binaries_to_path():
     # Extend the path here, since it's needed for CLI and TUI.
     # Search for the local/pyinstaller binaries first.
     # https://pyinstaller.org/en/stable/runtime-information.html#using-file
-    binaries_folder = str(Path(__file__).parent.parent / "bin")
+    binaries_folder = str(Path(__file__).parent.parent.parent / "bin")
     if binaries_folder not in os.environ["PATH"]:
         os.environ["PATH"] = binaries_folder + os.pathsep + os.environ["PATH"]
 

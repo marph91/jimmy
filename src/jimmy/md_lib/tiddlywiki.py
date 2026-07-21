@@ -60,7 +60,9 @@ def italic():
     def to_md(tokens):
         return "*" + wikitext_markup.transform_string(tokens[0][0]) + "*"
 
-    return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(to_md)
+    return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(
+        to_md
+    )
 
 
 def horizontal_line():

@@ -8,6 +8,7 @@ jimmy.log
 bin
 build
 dist
+src/jimmy.egg-info
 test_profile
 tmp
 tmp_output

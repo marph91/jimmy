@@ -26,7 +26,7 @@ def list_python_files(folder):
     return file_list
 
 
-hiddenimports = list_python_files(Path("jimmy/formats"))
+hiddenimports = list_python_files(Path("src/jimmy/formats"))
 # needed to avoid "ModuleNotFoundError: No module named 'rich._unicode_data.unicode17-0-0"
 # see https://github.com/marph91/jimmy/issues/71
 hiddenimports += collect_submodules("rich")
@@ -53,7 +53,7 @@ executable_name = f"jimmy-{system}"
 
 
 a = Analysis(
-    ["jimmy/jimmy_cli.py"],
+    ["src/jimmy/jimmy_cli.py"],
     pathex=[],
     binaries=[],
     datas=datas,

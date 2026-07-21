@@ -329,7 +329,9 @@ class EnexToMarkdown:
             case "en-media":
                 title = self.active_resource.get("title", self.active_link.get("alt", ""))
                 self.md.append(
-                    jimmy.md_lib.links.make_link(title, self.active_resource["hash"], is_image=True)
+                    jimmy.md_lib.links.make_link(
+                        title, self.active_resource["hash"], is_image=True
+                    )
                 )
                 self.hashes.append(self.active_resource["hash"])
                 self.active_resource = {}

@@ -50,7 +50,7 @@ class Converter(converter.BaseConverter):
             note_imf.updated = common.iso_to_datetime(
                 get_text(item.find("wp:post_modified_gmt", namespaces))  # type:ignore[arg-type]
             )
-        except (TypeError, ValueError):
+        except TypeError, ValueError:
             self.logger.debug("Failed to parse date.")
 
         content = get_text(item.find("content:encoded", namespaces))

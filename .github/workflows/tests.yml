@@ -18,18 +18,16 @@ jobs:
       - uses: actions/checkout@v5
         with:
           submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: "3.14.0"
-          cache: "pip"
-          cache-dependency-path: "requirements/requirements*.txt"
       - name: Install dependencies
         run: |
-          pip install -r requirements/requirements-dev.txt
-          python download_binaries.py
+          uv sync --group dev
+          uv run download_binaries.py
       - name: Run tests
         env:
           JIMMY_TEST_PASSWORD: ${{ secrets.JIMMY_TEST_PASSWORD }}
           PYTHONPATH: jimmy
-        run: pytest --capture=no --numprocesses=auto
+        run: uv run pytest --capture=no --numprocesses=auto

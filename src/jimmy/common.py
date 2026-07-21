@@ -242,7 +242,7 @@ def guess_suffix(file_: Path) -> str:
         if guessed_suffix == ".jfif":
             guessed_suffix = ".jpg"
         return guessed_suffix
-    except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
+    except FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError:
         return ""
 
 
@@ -266,7 +266,7 @@ def is_image(file_: Path) -> bool:
         return True
     try:
         return puremagic.from_file(file_, mime=True).startswith("image/")
-    except (FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError):
+    except FileNotFoundError, IsADirectoryError, puremagic.main.PureError, ValueError:
         return False
 
 

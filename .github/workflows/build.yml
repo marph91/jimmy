@@ -45,20 +45,18 @@ jobs:
           # fetch all tags for the "git describe" later
           fetch-depth: 0
           submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v6
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: "3.14.0"
-          cache: "pip"
-          cache-dependency-path: "requirements/requirements*.txt"
       - name: Install dependencies
         # install only the really required modules before the pyinstaller build
         run: |
-          pip install -r requirements/requirements-build.txt
-          python download_binaries.py
+          uv sync --group build
+          uv run download_binaries.py
       - name: Build executables with pyinstaller
         run: |
-          python -m PyInstaller jimmy.spec
+          uv run pyinstaller jimmy.spec
       - name: Release
         uses: softprops/action-gh-release@v3
         # release only if there is a release tag

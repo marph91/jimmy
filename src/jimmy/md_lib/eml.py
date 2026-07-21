@@ -17,7 +17,7 @@ def decode_payload(part) -> str:
     charset = part.get_content_charset("utf-8")
     try:
         return content.decode(charset)
-    except (LookupError, UnicodeDecodeError):
+    except LookupError, UnicodeDecodeError:
         # last resort: just decode as utf-8
         return content.decode("utf-8", errors="ignore")
 
@@ -25,7 +25,9 @@ def decode_payload(part) -> str:
 def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources]:
     mime = part.get_content_type()
     if mime == "text/html":
-        return [jimmy.md_lib.convert.markup_to_markdown(decode_payload(part), standalone=False)], []
+        return [
+            jimmy.md_lib.convert.markup_to_markdown(decode_payload(part), standalone=False)
+        ], []
     if mime in ("text/markdown", "text/plain"):
         return [decode_payload(part)], []
     if any(mime.startswith(t) for t in ("audio/", "image/", "application/", "text/")):

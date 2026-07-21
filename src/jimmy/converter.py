@@ -337,7 +337,9 @@ class DefaultConverter(BaseConverter):
                     case _:
                         note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
-                pandoc_format = jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(format_, format_)
+                pandoc_format = jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(
+                    format_, format_
+                )
                 note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
