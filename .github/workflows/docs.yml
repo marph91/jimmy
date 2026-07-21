@@ -22,9 +22,6 @@ jobs:
         with:
           # https://github.com/timvink/mkdocs-git-revision-date-localized-plugin?tab=readme-ov-file#note-when-using-build-systems-like-github-actions
           fetch-depth: 0
-          sparse-checkout: |
-            docs
-            requirements
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
