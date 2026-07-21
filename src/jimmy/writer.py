@@ -6,9 +6,9 @@ import re
 import shutil
 import urllib.parse
 
-from src.jimmy import common, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.text
+from jimmy import common, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -154,7 +154,7 @@ class FilesystemWriter:
         )
 
         relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-        resource_markdown = src.jimmy.md_lib.links.make_link(
+        resource_markdown = jimmy.md_lib.links.make_link(
             resource_title, relative_path, is_image=resource.is_image
         )
         if resource.original_text is None:
@@ -185,7 +185,7 @@ class FilesystemWriter:
             )
 
             relative_path = get_quoted_relative_path(note.path.parent, resource.path)
-            md_link = src.jimmy.md_lib.links.make_link(
+            md_link = jimmy.md_lib.links.make_link(
                 resource_title, relative_path, is_image=resource.is_image
             )
             resource_markdown = f"- {md_link}"
@@ -233,10 +233,10 @@ class FilesystemWriter:
             # internal link to heading
             note.body = note.body.replace(
                 note_link.original_text,
-                src.jimmy.md_lib.links.make_link(
+                jimmy.md_lib.links.make_link(
                     link_text or note_link.fragment,
                     "",
-                    fragment=src.jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
+                    fragment=jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
                     title=note_link.title,
                 ),
             )
@@ -257,10 +257,10 @@ class FilesystemWriter:
         relative_path = get_quoted_relative_path(note.path.parent, new_path)
         note.body = note.body.replace(
             note_link.original_text,
-            src.jimmy.md_lib.links.make_link(
+            jimmy.md_lib.links.make_link(
                 link_text,
                 relative_path,
-                fragment=src.jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
+                fragment=jimmy.md_lib.text.to_markdown_header_id(note_link.fragment),
                 title=note_link.title,
             ),
         )

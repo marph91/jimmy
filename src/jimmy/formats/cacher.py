@@ -4,8 +4,8 @@ from collections import defaultdict
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
@@ -19,7 +19,7 @@ class Converter(converter.BaseConverter):
         title = Path(file_["filename"]).stem
         self.logger.debug(f'Converting note "{title}"')
 
-        _, body = src.jimmy.md_lib.text.split_title_from_body(file_["content"])
+        _, body = jimmy.md_lib.text.split_title_from_body(file_["content"])
         note_imf = imf.Note(
             title,
             body,

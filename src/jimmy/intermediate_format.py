@@ -13,7 +13,7 @@ import string
 import frontmatter
 import yaml
 
-from src.jimmy import common
+from jimmy import common
 
 LOGGER = logging.getLogger("jimmy")
 OBSIDIAN_TAG_REGEX = re.compile(r"[^\w/_-]", re.UNICODE)

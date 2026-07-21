@@ -4,10 +4,10 @@ import json
 from pathlib import Path
 import urllib.parse
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.convert
-import src.jimmy.md_lib.html_filter
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.convert
+import jimmy.md_lib.html_filter
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -24,7 +24,7 @@ class Converter(converter.BaseConverter):
         note_links = []
         resources = []
         tags = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(note_body):
+        for link in jimmy.md_lib.links.get_markdown_links(note_body):
             if link.url.startswith("http://localhost"):
                 # resource
                 if resource_folder.is_dir():
@@ -68,12 +68,12 @@ class Converter(converter.BaseConverter):
             source_application=self.format,
         )
 
-        note_body = src.jimmy.md_lib.convert.markup_to_markdown(
+        note_body = jimmy.md_lib.convert.markup_to_markdown(
             note_upnote["data"]["html"],
             custom_filter=[
-                src.jimmy.md_lib.html_filter.upnote_add_formula,
-                src.jimmy.md_lib.html_filter.upnote_add_highlight,
-                src.jimmy.md_lib.html_filter.upnote_streamline_checklists,
+                jimmy.md_lib.html_filter.upnote_add_formula,
+                jimmy.md_lib.html_filter.upnote_add_highlight,
+                jimmy.md_lib.html_filter.upnote_streamline_checklists,
             ],
         )
 

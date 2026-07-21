@@ -22,7 +22,7 @@ def list_python_files(folder):
     file_list = []
     for file_ in folder.iterdir():
         if file_.suffix == ".py" and file_.name != "__init__.py":
-            file_list.append(f"src.jimmy.{folder.stem}.{file_.stem}")
+            file_list.append(f"jimmy.{folder.stem}.{file_.stem}")
     return file_list
 
 

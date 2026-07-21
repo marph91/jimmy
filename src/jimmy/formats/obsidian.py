@@ -6,9 +6,9 @@ from urllib.parse import unquote
 
 import frontmatter
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tags
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.tags
 
 
 class Converter(converter.BaseConverter):
@@ -18,7 +18,7 @@ class Converter(converter.BaseConverter):
         # https://help.obsidian.md/Editing+and+formatting/Attachments#Change+default+attachment+location
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if Path(link.url).suffix in common.MARKDOWN_LINK_SUFFIXES:
@@ -52,7 +52,7 @@ class Converter(converter.BaseConverter):
         resources, note_links = self.handle_links(body)
 
         # https://help.obsidian.md/Editing+and+formatting/Tags
-        inline_tags = src.jimmy.md_lib.tags.get_inline_tags(body, ["#"])
+        inline_tags = jimmy.md_lib.tags.get_inline_tags(body, ["#"])
 
         # frontmatter tags
         # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties

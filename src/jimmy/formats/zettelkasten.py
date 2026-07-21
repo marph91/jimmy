@@ -4,9 +4,9 @@ import datetime as dt
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-from src.jimmy.md_lib.zettelkasten import bbcode_to_md
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+from jimmy.md_lib.zettelkasten import bbcode_to_md
 
 
 class Converter(converter.BaseConverter):
@@ -29,7 +29,7 @@ class Converter(converter.BaseConverter):
     ) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("note://"):
@@ -95,7 +95,7 @@ class Converter(converter.BaseConverter):
                     # after the initial note content is parsed.
                     sequences = []
                     for note_id in item.text.split(","):
-                        text = src.jimmy.md_lib.links.make_link(note_id, note_id)
+                        text = jimmy.md_lib.links.make_link(note_id, note_id)
                         sequences.append(text)
                         note_imf.note_links.append(imf.NoteLink(text, note_id, note_id))
                     note_imf.body += "\n\n## Note Sequences\n\n" + ", ".join(sequences) + "\n"

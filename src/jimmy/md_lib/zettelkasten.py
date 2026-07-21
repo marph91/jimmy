@@ -4,8 +4,8 @@ import re
 
 import pyparsing as pp
 
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tables
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 # Prevent spaces, tabs and newlines from being stripped.
 pp.ParserElement.set_default_whitespace_chars("")
@@ -72,7 +72,7 @@ def list_():
 
 def image():
     def to_md(tokens):
-        return src.jimmy.md_lib.links.make_link(tokens[0], tokens[0], is_image=True)
+        return jimmy.md_lib.links.make_link(tokens[0], tokens[0], is_image=True)
 
     return pp.QuotedString("[img]", end_quote_char="[/img]").set_parse_action(to_md)
 
@@ -90,7 +90,7 @@ def table():
     def to_md(tokens):
         _, caption, content = tokens[0]
 
-        table_md = src.jimmy.md_lib.tables.MarkdownTable()
+        table_md = jimmy.md_lib.tables.MarkdownTable()
         if caption is not None:
             table_md.caption = caption
 

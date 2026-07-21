@@ -3,9 +3,9 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 
 def extract_tags_from_body(body: str) -> tuple[str, list[str]]:
@@ -25,7 +25,7 @@ class Converter(converter.BaseConverter):
     @common.catch_all_exceptions
     def convert_note(self, note_simplenote):
         # title is the first line
-        title, body = src.jimmy.md_lib.text.split_title_from_body(
+        title, body = jimmy.md_lib.text.split_title_from_body(
             note_simplenote["content"], h1=False
         )
         self.logger.debug(f'Converting note "{title}"')
@@ -38,7 +38,7 @@ class Converter(converter.BaseConverter):
             original_id=note_simplenote["id"],
         )
 
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("simplenote://"):

@@ -7,8 +7,8 @@ import sigexport.data
 import sigexport.files
 import sigexport.models
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -36,7 +36,7 @@ class Converter(converter.BaseConverter):
 
             for resource in message.attachments:
                 resource_path = self.resource_folder / title / resource.path
-                resource_link = src.jimmy.md_lib.links.make_link(
+                resource_link = jimmy.md_lib.links.make_link(
                     resource.name, str(resource_path), is_image=common.is_image(Path(resource.path))
                 )
                 note_body.append(resource_link)

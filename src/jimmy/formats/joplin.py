@@ -7,9 +7,9 @@ import math
 import mimetypes
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 
 class ItemType(enum.IntEnum):
@@ -51,7 +51,7 @@ class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             # https://joplinapp.org/api/references/rest_api/#creating-a-note-with-a-specific-id
@@ -75,7 +75,7 @@ class Converter(converter.BaseConverter):
 
     @common.catch_all_exceptions
     def convert_note(self, markdown: str, metadata_json: dict):
-        title, body = src.jimmy.md_lib.text.split_title_from_body(markdown, h1=False)
+        title, body = jimmy.md_lib.text.split_title_from_body(markdown, h1=False)
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title.strip(),

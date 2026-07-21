@@ -9,9 +9,9 @@ import sys
 
 from rich.logging import RichHandler
 
-import src.jimmy.common
-import src.jimmy.main
-import src.jimmy.variables
+import jimmy.common
+import jimmy.main
+import jimmy.variables
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -76,7 +76,7 @@ def main():
     # specific formats that need a special handling
     parser_cli.add_argument(
         "--format",
-        choices=src.jimmy.variables.FORMAT_REGISTRY,
+        choices=jimmy.variables.FORMAT_REGISTRY,
         help="The source format.",
     )
     parser_cli.add_argument(
@@ -148,9 +148,9 @@ def main():
     filters.add_argument("--include-tags", nargs="+", help="Include tags.")
 
     config_namespace = parser.parse_args()
-    config = src.jimmy.common.Config(**vars(config_namespace))
+    config = jimmy.common.Config(**vars(config_namespace))
 
-    src.jimmy.main.add_binaries_to_path()
+    jimmy.main.add_binaries_to_path()
 
     match config.interface:
         case None:
@@ -158,12 +158,12 @@ def main():
             return
         case "tui":
             # import TUI only when needed
-            from src.jimmy import jimmy_tui  # pylint: disable=import-outside-toplevel
+            from jimmy import jimmy_tui  # pylint: disable=import-outside-toplevel
 
             jimmy_tui.main()
             return
         case "list-formats":
-            src.jimmy.variables.formats_json()
+            jimmy.variables.formats_json()
             return
 
     if config.output_folder is None:
@@ -189,9 +189,9 @@ def main():
         console_handler.setFormatter(console_handler_formatter)
         console_handler.setLevel(config.stdout_log_level)
         custom_handlers.append(console_handler)
-    src.jimmy.main.setup_logging(custom_handlers=custom_handlers)
+    jimmy.main.setup_logging(custom_handlers=custom_handlers)
 
-    _, errors = src.jimmy.main.run_conversion(config)
+    _, errors = jimmy.main.run_conversion(config)
     if errors:
         logger = logging.getLogger("jimmy")
         logger.error("At least one error occured during conversion. Please check the log.")

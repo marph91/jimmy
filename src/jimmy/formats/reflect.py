@@ -3,9 +3,9 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
@@ -24,7 +24,7 @@ class Converter(converter.BaseConverter):
             note_links = []
         match note_json["type"]:
             case "backlink":
-                backlink_md = src.jimmy.md_lib.links.make_link(
+                backlink_md = jimmy.md_lib.links.make_link(
                     note_json["attrs"]["label"], note_json["attrs"]["id"]
                 )
                 note_md.append(backlink_md)
@@ -49,14 +49,14 @@ class Converter(converter.BaseConverter):
             case "file":
                 # print(note_json)
                 note_md.append(
-                    src.jimmy.md_lib.links.make_link(
+                    jimmy.md_lib.links.make_link(
                         note_json["attrs"]["fileName"], note_json["attrs"]["url"]
                     )
                 )
             case "image":
                 # print(note_json)
                 note_md.append(
-                    src.jimmy.md_lib.links.make_link(
+                    jimmy.md_lib.links.make_link(
                         note_json["attrs"]["alt"],
                         note_json["attrs"]["src"],
                         is_image=True,
@@ -82,7 +82,7 @@ class Converter(converter.BaseConverter):
                 tags.append(imf.Tag(label, original_id=note_json["attrs"]["id"]))
             case "text":
                 leading_whitespace, text_md, trailing_whitespace = (
-                    src.jimmy.md_lib.text.split_leading_trailing_whitespace(note_json["text"])
+                    jimmy.md_lib.text.split_leading_trailing_whitespace(note_json["text"])
                 )
                 # TODO: split leading and trailing whitespace
                 link = None
@@ -106,7 +106,7 @@ class Converter(converter.BaseConverter):
                             self.logger.warning(f"Unsupported markup: {mark['type']}")
                 # handle links last to apply other markup correctly
                 if link is not None:
-                    text_md = src.jimmy.md_lib.links.make_link(text_md, link["attrs"]["href"])
+                    text_md = jimmy.md_lib.links.make_link(text_md, link["attrs"]["href"])
                 note_md.append(leading_whitespace + text_md + trailing_whitespace)
             case _:
                 self.logger.warning(f"Unsupported type: {note_json['type']}")

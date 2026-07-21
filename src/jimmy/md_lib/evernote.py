@@ -10,8 +10,8 @@ import xml.etree.ElementTree as ET  # noqa: N817
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tables
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -64,7 +64,7 @@ class EnexToMarkdown:
         self.in_table = False
         self.table_row: list[str] = []
         self.table_cell: list[str] = []
-        self.current_table = src.jimmy.md_lib.tables.MarkdownTable()
+        self.current_table = jimmy.md_lib.tables.MarkdownTable()
         self.quote_level = 0
         self.newlines_after_formatting = 0
         self.hashes: list[str] = []
@@ -142,7 +142,7 @@ class EnexToMarkdown:
             case "img":
                 if (url := attrib.get("src")) is not None:
                     self.md.append(
-                        src.jimmy.md_lib.links.make_link(
+                        jimmy.md_lib.links.make_link(
                             attrib.get("title", attrib.get("alt", "")), url, is_image=True
                         )
                     )
@@ -314,7 +314,7 @@ class EnexToMarkdown:
                     #     pass
                     else:
                         # normal link
-                        self.md.append(src.jimmy.md_lib.links.make_link(title, url))
+                        self.md.append(jimmy.md_lib.links.make_link(title, url))
                     if append := self.active_link.get("append"):
                         self.md.extend(append)
                     self.active_link = {}
@@ -329,7 +329,7 @@ class EnexToMarkdown:
             case "en-media":
                 title = self.active_resource.get("title", self.active_link.get("alt", ""))
                 self.md.append(
-                    src.jimmy.md_lib.links.make_link(
+                    jimmy.md_lib.links.make_link(
                         title, self.active_resource["hash"], is_image=True
                     )
                 )
@@ -354,7 +354,7 @@ class EnexToMarkdown:
                 # ensure empty line (there is already one newline added at "create_md")
                 newlines = 1
                 self.in_table = False
-                self.current_table = src.jimmy.md_lib.tables.MarkdownTable()
+                self.current_table = jimmy.md_lib.tables.MarkdownTable()
             case "colgroup" | "th":
                 # header row finished
                 self.current_table.header_rows.append(self.table_row)

@@ -7,9 +7,9 @@ from urllib.parse import urlparse
 
 import yaml
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.convert
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.convert
+import jimmy.md_lib.links
 
 WRONG_QUOTATION_RE = re.compile(r'""(.*?)""\.(.*?)\]')
 
@@ -26,7 +26,7 @@ yaml.SafeLoader.add_constructor("tag:yaml.org,2002:python/unicode", construct_un
 class Converter(converter.BaseConverter):
     def handle_markdown_links(self, body: str) -> tuple[str, imf.Resources]:
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             # Links are usually enclosed with double quotation marks
             # (unparsed text: https://rednotebook.app/help.html#toc37).
             # They get removed in some cases when parsing. Add them again
@@ -75,7 +75,7 @@ class Converter(converter.BaseConverter):
         # def fix_quotation_marks(match: re.Match):
         #     return f'""{match.group(1)}.{match.group(2)}""]'
         # body_preprocessed = WRONG_QUOTATION_RE.sub(fix_quotation_marks, data["text"])
-        body = src.jimmy.md_lib.convert.markup_to_markdown(
+        body = jimmy.md_lib.convert.markup_to_markdown(
             data["text"], format_="t2t", standalone=False
         )
         body, resources = self.handle_markdown_links(body)
@@ -84,7 +84,7 @@ class Converter(converter.BaseConverter):
             body,
             source_application=self.format,
             resources=resources,
-            tags=[imf.Tag(tag) for tag in src.jimmy.md_lib.tags.get_inline_tags(body, ["#"])],
+            tags=[imf.Tag(tag) for tag in jimmy.md_lib.tags.get_inline_tags(body, ["#"])],
         )
         self.root_notebook.child_notes.append(note_imf)
 

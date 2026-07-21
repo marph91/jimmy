@@ -4,7 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 import xml.etree.ElementTree as ET  # noqa: N817
 
-from src.jimmy import common, converter, intermediate_format as imf
+from jimmy import common, converter, intermediate_format as imf
 
 
 # TODO: move to common

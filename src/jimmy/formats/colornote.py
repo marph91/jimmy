@@ -9,9 +9,9 @@ import struct
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.colornote
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.colornote
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -57,7 +57,7 @@ class Converter(converter.BaseConverter):
         # only internal links
         # https://www.colornote.com/faq-question/how-can-i-link-a-note-with-another-note/
         note_links = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             note_links.append(imf.NoteLink(str(link), link.url, link.text or link.url))
         return note_links
 
@@ -85,7 +85,7 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
         note_imf = imf.Note(
             title,
-            src.jimmy.md_lib.colornote.colornote_to_md(note_json["note"]),
+            jimmy.md_lib.colornote.colornote_to_md(note_json["note"]),
             created=common.timestamp_to_datetime(note_json["created_date"] / 1000),
             updated=common.timestamp_to_datetime(note_json["modified_date"] / 1000),
             source_application=self.format,

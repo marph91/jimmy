@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 import sqlite3
 
-from src.jimmy import common, converter, intermediate_format as imf
+from jimmy import common, converter, intermediate_format as imf
 
 IMAGE_RE = re.compile(r"(<img src=\"(.*?)\"(?:>| >| \/>))")
 SOUND_RE = re.compile(r"(\[sound:(.*?)\])")
@@ -64,7 +64,7 @@ class Converter(converter.BaseConverter):
         #         + "\n\n"
         #         + replace(template["afmt"], template_replacements)
         #     )
-        #     body = src.jimmy.md_lib.convert.markup_to_markdown(back)
+        #     body = jimmy.md_lib.convert.markup_to_markdown(back)
         body_md = "\n".join([f"- {key}: {value}" for key, value in template_replacements.items()])
         # cleanup
         body_md = (

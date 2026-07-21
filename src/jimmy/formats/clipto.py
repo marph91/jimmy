@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
@@ -12,7 +12,7 @@ class Converter(converter.BaseConverter):
     def convert_note(self, note_clipto: dict, tags: imf.Tags):
         text = note_clipto.get("text", "")
         if (title := note_clipto.get("title")) is None:
-            title, text = src.jimmy.md_lib.text.split_title_from_body(text, h1=False)
+            title, text = jimmy.md_lib.text.split_title_from_body(text, h1=False)
 
         self.logger.debug(f'Converting note "{title}"')
 

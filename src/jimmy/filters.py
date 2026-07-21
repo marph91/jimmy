@@ -2,7 +2,7 @@
 
 from fnmatch import fnmatchcase
 
-from src.jimmy import intermediate_format as imf
+from jimmy import intermediate_format as imf
 
 
 def select_notes(notebook: imf.Notebook, config):

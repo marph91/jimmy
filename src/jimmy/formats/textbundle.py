@@ -5,17 +5,17 @@ import json
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tags
-import src.jimmy.md_lib.text
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.tags
+import jimmy.md_lib.text
 
 
 class Converter(converter.BaseConverter):
     def handle_links(self, body: str) -> tuple[str, imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link or link.url.startswith("bear://"):
                 continue  # keep the original links
             if link.text.startswith("^"):
@@ -34,10 +34,10 @@ class Converter(converter.BaseConverter):
                 else:
                     if not urlparse(link.url).scheme:
                         body = body.replace(
-                            src.jimmy.md_lib.links.make_link(
+                            jimmy.md_lib.links.make_link(
                                 link.text, link.url, is_image=link.is_image
                             ),
-                            src.jimmy.md_lib.links.make_link(
+                            jimmy.md_lib.links.make_link(
                                 link.text, f"https://{link.url}", is_image=link.is_image
                             ),
                         )
@@ -60,13 +60,13 @@ class Converter(converter.BaseConverter):
         self.logger.debug(f'Converting note "{title}"')
 
         # title = first line header
-        _, body = src.jimmy.md_lib.text.split_title_from_body(file_.read_text(encoding="utf-8"))
+        _, body = jimmy.md_lib.text.split_title_from_body(file_.read_text(encoding="utf-8"))
         body = body.replace(r"\#", "#")  # sometimes incorrectly escaped in bear
         # TODO: Convert Bear underline "~abc~" to Joplin underline "++abc++".
         note_imf = imf.Note(title, body, source_application=self.format)
         # TODO: Handle Bear multiword tags, like "#tag abc#".
         note_imf.tags = [
-            imf.Tag(tag) for tag in src.jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
+            imf.Tag(tag) for tag in jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
         ]
         note_imf.body, note_imf.resources, note_imf.note_links = self.handle_links(note_imf.body)
 

@@ -8,19 +8,19 @@ from xml.etree import ElementTree as ET
 import frontmatter
 import pdf_oxide
 
-from src.jimmy import common, intermediate_format as imf
-import src.jimmy.md_lib.convert
-import src.jimmy.md_lib.eml
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tags
-import src.jimmy.variables
+from jimmy import common, intermediate_format as imf
+import jimmy.md_lib.convert
+import jimmy.md_lib.eml
+import jimmy.md_lib.links
+import jimmy.md_lib.tags
+import jimmy.variables
 
 
 class BaseConverter(abc.ABC):
     def __init__(self, config: common.Config, *_args, **_kwargs):
         self._config = config
 
-        accepted_inputs = src.jimmy.variables.FORMAT_REGISTRY.get(config.format)
+        accepted_inputs = jimmy.variables.FORMAT_REGISTRY.get(config.format)
         self.accepted_extensions = accepted_inputs["accepted_extensions"]  # type: ignore[index]
         self.accept_folder = accepted_inputs["accept_folder"]  # type: ignore[index]
 
@@ -179,7 +179,7 @@ class DefaultConverter(BaseConverter):
     def handle_markdown_links(self, body: str, path: Path) -> tuple[imf.Resources, imf.NoteLinks]:
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             # TODO: fix the source issue not the symptoms
             if "\x02amp\x03" in str(link):
                 self.logger.warning(f'Trying to repair corrupted link "{link}".')
@@ -250,7 +250,7 @@ class DefaultConverter(BaseConverter):
         format_ = file_.suffix.lower()[1:]
         match format_:
             case "adoc" | "asciidoc" | "asciidoctor":
-                note_imf.body = src.jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_="asciidoc",
@@ -263,7 +263,7 @@ class DefaultConverter(BaseConverter):
                     extra_args=["--shift-heading-level-by=1"],
                 )
             case "eml" | "mht" | "mhtml":
-                note_imf = src.jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder)
+                note_imf = jimmy.md_lib.eml.eml_to_note(file_, self.resource_folder)
                 parent.child_notes.append(note_imf)
                 return  # don't use the common conversion
             case "fountain":
@@ -308,7 +308,7 @@ class DefaultConverter(BaseConverter):
                 note_imf.body = file_.read_text(encoding="utf-8")
             case "docx" | "odt":
                 # binary format, supported by pandoc
-                note_imf.body = src.jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_bytes(),
                     pwd=file_.parent,
                     format_=format_,
@@ -319,16 +319,16 @@ class DefaultConverter(BaseConverter):
                 root_tag = root.tag.rpartition("}")[-1]  # strip namespace
                 match root_tag:
                     case "endnote" | "mediawiki" | "opml":  # TODO: endnotexml and opml example
-                        note_imf.body = src.jimmy.md_lib.convert.markup_to_markdown(
+                        note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                             file_.read_text(encoding="utf-8"),
                             pwd=file_.parent,
                             format_=root_tag,
                             resource_folder=self.resource_folder,
-                            custom_filter=[src.jimmy.md_lib.html_filter.replace_special_characters],
+                            custom_filter=[jimmy.md_lib.html_filter.replace_special_characters],
                         )
                     # TODO: docbook
                     # case "book":
-                    #     note_imf.body = src.jimmy.md_lib.convert.markup_to_markdown(
+                    #     note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     #         file_.read_text(encoding="utf-8"),
                     #         pwd=file_.parent,
                     #         format_="docbook",
@@ -337,18 +337,18 @@ class DefaultConverter(BaseConverter):
                     case _:
                         note_imf.body = file_.read_text(encoding="utf-8")
             case _:  # last resort
-                pandoc_format = src.jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(
+                pandoc_format = jimmy.md_lib.convert.PANDOC_INPUT_FORMAT_MAP.get(
                     format_, format_
                 )
-                note_imf.body = src.jimmy.md_lib.convert.markup_to_markdown(
+                note_imf.body = jimmy.md_lib.convert.markup_to_markdown(
                     file_.read_text(encoding="utf-8"),
                     pwd=file_.parent,
                     format_=pandoc_format,
                     resource_folder=self.resource_folder,
-                    custom_filter=[src.jimmy.md_lib.html_filter.replace_special_characters],
+                    custom_filter=[jimmy.md_lib.html_filter.replace_special_characters],
                 )
 
-        inline_tags = src.jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
+        inline_tags = jimmy.md_lib.tags.get_inline_tags(note_imf.body, ["#"])
         note_imf.tags.extend([imf.Tag(tag) for tag in inline_tags])
 
         note_imf.resources, note_imf.note_links = self.handle_markdown_links(

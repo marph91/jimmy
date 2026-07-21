@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
+from jimmy import common, converter, intermediate_format as imf
 
 
 class Converter(converter.BaseConverter):

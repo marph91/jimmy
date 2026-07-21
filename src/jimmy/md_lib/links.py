@@ -9,8 +9,8 @@ from markdown.extensions import Extension
 from markdown.inlinepatterns import InlineProcessor
 from markdown.treeprocessors import Treeprocessor
 
-import src.jimmy.md_lib.common
-import src.jimmy.md_lib.convert
+import jimmy.md_lib.common
+import jimmy.md_lib.convert
 
 
 def make_link(
@@ -68,7 +68,7 @@ class MarkdownLink:
     def is_web_link(self) -> bool:
         return any(
             self.url.startswith(f"{protocol}://")
-            for protocol in src.jimmy.md_lib.common.web_schemes
+            for protocol in jimmy.md_lib.common.web_schemes
         )
 
     @property
@@ -198,7 +198,7 @@ class LinkExtractor(Treeprocessor):
             text = "" if link.text is None else link.text
             # Convert any remaining HTML nodes back to Markdown.
             # This might alter the original link text.
-            text += src.jimmy.md_lib.convert.markup_to_markdown(
+            text += jimmy.md_lib.convert.markup_to_markdown(
                 "".join(
                     ET.tostring(child, encoding="unicode", method="html") for child in list(link)
                 ),
@@ -240,7 +240,7 @@ def get_markdown_links(text: str) -> list[MarkdownLink]:
 
     >>> import logging
     >>> logging.getLogger().setLevel("INFO")
-    >>> src.jimmy.main.add_binaries_to_path()  # hack to provide pandoc
+    >>> jimmy.main.add_binaries_to_path()  # hack to provide pandoc
     >>> get_markdown_links('```\n[link](:/custom)\n```')
     []
     >>> get_markdown_links('`[link](:/custom)`')

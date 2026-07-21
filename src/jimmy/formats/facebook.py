@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
 
 
 def fix_encoding_error(input_str: str) -> str:
@@ -22,7 +22,7 @@ class Converter(converter.BaseConverter):
 
     def handle_markdown_links(self, body: str) -> imf.Resources:
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             resource_path = self.root_path / link.url
@@ -49,7 +49,7 @@ class Converter(converter.BaseConverter):
                             post_body += f"\n\n<{post_attachment_value['url']}>"
                         case "media":
                             media_uri = post_attachment_value["uri"]
-                            post_body += src.jimmy.md_lib.links.make_link(
+                            post_body += jimmy.md_lib.links.make_link(
                                 post_attachment_value.get("title", ""),
                                 media_uri,
                                 is_image=common.is_image(self.root_path / media_uri),

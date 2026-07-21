@@ -16,9 +16,9 @@ from textual.worker import Worker, WorkerState
 from textual_fspicker import FileOpen, FileSave, Filters, SelectDirectory
 from textual_fspicker.file_dialog import FileFilter
 
-import src.jimmy.common
-import src.jimmy.main
-import src.jimmy.variables
+import jimmy.common
+import jimmy.main
+import jimmy.variables
 
 
 class CustomButton(Button):
@@ -201,7 +201,7 @@ class JimmyApp(App):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.available_formats = src.jimmy.variables.FORMAT_REGISTRY
+        self.available_formats = jimmy.variables.FORMAT_REGISTRY
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
         self.output_folder = Path().cwd() / f"{now} - Jimmy Import"
 
@@ -218,7 +218,7 @@ class JimmyApp(App):
         )
         console_handler.setFormatter(console_handler_formatter)
         console_handler.setLevel("DEBUG")
-        src.jimmy.main.setup_logging(custom_handlers=[console_handler])
+        jimmy.main.setup_logging(custom_handlers=[console_handler])
 
     def compose(self) -> ComposeResult:
         hg = HorizontalGroup(
@@ -344,7 +344,7 @@ class JimmyApp(App):
                     self.push_screen(SelectInputScreen())
                     return
 
-                config = src.jimmy.common.Config(
+                config = jimmy.common.Config(
                     "tui",
                     inputs,
                     self.query_one("#select_format").selection,
@@ -353,7 +353,7 @@ class JimmyApp(App):
 
                 self.logging_console.clear()
                 self.conversion_worker = self.run_worker(
-                    lambda: src.jimmy.main.run_conversion(config),
+                    lambda: jimmy.main.run_conversion(config),
                     name="jimmy_conversion",
                     thread=True,
                 )

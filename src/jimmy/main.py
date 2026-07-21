@@ -10,7 +10,7 @@ import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
 from rich.tree import Tree
 
-from src.jimmy import (
+from jimmy import (
     common,
     converter,
     filters,
@@ -73,11 +73,11 @@ def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
     # fall back to the default converter.
     try:
         LOGGER.debug(f'Try converting with converter "{config.format}"')
-        module = importlib.import_module(f"src.jimmy.formats.{config.format}")
+        module = importlib.import_module(f"jimmy.formats.{config.format}")
         converter_ = module.Converter(config)
     except ModuleNotFoundError as exc:
         LOGGER.debug(f"Fallback to default converter: {exc}")
-        if str(exc) == f"No module named 'src.jimmy.formats.{config.format}'":
+        if str(exc) == f"No module named 'jimmy.formats.{config.format}'":
             converter_ = converter.DefaultConverter(config)
         else:
             raise exc  # this is unexpected -> reraise

@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from src.jimmy import converter
-from src.jimmy.converter import DefaultConverter
+from jimmy import converter
+from jimmy.converter import DefaultConverter
 
 
 class Converter(converter.BaseConverter):

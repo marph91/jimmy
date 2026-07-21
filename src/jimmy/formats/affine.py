@@ -5,9 +5,9 @@ import sqlite3
 
 import pycrdt
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tables
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 
 def convert_table(block):
@@ -35,7 +35,7 @@ def convert_table(block):
             table[row_order[row]][column_order[col]] = str(value)
 
     # create markdown table
-    table_md = src.jimmy.md_lib.tables.MarkdownTable()
+    table_md = jimmy.md_lib.tables.MarkdownTable()
     table_md.header_rows = [[""] * len(column_order)]
     table_md.data_rows = table
     return table_md.create_md()
@@ -127,14 +127,14 @@ class Converter(converter.BaseConverter):
                 # TODO: How to convert database block?
                 lines.append(f'Affine Database "{block["prop:title"]}"')
             case "affine:embed-synced-doc":
-                note_link = src.jimmy.md_lib.links.make_link(
+                note_link = jimmy.md_lib.links.make_link(
                     "note_link", str(block.get("prop:pageId", ""))
                 )
                 note_links.append(imf.NoteLink(note_link, str(block.get("prop:pageId", "")), ""))
                 lines.append(note_link)
             case "affine:bookmark" | "affine:embed-youtube":
                 lines.append(
-                    src.jimmy.md_lib.links.make_link(
+                    jimmy.md_lib.links.make_link(
                         str(block.get("prop:title", "")), str(block.get("prop:url", ""))
                     )
                 )

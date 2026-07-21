@@ -2,7 +2,7 @@ import unittest
 
 import bs4
 
-import src.jimmy.md_lib.html_filter as filter
+import jimmy.md_lib.html_filter as filter
 
 
 class MergeConsecutiveFormatting(unittest.TestCase):

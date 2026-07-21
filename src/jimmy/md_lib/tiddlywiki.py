@@ -6,9 +6,9 @@ import urllib.parse
 
 import pyparsing as pp
 
-import src.jimmy.md_lib.common
-import src.jimmy.md_lib.links
-import src.jimmy.md_lib.tables
+import jimmy.md_lib.common
+import jimmy.md_lib.links
+import jimmy.md_lib.tables
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -60,13 +60,13 @@ def italic():
     def to_md(tokens):
         return "*" + wikitext_markup.transform_string(tokens[0][0]) + "*"
 
-    return pp.Regex(src.jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(
+    return pp.Regex(jimmy.md_lib.common.double_slash_re, as_group_list=True).set_parse_action(
         to_md
     )
 
 
 def horizontal_line():
-    return pp.Regex(src.jimmy.md_lib.common.horizontal_line_re).set_parse_action(lambda: "---")
+    return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(lambda: "---")
 
 
 def link():
@@ -80,7 +80,7 @@ def link():
             title = content
             url = content
 
-        md_link = src.jimmy.md_lib.links.MarkdownLink(url=url)
+        md_link = jimmy.md_lib.links.MarkdownLink(url=url)
 
         # wrap files with special characters in angle brackets
         if (
@@ -93,9 +93,9 @@ def link():
 
         title = wikitext_markup.transform_string(title)
         if is_external or is_image or md_link.is_web_link or md_link.is_mail_link:
-            return src.jimmy.md_lib.links.make_link(title, url, is_image=is_image)
+            return jimmy.md_lib.links.make_link(title, url, is_image=is_image)
         # guess that it's a wikilink
-        return src.jimmy.md_lib.links.make_link(title, f"tiddlywiki://{url}", is_image=is_image)
+        return jimmy.md_lib.links.make_link(title, f"tiddlywiki://{url}", is_image=is_image)
 
     return pp.Regex(link_re, as_group_list=True).set_parse_action(to_md)
 
@@ -133,7 +133,7 @@ def table():
         return text
 
     def to_md(tokens):
-        table_md = src.jimmy.md_lib.tables.MarkdownTable()
+        table_md = jimmy.md_lib.tables.MarkdownTable()
         for row in tokens:
             content, control = row
 

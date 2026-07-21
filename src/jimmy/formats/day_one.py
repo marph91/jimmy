@@ -3,8 +3,8 @@
 import json
 from pathlib import Path
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -61,7 +61,7 @@ class Converter(converter.BaseConverter):
                 return
             resources.append(imf.Resource(source_path, str(link), link.text))
 
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if link.is_web_link or link.is_mail_link:
                 continue  # keep the original links
             if link.url.startswith("dayone://view?entryId="):

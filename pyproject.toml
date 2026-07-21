@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling", "hatch-requirements-txt"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
@@ -49,7 +49,7 @@ dependencies = [
     "textual-fspicker==1.0.1",
 ]
 [project.scripts]
-jimmy = "src.jimmy.jimmy_cli:main"
+jimmy = "jimmy.jimmy_cli:main"
 [project.urls]
 Homepage = "https://github.com/marph91/jimmy"
 Documentation = "https://marph91.github.io/jimmy"
@@ -57,13 +57,8 @@ Download = "https://github.com/marph91/jimmy/releases"
 Repository = "https://github.com/marph91/jimmy"
 Issues = "https://github.com/marph91/jimmy/issues"
 
-[tool.hatch.build.targets.sdist]
-exclude = [
-  "/docs",
-]
-[tool.hatch.build.targets.wheel]
-packages = ["jimmy"]
-
+[tool.hatch.envs.default]
+installer = "uv"
 [tool.hatch.version]
 path = "src/jimmy/variables.py"
 

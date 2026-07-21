@@ -6,8 +6,8 @@ import email.policy
 import logging
 from pathlib import Path
 
-from src.jimmy import common, intermediate_format as imf
-import src.jimmy.md_lib.convert
+from jimmy import common, intermediate_format as imf
+import jimmy.md_lib.convert
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -26,7 +26,7 @@ def handle_part(part, attachment_folder: Path) -> tuple[list[str], imf.Resources
     mime = part.get_content_type()
     if mime == "text/html":
         return [
-            src.jimmy.md_lib.convert.markup_to_markdown(decode_payload(part), standalone=False)
+            jimmy.md_lib.convert.markup_to_markdown(decode_payload(part), standalone=False)
         ], []
     if mime in ("text/markdown", "text/plain"):
         return [decode_payload(part)], []

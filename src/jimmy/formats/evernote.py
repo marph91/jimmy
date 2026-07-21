@@ -11,9 +11,9 @@ from urllib.parse import unquote
 import uuid
 import xml.etree.ElementTree as ET  # noqa: N817
 
-from src.jimmy import common, converter, intermediate_format as imf
-import src.jimmy.md_lib.evernote
-import src.jimmy.md_lib.links
+from jimmy import common, converter, intermediate_format as imf
+import jimmy.md_lib.evernote
+import jimmy.md_lib.links
 
 
 class Converter(converter.BaseConverter):
@@ -28,7 +28,7 @@ class Converter(converter.BaseConverter):
         # resources and other links are mostly handled already
         note_links = []
         resources = []
-        for link in src.jimmy.md_lib.links.get_markdown_links(body):
+        for link in jimmy.md_lib.links.get_markdown_links(body):
             if not link.url.startswith("https://www.evernote.com/shard") and (
                 link.is_web_link or link.is_mail_link
             ):
@@ -89,7 +89,7 @@ class Converter(converter.BaseConverter):
                 case "content":
                     if note_element.text:
                         parser = ET.XMLParser(
-                            target=src.jimmy.md_lib.evernote.EnexToMarkdown(self.password)
+                            target=jimmy.md_lib.evernote.EnexToMarkdown(self.password)
                         )
                         try:
                             parser.feed(note_element.text.strip())

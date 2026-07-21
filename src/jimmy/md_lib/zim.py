@@ -5,8 +5,8 @@ import re
 
 import pyparsing as pp
 
-import src.jimmy.md_lib.common
-import src.jimmy.md_lib.links
+import jimmy.md_lib.common
+import jimmy.md_lib.links
 
 # Prevent spaces, tabs and newlines from being stripped.
 pp.ParserElement.set_default_whitespace_chars("")
@@ -82,11 +82,11 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
             return "*" + zim_markup.transform_string(tokens[0][0]) + "*"
 
         return pp.Regex(
-            src.jimmy.md_lib.common.double_slash_re, as_group_list=True
+            jimmy.md_lib.common.double_slash_re, as_group_list=True
         ).set_parse_action(to_md)
 
     def horizontal_line():
-        return pp.Regex(src.jimmy.md_lib.common.horizontal_line_re).set_parse_action(
+        return pp.Regex(jimmy.md_lib.common.horizontal_line_re).set_parse_action(
             lambda: "\n---\n"
         )
 
@@ -107,7 +107,7 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
         def to_md(tokens):
             image_path = Path(tokens[0].split("?")[0])  # strip queries like "?width=600px"
             image_path_resolved = resolve_resource(resource_path, image_path)
-            return src.jimmy.md_lib.links.make_link(
+            return jimmy.md_lib.links.make_link(
                 image_path.name, image_path_resolved, is_image=True
             )
 
@@ -123,13 +123,13 @@ def zim_to_md(zim_text: str, resource_path: Path = Path(".")) -> str:
             url = url.lstrip("+")
             title = url if len(t_splitted) < 2 else zim_markup.transform_string(t_splitted[1])
 
-            if any(url.startswith(scheme) for scheme in src.jimmy.md_lib.common.web_schemes):
+            if any(url.startswith(scheme) for scheme in jimmy.md_lib.common.web_schemes):
                 # URLs are recognized because they start with e.g. "https://" or "mailto:".
                 pass
             elif "/" in url:
                 # Links containing a '/' are considered links to external files
                 url = resolve_resource(resource_path, Path(url))
-            return src.jimmy.md_lib.links.make_link(title, url)
+            return jimmy.md_lib.links.make_link(title, url)
 
         return pp.QuotedString("[[", end_quote_char="]]").set_parse_action(to_md)
 

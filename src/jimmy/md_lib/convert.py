@@ -6,7 +6,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 import pypandoc
 
-import src.jimmy.md_lib.html_filter
+import jimmy.md_lib.html_filter
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -77,22 +77,22 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
         for filter_ in custom_filter:
             filter_(soup)
     # main filter
-    src.jimmy.md_lib.html_filter.div_checklists(soup)
-    src.jimmy.md_lib.html_filter.highlighting(soup)
-    src.jimmy.md_lib.html_filter.iframes_to_links(soup)
-    src.jimmy.md_lib.html_filter.link_internal_headings(soup)
-    src.jimmy.md_lib.html_filter.merge_consecutive_formatting(soup)
-    src.jimmy.md_lib.html_filter.merge_single_element_lists(soup)
-    src.jimmy.md_lib.html_filter.remove_bold_header(soup)
-    src.jimmy.md_lib.html_filter.remove_duplicated_links(soup)
-    src.jimmy.md_lib.html_filter.streamline_tables(soup)
-    src.jimmy.md_lib.html_filter.underline(soup)
-    src.jimmy.md_lib.html_filter.strikethrough(soup)
-    src.jimmy.md_lib.html_filter.whitespace_in_math(soup)
+    jimmy.md_lib.html_filter.div_checklists(soup)
+    jimmy.md_lib.html_filter.highlighting(soup)
+    jimmy.md_lib.html_filter.iframes_to_links(soup)
+    jimmy.md_lib.html_filter.link_internal_headings(soup)
+    jimmy.md_lib.html_filter.merge_consecutive_formatting(soup)
+    jimmy.md_lib.html_filter.merge_single_element_lists(soup)
+    jimmy.md_lib.html_filter.remove_bold_header(soup)
+    jimmy.md_lib.html_filter.remove_duplicated_links(soup)
+    jimmy.md_lib.html_filter.streamline_tables(soup)
+    jimmy.md_lib.html_filter.underline(soup)
+    jimmy.md_lib.html_filter.strikethrough(soup)
+    jimmy.md_lib.html_filter.whitespace_in_math(soup)
     # final cleanup
-    src.jimmy.md_lib.html_filter.multiline_markup(soup)
-    src.jimmy.md_lib.html_filter.unwrap_inline_whitespace(soup)
-    src.jimmy.md_lib.html_filter.remove_empty_markup(soup)
+    jimmy.md_lib.html_filter.multiline_markup(soup)
+    jimmy.md_lib.html_filter.unwrap_inline_whitespace(soup)
+    jimmy.md_lib.html_filter.remove_empty_markup(soup)
     text_html_filtered = str(soup)
 
     # writer: json ast -> markdown

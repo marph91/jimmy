@@ -1,7 +1,7 @@
 import copy
 import unittest
 
-from src.jimmy import intermediate_format as imf
+from jimmy import intermediate_format as imf
 
 TEST_NOTEBOOK = imf.Notebook(
     "Default root folder - imported always",

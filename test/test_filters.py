@@ -2,8 +2,8 @@ import copy
 from types import SimpleNamespace
 import unittest
 
-from src.jimmy import common, intermediate_format as imf
-from src.jimmy.filters import apply_filters
+from jimmy import common, intermediate_format as imf
+from jimmy.filters import apply_filters
 
 TEST_NOTE_TREE = [
     imf.Notebook(

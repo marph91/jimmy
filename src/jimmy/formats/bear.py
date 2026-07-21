@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from src.jimmy import converter
-from src.jimmy.formats.textbundle import Converter as TextbundleConverter
+from jimmy import converter
+from jimmy.formats.textbundle import Converter as TextbundleConverter
 
 
 class Converter(converter.BaseConverter):
