@@ -697,6 +697,7 @@ dev = [
     { name = "types-pyyaml" },
 ]
 docs = [
+    { name = "click" },
     { name = "mkdocs-git-revision-date-localized-plugin" },
     { name = "mkdocs-material" },
     { name = "mkdocs-open-in-new-tab" },
@@ -743,6 +744,7 @@ dev = [
     { name = "types-pyyaml", specifier = "==6.0.12.20260518" },
 ]
 docs = [
+    { name = "click", specifier = ">=8.4.0" },
     { name = "mkdocs-git-revision-date-localized-plugin", specifier = "==1.5.3" },
     { name = "mkdocs-material", specifier = "==9.5.18" },
     { name = "mkdocs-open-in-new-tab", specifier = "==1.0.8" },

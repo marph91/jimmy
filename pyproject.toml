@@ -89,6 +89,8 @@ docs = [
     "mkdocs-git-revision-date-localized-plugin==1.5.3",
     "mkdocs-material==9.5.18",
     "mkdocs-open-in-new-tab==1.0.8",
+    # TODO: remove temporary workaround
+    "click>=8.4.0",  # fix mkdocs livereload
 ]
 
 [tool.mypy]
