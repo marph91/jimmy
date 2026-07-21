@@ -11,7 +11,7 @@ repo_url: https://github.com/marph91/jimmy
 
 # Generate URLs in the format "jimmy/formats/cherrytree/".
 # Don't remove this as it would yield in many invalid links!
-# https://www.mkdocs.org/user-guide/configuration/#use_directory_urls
+# https://zensical.org/docs/setup/basics/?h=use_directory_urls#use_directory_urls
 use_directory_urls: true
 
 theme:
@@ -52,9 +52,11 @@ extra:
 
 plugins:
   # show last updated at bottom
-  - git-revision-date-localized
+  # TODO: https://github.com/zensical/backlog/issues/18
+  # - git-revision-date-localized
   # open external links in a new tab
-  - open-in-new-tab
+  # TODO: https://github.com/zensical/zensical/issues/447
+  # - open-in-new-tab
   - search
 markdown_extensions:
   - admonition

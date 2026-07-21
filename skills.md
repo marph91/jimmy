@@ -51,7 +51,7 @@ In addition to note applications, Jimmy can convert:
 - **Build System**: Hatchling with pyinstaller for binary distribution
 - **Testing**: Comprehensive test suite with pytest
 - **Linting**: Uses ruff, mypy, and pylint for code quality
-- **Documentation**: MkDocs-based documentation site
+- **Documentation**: Zensical-based documentation site
 
 ## Project Structure
 
