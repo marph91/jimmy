@@ -96,7 +96,10 @@ class PathDeterminer:
             note.path = notebook.path / common.safe_path(note.title, self.max_name_length)
             # Don't overwrite existing suffices.
             if note.path.suffix != ".md":
-                note.path = note.path.with_suffix(note.path.suffix + ".md")
+                # Reserve room for the appended suffix, since the name is
+                # truncated to "max_name_length" before it gets added.
+                name = common.safe_path(note.title, self.max_name_length - len(".md"))
+                note.path = note.path.with_name(f"{name}.md")
             # needed to properly link notes later
             self.note_id_map[note.reference_id] = note.path
 
