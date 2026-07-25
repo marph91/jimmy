@@ -57,7 +57,11 @@ class Converter(converter.BaseConverter):
         # frontmatter tags
         # https://help.obsidian.md/Editing+and+formatting/Properties#Default+properties
         metadata, body = frontmatter.parse(body)
-        frontmatter_tags = typing.cast(list[str], metadata.get("tags", []))
+        # A bare "#" in the tag list starts a YAML comment and parses as None.
+        # Drop these empty entries to avoid failing the whole conversion later.
+        frontmatter_tags = [
+            tag for tag in typing.cast(list[str], metadata.get("tags", [])) if tag is not None
+        ]
 
         # aliases seem to be only used in the link description
         # frontmatter_.get("aliases", [])
