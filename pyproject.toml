@@ -33,7 +33,7 @@ requires-python = ">=3.14"
 dependencies = [
     "anyblock-exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744",
     "beautifulsoup4==4.15.0",
-    "cryptography==48.0.1",
+    "cryptography==50.0.0",
     "markdown==3.10.2",
     "pdf-oxide==0.3.69",
     "platformdirs==4.10.0",
