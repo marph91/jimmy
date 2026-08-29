@@ -223,6 +223,11 @@ class EndToEnd(unittest.TestCase):
             [["synology_note_station/test_5/20241005_184010_8701_demouser.nsx"]],
             [["synology_note_station/test_8/20251026_153652_10216_abalakov.nsx"]],
             [["synology_note_station/test_9/20251030_182519_7781_abalakov.nsx"]],
+            # TODO: outcomment after https://github.com/marph91/jimmy/pull/99/
+            # [["telegram/test_4/ChatExport-SINGLE-BOT-CHAT-TELEGRAM-BOT"]],
+            # [["telegram/test_5/ChatExport-SINGLE-PERSONAL-CHAT-USER"]],
+            # [["telegram/test_6/ChatExport-SINGLE-PUBLIC-CHANNEL"]],
+            # [["telegram/test_7/ChatExport-SINGLE-PUBLIC-SUPERGROUP"]],
             # can't test with frontmatter - git doesn't preserve timestamps
             # https://github.com/actions/checkout/issues/364#issuecomment-812618265
             [["textbundle/test_1/example.textpack"]],
