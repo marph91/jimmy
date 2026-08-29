@@ -271,6 +271,8 @@ class EndToEnd(unittest.TestCase):
             [["telegram/test_1_encrypted/DataExport_2025-03-24"]],
             # export of a single chat
             [["telegram/test_2_encrypted/ChatExport_2026-02-27"]],
+            # export with saved messages
+            [["telegram/test_3_encrypted/DataExport_2026-07-29"]],
         ],
         name_func=name_func,
     )
