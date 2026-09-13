@@ -33,19 +33,19 @@ requires-python = ">=3.14"
 dependencies = [
     "anyblock-exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744",
     "beautifulsoup4==4.15.0",
-    "cryptography==50.0.0",
-    "markdown==3.10.2",
-    "pdf-oxide==0.3.69",
-    "platformdirs==4.10.0",
+    "cryptography==50.0.1",
+    "markdown==3.10.3",
+    "pdf-oxide==0.3.78",
+    "platformdirs==4.11.8",
     "puremagic==2.2.0",
-    "pycrdt==0.14.1",
+    "pycrdt==0.14.5",
     "pypandoc==1.17",
     "pyparsing==3.3.2",
     "python-frontmatter==1.3.0",
     "pyyaml==6.0.3",
     "rich==15.0.0",
-    "signal-export==3.8.3",
-    "textual==8.2.7",
+    "signal-export==3.9.3",
+    "textual==8.2.8",
     "textual-fspicker==1.0.1",
 ]
 [project.scripts]
@@ -66,20 +66,20 @@ path = "src/jimmy/variables.py"
 
 [dependency-groups]
 build = [
-    "hatch==1.17.0",
-    "pyinstaller==6.21.0",
-    "twine==6.2.0",
+    "hatch==1.18.0",
+    "pyinstaller==6.22.3",
+    "twine==7.0.0",
 ]
 dev = [
-    "mypy==2.1.0",
+    "mypy==2.3.1",
     "parameterized==0.9.0",
     "py7zr==1.1.3",
-    "pylint==4.0.6",
+    "pylint==4.0.8",
     "pytest==9.1.1",
     "pytest-sugar==1.1.1",
     "pytest-xdist==3.8.0",
     "requests==2.34.2",
-    "ruff==0.15.20",
+    "ruff==0.16.7",
     "types-beautifulsoup4==4.12.0.20250516",
     "types-markdown==3.10.2.20260518",
     "types-pyyaml==6.0.12.20260518",

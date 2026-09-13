@@ -64,19 +64,23 @@ class Converter(converter.BaseConverter):
 
     def convert(self, file_or_folder: Path):
         source_folder = file_or_folder.expanduser().resolve()
+
+        cursor = sigexport.data.get_signal_database(
+            source_folder,
+            password=self.password,
+            key=None,
+        )
+
         convos, contacts, _ = sigexport.data.fetch_data(
             source_folder,
-            password=self.password,  # password for DB key
-            key=None,
+            cursor,
             chats="",  # all chats
             include_empty=False,
             include_disappearing=True,
-            start_date=None,
-            end_date=None,
         )
 
         sigexport.files.copy_attachments(
-            source_folder, self.resource_folder, convos, contacts, password=self.password, key=None
+            source_folder, self.resource_folder, convos, contacts, cursor
         )
 
         chat_dict = sigexport.create.create_chats(convos, contacts)
