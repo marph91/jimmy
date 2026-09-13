@@ -560,6 +560,14 @@ def synology_note_station_fix_img_src(soup: bs4.BeautifulSoup):
             img.attrs["src"] = new_src
 
 
+def streamline_code_blocks(soup: bs4.BeautifulSoup):
+    # https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/pre
+    # add missing <code> tags inside code blocks (<pre>)
+    for element in soup.find_all("pre"):
+        if not element.find_all("code"):
+            wrap_content(soup, element, "code")
+
+
 NEWLINE_RE = re.compile(".*\n.*")
 
 
