@@ -300,9 +300,7 @@ class Note:
                     metadata["updated"] = int(self.updated.timestamp() * 1000)
 
                 # Tags – list of strings (hierarchical if you use dots)
-                metadata["tags"] = (
-                    sorted(tag.title for tag in self.tags if tag.title)
-                )
+                metadata["tags"] = sorted(tag.title for tag in self.tags if tag.title)
 
                 post = frontmatter.Post(self.body, **metadata)
                 self.body = frontmatter.dumps(post)

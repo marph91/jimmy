@@ -139,7 +139,7 @@ def markup_to_markdown(
                 "--wrap=preserve",
                 # mathml seems cover the widest range of formulas
                 # https://pandoc.org/MANUAL.html#math-rendering-in-html
-                "--mathml",
+                "--math-method=mathml",
             ]
         )
         if standalone:
