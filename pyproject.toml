@@ -20,7 +20,7 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Communications :: Email",
     "Topic :: Documentation",
     "Topic :: File Formats",
@@ -29,7 +29,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup :: HTML",
     "Topic :: Text Processing :: Markup :: reStructuredText",
 ]
-requires-python = ">=3.14"
+requires-python = "==3.15.*"
 dependencies = [
     "anyblock-exporter @ git+https://github.com/jfcostello/AnyBlock-To-Markdown.git@af1d744",
     "beautifulsoup4==4.15.0",
@@ -79,7 +79,7 @@ dev = [
     "pytest-sugar==1.1.1",
     "pytest-xdist==3.8.0",
     "requests==2.34.2",
-    "ruff==0.16.7",
+    "ruff==0.17.0",
     "types-beautifulsoup4==4.12.0.20250516",
     "types-markdown==3.10.2.20260518",
     "types-pyyaml==6.0.12.20260518",

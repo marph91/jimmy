@@ -170,6 +170,7 @@ def decode_strange_ascii(ascii_: str) -> str:
 
 
 class DefaultConverter(BaseConverter):
+    """This is the versatile default converter."""
     def __init__(self, config: common.Config, *args, **kwargs):
         super().__init__(config, *args, **kwargs)
         # we need a resource folder to avoid writing files to the source folder

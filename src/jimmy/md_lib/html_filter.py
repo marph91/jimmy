@@ -6,6 +6,7 @@ Should be used:
 - If they can't be expressed in another way.
 """
 
+import html
 import itertools
 import logging
 import re
@@ -93,7 +94,10 @@ def iframes_to_links(soup: bs4.BeautifulSoup):
             iframe.decompose()
             continue
         iframe.name = "a"
-        if iframe.text is None or not iframe.text.strip():  # link without text
+
+        # "iframe" text is raw, "a" text is html. Unescape it accordingly,
+        # since there is sometimes "&nbsp;".
+        if iframe.text is None or not html.unescape(iframe.text).strip():  # link without text
             iframe.string = iframe.attrs.get("title", iframe.attrs["src"])
         iframe.attrs = {"href": iframe.attrs["src"]}
 
