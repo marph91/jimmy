@@ -79,7 +79,7 @@ dev = [
     "pytest-sugar==1.1.1",
     "pytest-xdist==3.8.0",
     "requests==2.34.2",
-    "ruff==0.16.7",
+    "ruff==0.17.0",
     "types-beautifulsoup4==4.12.0.20250516",
     "types-markdown==3.10.2.20260518",
     "types-pyyaml==6.0.12.20260518",
