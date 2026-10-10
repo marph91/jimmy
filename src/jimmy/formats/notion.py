@@ -55,7 +55,7 @@ class Converter(converter.BaseConverter):
             unquoted_url = unquote(link.url)
             if Path(link.url).suffix in common.MARKDOWN_SUFFIXES + (".html",):
                 # internal link
-                _, linked_note_id = Path(unquoted_url).stem.rsplit(" ", 1)
+                linked_note_id = Path(unquoted_url).stem.rpartition(" ")[2]
                 note_links.append(
                     imf.NoteLink(
                         str(link),
@@ -80,12 +80,13 @@ class Converter(converter.BaseConverter):
             or item.name == "index.html"
         ):
             return
-        # id is appended to filename
-        title, _ = item.name.rsplit(" ", 1)
+        # The Notion id is appended to the filename, separated by a space.
+        # Empty titles result in a filename without a separator.
+        title, _, id_ = item.stem.rpartition(" ")
+        title = title or item.stem
 
         # propagate the path through all parents
         # separator is always "/"
-        _, id_ = item.stem.rsplit(" ", 1)
         if parent_notebook.original_id != ".":
             self.id_path_map[id_] = relative_parent_path / item.name
         else:
