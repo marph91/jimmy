@@ -1,6 +1,5 @@
 """Converter for many (note) formats to Markdown."""
 
-import importlib
 import logging
 import os
 from pathlib import Path
@@ -18,6 +17,45 @@ from jimmy import (
     variables,
     writer,
 )
+lazy import jimmy.formats.affine
+lazy import jimmy.formats.anki
+lazy import jimmy.formats.anytype
+lazy import jimmy.formats.bear
+lazy import jimmy.formats.cacher
+lazy import jimmy.formats.cherrytree
+lazy import jimmy.formats.clipto
+lazy import jimmy.formats.colornote
+lazy import jimmy.formats.day_one
+lazy import jimmy.formats.diaro
+lazy import jimmy.formats.drafts
+lazy import jimmy.formats.dynalist
+lazy import jimmy.formats.evernote
+lazy import jimmy.formats.facebook
+lazy import jimmy.formats.google_docs
+lazy import jimmy.formats.google_keep
+lazy import jimmy.formats.joplin
+lazy import jimmy.formats.jrnl
+lazy import jimmy.formats.nimbus_note
+lazy import jimmy.formats.notion
+lazy import jimmy.formats.obsidian
+lazy import jimmy.formats.qownnotes
+lazy import jimmy.formats.rednotebook
+lazy import jimmy.formats.reflect
+lazy import jimmy.formats.roam_research
+lazy import jimmy.formats.signal
+lazy import jimmy.formats.simplenote
+lazy import jimmy.formats.standard_notes
+lazy import jimmy.formats.synology_note_station
+lazy import jimmy.formats.telegram
+lazy import jimmy.formats.textbundle
+lazy import jimmy.formats.tiddlywiki
+lazy import jimmy.formats.tomboy_ng
+lazy import jimmy.formats.turtl
+lazy import jimmy.formats.upnote
+lazy import jimmy.formats.wordpress
+lazy import jimmy.formats.zettelkasten
+lazy import jimmy.formats.zim
+lazy import jimmy.formats.zoho_notebook
 
 LOGGER = logging.getLogger("jimmy")
 
@@ -69,18 +107,96 @@ def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
     Convert the input data to an intermediate representation
     that can be used by the writer later.
     """
-    # Try to use an app specific converter. If there is none,
-    # fall back to the default converter.
-    try:
-        LOGGER.debug(f'Try converting with converter "{config.format}"')
-        module = importlib.import_module(f"jimmy.formats.{config.format}")
-        converter_ = module.Converter(config)
-    except ModuleNotFoundError as exc:
-        LOGGER.debug(f"Fallback to default converter: {exc}")
-        if str(exc) == f"No module named 'jimmy.formats.{config.format}'":
-            converter_ = converter.DefaultConverter(config)
-        else:
-            raise exc  # this is unexpected -> reraise
+    if config.format is None:
+        LOGGER.debug("Converting with default converter.")
+        converter_ = converter.DefaultConverter(config)
+    elif config.format not in variables.FORMAT_REGISTRY:
+        raise NotImplementedError(f"There is no converter for {config.format}!")
+    else:
+        match config.format:  # TODO: merge with variables.FORMAT_REGISTRY?
+            case "affine":
+                converter_module = jimmy.formats.affine
+            case "anki":
+                converter_module = jimmy.formats.anki
+            case "anytype":
+                converter_module = jimmy.formats.anytype
+            case "bear":
+                converter_module = jimmy.formats.bear
+            case "cacher":
+                converter_module = jimmy.formats.cacher
+            case "cherrytree":
+                converter_module = jimmy.formats.cherrytree
+            case "clipto":
+                converter_module = jimmy.formats.clipto
+            case "colornote":
+                converter_module = jimmy.formats.colornote
+            case "day_one":
+                converter_module = jimmy.formats.day_one
+            case "diaro":
+                converter_module = jimmy.formats.diaro
+            case "drafts":
+                converter_module = jimmy.formats.drafts
+            case "dynalist":
+                converter_module = jimmy.formats.dynalist
+            case "evernote":
+                converter_module = jimmy.formats.evernote
+            case "facebook":
+                converter_module = jimmy.formats.facebook
+            case "google_docs":
+                converter_module = jimmy.formats.google_docs
+            case "google_keep":
+                converter_module = jimmy.formats.google_keep
+            case "joplin":
+                converter_module = jimmy.formats.joplin
+            case "jrnl":
+                converter_module = jimmy.formats.jrnl
+            case "nimbus_note":
+                converter_module = jimmy.formats.nimbus_note
+            case "notion":
+                converter_module = jimmy.formats.notion
+            case "obsidian":
+                converter_module = jimmy.formats.obsidian
+            case "qownnotes":
+                converter_module = jimmy.formats.qownnotes
+            case "rednotebook":
+                converter_module = jimmy.formats.rednotebook
+            case "reflect":
+                converter_module = jimmy.formats.reflect
+            case "roam_research":
+                converter_module = jimmy.formats.roam_research
+            case "signal":
+                converter_module = jimmy.formats.signal
+            case "simplenote":
+                converter_module = jimmy.formats.simplenote
+            case "standard_notes":
+                converter_module = jimmy.formats.standard_notes
+            case "synology_note_station":
+                converter_module = jimmy.formats.synology_note_station
+            case "telegram":
+                converter_module = jimmy.formats.telegram
+            case "textbundle":
+                converter_module = jimmy.formats.textbundle
+            case "tiddlywiki":
+                converter_module = jimmy.formats.tiddlywiki
+            case "tomboy_ng":
+                converter_module = jimmy.formats.tomboy_ng
+            case "turtl":
+                converter_module = jimmy.formats.turtl
+            case "upnote":
+                converter_module = jimmy.formats.upnote
+            case "wordpress":
+                converter_module = jimmy.formats.wordpress
+            case "zettelkasten":
+                converter_module = jimmy.formats.zettelkasten
+            case "zim":
+                converter_module = jimmy.formats.zim
+            case "zoho_notebook":
+                converter_module = jimmy.formats.zoho_notebook
+            case _:
+                raise NotImplementedError(f"There is no converter for {config.format}!")
+        converter_ = converter_module.Converter(config)
+        LOGGER.debug(f'Converting with converter "{config.format}"')
+
     # Children are added to the parent node / node tree implicitly.
     # This is an anti-pattern, but works for now.
     parent, errors = converter_.convert_multiple(config.input)
