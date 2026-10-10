@@ -4,6 +4,7 @@ import logging
 import os
 from pathlib import Path
 import shutil
+import types
 
 import pypandoc
 from rich import print  # pylint: disable=redefined-builtin
@@ -107,12 +108,14 @@ def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
     Convert the input data to an intermediate representation
     that can be used by the writer later.
     """
+    converter_: converter.BaseConverter
     if config.format is None:
         LOGGER.debug("Converting with default converter.")
         converter_ = converter.DefaultConverter(config)
     elif config.format not in variables.FORMAT_REGISTRY:
         raise NotImplementedError(f"There is no converter for {config.format}!")
     else:
+        converter_module: types.ModuleType
         match config.format:  # TODO: merge with variables.FORMAT_REGISTRY?
             case "affine":
                 converter_module = jimmy.formats.affine
