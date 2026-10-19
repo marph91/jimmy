@@ -36,7 +36,7 @@ class Converter(converter.BaseConverter):
                 continue  # keep the original links
             elif link_url.startswith("onenote:"):
                 section = Path(urlparse(link_url).path).stem
-                page = urlparse(link_url).fragment.split("&")[0]
+                page = link.fragment.split("&")[0]
                 note_links.append(imf.NoteLink(str(link), f"{section}/{page}", link.text))
             elif (file_path := note_path.parent / link_url).is_file():
                 if file_path.suffix != ".html":
@@ -120,6 +120,8 @@ class Converter(converter.BaseConverter):
                 "one2html",
                 "--input", str(file_or_folder.resolve()),
                 "--output", str(intermediate_html_folder.resolve()),
+                "--note-tag-icons", "emoji",
+                "--warnings",
             ],
             capture_output=True,
             check=False,  # check is done manually afterwards

@@ -79,7 +79,7 @@ def html_to_markdown(text_html: bytes | str, custom_filter: list | None = None):
     # main filter
     jimmy.md_lib.html_filter.div_checklists(soup)
     jimmy.md_lib.html_filter.highlighting(soup)
-    jimmy.md_lib.html_filter.iframes_to_links(soup)
+    jimmy.md_lib.html_filter.media_tags_to_links(soup)
     jimmy.md_lib.html_filter.link_internal_headings(soup)
     jimmy.md_lib.html_filter.merge_consecutive_formatting(soup)
     jimmy.md_lib.html_filter.merge_single_element_lists(soup)

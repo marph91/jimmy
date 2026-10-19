@@ -69,33 +69,38 @@ def highlighting(soup: bs4.BeautifulSoup):
         mark.attrs = {}
 
 
-def iframes_to_links(soup: bs4.BeautifulSoup):
+def media_tags_to_links(soup: bs4.BeautifulSoup):
     """
-    Convert iframes to simple links.
+    Convert audio and iframe tags to simple links.
 
     >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de"></iframe>', "html.parser")
-    >>> iframes_to_links(soup)
+    >>> media_tags_to_links(soup)
     >>> soup
     <a href="https://kicker.de">https://kicker.de</a>
 
     >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de">&nbsp;</iframe>', "html.parser")
-    >>> iframes_to_links(soup)
+    >>> media_tags_to_links(soup)
     >>> soup
     <a href="https://kicker.de">https://kicker.de</a>
 
     >>> soup = bs4.BeautifulSoup('<iframe src="https://kicker.de">link</iframe>', "html.parser")
-    >>> iframes_to_links(soup)
+    >>> media_tags_to_links(soup)
     >>> soup
     <a href="https://kicker.de">link</a>
+
+    >>> soup = bs4.BeautifulSoup('<audio controls src="ff-2c-44100hz.mp3"></audio>', "html.parser")
+    >>> media_tags_to_links(soup)
+    >>> soup
+    <a href="ff-2c-44100hz.mp3">ff-2c-44100hz.mp3</a>
     """
-    for iframe in soup.find_all("iframe"):
-        if not iframe.attrs.get("src", ""):
-            iframe.decompose()
+    for tag in soup.find_all(["audio", "iframe"]):
+        if not tag.attrs.get("src", ""):
+            tag.decompose()
             continue
-        iframe.name = "a"
-        if iframe.text is None or not iframe.text.strip():  # link without text
-            iframe.string = iframe.attrs.get("title", iframe.attrs["src"])
-        iframe.attrs = {"href": iframe.attrs["src"]}
+        tag.name = "a"
+        if tag.text is None or not tag.text.strip():  # link without text
+            tag.string = tag.attrs.get("title", tag.attrs["src"])
+        tag.attrs = {"href": tag.attrs["src"]}
 
 
 def link_internal_headings(soup: bs4.BeautifulSoup):

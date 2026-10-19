@@ -102,13 +102,13 @@ def download_one2html(
 if __name__ == "__main__":
     targetfolder = (Path(__file__).parent / "bin").resolve()
     targetfolder.mkdir(exist_ok=True)
-    # try:
-    download_pandoc(version="3.12.1", targetfolder=targetfolder)
-    # except Exception as exc:
-    #     print("pandoc download failed: ", str(exc))
-    #     exit(1)
-    # try:
-    #     download_one2html(targetfolder=targetfolder)
-    # except Exception as exc:
-    #     print("one2html download failed: ", str(exc))
-    #     exit(1)
+    try:
+        download_pandoc(version="3.12.1", targetfolder=targetfolder)
+    except Exception as exc:
+        print("pandoc download failed: ", str(exc))
+        exit(1)
+    try:
+        download_one2html(version="one2html-v2.0.1", targetfolder=targetfolder)
+    except Exception as exc:
+        print("one2html download failed: ", str(exc))
+        exit(1)

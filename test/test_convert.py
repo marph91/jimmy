@@ -198,8 +198,8 @@ class EndToEnd(unittest.TestCase):
             # similar to test 1, but new format and empty title/body
             [["notion/test_7/Export-380f3f1d-b14f-41ad-b4b9-446b185caf9a.zip"]],
             [["obsidian/test_1_frontmatter/vault"]],
-            # [["onenote/test_1_frontmatter/OneDrive_2025-09-28.zip"]],
-            # [["onenote/test_2/onenoters"]],
+            [["onenote/test_1_frontmatter/OneDrive_2025-09-28.zip"]],
+            [["onenote/test_2/onenoters"]],
             # can't test with frontmatter - git doesn't preserve timestamps
             # https://github.com/actions/checkout/issues/364#issuecomment-812618265
             [["qownnotes/test_1/note_folder"]],
