@@ -91,7 +91,6 @@ teardown_file() {
 }
 
 @test "onenote conversion with bundled executable" {
-  skip "onenote disabled for now"
   $JIMMY_EXE cli "$TEST_DATA_DIR/onenote/test_1_frontmatter/OneDrive_2025-09-28.zip" --format onenote "${JIMMY_ARGS[@]}"
 }
 
