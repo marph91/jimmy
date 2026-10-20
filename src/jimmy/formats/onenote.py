@@ -158,11 +158,16 @@ class Converter(converter.BaseConverter):
 
     def convert_file_or_folder(self, file_or_folder: Path):
         if file_or_folder.is_file():
-            self.convert_notebook(self.root_path)
+            if file_or_folder.suffix == ".zip":
+                self.convert_notebook(self.root_path)
+            else:  # .one
+                self.convert_section_and_toc(file_or_folder, self.root_notebook)
         else:
             for onenote_zip in file_or_folder.glob("*.zip"):
                 root_path = common.extract_zip(onenote_zip)
                 self.convert_notebook(root_path)
+            for onenote_file in file_or_folder.glob("*.one"):
+                self.convert_section_and_toc(onenote_file, self.root_notebook)
 
     def convert(self, file_or_folder: Path):
         # notebook > section > page
@@ -171,5 +176,5 @@ class Converter(converter.BaseConverter):
             self.logger.error('"one2html" binary not found.')
             return
         self.logger.debug(f"Using one2html from: {shutil_path}")
-        self.logger.debug(f'temp_folder: "{self.temp_folder}"')
+        self.logger.debug(f"{self.temp_folder=}")
         self.convert_file_or_folder(file_or_folder)
