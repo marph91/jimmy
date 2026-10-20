@@ -103,7 +103,7 @@ class Converter(converter.BaseConverter):
 
     def convert_backup(self, backup_file: Path):
         self.logger.info(f'Selected backup file "{backup_file}"')
-        resource_folder = backup_file.parent / ".." / "files"
+        resource_folder = backup_file.parent.parent / "files"
         if not resource_folder.is_dir():
             self.logger.warning(
                 f'Could not find resource folder at "{resource_folder}". '
