@@ -39,6 +39,7 @@ lazy import jimmy.formats.jrnl
 lazy import jimmy.formats.nimbus_note
 lazy import jimmy.formats.notion
 lazy import jimmy.formats.obsidian
+lazy import jimmy.formats.onenote
 lazy import jimmy.formats.qownnotes
 lazy import jimmy.formats.rednotebook
 lazy import jimmy.formats.reflect
@@ -159,6 +160,8 @@ def convert_all_inputs(config) -> tuple[imf.Notebooks, int]:
                 converter_module = jimmy.formats.notion
             case "obsidian":
                 converter_module = jimmy.formats.obsidian
+            case "onenote":
+                converter_module = jimmy.formats.onenote
             case "qownnotes":
                 converter_module = jimmy.formats.qownnotes
             case "rednotebook":
