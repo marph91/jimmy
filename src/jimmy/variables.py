@@ -3,7 +3,7 @@
 import json
 
 # current version of jimmy
-VERSION = "1.1.30"
+VERSION = "1.1.31"
 
 # all available formats and their allowed inputs
 # use a registry to avoid importing all (including many unneeded) modules
