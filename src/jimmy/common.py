@@ -188,7 +188,7 @@ def get_unique_path(path: Path, new_content: str | bytes | Path | None = None) -
         and new_content.read_bytes() == path.read_bytes()
         # text content is identical
         or isinstance(new_content, str)
-        and new_content == path.read_text()
+        and new_content == path.read_text(encoding="utf-8")
     ):
         return path
 
