@@ -1,5 +1,5 @@
 ---
-source_app: [x]it!
+source_app: "[x]it!"
 ---
 
 # Convert from [x]it! to Markdown
