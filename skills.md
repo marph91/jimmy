@@ -47,7 +47,7 @@ In addition to note applications, Jimmy can convert:
 
 ## Development
 
-- **Language**: Python 3.14+
+- **Language**: Python 3.15
 - **Build System**: Hatchling with pyinstaller for binary distribution
 - **Testing**: Comprehensive test suite with pytest
 - **Linting**: Uses ruff, mypy, and pylint for code quality

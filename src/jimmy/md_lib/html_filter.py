@@ -6,6 +6,7 @@ Should be used:
 - If they can't be expressed in another way.
 """
 
+import html
 import itertools
 import logging
 import re
@@ -98,7 +99,10 @@ def media_tags_to_links(soup: bs4.BeautifulSoup):
             tag.decompose()
             continue
         tag.name = "a"
-        if tag.text is None or not tag.text.strip():  # link without text
+
+        # "iframe" text is raw, "a" text is html. Unescape it accordingly,
+        # since there is sometimes "&nbsp;".
+        if tag.text is None or not html.unescape(tag.text).strip():  # link without text
             tag.string = tag.attrs.get("title", tag.attrs["src"])
         tag.attrs = {"href": tag.attrs["src"]}
 
